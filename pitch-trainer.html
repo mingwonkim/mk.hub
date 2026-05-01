@@ -3,332 +3,514 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>절대음감 트레이너 — 성인 최적화</title>
+<title>절대음감 트레이너</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600;800&family=Space+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  /* 배경 — 기존 유지 */
-  --bg:#131313;--sf:#1c1b1b;--sf2:#201f1f;--bd:#353535;
-  --tx:#e5e2e1;--txd:#a08d88;
-  /* 강조색 — MK.HUB 핑크-오렌지 */
-  --acc:#ffb4a2;--accd:rgba(255,180,162,.12);--accg:rgba(255,180,162,.3);
-  /* 정답/오답/골드 — 기존 유지 */
-  --ok:#2dd4a0;--okd:rgba(45,212,160,.12);--okg:rgba(45,212,160,.35);
-  --ng:#f06060;--ngd:rgba(240,96,96,.12);
-  --gold:#FF3B00;--goldd:rgba(255,59,0,.12);
-  --warn:#f0a030;
+  --bg:#0e0e14;--sf:#18181f;--sf2:#1e1e27;--bd:#2e2e3a;
+  --tx:#e5e2f0;--txd:#7a7a9a;
+  --acc:#c084fc;--accd:rgba(192,132,252,.13);--accg:rgba(192,132,252,.35);
+  --ok:#34d399;--okd:rgba(52,211,153,.13);--okg:rgba(52,211,153,.35);
+  --ng:#f87171;--ngd:rgba(248,113,113,.13);
+  --gold:#fbbf24;--goldd:rgba(251,191,36,.13);
+  --warn:#fb923c;--sky:#38bdf8;--skyd:rgba(56,189,248,.13);
+  --pink:#f472b6;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-html{height:100%;overflow:hidden;}
-body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);height:100%;overflow:hidden;-webkit-tap-highlight-color:transparent;}
-.app{max-width:1200px;margin:0 auto;height:100%;display:flex;flex-direction:column;padding:0 20px;overflow:hidden;}
+html,body{height:100%;overflow:hidden;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);}
+.app{max-width:900px;margin:0 auto;height:100%;display:flex;flex-direction:column;padding:0 16px;overflow:hidden;}
 
 /* Header */
-.hd{padding:20px 10px 14px;display:flex;justify-content:space-between;align-items:center;}
-.logo{font-size:18px;font-weight:800;letter-spacing:-.3px;font-family:'Space Grotesk',sans-serif;text-transform:uppercase;}.logo em{font-style:normal;color:var(--acc);font-size:10px;display:block;font-weight:500;letter-spacing:.15em;text-transform:uppercase;margin-top:2px;}
-.hr{display:flex;gap:10px;}.pill{display:flex;align-items:center;gap:5px;background:var(--sf2);padding:6px 14px;border-radius:16px;font-size:13px;font-weight:600;}.pill.gd{color:var(--gold);}
+.hd{padding:12px 4px 10px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;border-bottom:1px solid rgba(192,132,252,.08);margin-bottom:2px;}
+.logo{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:800;letter-spacing:-.3px;}
+.logo em{font-style:normal;color:var(--acc);text-shadow:0 0 16px rgba(192,132,252,.5);}
+.hr{display:flex;gap:8px;align-items:center;}
+.pill{display:flex;align-items:center;gap:4px;background:var(--sf2);padding:5px 11px;border-radius:14px;font-size:12px;font-weight:700;border:1px solid var(--bd);}
+.pill.gd{color:var(--gold);}
+.pill.fire{color:var(--warn);}
 
-/* XP */
-.xps{padding:0 10px 16px;}.xpt{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;}.xpl{color:var(--txd);font-family:'JetBrains Mono',monospace;}.xpr{color:var(--gold);font-weight:600;}
-.xpb{height:7px;background:var(--sf2);border-radius:4px;overflow:hidden;}.xpf{height:100%;background:linear-gradient(90deg,var(--acc),#FF3B00);border-radius:4px;transition:width .5s cubic-bezier(.22,.68,0,1.2);}
+/* XP bar */
+.xps{padding:8px 4px 10px;flex-shrink:0;}
+.xpt{display:flex;justify-content:space-between;font-size:11px;margin-bottom:6px;}
+.xpl{color:var(--txd);font-family:'JetBrains Mono',monospace;}
+.xpr{color:var(--gold);font-weight:700;font-size:11px;}
+.xpb{height:10px;background:var(--sf2);border-radius:5px;overflow:visible;position:relative;}
+.xpf{height:100%;background:linear-gradient(90deg,var(--acc),var(--pink));border-radius:5px;transition:width .7s cubic-bezier(.22,.68,0,1.2);position:relative;box-shadow:0 0 10px rgba(192,132,252,.4);}
+.xpf::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.18) 50%,transparent 100%);border-radius:5px;animation:shimmer 2s infinite;}
+@keyframes shimmer{0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
 
 /* Tabs */
-.tabs{display:flex;padding:0 10px;gap:6px;margin-bottom:18px;}.tb{flex:1;padding:12px 8px;text-align:center;font-size:14px;font-weight:600;color:var(--txd);background:none;border:none;border-radius:12px;cursor:pointer;transition:.2s;}.tb.on{background:var(--acc);color:#360e05;}
+.tabs{display:flex;padding:0 4px;gap:4px;margin-bottom:14px;flex-shrink:0;}
+.tb{flex:1;padding:9px 6px;text-align:center;font-size:12px;font-weight:700;color:var(--txd);background:var(--sf2);border:1px solid var(--bd);border-radius:12px;cursor:pointer;transition:.2s;font-family:'Noto Sans KR',sans-serif;}
+.tb.on{background:var(--acc);color:#1a003a;border-color:var(--acc);box-shadow:0 0 16px rgba(192,132,252,.35),0 2px 8px rgba(192,132,252,.2);}
+.tb:not(.on):active{background:var(--sf);}
 
 /* Screens */
-.sc{display:none;flex-direction:column;flex:1;padding:0 10px 30px;overflow-y:auto;}.sc.on{display:flex;}
+.sc{display:none;flex-direction:column;flex:1;padding:0 4px 20px;overflow-y:auto;min-height:0;}
+.sc.on{display:flex;}
 
-/* Section headers */
-.sh{font-size:15px;font-weight:700;color:var(--acc);margin:18px 0 12px;padding-left:4px;}
+/* ===== LEVEL MAP ===== */
+.map-header{text-align:center;margin-bottom:20px;}
+.map-header h2{font-size:18px;font-weight:900;margin-bottom:4px;}
+.map-header p{font-size:12px;color:var(--txd);}
+.section-label{display:flex;align-items:center;gap:10px;margin:16px 0 10px;font-size:13px;font-weight:700;color:var(--txd);}
+.section-label::after{content:'';flex:1;height:1px;background:var(--bd);}
 
-/* Desktop 2-column layout for training cards */
-@media(min-width:768px){
-  .train-cols{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
-  .train-col{}
-}
+/* Level path */
+.level-path{display:flex;flex-direction:column;gap:7px;position:relative;}
+.level-node{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--sf);border:1.5px solid var(--bd);border-radius:16px;cursor:pointer;transition:transform .15s,box-shadow .15s,border-color .15s;position:relative;overflow:hidden;}
+.level-node:hover{border-color:rgba(192,132,252,.3);box-shadow:0 2px 12px rgba(0,0,0,.2);}
+.level-node:active{transform:scale(.97);}
+.level-node.locked{opacity:.35;pointer-events:none;}
+.level-node.mastered{border-color:rgba(251,191,36,.45);background:linear-gradient(135deg,var(--sf),rgba(251,191,36,.04));}
+.level-node.mastered::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--warn),var(--gold));background-size:200%;animation:goldShimmer 2.5s linear infinite;}
+@keyframes goldShimmer{0%{background-position:200%;}100%{background-position:-200%;}}
+.level-node.current{border-color:var(--acc);box-shadow:0 0 20px rgba(192,132,252,.15),inset 0 0 20px rgba(192,132,252,.03);}
+.level-node.current::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--acc),var(--pink));box-shadow:0 0 8px var(--acc);}
+.level-node.current::after{content:'';position:absolute;inset:0;border-radius:14px;animation:nodePulse 2s ease-in-out infinite;pointer-events:none;}
+@keyframes nodePulse{0%,100%{box-shadow:inset 0 0 0 0 rgba(192,132,252,0);}50%{box-shadow:inset 0 0 12px 0 rgba(192,132,252,.07);}}
+.ln-icon{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-weight:800;font-size:13px;}
+.ln-icon.note{background:linear-gradient(135deg,var(--accd),rgba(244,114,182,.08));color:var(--acc);box-shadow:0 0 12px rgba(192,132,252,.2);}
+.ln-icon.chord{background:linear-gradient(135deg,var(--okd),rgba(52,211,153,.05));color:var(--ok);box-shadow:0 0 12px rgba(52,211,153,.15);}
+.ln-icon.locked{background:var(--sf2);color:var(--txd);}
+.ln-icon.mastered{background:linear-gradient(135deg,var(--goldd),rgba(251,191,36,.08));color:var(--gold);box-shadow:0 0 10px rgba(251,191,36,.2);}
+.ln-body{flex:1;min-width:0;}
+.ln-title{font-size:14px;font-weight:700;margin-bottom:3px;}
+.ln-desc{font-size:11px;color:var(--txd);}
+.ln-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
+.ln-stars{font-size:13px;letter-spacing:1px;color:var(--gold);}
+.ln-pct{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--txd);}
+.ln-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;}
+.ln-badge.new{background:rgba(52,211,153,.15);color:var(--ok);border:1px solid rgba(52,211,153,.2);}
+.ln-badge.locked{background:var(--sf2);color:var(--txd);}
+.ln-badge.done{background:rgba(251,191,36,.12);color:var(--gold);border:1px solid rgba(251,191,36,.2);}
 
-/* Cards */
-.cards{display:flex;flex-direction:column;gap:12px;}
-@media(min-width:768px){.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;}}
-.cd{background:var(--sf);border:1px solid var(--bd);border-radius:16px;padding:18px 20px;cursor:pointer;transition:.2s;position:relative;overflow:hidden;}
-.cd:active{transform:scale(.98);}.cd.lk{opacity:.3;pointer-events:none;}.cd.dn{border-color:var(--ok);}
-.cd .r1{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
-.cd .ln{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--acc);font-weight:600;}.cd .st{font-size:14px;letter-spacing:1px;}
-.cd h3{font-size:16px;font-weight:700;margin-bottom:3px;}
-.cd .tg{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px;margin-bottom:4px;}
-.cd .tg.a{background:var(--accd);color:var(--acc);}.cd .tg.b{background:var(--goldd);color:var(--gold);}.cd .tg.c{background:var(--okd);color:var(--ok);}
-.cd .ds{font-size:13px;color:var(--txd);line-height:1.5;}
-.cd .pr{display:flex;align-items:center;gap:10px;margin-top:10px;}.cd .pt{flex:1;height:5px;background:var(--sf2);border-radius:3px;overflow:hidden;}.cd .pf{height:100%;background:var(--acc);border-radius:3px;}.cd .pp{font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--txd);}
-.cd .lki{position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:20px;opacity:.4;}
+/* Today box */
+.today-box{background:linear-gradient(135deg,rgba(192,132,252,.07),rgba(244,114,182,.04));border:1px solid rgba(192,132,252,.2);border-radius:20px;padding:16px 18px;margin-bottom:14px;flex-shrink:0;transition:border-color .4s,box-shadow .4s;}
+.today-box.all-done{border-color:rgba(251,191,36,.4);box-shadow:0 0 24px rgba(251,191,36,.1);}
+.today-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.today-top h3{font-size:14px;font-weight:900;letter-spacing:.01em;}
+.today-day{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);font-weight:700;background:var(--goldd);padding:3px 8px;border-radius:8px;}
+.today-stats{display:flex;gap:8px;margin-bottom:12px;}
+.today-stat{flex:1;background:rgba(14,14,20,.6);border:1px solid var(--bd);border-radius:12px;padding:10px 6px;text-align:center;}
+.today-stat .v{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:800;line-height:1.2;}
+.today-stat .v.acc{color:var(--acc);text-shadow:0 0 12px rgba(192,132,252,.3);}
+.today-stat .v.gold{color:var(--gold);text-shadow:0 0 12px rgba(251,191,36,.3);}
+.today-stat .v.ok{color:var(--ok);text-shadow:0 0 12px rgba(52,211,153,.3);}
+.today-stat .l{font-size:9px;color:var(--txd);margin-top:3px;letter-spacing:.03em;}
+.today-steps{display:flex;flex-direction:column;gap:7px;}
+@media(min-width:600px){.today-steps{flex-direction:row;}}
+.tstep{display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(14,14,20,.5);border:1px solid var(--bd);border-radius:12px;cursor:pointer;transition:.2s;flex:1;}
+.tstep:hover{border-color:rgba(192,132,252,.25);background:rgba(192,132,252,.04);}
+.tstep:active{transform:scale(.97);}
+.tstep.done{border-color:rgba(52,211,153,.3);background:rgba(52,211,153,.04);}
+.tstep-icon{font-size:17px;width:34px;text-align:center;flex-shrink:0;}
+.tstep-info{flex:1;}
+.tstep-title{font-size:12px;font-weight:700;}
+.tstep-sub{font-size:10px;color:var(--txd);}
+.tstep-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent;flex-shrink:0;transition:.2s;}
+.tstep.done .tstep-check{border-color:var(--ok);color:var(--ok);background:rgba(52,211,153,.12);box-shadow:0 0 8px rgba(52,211,153,.2);}
+.today-prog{display:flex;align-items:center;gap:10px;margin-top:10px;}
+.today-prog .bar{flex:1;height:5px;background:var(--sf2);border-radius:3px;overflow:hidden;}
+.today-prog .fill{height:100%;background:linear-gradient(90deg,var(--ok),#6ee7b7);border-radius:3px;transition:width .4s cubic-bezier(.22,.68,0,1.2);box-shadow:0 0 6px rgba(52,211,153,.3);}
+.today-prog .pct{font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--txd);font-weight:600;min-width:24px;}
+.complete-msg{text-align:center;padding:10px 0 2px;font-size:15px;font-weight:900;background:linear-gradient(90deg,var(--gold),var(--warn),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:none;}
+.complete-msg.show{display:block;animation:fadeup .4s ease-out;}
 
-/* Quiz */
-.qt{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;max-width:700px;margin-left:auto;margin-right:auto;width:100%;}.qt .ll{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--acc);font-weight:600;}.qt .tm{font-family:'JetBrains Mono',monospace;font-size:16px;color:var(--txd);}
-.qtt{font-size:22px;font-weight:700;text-align:center;margin-bottom:6px;}.qsb{font-size:13px;color:var(--txd);text-align:center;margin-bottom:12px;}
+/* ===== QUIZ ===== */
+.quiz-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;max-width:700px;width:100%;align-self:center;}
+.quiz-label{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--acc);font-weight:700;}
+.quiz-timer{font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--txd);}
+.quiz-lives{display:flex;gap:4px;}
+.heart{font-size:18px;transition:.3s;}
+.heart.lost{filter:grayscale(1);opacity:.3;}
+.quiz-title{font-size:20px;font-weight:800;text-align:center;margin-bottom:4px;}
+.quiz-sub{font-size:12px;color:var(--txd);text-align:center;margin-bottom:10px;}
+.rt-bar{height:5px;background:var(--sf2);border-radius:3px;margin-bottom:12px;overflow:hidden;max-width:700px;width:100%;align-self:center;}
+.rt-fill{height:100%;border-radius:3px;transition:width .05s linear;}
+.combo-row{display:flex;justify-content:center;align-items:center;gap:10px;min-height:36px;margin-bottom:10px;}
+.combo-num{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:800;color:var(--gold);transition:.15s;}
+.combo-num.pop{transform:scale(1.4);text-shadow:0 0 18px var(--gold);}
+.combo-label{font-size:12px;color:var(--txd);font-weight:700;}
+.combo-mul{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--gold);background:var(--goldd);padding:3px 10px;border-radius:8px;font-weight:800;}
+.q-progress{display:flex;gap:3px;margin-bottom:14px;max-width:700px;width:100%;align-self:center;}
+.q-progress .dot{flex:1;height:6px;background:var(--sf2);border-radius:3px;transition:.3s;}
+.q-progress .dot.ok{background:var(--ok);}
+.q-progress .dot.cur{background:var(--acc);}
+.q-progress .dot.ng{background:var(--ng);}
+.play-area{display:flex;flex-direction:column;align-items:center;margin-bottom:20px;}
+.play-btn{width:96px;height:96px;border-radius:50%;border:2.5px solid var(--acc);background:radial-gradient(circle,rgba(192,132,252,.08),transparent);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;position:relative;box-shadow:0 0 20px rgba(192,132,252,.15);}
+.play-btn::before{content:'';position:absolute;inset:-6px;border-radius:50%;border:1.5px solid rgba(192,132,252,.2);animation:playPulse 2s ease-in-out infinite;}
+@keyframes playPulse{0%,100%{transform:scale(1);opacity:.6;}50%{transform:scale(1.1);opacity:.2;}}
+.play-btn.on{border-color:var(--pink);box-shadow:0 0 40px rgba(244,114,182,.4),0 0 80px rgba(192,132,252,.15);}
+.play-btn .note-icon{font-size:36px;color:var(--acc);transition:transform .12s;}
+.play-btn:active .note-icon{transform:scale(.82);}
+.play-btn.on .note-icon{color:var(--pink);text-shadow:0 0 20px var(--pink);}
+.play-hint{margin-top:8px;font-size:12px;color:var(--txd);}
+.ans-grid{display:grid;gap:8px;margin-bottom:10px;max-width:700px;width:100%;align-self:center;}
+.ans-grid.g2{grid-template-columns:1fr 1fr;}
+.ans-grid.g3{grid-template-columns:1fr 1fr 1fr;}
+.ans-grid.g4{grid-template-columns:1fr 1fr 1fr 1fr;}
+.ans-btn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:15px 8px 11px;border:2px solid var(--bd);border-radius:14px;background:var(--sf);cursor:pointer;transition:.15s;user-select:none;-webkit-user-select:none;font-family:'JetBrains Mono',monospace;}
+.ans-btn:hover{border-color:rgba(192,132,252,.3);background:rgba(192,132,252,.04);transform:translateY(-1px);}
+.ans-btn:active{transform:scale(.91);}
+.ans-btn .main{font-size:20px;font-weight:800;}
+.ans-btn .sub{font-size:11px;color:var(--txd);font-family:'Noto Sans KR',sans-serif;}
+.ans-btn.ok{border-color:var(--ok);background:rgba(52,211,153,.12);box-shadow:0 0 14px rgba(52,211,153,.2);}
+.ans-btn.ng{border-color:var(--ng);background:rgba(248,113,113,.1);}
+.ans-btn:disabled{pointer-events:none;}
+.chord-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:15px 8px 11px;border:2px solid var(--bd);border-radius:14px;background:var(--sf);cursor:pointer;transition:.15s;user-select:none;}
+.chord-btn:hover{border-color:rgba(192,132,252,.3);transform:translateY(-1px);}
+.chord-btn:active{transform:scale(.91);}
+.chord-color{width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,.1);box-shadow:0 2px 8px rgba(0,0,0,.3);}
+.chord-name{font-size:12px;font-weight:700;}
+.chord-btn.ok{border-color:var(--ok);background:rgba(52,211,153,.12);box-shadow:0 0 14px rgba(52,211,153,.2);}
+.chord-btn.ng{border-color:var(--ng);background:rgba(248,113,113,.1);}
+.chord-btn:disabled{pointer-events:none;}
+.fb{text-align:center;padding:12px;border-radius:12px;margin-top:10px;font-size:15px;font-weight:700;animation:fadeup .2s ease-out;max-width:700px;width:100%;align-self:center;}
+.fb.ok{background:var(--okd);border:1px solid rgba(52,211,153,.2);color:var(--ok);}
+.fb.ng{background:var(--ngd);border:1px solid rgba(248,113,113,.2);color:var(--ng);}
+.fb .xpg{font-size:11px;margin-top:2px;color:var(--gold);}
+.xp-float{position:fixed;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:800;color:var(--gold);pointer-events:none;animation:floatup .7s ease-out forwards;z-index:999;}
+@keyframes floatup{0%{opacity:1;transform:translateX(-50%) translateY(0);}100%{opacity:0;transform:translateX(-50%) translateY(-50px);}}
 
-/* RT bar */
-.rtb{height:6px;background:var(--sf2);border-radius:3px;margin-bottom:14px;overflow:hidden;max-width:700px;margin-left:auto;margin-right:auto;width:100%;}.rtf{height:100%;border-radius:3px;transition:width .05s linear;}
+/* ===== RESULT ===== */
+.result-card{background:linear-gradient(160deg,var(--sf),rgba(192,132,252,.04));border:1px solid rgba(192,132,252,.15);border-radius:22px;padding:28px 22px;text-align:center;margin:10px auto 0;max-width:500px;width:100%;}
+.result-emoji{font-size:52px;margin-bottom:8px;display:block;animation:resultBounce .6s cubic-bezier(.22,.68,0,1.4);}
+@keyframes resultBounce{from{transform:scale(.5);opacity:0;}to{transform:scale(1);opacity:1;}}
+.result-title{font-size:22px;font-weight:900;margin-bottom:3px;}
+.result-sub{font-size:12px;color:var(--txd);margin-bottom:12px;}
+.result-score{font-family:'JetBrains Mono',monospace;font-size:54px;font-weight:800;color:var(--acc);text-shadow:0 0 30px rgba(192,132,252,.35);}
+.result-score span{font-size:18px;color:var(--txd);font-weight:400;}
+.result-stars{font-size:26px;letter-spacing:6px;margin:6px 0;filter:drop-shadow(0 0 4px gold);}
+.result-xp{font-size:14px;color:var(--gold);font-weight:700;margin:4px 0 14px;background:var(--goldd);display:inline-block;padding:4px 14px;border-radius:10px;}
+.result-stats{display:flex;justify-content:center;gap:20px;font-size:12px;color:var(--txd);margin-bottom:18px;}
+.result-stats .n{font-weight:800;color:var(--tx);display:block;font-size:17px;font-family:'JetBrains Mono',monospace;}
+.btn-primary{width:100%;padding:14px;background:linear-gradient(135deg,var(--acc),var(--pink));color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:.15s;box-shadow:0 4px 16px rgba(192,132,252,.3);}
+.btn-primary:hover{box-shadow:0 6px 24px rgba(192,132,252,.45);}
+.btn-primary:active{transform:scale(.97);}
+.btn-secondary{width:100%;padding:12px;background:none;color:var(--txd);border:1px solid var(--bd);border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;margin-top:8px;font-family:'Noto Sans KR',sans-serif;transition:.15s;}
+.btn-secondary:hover{border-color:rgba(192,132,252,.3);color:var(--tx);}
+.new-badge{display:inline-block;background:var(--ok);color:#000;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;margin-left:5px;animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.6;}}
 
-/* Combo */
-.cmb{display:flex;justify-content:center;align-items:center;gap:10px;min-height:30px;margin-bottom:12px;}
-.cmb .cn{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:800;color:var(--gold);transition:.15s;}.cmb .cn.pop{transform:scale(1.3);text-shadow:0 0 14px var(--gold);}
-.cmb .cl{font-size:13px;color:var(--txd);font-weight:600;}.cmb .cm{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--gold);background:var(--goldd);padding:3px 10px;border-radius:8px;font-weight:700;}
+/* ===== ENDLESS ===== */
+.endless-header{text-align:center;margin-bottom:14px;}
+.endless-header h2{font-size:18px;font-weight:900;margin-bottom:4px;}
+.endless-header p{font-size:11px;color:var(--txd);line-height:1.6;}
+.mode-btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;}
+.mode-btn{padding:9px 16px;border-radius:10px;border:1px solid var(--bd);background:var(--sf);color:var(--tx);font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:.2s;}
+.mode-btn.on{border-color:var(--acc);background:var(--accd);color:var(--acc);}
+.endless-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:400px;margin:16px auto 0;}
+@media(min-width:500px){.endless-stats{grid-template-columns:repeat(4,1fr);}}
 
-/* Progress */
-.qp{display:flex;gap:3px;margin-bottom:16px;max-width:700px;margin-left:auto;margin-right:auto;width:100%;}.qp .d{flex:1;height:5px;background:var(--sf2);border-radius:3px;transition:.3s;}.qp .d.ok{background:var(--ok);}.qp .d.cur{background:var(--acc);}.qp .d.ng{background:var(--ng);}
+/* ===== STATS ===== */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px;}
+@media(max-width:500px){.stat-grid{grid-template-columns:1fr 1fr;}}
+.stat-box{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:16px;text-align:center;}
+.stat-box .v{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:800;color:var(--acc);}
+.stat-box .l{font-size:11px;color:var(--txd);margin-top:3px;}
+.section-title{font-size:14px;font-weight:800;margin:16px 0 10px;color:var(--acc);}
+.note-bar{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--bd);}
+.note-bar .nn{width:36px;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;}
+.note-bar .bb{flex:1;height:7px;background:var(--sf2);border-radius:4px;overflow:hidden;}
+.note-bar .bf{height:100%;border-radius:4px;transition:width .5s;}
+.note-bar .pc{width:40px;text-align:right;font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--txd);}
 
-/* Play btn */
-.pa{display:flex;flex-direction:column;align-items:center;margin-bottom:24px;}.pb{width:130px;height:130px;border-radius:50%;border:3px solid var(--acc);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;}.pb.on{border-color:#FF3B00;box-shadow:0 0 50px var(--accg);}.pb .ic{font-size:48px;color:var(--acc);transition:transform .12s;}.pb:active .ic{transform:scale(.88);}.phi{margin-top:10px;font-size:13px;color:var(--txd);}
+/* Session history */
+.session-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--sf);border-radius:12px;margin-bottom:6px;}
+.session-item .si-date{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--txd);width:90px;flex-shrink:0;}
+.session-item .si-info{flex:1;}
+.session-item .si-score{font-size:13px;font-weight:700;}
+.session-item .si-sub{font-size:11px;color:var(--txd);}
+.session-item .si-stars{font-size:13px;}
 
-/* Answers */
-.ans{display:grid;gap:10px;margin-bottom:12px;max-width:700px;margin-left:auto;margin-right:auto;width:100%;}
-.ans.g2{grid-template-columns:1fr 1fr;}.ans.g3{grid-template-columns:1fr 1fr 1fr;}.ans.g4{grid-template-columns:1fr 1fr 1fr 1fr;}.ans.g6{grid-template-columns:repeat(4,1fr);}
-.ab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px 8px 14px;border:2px solid var(--bd);border-radius:14px;background:var(--sf);cursor:pointer;transition:.12s;user-select:none;-webkit-user-select:none;font-family:'JetBrains Mono',monospace;}
-.ab:active{transform:scale(.94);}.ab .main{font-size:22px;font-weight:700;}.ab .sub{font-size:12px;color:var(--txd);font-family:'Noto Sans KR',sans-serif;}
-.ab.ok{border-color:var(--ok);background:var(--okd);}.ab.ng{border-color:var(--ng);background:var(--ngd);}.ab:disabled{pointer-events:none;}
+/* Streak calendar */
+.streak-row{display:flex;gap:4px;margin-bottom:14px;flex-wrap:wrap;}
+.streak-day{width:28px;height:28px;border-radius:7px;background:var(--sf2);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--txd);font-family:'JetBrains Mono',monospace;transition:.2s;}
+.streak-day.active{background:linear-gradient(135deg,var(--acc),var(--pink));color:#fff;font-weight:700;box-shadow:0 2px 8px rgba(192,132,252,.3);}
+.streak-day.today{outline:2px solid var(--acc);outline-offset:2px;box-shadow:0 0 8px rgba(192,132,252,.3);}
 
-/* Color chord buttons */
-.cab{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 8px 14px;border:2px solid var(--bd);border-radius:14px;background:var(--sf);cursor:pointer;transition:.12s;user-select:none;}
-.cab:active{transform:scale(.94);}.cab .cc{width:40px;height:40px;border-radius:50%;border:2px solid rgba(255,255,255,.1);}.cab .cl2{font-size:13px;font-weight:700;}
-.cab.ok{border-color:var(--ok);background:var(--okd);}.cab.ng{border-color:var(--ng);background:var(--ngd);}.cab:disabled{pointer-events:none;}
+/* ===== ACHIEVEMENTS ===== */
+.ach-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+@media(min-width:600px){.ach-grid{grid-template-columns:1fr 1fr 1fr;}}
+.ach-card{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:16px;text-align:center;position:relative;transition:.2s;}
+.ach-card.unlocked{border-color:rgba(251,191,36,.4);background:linear-gradient(135deg,var(--sf),rgba(251,191,36,.04));}
+.ach-card.unlocked::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--warn),var(--gold));background-size:200%;animation:goldShimmer 3s linear infinite;}
+.ach-card.locked{opacity:.3;filter:grayscale(.5);}
+.ach-icon{font-size:30px;margin-bottom:6px;}
+.ach-name{font-size:12px;font-weight:800;margin-bottom:3px;}
+.ach-desc{font-size:10px;color:var(--txd);}
+.ach-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:5px;margin-top:5px;display:inline-block;}
+.ach-badge.gold{background:rgba(251,191,36,.15);color:var(--gold);border:1px solid rgba(251,191,36,.2);}
+.ach-badge.locked{background:var(--sf2);color:var(--txd);}
 
-/* Feedback */
-.fb{text-align:center;padding:14px;border-radius:12px;margin-top:14px;font-size:16px;font-weight:600;animation:fu .2s ease-out;max-width:700px;margin-left:auto;margin-right:auto;width:100%;}
-@keyframes fu{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
-.fb.fbok{background:var(--okd);border:1px solid rgba(45,212,160,.2);color:var(--ok);}.fb.fbng{background:var(--ngd);border:1px solid rgba(240,96,96,.2);color:var(--ng);}.fb .xpg{font-size:12px;margin-top:3px;color:var(--gold);}
-.fxp{position:fixed;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:800;color:var(--gold);pointer-events:none;animation:fup .7s ease-out forwards;z-index:999;}
-@keyframes fup{0%{opacity:1;transform:translateX(-50%) translateY(0);}100%{opacity:0;transform:translateX(-50%) translateY(-45px);}}
+/* ===== LEVEL UP OVERLAY ===== */
+.levelup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:9999;animation:fadeIn .25s ease;}
+.levelup-box{background:linear-gradient(160deg,var(--sf),#1a003a);border:2px solid rgba(251,191,36,.6);border-radius:26px;padding:38px 30px;text-align:center;max-width:300px;width:88%;box-shadow:0 0 60px rgba(251,191,36,.12),0 20px 60px rgba(0,0,0,.4);animation:levelupPop .5s cubic-bezier(.22,.68,0,1.2);}
+.levelup-box .em{font-size:60px;margin-bottom:10px;display:block;animation:emBounce .5s .2s cubic-bezier(.22,.68,0,1.4) both;}
+@keyframes emBounce{from{transform:scale(0) rotate(-20deg);}to{transform:scale(1) rotate(0deg);}}
+.levelup-box h2{font-size:24px;font-weight:900;background:linear-gradient(90deg,var(--gold),var(--warn));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;letter-spacing:.04em;}
+.levelup-box .rank{font-size:15px;color:var(--tx);margin-bottom:20px;font-weight:600;}
+.levelup-box .btn-primary{background:linear-gradient(135deg,var(--gold),var(--warn));color:#000;box-shadow:0 4px 14px rgba(251,191,36,.3);}
+@keyframes levelupPop{from{transform:scale(.65) translateY(20px);opacity:0;}to{transform:scale(1) translateY(0);opacity:1;}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
 
-/* Result */
-.rc{background:var(--sf);border:1px solid var(--bd);border-radius:18px;padding:32px 28px;text-align:center;margin-top:14px;max-width:600px;margin-left:auto;margin-right:auto;width:100%;}
-.rc .em{font-size:52px;margin-bottom:12px;}.rc h2{font-size:24px;margin-bottom:4px;}.rc .sub{font-size:14px;color:var(--txd);margin-bottom:16px;}
-.rc .sb{font-family:'JetBrains Mono',monospace;font-size:48px;font-weight:800;color:var(--acc);}.rc .sb span{font-size:20px;color:var(--txd);font-weight:400;}
-.rs{font-size:30px;letter-spacing:6px;margin:10px 0;}.rxp{font-size:16px;color:var(--gold);font-weight:600;margin:6px 0 16px;}
-.rd{display:flex;justify-content:center;gap:24px;font-size:14px;color:var(--txd);margin-bottom:20px;}.rd .n{font-weight:700;color:var(--tx);display:block;font-size:20px;font-family:'JetBrains Mono',monospace;}
-.bp{width:100%;padding:16px;background:var(--acc);color:#360e05;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}
-.bs{width:100%;padding:14px;background:none;color:var(--txd);border:1px solid var(--bd);border-radius:12px;font-size:14px;font-weight:500;cursor:pointer;margin-top:8px;font-family:'Noto Sans KR',sans-serif;}
-.nw{display:inline-block;background:var(--ok);color:#000;font-size:10px;font-weight:700;padding:3px 6px;border-radius:4px;margin-left:5px;animation:pls 1s infinite;}
-@keyframes pls{0%,100%{opacity:1;}50%{opacity:.6;}}
+/* ===== ACHIEVEMENT POPUP ===== */
+.ach-popup{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--sf);border:2px solid var(--gold);border-radius:16px;padding:14px 20px;display:flex;align-items:center;gap:12px;z-index:9998;animation:slideUp .4s ease-out;min-width:240px;}
+.ach-popup .ap-icon{font-size:28px;}
+.ach-popup .ap-title{font-size:11px;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:.05em;}
+.ach-popup .ap-name{font-size:14px;font-weight:800;}
+@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(20px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
 
-/* Free Play */
-.fpa{display:flex;flex-direction:column;align-items:center;gap:18px;}
-.fnd{font-family:'JetBrains Mono',monospace;font-size:64px;font-weight:800;color:var(--acc);height:75px;display:flex;align-items:baseline;gap:8px;}.fnd .fr{font-size:16px;color:var(--txd);font-weight:400;}
-.pk{display:flex;position:relative;width:fit-content;margin:0 auto;height:120px;}
-.pk .wk{width:48px;height:120px;background:#eee;border:1px solid #bbb;border-radius:0 0 6px 6px;cursor:pointer;transition:.12s;position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;font-size:11px;color:#999;font-family:'JetBrains Mono',monospace;}
-.pk .wk:active,.pk .wk.act{background:var(--acc);border-color:var(--acc);color:#360e05;}
-.pk .bk{width:30px;height:74px;background:#222;border-radius:0 0 4px 4px;position:absolute;z-index:2;cursor:pointer;transition:.12s;}.pk .bk:active,.pk .bk.act{background:var(--acc);}
-.tmb-sel{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
-.tmb-btn{padding:8px 18px;border-radius:10px;border:1px solid var(--bd);background:var(--sf);color:var(--tx);font-size:13px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}.tmb-btn.on{border-color:var(--acc);background:var(--accd);}
+/* Shared */
+@keyframes fadeup{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}.shake{animation:shake .3s ease-in-out;}
 
-/* Stats */
-.sg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:18px;}
-@media(max-width:600px){.sg{grid-template-columns:1fr 1fr;}}
-.stb{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:18px;text-align:center;}.stb .v{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:700;color:var(--acc);}.stb .l{font-size:12px;color:var(--txd);margin-top:3px;}
-.na h3{font-size:16px;font-weight:600;margin-bottom:12px;}
-.nr{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--bd);}.nr .nn{width:40px;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:14px;}.nr .bb{flex:1;height:6px;background:var(--sf2);border-radius:3px;overflow:hidden;}.nr .bf{height:100%;border-radius:3px;transition:width .5s;}.nr .pc2{width:44px;text-align:right;font-size:13px;font-family:'JetBrains Mono',monospace;color:var(--txd);}
+.stb{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:16px;text-align:center;}
+.stb .v{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:800;color:var(--acc);}
+.stb .l{font-size:11px;color:var(--txd);margin-top:3px;}
 
-/* Guide */
-.gc{flex:1;overflow-y:auto;max-width:900px;margin:0 auto;width:100%;}
-@media(min-width:768px){.gc{columns:2;column-gap:16px;}.gs{break-inside:avoid;}}
-.gs{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:18px 20px;margin-bottom:12px;}.gs h3{font-size:16px;font-weight:700;margin-bottom:6px;}.gs p{font-size:13px;color:var(--txd);line-height:1.8;}.gs .tp{display:inline-block;background:var(--accd);color:var(--acc);padding:3px 9px;border-radius:5px;font-size:10px;font-weight:700;margin-bottom:4px;}
-.paper{background:var(--sf2);border:1px solid var(--bd);border-radius:10px;padding:12px 14px;margin:8px 0;}.paper .t{font-size:13px;font-weight:600;color:var(--tx);}.paper .a{font-size:11px;color:var(--txd);}.paper .j{font-size:10px;color:var(--acc);margin-top:2px;}
+/* Journey progress bar */
+.journey-bar{padding:0 4px 10px;flex-shrink:0;}
+.jb-top{display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px;}
+.jb-label{color:var(--txd);font-family:'JetBrains Mono',monospace;}
+.jb-val{color:var(--warn);font-weight:700;}
+.jb-wrap{position:relative;}
+.jb-track{height:6px;background:var(--sf2);border-radius:3px;overflow:hidden;}
+.jb-fill{height:100%;background:linear-gradient(90deg,var(--warn),var(--gold));border-radius:3px;transition:width .6s cubic-bezier(.22,.68,0,1.2);box-shadow:0 0 8px rgba(251,191,36,.3);}
+.jb-milestones{position:absolute;top:0;left:0;right:0;height:6px;pointer-events:none;}
+.jb-milestone{position:absolute;top:0;width:2px;height:6px;background:rgba(0,0,0,.35);}
 
-@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-3px);}75%{transform:translateX(3px);}}.shake{animation:shake .3s ease-in-out;}
+/* Level badge */
+.lv-badge{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:800;background:linear-gradient(135deg,var(--accd),rgba(244,114,182,.1));border:1px solid rgba(192,132,252,.3);padding:5px 11px;border-radius:14px;color:var(--acc);}
+.lv-badge.max{background:linear-gradient(135deg,var(--goldd),rgba(251,191,36,.1));border-color:rgba(251,191,36,.5);color:var(--gold);animation:pulse .8s infinite;}
 
-/* Daily Routine Panel */
-.routine{background:linear-gradient(135deg,rgba(255,180,162,.07),rgba(45,212,160,.05));border:1px solid rgba(255,180,162,.2);border-radius:18px;padding:24px;margin-bottom:20px;}
-.routine .rh{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-.routine .rh h3{font-size:20px;font-weight:900;}.routine .rh .day{font-size:14px;color:var(--gold);font-weight:700;font-family:'JetBrains Mono',monospace;}
-/* Time stats row */
-.rtime-row{display:flex;gap:12px;margin-bottom:18px;}
-.rtime-box{flex:1;background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:16px 12px;text-align:center;}
-.rtime-box .rv{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:800;color:var(--acc);line-height:1.2;}
-.rtime-box .rv.gold{color:var(--gold);}.rtime-box .rv.ok{color:var(--ok);}
-.rtime-box .rl{font-size:11px;color:var(--txd);margin-top:4px;}
-.routine .steps{display:flex;flex-direction:column;gap:12px;}
-@media(min-width:768px){.routine .steps{flex-direction:row;}.rstep{flex:1;}}
-.rstep{display:flex;align-items:center;gap:14px;padding:18px 20px;background:var(--sf);border:1.5px solid var(--bd);border-radius:14px;cursor:pointer;transition:.2s;}
-.rstep:active{transform:scale(.98);}
-.rstep.done{border-color:var(--ok);background:rgba(45,212,160,.04);}
-.rstep .ricon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
-.rstep .ricon.a{background:var(--accd);}.rstep .ricon.b{background:var(--goldd);}.rstep .ricon.c{background:var(--okd);}
-.rstep .rinfo{flex:1;}
-.rstep .rinfo .rtitle{font-size:15px;font-weight:700;margin-bottom:3px;}
-.rstep .rinfo .rsub{font-size:12px;color:var(--txd);}
-.rstep .rtime{font-size:14px;font-family:'JetBrains Mono',monospace;color:var(--txd);flex-shrink:0;}
-.rstep .rcheck{width:28px;height:28px;border-radius:50%;border:2.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;color:transparent;transition:.2s;}
-.rstep.done .rcheck{border-color:var(--ok);color:var(--ok);background:rgba(45,212,160,.1);}
-.routine .rprog{margin-top:16px;display:flex;align-items:center;gap:12px;}
-.routine .rprog .rpt{flex:1;height:8px;background:var(--sf2);border-radius:4px;overflow:hidden;}.routine .rprog .rpf{height:100%;background:linear-gradient(90deg,var(--ok),#6ee7b7);border-radius:4px;transition:width .3s;}
-.routine .rprog .rpp{font-size:14px;font-family:'JetBrains Mono',monospace;color:var(--txd);font-weight:600;}
-.routine .rcomplete{text-align:center;padding:14px;margin-top:12px;font-size:18px;font-weight:800;color:var(--gold);display:none;}
-.routine .rcomplete.show{display:block;animation:fu .3s ease-out;}
+/* Lv100 epic overlay */
+.lv100-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);display:flex;align-items:center;justify-content:center;z-index:10000;animation:fadeIn .4s ease;}
+.lv100-box{background:linear-gradient(135deg,#0e0e14,#1a003a);border:3px solid var(--gold);border-radius:28px;padding:44px 32px;text-align:center;max-width:340px;width:90%;animation:levelupPop .6s cubic-bezier(.22,.68,0,1.2);}
+.lv100-box .em100{font-size:72px;margin-bottom:14px;display:block;animation:float100 2s ease-in-out infinite;}
+.lv100-box h1{font-size:26px;font-weight:900;background:linear-gradient(90deg,var(--gold),var(--warn),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;}
+.lv100-box .lv100-rank{font-size:16px;color:var(--gold);font-weight:800;margin-bottom:10px;}
+.lv100-box .lv100-sub{font-size:13px;color:var(--txd);line-height:1.7;margin-bottom:22px;}
+.lv100-box .lv100-days{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:800;color:var(--acc);margin-bottom:4px;}
+.lv100-box .lv100-days-l{font-size:11px;color:var(--txd);}
+.btn-gold{width:100%;padding:15px;background:linear-gradient(135deg,var(--gold),var(--warn));color:#000;border:none;border-radius:12px;font-size:15px;font-weight:900;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:.15s;margin-top:16px;}
+.btn-gold:active{transform:scale(.98);}
+@keyframes float100{0%,100%{transform:translateY(0) rotate(-5deg);}50%{transform:translateY(-12px) rotate(5deg);}}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotateZ(0deg);opacity:1;}100%{transform:translateY(110vh) rotateZ(720deg);opacity:0;}}
 </style>
 </head>
 <body>
 <div class="app">
-<div class="hd">
-  <div class="logo">절대음감 트레이너<em>성인 최적화 · Wong 2025 + Eguchi CIM 기반</em></div>
-  <div class="hr"><div class="pill"><span>🔥</span><span id="hSk">0</span></div><div class="pill gd" id="hRk">🥚 Lv.1</div></div>
-</div>
-<div class="xps"><div class="xpt"><span class="xpl"><span id="hXP">0</span>/<span id="hXM">100</span> XP</span><span class="xpr" id="hNR">다음: Lv.2</span></div><div class="xpb"><div class="xpf" id="hXB" style="width:0%"></div></div></div>
-<div class="tabs">
-  <button class="tb on" onclick="tab('train')">훈련</button>
-  <button class="tb" onclick="tab('endless')">무한퀴즈</button>
-  <button class="tb" onclick="tab('stats')">통계</button>
-  <button class="tb" onclick="tab('guide')">가이드</button>
-</div>
-
-<!-- Train -->
-<div class="sc on" id="sc-train">
-  <div class="routine" id="routinePanel">
-    <div class="rh"><h3>📋 오늘의 훈련</h3><span class="day" id="rDay"></span></div>
-    <div class="rtime-row">
-      <div class="rtime-box"><div class="rv" id="rTodayTime">0:00</div><div class="rl">오늘 공부시간</div></div>
-      <div class="rtime-box"><div class="rv gold" id="rTotalTime">0:00</div><div class="rl">총 공부시간</div></div>
-      <div class="rtime-box"><div class="rv ok" id="rGoalPct">0%</div><div class="rl">목표 20h 달성률</div></div>
+  <div class="hd">
+    <div class="logo">🎹 <em>PITCH</em> QUEST</div>
+    <div class="hr">
+      <div class="pill fire"><span>🔥</span><span id="hSk">0</span></div>
+      <div class="lv-badge" id="hRk">🥚 Lv.1</div>
     </div>
-    <div class="steps" id="rSteps"></div>
-    <div class="rprog"><div class="rpt"><div class="rpf" id="rPF" style="width:0%"></div></div><span class="rpp" id="rPP">0/3</span></div>
-    <div class="rcomplete" id="rComplete">🎉 오늘 루틴 완료! 내일도 화이팅!</div>
   </div>
-  <div class="sh">🎹 단음 피치클래스 훈련 (Wong 2025 기반)</div>
-  <div class="cards" id="noteCards"></div>
-  <div class="sh">🎨 화음 색깔 훈련 (에구치 메소드)</div>
-  <div class="cards" id="chordCards"></div>
-</div>
-
-<!-- Quiz -->
-<div class="sc" id="sc-quiz">
-  <div class="qt"><span class="ll" id="qLL"></span><span class="tm" id="qTM">0:00</span></div>
-  <div class="qtt" id="qTT"></div><div class="qsb" id="qSB"></div>
-  <div class="rtb" id="rtBar"><div class="rtf" id="rtFill" style="width:100%;background:var(--ok)"></div></div>
-  <div class="cmb"><span class="cn" id="cC" style="visibility:hidden">0</span><span class="cl" id="cL" style="visibility:hidden">COMBO</span><span class="cm" id="cM" style="visibility:hidden">×1</span></div>
-  <div class="qp" id="qP"></div>
-  <div class="pa"><button class="pb" id="pB" onclick="playQ()"><span class="ic">♪</span></button><div class="phi" id="pH">터치하여 소리 듣기</div></div>
-  <div class="ans" id="aG"></div><div id="fbA"></div>
-</div>
-
-<!-- Result -->
-<div class="sc" id="sc-result">
-  <div class="rc"><div class="em" id="rE">🎉</div><h2 id="rT"></h2><div class="sub" id="rS"></div>
-  <div class="sb" id="rSc"></div><div class="rs" id="rSt"></div><div class="rxp" id="rXP"></div>
-  <div class="rd"><div><span class="n" id="rOk"></span>정답</div><div><span class="n" id="rNg"></span>오답</div><div><span class="n" id="rTm"></span>시간</div><div><span class="n" id="rRT"></span>평균RT</div></div>
-  <button class="bp" onclick="retry()">다시 도전</button><button class="bs" id="nxB" onclick="goNx()" style="display:none"></button><button class="bs" onclick="tab('train')">레벨 선택</button></div>
-</div>
-
-<!-- Endless Quiz -->
-<div class="sc" id="sc-endless">
-  <div style="text-align:center;margin-bottom:16px;">
-    <h2 style="font-size:20px;font-weight:900;margin-bottom:6px;">♾️ 무한 퀴즈</h2>
-    <p style="font-size:12px;color:var(--txd);line-height:1.6;">끝없이 반복. 틀린 음은 더 자주 출제.<br>멈추고 싶을 때 중단 버튼을 누르세요.</p>
+  <div class="xps">
+    <div class="xpt">
+      <span class="xpl"><span id="hXP">0</span> / <span id="hXM">500</span> XP</span>
+      <span class="xpr" id="hNR">→ Lv.2</span>
+    </div>
+    <div class="xpb"><div class="xpf" id="hXB" style="width:0%"></div></div>
   </div>
-  <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;justify-content:center;" id="endlessOpts"></div>
-  <div style="display:flex;gap:10px;justify-content:center;margin-bottom:16px;">
-    <button class="bp" style="max-width:200px;" onclick="startEndless()">시작</button>
+  <div class="journey-bar">
+    <div class="jb-top">
+      <span class="jb-label">📅 에구치 6개월 여정</span>
+      <span class="jb-val"><span id="jDays">0</span> / 180일</span>
+    </div>
+    <div class="jb-wrap">
+      <div class="jb-track"><div class="jb-fill" id="jFill" style="width:0%"></div></div>
+      <div class="jb-milestones">
+        <div class="jb-milestone" style="left:16.67%"></div>
+        <div class="jb-milestone" style="left:33.33%"></div>
+        <div class="jb-milestone" style="left:50%"></div>
+        <div class="jb-milestone" style="left:66.67%"></div>
+        <div class="jb-milestone" style="left:83.33%"></div>
+      </div>
+    </div>
   </div>
-  <!-- Endless playing area (reuses quiz screen) -->
-  <div id="endlessStats" style="text-align:center;margin-top:10px;">
-    <div class="sg" style="max-width:400px;margin:0 auto;">
+  <div class="tabs">
+    <button class="tb on" onclick="tab('train')">🗺 레벨맵</button>
+    <button class="tb" onclick="tab('endless')">♾️ 무한</button>
+    <button class="tb" onclick="tab('stats')">📊 기록</button>
+    <button class="tb" onclick="tab('ach')">🏅 업적</button>
+  </div>
+
+  <!-- Train / Level Map -->
+  <div class="sc on" id="sc-train">
+    <div class="today-box" id="todayBox">
+      <div class="today-top">
+        <h3>📋 오늘의 미션</h3>
+        <span class="today-day" id="tDay"></span>
+      </div>
+      <div class="today-stats">
+        <div class="today-stat"><div class="v acc" id="tToday">+0</div><div class="l">오늘 XP</div></div>
+        <div class="today-stat"><div class="v gold" id="tTotal">Lv.1</div><div class="l">현재 레벨</div></div>
+        <div class="today-stat"><div class="v ok" id="tGoal">0일</div><div class="l">6개월 여정</div></div>
+      </div>
+      <div class="today-steps" id="tSteps"></div>
+      <div class="today-prog">
+        <div class="bar"><div class="fill" id="tProgFill" style="width:0%"></div></div>
+        <span class="pct" id="tProgPct">0/3</span>
+      </div>
+      <div class="complete-msg" id="tComplete">🎉 오늘 미션 클리어!</div>
+    </div>
+
+    <div class="section-label">🎵 단음 훈련 (Wong 2025)</div>
+    <div class="level-path" id="noteMap"></div>
+    <div class="section-label" style="margin-top:20px;">🎨 화음 훈련 (에구치)</div>
+    <div class="level-path" id="chordMap"></div>
+  </div>
+
+  <!-- Quiz -->
+  <div class="sc" id="sc-quiz">
+    <div class="quiz-top" style="align-self:center;max-width:700px;width:100%;">
+      <span class="quiz-label" id="qLabel"></span>
+      <div class="quiz-lives" id="qLives"></div>
+      <span class="quiz-timer" id="qTimer">0:00</span>
+    </div>
+    <div class="quiz-title" id="qTitle"></div>
+    <div class="quiz-sub" id="qSub"></div>
+    <div class="rt-bar" style="align-self:center;"><div class="rt-fill" id="rtFill" style="width:100%;background:var(--ok)"></div></div>
+    <div class="combo-row">
+      <span class="combo-num" id="cNum" style="visibility:hidden">0</span>
+      <span class="combo-label" id="cLbl" style="visibility:hidden">COMBO</span>
+      <span class="combo-mul" id="cMul" style="visibility:hidden">×1</span>
+    </div>
+    <div class="q-progress" id="qProg" style="align-self:center;"></div>
+    <div class="play-area">
+      <button class="play-btn" id="playBtn" onclick="playQ()">
+        <span class="note-icon">♪</span>
+      </button>
+      <div class="play-hint" id="playHint">터치하여 소리 듣기</div>
+    </div>
+    <div class="ans-grid" id="ansGrid" style="align-self:center;"></div>
+    <div id="fbArea"></div>
+  </div>
+
+  <!-- Result -->
+  <div class="sc" id="sc-result">
+    <div class="result-card">
+      <div class="result-emoji" id="rEmoji">🎉</div>
+      <h2 class="result-title" id="rTitle"></h2>
+      <div class="result-sub" id="rSub"></div>
+      <div class="result-score" id="rScore"></div>
+      <div class="result-stars" id="rStars"></div>
+      <div class="result-xp" id="rXp"></div>
+      <div class="result-stats">
+        <div><span class="n" id="rOk"></span>정답</div>
+        <div><span class="n" id="rNg"></span>오답</div>
+        <div><span class="n" id="rTime"></span>시간</div>
+        <div><span class="n" id="rRT"></span>평균RT</div>
+      </div>
+      <button class="btn-primary" onclick="retry()">🔄 다시 도전</button>
+      <button class="btn-secondary" id="nextBtn" onclick="goNext()" style="display:none"></button>
+      <button class="btn-secondary" onclick="tab('train')">← 레벨 선택</button>
+    </div>
+  </div>
+
+  <!-- Endless -->
+  <div class="sc" id="sc-endless">
+    <div class="endless-header">
+      <h2>♾️ 무한 퀴즈</h2>
+      <p>끝없이 반복 · 틀린 음은 더 자주 출제<br>멈추고 싶을 때 중단 버튼을 누르세요</p>
+    </div>
+    <div class="mode-btns" id="eModes"></div>
+    <div style="display:flex;justify-content:center;margin-bottom:16px;">
+      <button class="btn-primary" style="max-width:200px;" onclick="startEndless()">▶ 시작</button>
+    </div>
+    <div class="endless-stats" id="eStats">
       <div class="stb"><div class="v" id="eTot">0</div><div class="l">문제 수</div></div>
       <div class="stb"><div class="v" id="eAcc">0%</div><div class="l">정확도</div></div>
       <div class="stb"><div class="v" id="eCombo">0</div><div class="l">최고 콤보</div></div>
       <div class="stb"><div class="v" id="eTime">0:00</div><div class="l">경과 시간</div></div>
     </div>
   </div>
-</div>
 
-<!-- Stats -->
-<div class="sc" id="sc-stats">
-  <div class="sg">
-    <div class="stb"><div class="v" id="stT">0</div><div class="l">총 문제</div></div>
-    <div class="stb"><div class="v" id="stA">0%</div><div class="l">정확도</div></div>
-    <div class="stb"><div class="v" id="stC">0</div><div class="l">최고 콤보</div></div>
-    <div class="stb"><div class="v" id="stD">0</div><div class="l">훈련 일수</div></div>
-    <div class="stb"><div class="v" id="stTime" style="color:var(--gold);">0:00</div><div class="l">총 공부시간</div></div>
-    <div class="stb"><div class="v" id="stGoal" style="color:var(--ok);">0%</div><div class="l">목표 20h</div></div>
-  </div>
-  <div class="na"><h3>음별 정확도 (단음)</h3><div id="naL"></div></div>
-  <button class="bs" style="margin-top:14px;" onclick="resetSt()">통계 초기화</button>
-</div>
-
-<!-- Guide -->
-<div class="sc" id="sc-guide">
-  <div class="gc">
-    <div class="gs"><span class="tp">성인 최적화</span><h3>이 앱의 훈련 설계</h3>
-      <p>이 트레이너는 2025년 발표된 최신 연구(Wong et al.)의 성인 절대음감 훈련 프로토콜을 기반으로 합니다.<br><br>
-      <b>핵심 원리:</b><br>
-      ① <b>피치 클래스(음이름) 학습</b> — 높낮이가 아닌 "이 소리는 C다"를 범주적으로 인식<br>
-      ② <b>점진적 확장</b> — 2~3개 음부터 시작, 정확도 달성 후 음을 추가<br>
-      ③ <b>틀린 음 자동 재학습</b> — 약한 음이 더 자주 출제됨<br>
-      ④ <b>반응시간 훈련</b> — 정확도뿐 아니라 빠른 판별을 목표<br>
-      ⑤ <b>음색(timbre) 일반화</b> — 피아노·기타·신스 등 다른 음색으로도 확인<br>
-      ⑥ <b>에구치 화음 훈련 병행</b> — 화음으로 음향적 맥락 강화</p></div>
-
-    <div class="gs"><span class="tp">왜 성인도 가능한가?</span><h3>임계기 가설의 도전</h3>
-      <p>2025년 Wong 등의 연구에서 성인 음악가 12명이 8주(평균 21.4시간, 15,327회 훈련) 동안 프로그램을 수행했습니다.
-      결과: 평균 7.08개 음에서 90%+ 정확도, 2명은 12개 음 전체를 실제 절대음감 보유자 수준으로 달성했습니다.
-      특히 훈련하지 않은 다른 악기 음색에서도 일반화가 확인되어, 단순 암기가 아닌 진정한 피치클래스 학습으로 판단됩니다.</p></div>
-
-    <div class="gs"><span class="tp">에구치 메소드</span><h3>화음 → 색깔 → 절대음감</h3>
-      <p>1981년 에구치 카즈코가 발표. C·F·G 메이저 화음의 3가지 전위형 = 9개 화음을 색깔로 구별시킵니다.
-      성인에게는 단음 훈련의 보조 수단으로 병행하면 화음 감각과 음향 맥락이 풍부해지는 효과가 있습니다.</p></div>
-
-    <div class="gs"><span class="tp">논문</span><h3>학술 자료</h3>
-      <div class="paper"><div class="t">Wong, Y.K. et al. (2025)</div><div class="a">Learning fast and accurate absolute pitch judgment in adulthood</div><div class="j">Psychonomic Bulletin & Review, 32(4), 1676-1688</div></div>
-      <div class="paper"><div class="t">Sakakibara, A. (2014)</div><div class="a">A longitudinal study of the process of acquiring AP: CIM training</div><div class="j">Psychology of Music, 42(1), 86-111</div></div>
-      <div class="paper"><div class="t">Schmidt, J. (2025)</div><div class="a">Implicit and explicit absolute pitch</div><div class="j">Music Perception — 대부분의 사람이 암묵적 AP를 보유</div></div>
+  <!-- Stats -->
+  <div class="sc" id="sc-stats">
+    <div class="stat-grid">
+      <div class="stat-box"><div class="v" id="stT">0</div><div class="l">총 문제</div></div>
+      <div class="stat-box"><div class="v" id="stA">0%</div><div class="l">정확도</div></div>
+      <div class="stat-box"><div class="v" id="stC">0</div><div class="l">최고 콤보</div></div>
+      <div class="stat-box"><div class="v" id="stD">0</div><div class="l">연속 일수</div></div>
+      <div class="stat-box"><div class="v" style="color:var(--gold);" id="stTime">0h</div><div class="l">총 공부시간</div></div>
+      <div class="stat-box"><div class="v" style="color:var(--ok);" id="stGoal">0%</div><div class="l">6개월 달성률</div></div>
+      <div class="stat-box" style="grid-column:1/-1;background:linear-gradient(135deg,var(--accd),rgba(244,114,182,.06));border-color:rgba(192,132,252,.2);">
+        <div class="v" style="color:var(--acc);" id="stLv">Lv.1</div>
+        <div class="l" id="stRank">음감의 씨앗</div>
+      </div>
     </div>
 
-    <div class="gs"><span class="tp">추천 루틴</span><h3>26세를 위한 일일 30분 훈련법</h3>
-      <p>① 단음 훈련 15분 — 현재 레벨 반복 (하루 100~150문제 목표)<br>
-      ② 화음 색깔 훈련 10분 — 에구치 메소드 병행<br>
-      ③ 무한 퀴즈 5분 — 틀린 음 집중 반복 (레벨 제한 없이 끝없이)<br><br>
-      8주(약 20시간) 꾸준히 하면 평균 7개 음을 90%+ 정확도로 식별할 수 있습니다.</p></div>
+    <div class="section-title">📅 최근 활동 (14일)</div>
+    <div class="streak-row" id="streakRow"></div>
+
+    <div class="section-title">🎵 음별 정확도</div>
+    <div id="noteAccList"></div>
+
+    <div class="section-title">📝 최근 세션</div>
+    <div id="sessionList"></div>
+
+    <button class="btn-secondary" style="margin-top:14px;" onclick="resetStats()">통계 초기화</button>
   </div>
-</div>
+
+  <!-- Achievements -->
+  <div class="sc" id="sc-ach">
+    <div class="section-title">🏅 업적</div>
+    <div class="ach-grid" id="achGrid"></div>
+  </div>
 </div>
 
 <script>
-// ===== Audio =====
-const AC=new(window.AudioContext||window.webkitAudioContext)();
-const NN=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-const KO={C:'도','C#':'도#',D:'레','D#':'레#',E:'미',F:'파','F#':'파#',G:'솔','G#':'솔#',A:'라','A#':'라#',B:'시'};
+// ===== AUDIO =====
+const AC = new (window.AudioContext || window.webkitAudioContext)();
+const NN = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const KO = {C:'도','C#':'도#',D:'레','D#':'레#',E:'미',F:'파','F#':'파#',G:'솔','G#':'솔#',A:'라','A#':'라#',B:'시'};
 function freq(n,o){return 440*Math.pow(2,((o-4)*12+NN.indexOf(n)-9)/12);}
-
-// Timbres
-const TIMBRES={
-  piano:{name:'피아노',wave:'triangle',harmonics:[1,.4,.18,.08]},
-  guitar:{name:'기타',wave:'sawtooth',harmonics:[1,.3,.15,.06,.03]},
-  synth:{name:'신스',wave:'square',harmonics:[1,.2,.08]},
-  organ:{name:'오르간',wave:'sine',harmonics:[1,.6,.4,.3,.2,.1]},
+const TIMBRES = {
+  piano:{wave:'triangle',h:[1,.4,.18,.08]},
+  guitar:{wave:'sawtooth',h:[1,.3,.15,.06,.03]},
+  synth:{wave:'square',h:[1,.2,.08]},
+  organ:{wave:'sine',h:[1,.6,.4,.3,.2,.1]},
 };
-let curTimbre='piano';
-
-function playN(n,o,d=1.3,tmb){
+function playN(n,o,d=1.3,tmb='piano'){
   if(AC.state==='suspended')AC.resume();
-  const T=TIMBRES[tmb||curTimbre];
+  const T=TIMBRES[tmb]||TIMBRES.piano;
   const f=freq(n,o),t=AC.currentTime,m=AC.createGain();
   m.gain.setValueAtTime(.22,t);m.gain.exponentialRampToValueAtTime(.001,t+d);m.connect(AC.destination);
-  T.harmonics.forEach((g,i)=>{const os=AC.createOscillator(),gn=AC.createGain();os.type=i===0?T.wave:'sine';os.frequency.setValueAtTime(f*(i+1),t);gn.gain.setValueAtTime(g*.25,t);gn.gain.exponentialRampToValueAtTime(.001,t+d*(1-i*.1));os.connect(gn);gn.connect(m);os.start(t);os.stop(t+d);});
+  T.h.forEach((g,i)=>{const os=AC.createOscillator(),gn=AC.createGain();os.type=i===0?T.wave:'sine';os.frequency.setValueAtTime(f*(i+1),t);gn.gain.setValueAtTime(g*.25,t);gn.gain.exponentialRampToValueAtTime(.001,t+d*(1-i*.1));os.connect(gn);gn.connect(m);os.start(t);os.stop(t+d);});
 }
 function playChord(notes,d=1.6){notes.forEach(([n,o])=>playN(n,o,d));}
-function sfx(t){if(AC.state==='suspended')AC.resume();const tm=AC.currentTime;if(t==='ok'){const o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.type='sine';o.frequency.setValueAtTime(880,tm);o.frequency.setValueAtTime(1100,tm+.06);g.gain.setValueAtTime(.09,tm);g.gain.exponentialRampToValueAtTime(.001,tm+.12);o.start(tm);o.stop(tm+.12);}else if(t==='ng'){const o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.type='square';o.frequency.setValueAtTime(200,tm);o.frequency.setValueAtTime(150,tm+.1);g.gain.setValueAtTime(.05,tm);g.gain.exponentialRampToValueAtTime(.001,tm+.18);o.start(tm);o.stop(tm+.18);}else if(t==='up'){[523,659,784].forEach((f,i)=>{const os=AC.createOscillator(),gn=AC.createGain();os.type='sine';os.frequency.setValueAtTime(f,tm+i*.12);gn.gain.setValueAtTime(.07,tm+i*.12);gn.gain.exponentialRampToValueAtTime(.001,tm+i*.12+.25);os.connect(gn);gn.connect(AC.destination);os.start(tm+i*.12);os.stop(tm+i*.12+.25);});}}
+function sfx(t){
+  if(AC.state==='suspended')AC.resume();
+  const tm=AC.currentTime;
+  if(t==='ok'){const o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.type='sine';o.frequency.setValueAtTime(880,tm);o.frequency.setValueAtTime(1100,tm+.06);g.gain.setValueAtTime(.09,tm);g.gain.exponentialRampToValueAtTime(.001,tm+.12);o.start(tm);o.stop(tm+.12);}
+  else if(t==='ng'){const o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.type='square';o.frequency.setValueAtTime(200,tm);o.frequency.setValueAtTime(150,tm+.1);g.gain.setValueAtTime(.05,tm);g.gain.exponentialRampToValueAtTime(.001,tm+.18);o.start(tm);o.stop(tm+.18);}
+  else if(t==='up'){[523,659,784,1047].forEach((f,i)=>{const os=AC.createOscillator(),gn=AC.createGain();os.type='sine';os.frequency.setValueAtTime(f,tm+i*.1);gn.gain.setValueAtTime(.07,tm+i*.1);gn.gain.exponentialRampToValueAtTime(.001,tm+i*.1+.25);os.connect(gn);gn.connect(AC.destination);os.start(tm+i*.1);os.stop(tm+i*.1+.25);});
+  }else if(t==='lvup'){[523,659,784,1047,1318].forEach((f,i)=>{const os=AC.createOscillator(),gn=AC.createGain();os.type='sine';os.frequency.setValueAtTime(f,tm+i*.08);gn.gain.setValueAtTime(.08,tm+i*.08);gn.gain.exponentialRampToValueAtTime(.001,tm+i*.08+.3);os.connect(gn);gn.connect(AC.destination);os.start(tm+i*.08);os.stop(tm+i*.08+.3);});
+  }
+}
 
-// ===== Note Levels (Wong-style progressive pitch class) =====
+// ===== NOTE LEVELS =====
 const NL=[
-  {id:'n1',title:'A4 기준음 암기',notes:['A'],octs:[4],mode:'listen',qs:10,desc:'440Hz 라 — 모든 음의 기준',tag:'기준음 학습',rt:0},
-  {id:'n2',title:'2음: A vs C',notes:['A','C'],octs:[4],mode:'quiz',qs:12,desc:'라 ↔ 도 구별',tag:'단3도 관계',rt:5000},
-  {id:'n3',title:'3음: A, C, E',notes:['A','C','E'],octs:[4],mode:'quiz',qs:14,desc:'라·도·미 구별',tag:'장3화음 구성음',rt:5000},
-  {id:'n4',title:'4음: + G',notes:['A','C','E','G'],octs:[4],mode:'quiz',qs:16,desc:'라·도·미·솔',tag:'완전5도 추가',rt:4500},
-  {id:'n5',title:'5음: + D',notes:['A','C','D','E','G'],octs:[4],mode:'quiz',qs:16,desc:'5음 음계(펜타토닉)',tag:'펜타토닉 스케일',rt:4000},
-  {id:'n6',title:'7음: 온음계',notes:['C','D','E','F','G','A','B'],octs:[4],mode:'quiz',qs:18,desc:'도레미파솔라시',tag:'C 메이저 스케일',rt:4000},
-  {id:'n7',title:'9음: + F#, Bb',notes:['C','D','E','F','F#','G','A','A#','B'],octs:[4],mode:'quiz',qs:20,desc:'흰건반 + 검은건반 2개',tag:'반음계 확장①',rt:3500},
-  {id:'n8',title:'12음: 크로매틱',notes:NN.slice(),octs:[4],mode:'quiz',qs:22,desc:'12음 전체 판별',tag:'크로매틱 스케일',rt:3000},
-  {id:'n9',title:'옥타브 일반화',notes:NN.slice(),octs:[3,4,5],mode:'quiz',qs:24,desc:'C3~C5 다중 옥타브',tag:'옥타브 일반화',rt:3000},
-  {id:'n10',title:'음색 일반화',notes:NN.slice(),octs:[3,4,5],mode:'timbre',qs:24,desc:'피아노+기타+신스 랜덤',tag:'음색 전이 테스트',rt:2500},
+  {id:'n1',title:'A4 기준음 암기',notes:['A'],octs:[4],mode:'listen',qs:10,desc:'440Hz 라 — 모든 음의 기준',tag:'기준음',rt:0},
+  {id:'n2',title:'2음: A vs C',notes:['A','C'],octs:[4],mode:'quiz',qs:12,desc:'라 ↔ 도 구별',tag:'단3도',rt:5000},
+  {id:'n3',title:'3음: A, C, E',notes:['A','C','E'],octs:[4],mode:'quiz',qs:14,desc:'라·도·미 구별',tag:'장3화음',rt:5000},
+  {id:'n4',title:'4음: + G',notes:['A','C','E','G'],octs:[4],mode:'quiz',qs:16,desc:'라·도·미·솔',tag:'완전5도',rt:4500},
+  {id:'n5',title:'5음: + D',notes:['A','C','D','E','G'],octs:[4],mode:'quiz',qs:16,desc:'5음 펜타토닉',tag:'펜타토닉',rt:4000},
+  {id:'n6',title:'7음: 온음계',notes:['C','D','E','F','G','A','B'],octs:[4],mode:'quiz',qs:18,desc:'도레미파솔라시',tag:'메이저 스케일',rt:4000},
+  {id:'n7',title:'9음: + F#, Bb',notes:['C','D','E','F','F#','G','A','A#','B'],octs:[4],mode:'quiz',qs:20,desc:'흰건반 + 검은건반 2개',tag:'반음계①',rt:3500},
+  {id:'n8',title:'12음: 크로매틱',notes:NN.slice(),octs:[4],mode:'quiz',qs:22,desc:'12음 전체 판별',tag:'크로매틱',rt:3000},
+  {id:'n9',title:'옥타브 일반화',notes:NN.slice(),octs:[3,4,5],mode:'quiz',qs:24,desc:'C3~C5 다중 옥타브',tag:'옥타브',rt:3000},
+  {id:'n10',title:'음색 일반화',notes:NN.slice(),octs:[3,4,5],mode:'timbre',qs:24,desc:'피아노·기타·신스 랜덤',tag:'음색',rt:2500},
 ];
 
-// ===== Eguchi Chords =====
+// ===== EGUCHI CHORDS =====
 const ECH=[
   {id:'C_R',color:'#e74c3c',name:'빨강',notes:[['C',4],['E',4],['G',4]],label:'C 근음'},
   {id:'F_2',color:'#f1c40f',name:'노랑',notes:[['C',4],['F',4],['A',4]],label:'F 제2전위'},
@@ -341,88 +523,314 @@ const ECH=[
   {id:'C_2',color:'#8B4513',name:'갈색',notes:[['G',4],['C',5],['E',5]],label:'C 제2전위'},
 ];
 const CL=[];
-for(let i=0;i<9;i++){const chs=ECH.slice(0,i+1);CL.push({id:'c'+(i+1),title:i===0?`${ECH[i].name}색 화음 암기`:`${i+1}개 화음 구별`,chords:chs,mode:i===0?'listen':'chord',qs:i===0?8:Math.min(10+i*2,20),desc:chs.map(c=>c.name).join('·'),tag:`에구치 Phase ${i+1}`});}
+for(let i=0;i<9;i++){const chs=ECH.slice(0,i+1);CL.push({id:'c'+(i+1),title:i===0?`${ECH[i].name}색 화음 암기`:`${i+1}개 화음 구별`,chords:chs,mode:i===0?'listen':'chord',qs:i===0?8:Math.min(10+i*2,20),desc:chs.map(c=>c.name).join('·'),tag:`화음 Phase${i+1}`});}
 
-// All levels combined
-const ALL_LEVELS=[...NL.map(l=>({...l,cat:'note'})),...CL.map(l=>({...l,cat:'chord'}))];
+// ===== LEVEL SYSTEM (Lv1-100, 에구치 6개월 = 150,000 XP = Lv100) =====
+const TOTAL_XP_MAX = 150000;
+function xpThreshold(n){
+  if(n<=1)return 0;
+  if(n>=100)return TOTAL_XP_MAX;
+  return Math.floor(TOTAL_XP_MAX*Math.pow((n-1)/99,1.5));
+}
+function getLevel(xp){for(let n=100;n>=1;n--)if(xp>=xpThreshold(n))return n;return 1;}
 
-// ===== Ranks =====
-const RK=[{l:1,n:'🥚 초보',x:0},{l:2,n:'🐣 입문',x:100},{l:3,n:'🎵 견습생',x:300},{l:4,n:'🎶 수련생',x:600},{l:5,n:'🎸 연주자',x:1000},{l:6,n:'🎹 음악가',x:1600},{l:7,n:'🎻 달인',x:2500},{l:8,n:'🏆 마스터',x:4000},{l:9,n:'👑 절대음감',x:6000}];
-function gR(x){let r=RK[0];for(const k of RK)if(x>=k.x)r=k;else break;return r;}
-function nR(x){for(const k of RK)if(x<k.x)return k;return null;}
+const RANK_TITLES=[
+  {lv:1,  icon:'🥚', name:'음감의 씨앗'},
+  {lv:5,  icon:'🐣', name:'입문자'},
+  {lv:10, icon:'🎵', name:'수련생'},
+  {lv:15, icon:'🎶', name:'견습 연주자'},
+  {lv:20, icon:'🎸', name:'음감 훈련생'},
+  {lv:25, icon:'🎹', name:'연습생'},
+  {lv:30, icon:'🎨', name:'화음 탐험가'},
+  {lv:35, icon:'🎯', name:'음정 사냥꾼'},
+  {lv:40, icon:'⚡', name:'음감 전사'},
+  {lv:45, icon:'🌟', name:'선율 마스터'},
+  {lv:50, icon:'🏅', name:'반음계의 달인'},
+  {lv:55, icon:'🎻', name:'음악 수도자'},
+  {lv:60, icon:'🔮', name:'음감 현자'},
+  {lv:65, icon:'💎', name:'크로매틱 마스터'},
+  {lv:70, icon:'🌙', name:'달의 귀'},
+  {lv:75, icon:'⭐', name:'별의 귀'},
+  {lv:80, icon:'🔥', name:'불꽃의 청음'},
+  {lv:85, icon:'👁', name:'음감 각성자'},
+  {lv:90, icon:'🌈', name:'색채의 귀'},
+  {lv:95, icon:'🏆', name:'에구치 완성자'},
+  {lv:99, icon:'👑', name:'절대음감 전야'},
+  {lv:100,icon:'🎯', name:'절대음감 보유자'},
+];
+function getRank(lv){let r=RANK_TITLES[0];for(const t of RANK_TITLES){if(lv>=t.lv)r=t;else break;}return r;}
 
-// ===== State =====
-let S=ldS();
-function dS(){return{nul:1,cul:1,sc:{},ns:{},tc:0,tw:0,bc:0,sk:0,days:[],ld:null,xp:0,rts:{},routine:null,totalSec:0,dailySec:{}};}
-function ldS(){try{const s=localStorage.getItem('apt4');return s?{...dS(),...JSON.parse(s)}:dS();}catch{return dS();}}
-function svS(){const td=new Date().toISOString().slice(0,10);if(S.ld!==td){if(!S.days.includes(td))S.days.push(td);if(S.ld){const d=(new Date(td)-new Date(S.ld))/864e5;S.sk=d>1?1:S.sk+1;}else S.sk=1;S.ld=td;}localStorage.setItem('apt4',JSON.stringify(S));updH();}
-function updH(){document.getElementById('hSk').textContent=S.sk;const r=gR(S.xp),nx=nR(S.xp);document.getElementById('hRk').textContent=r.n+' Lv.'+r.l;document.getElementById('hXP').textContent=S.xp;if(nx){document.getElementById('hXM').textContent=nx.x;document.getElementById('hNR').textContent='다음: '+nx.n;document.getElementById('hXB').style.width=Math.min((S.xp-r.x)/(nx.x-r.x)*100,100)+'%';}else{document.getElementById('hXM').textContent='MAX';document.getElementById('hNR').textContent='최고 랭크!';document.getElementById('hXB').style.width='100%';}}
+// ===== ACHIEVEMENTS =====
+const ACHS=[
+  {id:'first',icon:'🌱',name:'첫 걸음',desc:'첫 번째 퀴즈 완료',check:s=>s.sessions&&s.sessions.length>=1},
+  {id:'streak3',icon:'🔥',name:'3일 연속',desc:'3일 연속 훈련',check:s=>s.sk>=3},
+  {id:'streak7',icon:'🌟',name:'일주일 연속',desc:'7일 연속 훈련',check:s=>s.sk>=7},
+  {id:'combo10',icon:'⚡',name:'10연속',desc:'10 콤보 달성',check:s=>s.bc>=10},
+  {id:'combo20',icon:'💥',name:'20연속',desc:'20 콤보 달성',check:s=>s.bc>=20},
+  {id:'perfect',icon:'💎',name:'퍼펙트',desc:'한 세션 100% 달성',check:s=>s.hasPerfect},
+  {id:'q100',icon:'📚',name:'100문제',desc:'총 100문제 풀기',check:s=>(s.tc+s.tw)>=100},
+  {id:'q500',icon:'📖',name:'500문제',desc:'총 500문제 풀기',check:s=>(s.tc+s.tw)>=500},
+  {id:'q1000',icon:'🧠',name:'1000문제',desc:'총 1000문제 풀기',check:s=>(s.tc+s.tw)>=1000},
+  {id:'note5',icon:'🎵',name:'5레벨 달성',desc:'단음 N-5 언락',check:s=>s.nul>=5},
+  {id:'note8',icon:'🎼',name:'12음 마스터',desc:'단음 N-8 언락',check:s=>s.nul>=8},
+  {id:'allnote',icon:'🏆',name:'단음 완주',desc:'단음 모든 레벨 클리어',check:s=>s.nul>=NL.length},
+  {id:'chord3',icon:'🎨',name:'화음 3종',desc:'화음 C-3 언락',check:s=>s.cul>=3},
+  {id:'allchord',icon:'🌈',name:'화음 완주',desc:'화음 모든 레벨 클리어',check:s=>s.cul>=CL.length},
+  {id:'hour1',icon:'⏰',name:'1시간 달성',desc:'총 1시간 훈련',check:s=>(s.totalSec||0)>=3600},
+  {id:'hour10',icon:'🕙',name:'10시간 달성',desc:'총 10시간 훈련',check:s=>(s.totalSec||0)>=36000},
+  {id:'lv50',icon:'🏅',name:'절반의 여정',desc:'Lv.50 달성',check:s=>getLevel(s.xp)>=50},
+  {id:'lv100',icon:'🎯',name:'절대음감 보유자',desc:'Lv.100 달성 — 에구치 6개월 완성!',check:s=>s.lv100achieved||getLevel(s.xp)>=100},
+  {id:'day30',icon:'📅',name:'한 달 연속',desc:'30일 이상 훈련',check:s=>(s.days||[]).length>=30},
+  {id:'day90',icon:'🗓',name:'3개월 돌파',desc:'90일 이상 훈련',check:s=>(s.days||[]).length>=90},
+  {id:'day180',icon:'🌟',name:'6개월 완주',desc:'180일 이상 훈련',check:s=>(s.days||[]).length>=180},
+];
 
-// ===== Quiz =====
-let Q={lv:null,qs:[],c:0,ok:0,ng:0,a:false,cur:null,cb:0,txp:0,t0:0,tid:null,rtid:null,rtStart:0,rts:[]};
+// ===== STATE =====
+function defState(){return{nul:1,cul:1,sc:{},ns:{},tc:0,tw:0,bc:0,sk:0,days:[],ld:null,xp:0,rts:{},routine:null,totalSec:0,dailySec:{},sessions:[],hasPerfect:false,unlockedAchs:[],lv100achieved:false,xpDayStart:0};}
+let S=loadState();
+function loadState(){try{const s=localStorage.getItem('pitchquest2');return s?{...defState(),...JSON.parse(s)}:defState();}catch{return defState();}}
+function saveState(){
+  const td=new Date().toISOString().slice(0,10);
+  if(S.ld!==td){S.xpDayStart=S.xp;if(!S.days.includes(td))S.days.push(td);if(S.ld){const d=(new Date(td)-new Date(S.ld))/864e5;S.sk=d>1?1:S.sk+1;}else S.sk=1;S.ld=td;}
+  localStorage.setItem('pitchquest2',JSON.stringify(S));
+  updHeader();
+  checkAchs();
+}
+function updHeader(){
+  document.getElementById('hSk').textContent=S.sk;
+  const lv=getLevel(S.xp);
+  const rank=getRank(lv);
+  const hRk=document.getElementById('hRk');
+  if(hRk){hRk.textContent=rank.icon+' Lv.'+lv;hRk.className=lv>=100?'lv-badge max':'lv-badge';}
+  const curThresh=xpThreshold(lv);
+  const nextThresh=lv<100?xpThreshold(lv+1):TOTAL_XP_MAX;
+  const xpIn=S.xp-curThresh;
+  const xpNeed=nextThresh-curThresh;
+  if(lv<100){
+    document.getElementById('hXP').textContent=xpIn;
+    document.getElementById('hXM').textContent=xpNeed;
+    const nextRank=getRank(lv+1);
+    document.getElementById('hNR').textContent='→ Lv.'+(lv+1)+' '+nextRank.name;
+    document.getElementById('hXB').style.width=Math.min(xpIn/xpNeed*100,100)+'%';
+  }else{
+    document.getElementById('hXP').textContent='150,000';
+    document.getElementById('hXM').textContent='150,000';
+    document.getElementById('hNR').textContent='🎯 절대음감 보유자!';
+    document.getElementById('hXB').style.width='100%';
+  }
+  // Journey bar
+  const dayCount=(S.days||[]).length;
+  const jd=document.getElementById('jDays');if(jd)jd.textContent=dayCount;
+  const jf=document.getElementById('jFill');if(jf)jf.style.width=Math.min(dayCount/180*100,100)+'%';
+}
 
-function tab(t){document.querySelectorAll('.tb').forEach((b,i)=>b.classList.toggle('on',['train','endless','stats','guide'][i]===t));document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));clrTimers();if(t==='train'){ss('train');rCards();}else if(t==='endless'){ss('endless');rEndlessOpts();}else if(t==='stats'){ss('stats');rSt();}else ss('guide');}
+// ===== LEVEL UP DETECTION =====
+let _prevLv=null;
+function checkLevelUp(){
+  const lv=getLevel(S.xp);
+  if(_prevLv!==null&&lv>_prevLv){
+    if(lv>=100&&!S.lv100achieved){showLv100();}
+    else if(lv<100){showLevelUp(lv);}
+  }
+  _prevLv=lv;
+}
+function showLevelUp(lv){
+  sfx('lvup');
+  const rank=getRank(lv);
+  const el=document.createElement('div');
+  el.className='levelup-overlay';
+  el.innerHTML=`<div class="levelup-box">
+    <div class="em">${rank.icon}</div>
+    <h2>LEVEL UP!</h2>
+    <div class="rank">Lv.${lv} · ${rank.name}</div>
+    <button class="btn-primary" onclick="this.closest('.levelup-overlay').remove()">계속하기</button>
+  </div>`;
+  document.body.appendChild(el);
+  setTimeout(()=>{if(el.parentNode)el.remove();},5000);
+}
+function showLv100(){
+  sfx('lvup');
+  setTimeout(()=>sfx('lvup'),500);
+  setTimeout(()=>sfx('lvup'),1000);
+  S.lv100achieved=true;saveState();
+  launchConfetti();
+  const el=document.createElement('div');
+  el.className='lv100-overlay';
+  el.innerHTML=`<div class="lv100-box">
+    <span class="em100">🎯</span>
+    <h1>절대음감 획득!</h1>
+    <div class="lv100-rank">Lv.100 달성!</div>
+    <div class="lv100-sub">
+      에구치 메소드 6개월 여정 완성!<br>
+      당신은 이제 절대음감 보유자입니다.
+    </div>
+    <div class="lv100-days">${(S.days||[]).length}일</div>
+    <div class="lv100-days-l">총 훈련 일수</div>
+    <button class="btn-gold" onclick="this.closest('.lv100-overlay').remove()">🎊 절대음감 달성!</button>
+  </div>`;
+  document.body.appendChild(el);
+}
+function launchConfetti(){
+  const cols=['#fbbf24','#c084fc','#34d399','#f472b6','#fb923c','#38bdf8'];
+  for(let i=0;i<80;i++){
+    const el=document.createElement('div');
+    const sz=5+Math.random()*8;
+    el.style.cssText=`position:fixed;width:${sz}px;height:${sz}px;border-radius:${Math.random()>.5?'50%':'2px'};background:${cols[Math.floor(Math.random()*cols.length)]};left:${Math.random()*100}%;top:-20px;z-index:10001;pointer-events:none;animation:confettiFall ${1.5+Math.random()*2.5}s ${Math.random()*1.5}s linear forwards;`;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),5000);
+  }
+}
+
+// ===== ACHIEVEMENTS CHECK =====
+let _achQueue=[];
+function checkAchs(){
+  ACHS.forEach(a=>{
+    if(!S.unlockedAchs.includes(a.id)&&a.check(S)){
+      S.unlockedAchs.push(a.id);
+      _achQueue.push(a);
+    }
+  });
+  if(_achQueue.length>0)drainAchQueue();
+}
+function drainAchQueue(){
+  if(_achQueue.length===0)return;
+  const a=_achQueue.shift();
+  const el=document.createElement('div');
+  el.className='ach-popup';
+  el.innerHTML=`<div class="ap-icon">${a.icon}</div><div><div class="ap-title">업적 달성!</div><div class="ap-name">${a.name}</div></div>`;
+  document.body.appendChild(el);
+  setTimeout(()=>{el.style.transition='opacity .4s';el.style.opacity='0';setTimeout(()=>{if(el.parentNode)el.remove();drainAchQueue();},400);},2500);
+}
+
+// ===== QUIZ STATE =====
+let Q={lv:null,qs:[],c:0,ok:0,ng:0,a:false,cur:null,cb:0,txp:0,t0:0,tid:null,rtid:null,rtStart:0,rts:[],lives:3,maxLives:3};
+
+// ===== TABS =====
+function tab(t){
+  document.querySelectorAll('.tb').forEach((b,i)=>b.classList.toggle('on',['train','endless','stats','ach'][i]===t));
+  clearTimers();
+  if(t==='train'){ss('train');renderLevelMap();renderToday();}
+  else if(t==='endless'){ss('endless');renderEndlessOpts();}
+  else if(t==='stats'){ss('stats');renderStats();}
+  else ss('ach'),renderAch();
+}
 function ss(n){document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));document.getElementById('sc-'+n).classList.add('on');}
-function clrTimers(){if(Q.tid){clearInterval(Q.tid);Q.tid=null;}if(Q.rtid){clearInterval(Q.rtid);Q.rtid=null;}if(E.tid){clearInterval(E.tid);E.tid=null;}E.running=false;}
+function clearTimers(){if(Q.tid){clearInterval(Q.tid);Q.tid=null;}if(Q.rtid){clearInterval(Q.rtid);Q.rtid=null;}if(E.tid){clearInterval(E.tid);E.tid=null;}E.running=false;}
 
-function rCards(){
-  const nc=document.getElementById('noteCards'),cc=document.getElementById('chordCards');
-  nc.innerHTML=NL.map((l,i)=>{const lk=i+1>S.nul,sc=S.sc[l.id]||0;const st=sc>=90?'★★★':sc>=70?'★★☆':sc>0?'★☆☆':'☆☆☆';
-    return`<div class="cd ${lk?'lk':''} ${sc>=80?'dn':''}" onclick="startLv('${l.id}','note')">
-    ${lk?'<span class="lki">🔒</span>':''}<div class="r1"><span class="ln">N-${i+1}</span><span class="st">${st}</span></div>
-    <h3>${l.title}</h3><span class="tg a">${l.tag}</span>${l.rt?`<span class="tg b" style="margin-left:4px;">RT ${(l.rt/1000).toFixed(1)}s</span>`:''}<p class="ds">${l.desc}</p>
-    <div class="pr"><div class="pt"><div class="pf" style="width:${sc}%"></div></div><span class="pp">${sc?sc+'%':''}</span></div></div>`;
+// ===== LEVEL MAP =====
+function renderLevelMap(){
+  const nm=document.getElementById('noteMap');
+  const cm=document.getElementById('chordMap');
+  nm.innerHTML=NL.map((l,i)=>{
+    const locked=i+1>S.nul,sc=S.sc[l.id]||0;
+    const isCurrent=i+1===S.nul;
+    const isMastered=sc>=90;
+    let cls='level-node';
+    if(locked)cls+=' locked';
+    else if(isMastered)cls+=' mastered';
+    else if(isCurrent)cls+=' current';
+    const stars=sc>=90?'★★★':sc>=70?'★★☆':sc>0?'★☆☆':'☆☆☆';
+    let iconCls=locked?'locked':isMastered?'mastered':'note';
+    let iconTxt=locked?'🔒':isMastered?'★':'N'+(i+1);
+    let badge=locked?'<span class="ln-badge locked">🔒 잠김</span>':isMastered?'<span class="ln-badge done">✓ 마스터</span>':isCurrent?'<span class="ln-badge new">▶ 도전중</span>':'';
+    return`<div class="${cls}" onclick="startLv('${l.id}','note')">
+      <div class="ln-icon ${iconCls}">${iconTxt}</div>
+      <div class="ln-body"><div class="ln-title">${l.title}</div><div class="ln-desc">${l.desc} · ${l.tag}</div></div>
+      <div class="ln-right"><div class="ln-stars">${stars}</div>${sc?`<div class="ln-pct">${sc}%</div>`:''}${badge}</div>
+    </div>`;
   }).join('');
-  cc.innerHTML=CL.map((l,i)=>{const lk=i+1>S.cul,sc=S.sc[l.id]||0;const st=sc>=90?'★★★':sc>=70?'★★☆':sc>0?'★☆☆':'☆☆☆';
-    const dots=l.chords.map(c=>`<span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:${c.color};border:1px solid rgba(255,255,255,.08);vertical-align:middle;"></span>`).join(' ');
-    return`<div class="cd ${lk?'lk':''} ${sc>=80?'dn':''}" onclick="startLv('${l.id}','chord')">
-    ${lk?'<span class="lki">🔒</span>':''}<div class="r1"><span class="ln">C-${i+1}</span><span class="st">${st}</span></div>
-    <h3>${l.title}</h3><span class="tg c">${l.tag}</span><p class="ds">${dots}</p>
-    <div class="pr"><div class="pt"><div class="pf" style="width:${sc}%"></div></div><span class="pp">${sc?sc+'%':''}</span></div></div>`;
+  cm.innerHTML=CL.map((l,i)=>{
+    const locked=i+1>S.cul,sc=S.sc[l.id]||0;
+    const isCurrent=i+1===S.cul;
+    const isMastered=sc>=90;
+    let cls='level-node';
+    if(locked)cls+=' locked';
+    else if(isMastered)cls+=' mastered';
+    else if(isCurrent)cls+=' current';
+    const stars=sc>=90?'★★★':sc>=70?'★★☆':sc>0?'★☆☆':'☆☆☆';
+    const dots=l.chords.map(c=>`<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${c.color};"></span>`).join(' ');
+    let iconCls=locked?'locked':isMastered?'mastered':'chord';
+    let iconTxt=locked?'🔒':isMastered?'★':'C'+(i+1);
+    let badge=locked?'<span class="ln-badge locked">🔒 잠김</span>':isMastered?'<span class="ln-badge done">✓ 마스터</span>':isCurrent?'<span class="ln-badge new">▶ 도전중</span>':'';
+    return`<div class="${cls}" onclick="startLv('${l.id}','chord')">
+      <div class="ln-icon ${iconCls}">${iconTxt}</div>
+      <div class="ln-body"><div class="ln-title">${l.title}</div><div class="ln-desc">${dots}</div></div>
+      <div class="ln-right"><div class="ln-stars">${stars}</div>${sc?`<div class="ln-pct">${sc}%</div>`:''}${badge}</div>
+    </div>`;
   }).join('');
 }
 
+// ===== TODAY PANEL =====
+function renderToday(){
+  const today=new Date().toISOString().slice(0,10);
+  if(!S.routine||S.routine.date!==today){S.routine={date:today,steps:[false,false,false]};saveState();}
+  const r=S.routine;
+  const dayNum=(S.days||[]).length||1;
+  document.getElementById('tDay').textContent='Day '+dayNum+' / 180';
+  const steps=[
+    {icon:'🎵',title:'단음 훈련 15분',sub:'N-'+S.nul+' 레벨 도전',done:r.steps[0],action:()=>{const lv=NL[S.nul-1];if(lv)startLv(lv.id,'note');}},
+    {icon:'🎨',title:'화음 훈련 10분',sub:'C-'+S.cul+' 레벨 도전',done:r.steps[1],action:()=>{const lv=CL[S.cul-1];if(lv)startLv(lv.id,'chord');}},
+    {icon:'♾️',title:'무한 퀴즈 5분',sub:'약점 음 집중 반복',done:r.steps[2],action:()=>{tab('endless');}},
+  ];
+  document.getElementById('tSteps').innerHTML=steps.map((s,i)=>`
+    <div class="tstep ${s.done?'done':''}" onclick="routineGo(${i})" id="tstep${i}">
+      <div class="tstep-icon">${s.icon}</div>
+      <div class="tstep-info"><div class="tstep-title">${s.title}</div><div class="tstep-sub">${s.sub}</div></div>
+      <div class="tstep-check">✓</div>
+    </div>`).join('');
+  const done=r.steps.filter(Boolean).length;
+  document.getElementById('tProgFill').style.width=(done/3*100)+'%';
+  document.getElementById('tProgPct').textContent=done+'/3';
+  document.getElementById('tComplete').classList.toggle('show',done===3);
+  const tb=document.getElementById('todayBox');if(tb)tb.classList.toggle('all-done',done===3);
+  updTodayTime();
+  window._todaySteps=steps;
+}
+function routineGo(idx){const s=window._todaySteps;if(s&&s[idx]){window._activeStep=idx;s[idx].action();}}
+function markStep(idx){if(!S.routine)return;S.routine.steps[idx]=true;saveState();}
+
+// ===== START LEVEL =====
 function startLv(id,cat){
+  endSession();
   const lv=cat==='note'?NL.find(l=>l.id===id):CL.find(l=>l.id===id);
-  if(!lv)return;Q.lv={...lv,cat};Q.c=0;Q.ok=0;Q.ng=0;Q.a=false;Q.cb=0;Q.txp=0;Q.rts=[];Q.qs=[];
+  if(!lv)return;
+  _prevLv=getLevel(S.xp);
+  Q={lv:{...lv,cat},qs:[],c:0,ok:0,ng:0,a:false,cur:null,cb:0,txp:0,t0:Date.now(),tid:null,rtid:null,rtStart:Date.now(),rts:[],lives:3,maxLives:3};
+  // Build questions
   if(cat==='chord'){
-    // Chord levels: always use lv.chords
     for(let i=0;i<lv.qs;i++)Q.qs.push(lv.chords[Math.floor(Math.random()*lv.chords.length)]);
   }else if(lv.mode==='listen'){
-    // Note listen mode: generate single-note questions from lv.notes
-    for(let i=0;i<lv.qs;i++){
-      const note=lv.notes[Math.floor(Math.random()*lv.notes.length)];
-      const oct=lv.octs[Math.floor(Math.random()*lv.octs.length)];
-      Q.qs.push({note,oct,tmb:'piano'});
-    }
+    for(let i=0;i<lv.qs;i++){Q.qs.push({note:lv.notes[Math.floor(Math.random()*lv.notes.length)],oct:lv.octs[Math.floor(Math.random()*lv.octs.length)],tmb:'piano'});}
   }else{
-    // Note quiz/timbre mode: weighted random
     const pool=[];
     lv.notes.forEach(n=>{const k='n_'+n;const s=S.ns[k];const w=s?(1-s.c/Math.max(s.t,1))*3+1:2;for(let i=0;i<Math.ceil(w);i++)pool.push(n);});
-    for(let i=0;i<lv.qs;i++){
-      const note=pool[Math.floor(Math.random()*pool.length)];
-      const oct=lv.octs[Math.floor(Math.random()*lv.octs.length)];
-      const tmb=lv.mode==='timbre'?['piano','guitar','synth'][Math.floor(Math.random()*3)]:'piano';
-      Q.qs.push({note,oct,tmb});
-    }
+    for(let i=0;i<lv.qs;i++){Q.qs.push({note:pool[Math.floor(Math.random()*pool.length)],oct:lv.octs[Math.floor(Math.random()*lv.octs.length)],tmb:lv.mode==='timbre'?['piano','guitar','synth'][Math.floor(Math.random()*3)]:'piano'});}
   }
-  Q.t0=Date.now();ss('quiz');clrTimers();
-  Q.tid=setInterval(()=>{const s=Math.floor((Date.now()-Q.t0)/1000),m=Math.floor(s/60);document.getElementById('qTM').textContent=m+':'+(s%60<10?'0':'')+(s%60);},1000);
-  rQ();
+  clearTimers();
+  Q.tid=setInterval(()=>{const s=Math.floor((Date.now()-Q.t0)/1000),m=Math.floor(s/60);document.getElementById('qTimer').textContent=m+':'+(s%60<10?'0':'')+(s%60);},1000);
+  ss('quiz');
+  startSession('quiz');
+  renderQ();
+  setTimeout(playQ,400);
 }
 
-function rQ(){
+function renderQ(){
   const lv=Q.lv;
-  document.getElementById('qLL').textContent=(lv.cat==='note'?'N-':'C-')+(lv.cat==='note'?NL.findIndex(l=>l.id===lv.id)+1:CL.findIndex(l=>l.id===lv.id)+1);
-  document.getElementById('qTT').textContent=lv.title;
-  document.getElementById('qSB').textContent=lv.desc;
-  document.getElementById('qP').innerHTML=Q.qs.map((_,i)=>{let c='d';if(i<Q.c)c+=Q.qs[i]._ok?' ok':' ng';else if(i===Q.c)c+=' cur';return`<div class="${c}"></div>`;}).join('');
-  updCB();Q.a=false;Q.cur=Q.qs[Q.c];
-  // RT bar
-  if(lv.rt){startRT(lv.rt);}else{document.getElementById('rtFill').style.width='100%';document.getElementById('rtFill').style.background='var(--ok)';}
-  if(lv.cat==='chord'){rChordAns();}else{rNoteAns();}
-  document.getElementById('fbA').innerHTML='';document.getElementById('pB').classList.remove('on');
-  document.getElementById('pH').textContent=lv.cat==='chord'?'터치하여 화음 듣기':'터치하여 음 듣기';
+  document.getElementById('qLabel').textContent=(lv.cat==='note'?'N-':'C-')+(lv.cat==='note'?NL.findIndex(l=>l.id===lv.id)+1:CL.findIndex(l=>l.id===lv.id)+1);
+  document.getElementById('qTitle').textContent=lv.title;
+  document.getElementById('qSub').textContent=lv.desc;
+  // Lives
+  const lv3=document.getElementById('qLives');
+  lv3.innerHTML=Array.from({length:Q.maxLives},(_,i)=>`<span class="heart${i>=Q.lives?' lost':''}" id="heart${i}">♥</span>`).join('');
+  // Progress dots
+  document.getElementById('qProg').innerHTML=Q.qs.map((_,i)=>{let c='dot';if(i<Q.c)c+=Q.qs[i]._ok?' ok':' ng';else if(i===Q.c)c+=' cur';return`<div class="${c}"></div>`;}).join('');
+  updCombo();
+  Q.a=false;Q.cur=Q.qs[Q.c];
+  if(lv.rt)startRT(lv.rt);else{document.getElementById('rtFill').style.width='100%';document.getElementById('rtFill').style.background='var(--ok)';}
+  if(lv.cat==='chord')renderChordAns();else renderNoteAns();
+  document.getElementById('fbArea').innerHTML='';
+  document.getElementById('playBtn').classList.remove('on');
+  document.getElementById('playHint').textContent=lv.cat==='chord'?'터치하여 화음 듣기':'터치하여 음 듣기';
 }
 
 function startRT(ms){
@@ -431,455 +839,389 @@ function startRT(ms){
   const fill=document.getElementById('rtFill');
   fill.style.width='100%';fill.style.background='var(--ok)';
   Q.rtid=setInterval(()=>{
-    const el=(Date.now()-Q.rtStart)/ms;
-    const pct=Math.max(0,1-el)*100;
+    const el=(Date.now()-Q.rtStart)/ms,pct=Math.max(0,1-el)*100;
     fill.style.width=pct+'%';
     fill.style.background=pct>50?'var(--ok)':pct>25?'var(--warn)':'var(--ng)';
+    if(pct<=0){clearInterval(Q.rtid);Q.rtid=null;timeOut();}
   },50);
 }
 
-function rNoteAns(){
-  const lv=Q.lv,g=document.getElementById('aG');
+function timeOut(){
+  if(Q.a)return;Q.a=true;
+  Q.qs[Q.c]._ok=false;S.tw++;Q.ng++;Q.cb=0;updCombo();
+  loseLife();sfx('ng');
+  // Show correct answer
+  if(Q.lv.cat==='note'){
+    document.querySelectorAll('.ans-btn').forEach(b=>{if(b.querySelector('.main')&&b.querySelector('.main').textContent===Q.cur.note)b.classList.add('ok');});
+    document.getElementById('fbArea').innerHTML=`<div class="fb ng">⏰ 시간 초과! 정답: ${Q.cur.note}(${KO[Q.cur.note]})</div>`;
+  }else{
+    document.querySelectorAll('.chord-btn').forEach(b=>{if(b.querySelector('.chord-name')&&b.querySelector('.chord-name').textContent===Q.cur.name)b.classList.add('ok');});
+    document.getElementById('fbArea').innerHTML=`<div class="fb ng">⏰ 시간 초과! 정답: ${Q.cur.name}색</div>`;
+  }
+  document.querySelectorAll('.ans-btn,.chord-btn').forEach(b=>b.disabled=true);
+  document.getElementById('sc-quiz').classList.add('shake');
+  setTimeout(()=>document.getElementById('sc-quiz').classList.remove('shake'),300);
+  saveState();
+  setTimeout(()=>{Q.c++;Q.c>=Q.lv.qs?finish():renderQ();},1600);
+}
+
+function loseLife(){
+  Q.lives=Math.max(0,Q.lives-1);
+  const hearts=document.getElementById('qLives');
+  if(hearts){
+    const h=hearts.querySelectorAll('.heart');
+    h.forEach((el,i)=>{if(i>=Q.lives)el.classList.add('lost');});
+  }
+}
+
+function renderNoteAns(){
+  const lv=Q.lv,g=document.getElementById('ansGrid');
   if(lv.mode==='listen'){
-    g.className='ans g2';
+    g.className='ans-grid g2';
     g.innerHTML=`<div style="grid-column:1/-1;text-align:center;">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:800;color:var(--gold);margin-bottom:8px;">A4</div>
-      <div style="font-size:11px;color:var(--txd);margin-bottom:4px;">라 — 440Hz</div>
-      <div style="font-size:10px;color:var(--txd);margin-bottom:12px;">이 소리를 확실히 기억하세요</div>
-      <button class="bp" onclick="listenNx()" style="max-width:180px;margin:0 auto;">${Q.c<lv.qs-1?'다음 ▶':'완료 ✓'}</button></div>`;
+      <div style="font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:800;color:var(--gold);margin-bottom:6px;">A4</div>
+      <div style="font-size:12px;color:var(--txd);margin-bottom:12px;">라 — 440Hz 기준음</div>
+      <button class="btn-primary" onclick="listenNext()" style="max-width:180px;margin:0 auto;">${Q.c<Q.lv.qs-1?'다음 ▶':'완료 ✓'}</button></div>`;
   }else{
     const nc=lv.notes.length;
-    g.className='ans '+(nc<=4?'g2':nc<=6?'g3':'g4');
-    g.innerHTML=lv.notes.map(n=>`<button class="ab" onclick="ansNote(this,'${n}')"><span class="main">${n}</span><span class="sub">${KO[n]}</span></button>`).join('');
+    g.className='ans-grid '+(nc<=4?'g2':nc<=6?'g3':'g4');
+    g.innerHTML=lv.notes.map(n=>`<button class="ans-btn" onclick="ansNote(this,'${n}')"><span class="main">${n}</span><span class="sub">${KO[n]}</span></button>`).join('');
   }
 }
 
-function rChordAns(){
-  const lv=Q.lv,g=document.getElementById('aG');
+function renderChordAns(){
+  const lv=Q.lv,g=document.getElementById('ansGrid');
   if(lv.mode==='listen'){
-    g.className='ans g2';
+    g.className='ans-grid g2';
     g.innerHTML=`<div style="grid-column:1/-1;text-align:center;">
-      <div style="width:48px;height:48px;border-radius:50%;background:${Q.cur.color};margin:0 auto 8px;border:2px solid rgba(255,255,255,.1);"></div>
-      <div style="font-size:14px;font-weight:700;">"${Q.cur.name}색" 화음</div>
-      <div style="font-size:10px;color:var(--txd);margin:4px 0 12px;">${Q.cur.label}</div>
-      <button class="bp" onclick="listenNx()" style="max-width:180px;margin:0 auto;">${Q.c<lv.qs-1?'다음 ▶':'완료 ✓'}</button></div>`;
+      <div style="width:52px;height:52px;border-radius:50%;background:${Q.cur.color};margin:0 auto 8px;border:2px solid rgba(255,255,255,.1);"></div>
+      <div style="font-size:15px;font-weight:800;">"${Q.cur.name}색" 화음</div>
+      <div style="font-size:11px;color:var(--txd);margin:4px 0 12px;">${Q.cur.label}</div>
+      <button class="btn-primary" onclick="listenNext()" style="max-width:180px;margin:0 auto;">${Q.c<Q.lv.qs-1?'다음 ▶':'완료 ✓'}</button></div>`;
   }else{
     const nc=lv.chords.length;
-    g.className='ans '+(nc<=3?'g3':nc<=5?'g3':'g3');
-    g.innerHTML=lv.chords.map(ch=>`<button class="cab" onclick="ansChord(this,'${ch.id}')"><div class="cc" style="background:${ch.color}"></div><span class="cl2">${ch.name}</span></button>`).join('');
+    g.className='ans-grid g3';
+    g.innerHTML=lv.chords.map(ch=>`<button class="chord-btn" onclick="ansChord(this,'${ch.id}')"><div class="chord-color" style="background:${ch.color}"></div><span class="chord-name">${ch.name}</span></button>`).join('');
   }
 }
 
-function updCB(){const cn=document.getElementById('cC'),cl=document.getElementById('cL'),cm=document.getElementById('cM');if(Q.cb>=2){cn.style.visibility='visible';cl.style.visibility='visible';cm.style.visibility='visible';cn.textContent=Q.cb;cm.textContent='×'+Math.min(1+Math.floor(Q.cb/3),4);cn.classList.add('pop');setTimeout(()=>cn.classList.remove('pop'),150);}else{cn.style.visibility='hidden';cl.style.visibility='hidden';cm.style.visibility='hidden';}}
-
-function playQ(){
-  document.getElementById('pB').classList.add('on');
-  if(Q.lv.cat==='chord')playChord(Q.cur.notes);
-  else{const c=Q.cur;playN(c.note,c.oct,1.3,c.tmb||'piano');}
-  setTimeout(()=>document.getElementById('pB').classList.remove('on'),400);
+function updCombo(){
+  const cn=document.getElementById('cNum'),cl=document.getElementById('cLbl'),cm=document.getElementById('cMul');
+  if(Q.cb>=2){
+    cn.style.visibility='visible';cl.style.visibility='visible';cm.style.visibility='visible';
+    cn.textContent=Q.cb;cm.textContent='×'+Math.min(1+Math.floor(Q.cb/3),4);
+    cn.classList.add('pop');setTimeout(()=>cn.classList.remove('pop'),150);
+  }else{cn.style.visibility='hidden';cl.style.visibility='hidden';cm.style.visibility='hidden';}
 }
 
-function listenNx(){Q.qs[Q.c]._ok=true;Q.ok++;Q.txp+=5;S.xp+=5;svS();Q.c++;if(Q.c>=Q.lv.qs)finish();else{rQ();setTimeout(playQ,300);}}
+function playQ(){
+  document.getElementById('playBtn').classList.add('on');
+  if(E.running){
+    if(E.cur.type==='chord')playChord(E.cur.chord.notes);
+    else playN(E.cur.note,E.cur.oct,1.3,E.cur.tmb);
+  }else if(Q.lv&&Q.cur){
+    if(Q.lv.cat==='chord')playChord(Q.cur.notes);
+    else playN(Q.cur.note,Q.cur.oct,1.3,Q.cur.tmb||'piano');
+  }
+  setTimeout(()=>document.getElementById('playBtn').classList.remove('on'),400);
+}
+
+function listenNext(){Q.qs[Q.c]._ok=true;Q.ok++;Q.txp+=5;S.xp+=5;saveState();Q.c++;if(Q.c>=Q.lv.qs)finish();else{renderQ();setTimeout(playQ,300);}}
 
 function ansNote(btn,n){
   if(Q.a)return;Q.a=true;if(Q.rtid){clearInterval(Q.rtid);Q.rtid=null;}
   const rt=Date.now()-Q.rtStart;Q.rts.push(rt);
   const ok=n===Q.cur.note,k='n_'+Q.cur.note;
   if(!S.ns[k])S.ns[k]={c:0,t:0};S.ns[k].t++;
-  if(ok){S.ns[k].c++;S.tc++;Q.ok++;Q.qs[Q.c]._ok=true;Q.cb++;if(Q.cb>S.bc)S.bc=Q.cb;
+  if(ok){
+    S.ns[k].c++;S.tc++;Q.ok++;Q.qs[Q.c]._ok=true;Q.cb++;if(Q.cb>S.bc)S.bc=Q.cb;
     const mul=Math.min(1+Math.floor(Q.cb/3),4),xp=10*mul;Q.txp+=xp;S.xp+=xp;
-    btn.classList.add('ok');sfx('ok');fXP(xp,btn);updCB();
+    btn.classList.add('ok');sfx('ok');floatXP(xp,btn);updCombo();
     const rtStr=Q.lv.rt?` · ${(rt/1000).toFixed(1)}s`:'';
-    document.getElementById('fbA').innerHTML=`<div class="fb fbok">${Q.cur.note}(${KO[Q.cur.note]}) 정답!${rtStr} <div class="xpg">+${xp} XP</div></div>`;
-  }else{S.tw++;Q.ng++;Q.qs[Q.c]._ok=false;Q.cb=0;btn.classList.add('ng');sfx('ng');updCB();
-    document.querySelectorAll('.ab').forEach(b=>{if(b.querySelector('.main').textContent===Q.cur.note)b.classList.add('ok');});
-    document.getElementById('fbA').innerHTML=`<div class="fb fbng">정답: ${Q.cur.note}(${KO[Q.cur.note]})</div>`;
+    document.getElementById('fbArea').innerHTML=`<div class="fb ok">${Q.cur.note}(${KO[Q.cur.note]}) 정답!${rtStr} <div class="xpg">+${xp} XP</div></div>`;
+  }else{
+    S.tw++;Q.ng++;Q.qs[Q.c]._ok=false;Q.cb=0;loseLife();btn.classList.add('ng');sfx('ng');updCombo();
+    document.querySelectorAll('.ans-btn').forEach(b=>{if(b.querySelector('.main').textContent===Q.cur.note)b.classList.add('ok');});
+    document.getElementById('fbArea').innerHTML=`<div class="fb ng">정답: ${Q.cur.note}(${KO[Q.cur.note]})</div>`;
     document.getElementById('sc-quiz').classList.add('shake');setTimeout(()=>document.getElementById('sc-quiz').classList.remove('shake'),300);
     setTimeout(()=>playN(Q.cur.note,Q.cur.oct,1,Q.cur.tmb),300);
   }
-  document.querySelectorAll('.ab').forEach(b=>b.disabled=true);svS();
-  setTimeout(()=>{Q.c++;Q.c>=Q.lv.qs?finish():rQ();},ok?800:1600);
+  document.querySelectorAll('.ans-btn').forEach(b=>b.disabled=true);saveState();
+  setTimeout(()=>{Q.c++;Q.c>=Q.lv.qs?finish():renderQ();},ok?700:1600);
 }
 
 function ansChord(btn,id){
   if(Q.a)return;Q.a=true;if(Q.rtid){clearInterval(Q.rtid);Q.rtid=null;}
   const ok=id===Q.cur.id,k='ch_'+Q.cur.id;
   if(!S.ns[k])S.ns[k]={c:0,t:0};S.ns[k].t++;
-  if(ok){S.ns[k].c++;S.tc++;Q.ok++;Q.qs[Q.c]._ok=true;Q.cb++;if(Q.cb>S.bc)S.bc=Q.cb;
+  if(ok){
+    S.ns[k].c++;S.tc++;Q.ok++;Q.qs[Q.c]._ok=true;Q.cb++;if(Q.cb>S.bc)S.bc=Q.cb;
     const mul=Math.min(1+Math.floor(Q.cb/3),4),xp=10*mul;Q.txp+=xp;S.xp+=xp;
-    btn.classList.add('ok');sfx('ok');fXP(xp,btn);updCB();
-    document.getElementById('fbA').innerHTML=`<div class="fb fbok">"${Q.cur.name}색" 정답! <div class="xpg">+${xp} XP</div></div>`;
-  }else{S.tw++;Q.ng++;Q.qs[Q.c]._ok=false;Q.cb=0;btn.classList.add('ng');sfx('ng');updCB();
-    document.querySelectorAll('.cab').forEach(b=>{if(b.querySelector('.cl2').textContent===Q.cur.name)b.classList.add('ok');});
-    document.getElementById('fbA').innerHTML=`<div class="fb fbng">정답: ${Q.cur.name}색 (${Q.cur.label})</div>`;
+    btn.classList.add('ok');sfx('ok');floatXP(xp,btn);updCombo();
+    document.getElementById('fbArea').innerHTML=`<div class="fb ok">"${Q.cur.name}색" 정답! <div class="xpg">+${xp} XP</div></div>`;
+  }else{
+    S.tw++;Q.ng++;Q.qs[Q.c]._ok=false;Q.cb=0;loseLife();btn.classList.add('ng');sfx('ng');updCombo();
+    document.querySelectorAll('.chord-btn').forEach(b=>{if(b.querySelector('.chord-name').textContent===Q.cur.name)b.classList.add('ok');});
+    document.getElementById('fbArea').innerHTML=`<div class="fb ng">정답: ${Q.cur.name}색 (${Q.cur.label})</div>`;
     document.getElementById('sc-quiz').classList.add('shake');setTimeout(()=>document.getElementById('sc-quiz').classList.remove('shake'),300);
     setTimeout(()=>playChord(Q.cur.notes),300);
   }
-  document.querySelectorAll('.cab').forEach(b=>b.disabled=true);svS();
-  setTimeout(()=>{Q.c++;Q.c>=Q.lv.qs?finish():rQ();},ok?800:1600);
+  document.querySelectorAll('.chord-btn').forEach(b=>b.disabled=true);saveState();
+  setTimeout(()=>{Q.c++;Q.c>=Q.lv.qs?finish():renderQ();},ok?700:1600);
 }
 
-function fXP(xp,btn){const el=document.createElement('div');el.className='fxp';el.textContent='+'+xp;const r=btn.getBoundingClientRect();el.style.top=(r.top-10)+'px';document.body.appendChild(el);setTimeout(()=>el.remove(),700);}
+function floatXP(xp,btn){
+  const el=document.createElement('div');el.className='xp-float';el.textContent='+'+xp;
+  const r=btn.getBoundingClientRect();el.style.top=(r.top-10)+'px';
+  document.body.appendChild(el);setTimeout(()=>el.remove(),700);
+}
 
 function finish(){
-  clrTimers();const pct=Math.round(Q.ok/Q.lv.qs*100);
+  clearTimers();
+  endSession();
+  const pct=Math.round(Q.ok/Q.lv.qs*100);
   S.sc[Q.lv.id]=Math.max(S.sc[Q.lv.id]||0,pct);
+  if(pct===100)S.hasPerfect=true;
   let unlk=false;
   if(pct>=80){
     if(Q.lv.cat==='note'){const idx=NL.findIndex(l=>l.id===Q.lv.id);if(idx+1===S.nul&&S.nul<NL.length){S.nul++;unlk=true;}}
     else{const idx=CL.findIndex(l=>l.id===Q.lv.id);if(idx+1===S.cul&&S.cul<CL.length){S.cul++;unlk=true;}}
   }
   let bonus=0;if(pct>=80)bonus=50;else if(pct>=60)bonus=20;if(pct===100)bonus+=30;
-  if(bonus){Q.txp+=bonus;S.xp+=bonus;}svS();
-  const sec=Math.floor((Date.now()-Q.t0)/1000),m=Math.floor(sec/60),s=sec%60;
+  if(bonus){Q.txp+=bonus;S.xp+=bonus;}
+  // Save session
+  const sec=Math.floor((Date.now()-Q.t0)/1000);
   const avgRT=Q.rts.length?Math.round(Q.rts.reduce((a,b)=>a+b,0)/Q.rts.length):0;
-  document.getElementById('rSc').innerHTML=Q.ok+'<span>/'+Q.lv.qs+'</span>';
+  if(!S.sessions)S.sessions=[];
+  S.sessions.unshift({date:new Date().toISOString(),lvTitle:Q.lv.title,pct,ok:Q.ok,ng:Q.ng,sec,xp:Q.txp,cat:Q.lv.cat});
+  if(S.sessions.length>50)S.sessions=S.sessions.slice(0,50);
+  saveState();
+  checkLevelUp();
+  // Mark routine
+  if(typeof window._activeStep==='number'){markStep(window._activeStep);window._activeStep=null;}
+  else{if(Q.lv.cat==='note')markStep(0);else markStep(1);}
+  // Render result
+  const m=Math.floor(sec/60),s=sec%60;
+  document.getElementById('rScore').innerHTML=Q.ok+'<span>/'+Q.lv.qs+'</span>';
   document.getElementById('rOk').textContent=Q.ok;document.getElementById('rNg').textContent=Q.ng;
-  document.getElementById('rTm').textContent=m+':'+(s<10?'0':'')+s;
+  document.getElementById('rTime').textContent=m+':'+(s<10?'0':'')+s;
   document.getElementById('rRT').textContent=avgRT?(avgRT/1000).toFixed(1)+'s':'-';
-  document.getElementById('rSt').textContent=pct>=90?'★★★':pct>=70?'★★☆':'★☆☆';
-  document.getElementById('rXP').textContent='+'+Q.txp+' XP';
-  if(pct>=80){document.getElementById('rE').textContent='🎉';document.getElementById('rT').textContent='훌륭해요!';document.getElementById('rS').textContent=pct===100?'퍼펙트! 🏆':'80% 이상!';sfx('up');}
-  else if(pct>=60){document.getElementById('rE').textContent='💪';document.getElementById('rT').textContent='좋은 시도!';document.getElementById('rS').textContent='조금만 더!';}
-  else{document.getElementById('rE').textContent='🎯';document.getElementById('rT').textContent='계속 도전!';document.getElementById('rS').textContent='반복이 핵심';}
-  const nb=document.getElementById('nxB');
-  // 다음 레벨이 존재하면 항상 버튼 표시
+  document.getElementById('rStars').textContent=pct>=90?'★★★':pct>=70?'★★☆':'★☆☆';
+  document.getElementById('rXp').textContent='+'+Q.txp+' XP'+(bonus>0?` (+${bonus} 보너스)`: '');
+  if(pct>=80){document.getElementById('rEmoji').textContent='🎉';document.getElementById('rTitle').textContent='훌륭해요!';document.getElementById('rSub').textContent=pct===100?'퍼펙트! 완벽한 점수!':'80% 이상 달성!';sfx('up');}
+  else if(pct>=60){document.getElementById('rEmoji').textContent='💪';document.getElementById('rTitle').textContent='좋은 시도!';document.getElementById('rSub').textContent='조금만 더!';}
+  else{document.getElementById('rEmoji').textContent='🎯';document.getElementById('rTitle').textContent='계속 도전!';document.getElementById('rSub').textContent='반복이 핵심';}
+  const nb=document.getElementById('nextBtn');
   let hasNext=false;
   if(Q.lv.cat==='note'){const idx=NL.findIndex(l=>l.id===Q.lv.id);hasNext=idx+1<NL.length&&idx+1<S.nul;}
   else{const idx=CL.findIndex(l=>l.id===Q.lv.id);hasNext=idx+1<CL.length&&idx+1<S.cul;}
-  if(unlk){nb.style.display='block';nb.innerHTML='다음 레벨 → <span class="nw">NEW</span>';}
+  if(unlk){nb.style.display='block';nb.innerHTML='다음 레벨 → <span class="new-badge">NEW</span>';}
   else if(hasNext){nb.style.display='block';nb.innerHTML='다음 레벨 →';}
   else{nb.style.display='none';}
   ss('result');
 }
 function retry(){startLv(Q.lv.id,Q.lv.cat);}
-function goNx(){
+function goNext(){
   if(Q.lv.cat==='note'){const idx=NL.findIndex(l=>l.id===Q.lv.id);if(idx+1<NL.length)startLv(NL[idx+1].id,'note');}
   else{const idx=CL.findIndex(l=>l.id===Q.lv.id);if(idx+1<CL.length)startLv(CL[idx+1].id,'chord');}
 }
 
-// ===== Endless Quiz =====
-var endlessMode=null; // 'note' or 'chord'
-var endlessNotes=null;
-var endlessChords=null;
+// ===== ENDLESS =====
+var endlessMode='note';
+var endlessNotes=null,endlessChords=null;
 var E={ok:0,ng:0,cb:0,bcb:0,t0:0,tid:null,cur:null,running:false};
-
-function rEndlessOpts(){
-  // Build mode selection buttons
-  const d=document.getElementById('endlessOpts');
-  const unlN=S.nul;const unlC=S.cul;
-  // Determine which notes are unlocked
-  const availNotes=unlN>=8?NN.slice():unlN>=7?['C','D','E','F','F#','G','A','A#','B']:unlN>=6?['C','D','E','F','G','A','B']:unlN>=5?['A','C','D','E','G']:unlN>=4?['A','C','E','G']:unlN>=3?['A','C','E']:unlN>=2?['A','C']:['A'];
-  const noteLabel=availNotes.length+'음 ('+availNotes.join('·')+')';
-  const chordLabel=Math.min(unlC,9)+'개 화음';
-  d.innerHTML=`
-    <button class="tmb-btn ${endlessMode==='note'?'on':''}" onclick="endlessMode='note';rEndlessOpts()">🎹 단음: ${noteLabel}</button>
-    <button class="tmb-btn ${endlessMode==='chord'?'on':''}" onclick="endlessMode='chord';rEndlessOpts()">🎨 화음: ${chordLabel}</button>
-    <button class="tmb-btn ${endlessMode==='mix'?'on':''}" onclick="endlessMode='mix';rEndlessOpts()">🔀 혼합</button>`;
-  if(!endlessMode)endlessMode='note';
-  endlessNotes=availNotes;
-  endlessChords=ECH.slice(0,Math.min(unlC,9));
+function renderEndlessOpts(){
+  const unlN=S.nul,unlC=S.cul;
+  const avail=unlN>=8?NN.slice():unlN>=7?['C','D','E','F','F#','G','A','A#','B']:unlN>=6?['C','D','E','F','G','A','B']:unlN>=5?['A','C','D','E','G']:unlN>=4?['A','C','E','G']:unlN>=3?['A','C','E']:unlN>=2?['A','C']:['A'];
+  endlessNotes=avail;endlessChords=ECH.slice(0,Math.min(unlC,9));
+  document.getElementById('eModes').innerHTML=`
+    <button class="mode-btn ${endlessMode==='note'?'on':''}" onclick="endlessMode='note';renderEndlessOpts()">🎹 단음 ${avail.length}음</button>
+    <button class="mode-btn ${endlessMode==='chord'?'on':''}" onclick="endlessMode='chord';renderEndlessOpts()">🎨 화음 ${endlessChords.length}개</button>
+    <button class="mode-btn ${endlessMode==='mix'?'on':''}" onclick="endlessMode='mix';renderEndlessOpts()">🔀 혼합</button>`;
 }
-
 function startEndless(){
   if(!endlessMode)endlessMode='note';
   E={ok:0,ng:0,cb:0,bcb:0,t0:Date.now(),tid:null,cur:null,running:true};
-  ss('quiz');
-  // Timer
-  clrTimers();
-  E.tid=setInterval(()=>{
-    const s=Math.floor((Date.now()-E.t0)/1000),m=Math.floor(s/60);
-    document.getElementById('qTM').textContent=m+':'+(s%60<10?'0':'')+(s%60);
-  },1000);
+  ss('quiz');clearTimers();
+  E.tid=setInterval(()=>{const s=Math.floor((Date.now()-E.t0)/1000),m=Math.floor(s/60);document.getElementById('qTimer').textContent=m+':'+(s%60<10?'0':'')+(s%60);},1000);
   Q.lv={id:'endless',cat:endlessMode==='chord'?'chord':'note',title:'무한 퀴즈',desc:'멈출 때까지 계속',mode:'endless',rt:0};
-  startSession('quiz');
-  nextEndless();
+  startSession('endless');nextEndless();
 }
-
 function nextEndless(){
   if(!E.running)return;
-  document.getElementById('qLL').textContent='♾️ ENDLESS';
-  document.getElementById('qTT').textContent='무한 퀴즈';
+  document.getElementById('qLabel').textContent='♾️';
+  document.getElementById('qTitle').textContent='무한 퀴즈';
+  document.getElementById('qLives').innerHTML='';
   const tot=E.ok+E.ng;
-  document.getElementById('qSB').textContent=`${tot}문제 · 정답률 ${tot?Math.round(E.ok/tot*100):0}% · 콤보 ${E.cb}`;
-  document.getElementById('qP').innerHTML='';
+  document.getElementById('qSub').textContent=`${tot}문제 · 정답률 ${tot?Math.round(E.ok/tot*100):0}% · 최고콤보 ${E.bcb}`;
+  document.getElementById('qProg').innerHTML='';
   document.getElementById('rtFill').style.width='100%';document.getElementById('rtFill').style.background='var(--ok)';
   updCBEndless();
-
-  // Pick question
   if(endlessMode==='chord'){
     E.cur={type:'chord',chord:endlessChords[Math.floor(Math.random()*endlessChords.length)]};
   }else if(endlessMode==='note'){
-    E.cur={type:'note',note:pickWeightedNote(),oct:[3,4,5][Math.floor(Math.random()*3)],tmb:['piano','guitar','synth'][Math.floor(Math.random()*3)]};
+    E.cur={type:'note',note:pickWeighted(),oct:[3,4,5][Math.floor(Math.random()*3)],tmb:['piano','guitar','synth'][Math.floor(Math.random()*3)]};
   }else{
-    // Mix
-    if(Math.random()<0.6){
-      E.cur={type:'note',note:pickWeightedNote(),oct:[3,4,5][Math.floor(Math.random()*3)],tmb:['piano','guitar','synth'][Math.floor(Math.random()*3)]};
-    }else{
-      E.cur={type:'chord',chord:endlessChords[Math.floor(Math.random()*endlessChords.length)]};
-    }
+    if(Math.random()<.6)E.cur={type:'note',note:pickWeighted(),oct:[3,4,5][Math.floor(Math.random()*3)],tmb:['piano','guitar','synth'][Math.floor(Math.random()*3)]};
+    else E.cur={type:'chord',chord:endlessChords[Math.floor(Math.random()*endlessChords.length)]};
   }
-
   Q.a=false;
-  const g=document.getElementById('aG');
+  const g=document.getElementById('ansGrid');
   if(E.cur.type==='chord'){
-    g.className='ans g3';
-    g.innerHTML=endlessChords.map(ch=>`<button class="cab" onclick="ansEndlessChord(this,'${ch.id}')"><div class="cc" style="background:${ch.color}"></div><span class="cl2">${ch.name}</span></button>`).join('');
+    g.className='ans-grid g3';
+    g.innerHTML=endlessChords.map(ch=>`<button class="chord-btn" onclick="ansEndlessChord(this,'${ch.id}')"><div class="chord-color" style="background:${ch.color}"></div><span class="chord-name">${ch.name}</span></button>`).join('');
   }else{
     const nc=endlessNotes.length;
-    g.className='ans '+(nc<=4?'g2':nc<=6?'g3':'g4');
-    g.innerHTML=endlessNotes.map(n=>`<button class="ab" onclick="ansEndlessNote(this,'${n}')"><span class="main">${n}</span><span class="sub">${KO[n]}</span></button>`).join('');
+    g.className='ans-grid '+(nc<=4?'g2':nc<=6?'g3':'g4');
+    g.innerHTML=endlessNotes.map(n=>`<button class="ans-btn" onclick="ansEndlessNote(this,'${n}')"><span class="main">${n}</span><span class="sub">${KO[n]}</span></button>`).join('');
   }
-  document.getElementById('fbA').innerHTML=`<div style="text-align:center;margin-top:12px;"><button class="bs" style="max-width:200px;margin:0 auto;color:var(--ng);border-color:var(--ng);" onclick="stopEndless()">⏹ 중단하고 결과 보기</button></div>`;
-  document.getElementById('pB').classList.remove('on');
-  document.getElementById('pH').textContent=E.cur.type==='chord'?'터치하여 화음 듣기':'터치하여 음 듣기';
+  document.getElementById('fbArea').innerHTML=`<div style="text-align:center;margin-top:10px;"><button class="btn-secondary" style="max-width:200px;margin:0 auto;color:var(--ng);border-color:var(--ng);" onclick="stopEndless()">⏹ 중단</button></div>`;
+  document.getElementById('playBtn').classList.remove('on');
+  document.getElementById('playHint').textContent=E.cur.type==='chord'?'터치하여 화음 듣기':'터치하여 음 듣기';
 }
-
-function pickWeightedNote(){
+function pickWeighted(){
   const pool=[];
   endlessNotes.forEach(n=>{const k='n_'+n;const s=S.ns[k];const w=s?(1-s.c/Math.max(s.t,1))*3+1:2;for(let i=0;i<Math.ceil(w);i++)pool.push(n);});
   return pool[Math.floor(Math.random()*pool.length)];
 }
-
-function playQ(){
-  document.getElementById('pB').classList.add('on');
-  if(E.running){
-    if(E.cur.type==='chord')playChord(E.cur.chord.notes);
-    else playN(E.cur.note,E.cur.oct,1.3,E.cur.tmb);
-  }else if(Q.lv&&Q.lv.cat==='chord'){
-    playChord(Q.cur.notes);
-  }else if(Q.cur){
-    playN(Q.cur.note,Q.cur.oct,1.3,Q.cur.tmb||'piano');
-  }
-  setTimeout(()=>document.getElementById('pB').classList.remove('on'),400);
-}
-
 function updCBEndless(){
-  const cn=document.getElementById('cC'),cl=document.getElementById('cL'),cm=document.getElementById('cM');
+  const cn=document.getElementById('cNum'),cl=document.getElementById('cLbl'),cm=document.getElementById('cMul');
   if(E.cb>=2){cn.style.visibility='visible';cl.style.visibility='visible';cm.style.visibility='visible';
-    cn.textContent=E.cb;cm.textContent='×'+Math.min(1+Math.floor(E.cb/3),4);
-    cn.classList.add('pop');setTimeout(()=>cn.classList.remove('pop'),150);
+    cn.textContent=E.cb;cm.textContent='×'+Math.min(1+Math.floor(E.cb/3),4);cn.classList.add('pop');setTimeout(()=>cn.classList.remove('pop'),150);
   }else{cn.style.visibility='hidden';cl.style.visibility='hidden';cm.style.visibility='hidden';}
 }
-
 function ansEndlessNote(btn,n){
   if(Q.a)return;Q.a=true;
   const ok=n===E.cur.note,k='n_'+E.cur.note;
   if(!S.ns[k])S.ns[k]={c:0,t:0};S.ns[k].t++;
-  if(ok){
-    S.ns[k].c++;S.tc++;E.ok++;E.cb++;if(E.cb>E.bcb)E.bcb=E.cb;if(E.cb>S.bc)S.bc=E.cb;
+  if(ok){S.ns[k].c++;S.tc++;E.ok++;E.cb++;if(E.cb>E.bcb)E.bcb=E.cb;if(E.cb>S.bc)S.bc=E.cb;
     const mul=Math.min(1+Math.floor(E.cb/3),4),xp=10*mul;S.xp+=xp;
-    btn.classList.add('ok');sfx('ok');fXP(xp,btn);
-  }else{
-    S.tw++;E.ng++;E.cb=0;
-    btn.classList.add('ng');sfx('ng');
-    document.querySelectorAll('.ab').forEach(b=>{if(b.querySelector('.main').textContent===E.cur.note)b.classList.add('ok');});
+    btn.classList.add('ok');sfx('ok');floatXP(xp,btn);updCBEndless();
+    document.getElementById('fbArea').innerHTML=`<div class="fb ok">${E.cur.note}(${KO[E.cur.note]}) 정답! <div class="xpg">+${xp} XP</div></div><div style="text-align:center;margin-top:8px;"><button class="btn-secondary" style="max-width:200px;margin:0 auto;color:var(--ng);border-color:var(--ng);" onclick="stopEndless()">⏹ 중단</button></div>`;
+  }else{S.tw++;E.ng++;E.cb=0;btn.classList.add('ng');sfx('ng');updCBEndless();
+    document.querySelectorAll('.ans-btn').forEach(b=>{if(b.querySelector('.main').textContent===E.cur.note)b.classList.add('ok');});
     setTimeout(()=>playN(E.cur.note,E.cur.oct,1,E.cur.tmb),300);
+    document.getElementById('fbArea').innerHTML=`<div class="fb ng">정답: ${E.cur.note}(${KO[E.cur.note]})</div><div style="text-align:center;margin-top:8px;"><button class="btn-secondary" style="max-width:200px;margin:0 auto;color:var(--ng);border-color:var(--ng);" onclick="stopEndless()">⏹ 중단</button></div>`;
   }
-  document.querySelectorAll('.ab').forEach(b=>b.disabled=true);svS();
-  setTimeout(()=>nextEndless(),ok?700:1400);
+  document.querySelectorAll('.ans-btn').forEach(b=>b.disabled=true);
+  saveState();setTimeout(()=>nextEndless(),ok?600:1400);
 }
-
 function ansEndlessChord(btn,id){
   if(Q.a)return;Q.a=true;
   const ok=id===E.cur.chord.id,k='ch_'+E.cur.chord.id;
   if(!S.ns[k])S.ns[k]={c:0,t:0};S.ns[k].t++;
-  if(ok){
-    S.ns[k].c++;S.tc++;E.ok++;E.cb++;if(E.cb>E.bcb)E.bcb=E.cb;if(E.cb>S.bc)S.bc=E.cb;
+  if(ok){S.ns[k].c++;S.tc++;E.ok++;E.cb++;if(E.cb>E.bcb)E.bcb=E.cb;if(E.cb>S.bc)S.bc=E.cb;
     const mul=Math.min(1+Math.floor(E.cb/3),4),xp=10*mul;S.xp+=xp;
-    btn.classList.add('ok');sfx('ok');fXP(xp,btn);
-  }else{
-    S.tw++;E.ng++;E.cb=0;
-    btn.classList.add('ng');sfx('ng');
-    document.querySelectorAll('.cab').forEach(b=>{if(b.querySelector('.cl2').textContent===E.cur.chord.name)b.classList.add('ok');});
+    btn.classList.add('ok');sfx('ok');floatXP(xp,btn);updCBEndless();
+    document.getElementById('fbArea').innerHTML=`<div class="fb ok">"${E.cur.chord.name}색" 정답! <div class="xpg">+${xp} XP</div></div><div style="text-align:center;margin-top:8px;"><button class="btn-secondary" style="max-width:200px;margin:0 auto;color:var(--ng);border-color:var(--ng);" onclick="stopEndless()">⏹ 중단</button></div>`;
+  }else{S.tw++;E.ng++;E.cb=0;btn.classList.add('ng');sfx('ng');updCBEndless();
+    document.querySelectorAll('.chord-btn').forEach(b=>{if(b.querySelector('.chord-name').textContent===E.cur.chord.name)b.classList.add('ok');});
     setTimeout(()=>playChord(E.cur.chord.notes),300);
+    document.getElementById('fbArea').innerHTML=`<div class="fb ng">정답: ${E.cur.chord.name}색</div><div style="text-align:center;margin-top:8px;"><button class="btn-secondary" style="max-width:200px;margin:0 auto;color:var(--ng);border-color:var(--ng);" onclick="stopEndless()">⏹ 중단</button></div>`;
   }
-  document.querySelectorAll('.cab').forEach(b=>b.disabled=true);svS();
-  setTimeout(()=>nextEndless(),ok?700:1400);
+  document.querySelectorAll('.chord-btn').forEach(b=>b.disabled=true);
+  saveState();setTimeout(()=>nextEndless(),ok?600:1400);
 }
-
 function stopEndless(){
-  E.running=false;
-  if(E.tid){clearInterval(E.tid);E.tid=null;}
-  endSession();
-  markRoutineStep(2); // 무한퀴즈 완료 → 루틴 3단계 체크
-  const tot=E.ok+E.ng;
-  const pct=tot?Math.round(E.ok/tot*100):0;
-  const sec=Math.floor((Date.now()-E.t0)/1000),m=Math.floor(sec/60),s=sec%60;
-  // Bonus XP
-  let bonus=Math.floor(tot/10)*5;S.xp+=bonus;svS();
-
-  document.getElementById('rSc').innerHTML=E.ok+'<span>/'+tot+'</span>';
+  E.running=false;if(E.tid){clearInterval(E.tid);E.tid=null;}
+  endSession();markStep(2);
+  const tot=E.ok+E.ng,pct=tot?Math.round(E.ok/tot*100):0,sec=Math.floor((Date.now()-E.t0)/1000),m=Math.floor(sec/60),s=sec%60;
+  let bonus=Math.floor(tot/10)*5;S.xp+=bonus;
+  if(!S.sessions)S.sessions=[];
+  S.sessions.unshift({date:new Date().toISOString(),lvTitle:'무한 퀴즈',pct,ok:E.ok,ng:E.ng,sec,xp:bonus,cat:'endless'});
+  if(S.sessions.length>50)S.sessions=S.sessions.slice(0,50);
+  saveState();
+  document.getElementById('rScore').innerHTML=E.ok+'<span>/'+tot+'</span>';
   document.getElementById('rOk').textContent=E.ok;document.getElementById('rNg').textContent=E.ng;
-  document.getElementById('rTm').textContent=m+':'+(s<10?'0':'')+s;
-  document.getElementById('rRT').textContent='-';
-  document.getElementById('rSt').textContent=pct>=90?'★★★':pct>=70?'★★☆':'★☆☆';
-  document.getElementById('rXP').textContent='+'+(bonus)+' 보너스 XP';
-  if(pct>=80){document.getElementById('rE').textContent='🎉';document.getElementById('rT').textContent='훌륭해요!';document.getElementById('rS').textContent=tot+'문제 완료!';}
-  else if(pct>=60){document.getElementById('rE').textContent='💪';document.getElementById('rT').textContent='좋은 시도!';document.getElementById('rS').textContent='계속 반복!';}
-  else{document.getElementById('rE').textContent='🎯';document.getElementById('rT').textContent='계속 도전!';document.getElementById('rS').textContent='반복이 핵심';}
-  document.getElementById('nxB').style.display='none';
-  ss('result');
+  document.getElementById('rTime').textContent=m+':'+(s<10?'0':'')+s;document.getElementById('rRT').textContent='-';
+  document.getElementById('rStars').textContent=pct>=90?'★★★':pct>=70?'★★☆':'★☆☆';
+  document.getElementById('rXp').textContent='+'+bonus+' 보너스 XP';
+  if(pct>=80){document.getElementById('rEmoji').textContent='🎉';document.getElementById('rTitle').textContent='훌륭해요!';document.getElementById('rSub').textContent=tot+'문제 완료!';}
+  else{document.getElementById('rEmoji').textContent='💪';document.getElementById('rTitle').textContent='좋은 시도!';document.getElementById('rSub').textContent='계속 반복!';}
+  document.getElementById('nextBtn').style.display='none';ss('result');
 }
 
-// ===== Stats =====
-function rSt(){
+// ===== STATS =====
+function renderStats(){
   const tot=S.tc+S.tw,acc=tot?Math.round(S.tc/tot*100):0;
   document.getElementById('stT').textContent=tot;document.getElementById('stA').textContent=acc+'%';
-  document.getElementById('stC').textContent=S.bc;document.getElementById('stD').textContent=S.days.length;
-  document.getElementById('naL').innerHTML=NN.map(n=>{const k='n_'+n,s=S.ns[k],p=s?Math.round(s.c/s.t*100):0;
+  document.getElementById('stC').textContent=S.bc;document.getElementById('stD').textContent=S.sk;
+  document.getElementById('stTime').textContent=fmtHM(S.totalSec||0);
+  document.getElementById('stGoal').textContent=Math.min(Math.round((S.days||[]).length/180*100),100)+'%';
+  const lv=getLevel(S.xp);const rank=getRank(lv);
+  const slv=document.getElementById('stLv');if(slv)slv.textContent=rank.icon+' Lv.'+lv;
+  const srk=document.getElementById('stRank');if(srk)srk.textContent=rank.name+(lv>=100?' ✓':' · 다음: '+getRank(lv+1>100?100:lv+1).name);
+  // Streak calendar (14 days)
+  const row=document.getElementById('streakRow');row.innerHTML='';
+  for(let i=13;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const ds=d.toISOString().slice(0,10);
+    const active=S.days.includes(ds);
+    const isToday=i===0;
+    const el=document.createElement('div');el.className='streak-day'+(active?' active':'')+(isToday?' today':'');
+    el.textContent=(d.getDate());
+    row.appendChild(el);
+  }
+  // Note accuracy
+  document.getElementById('noteAccList').innerHTML=NN.map(n=>{
+    const k='n_'+n,s=S.ns[k],p=s?Math.round(s.c/s.t*100):0;
     const col=p>=80?'var(--ok)':p>=50?'var(--acc)':'var(--ng)';
-    return`<div class="nr"><span class="nn">${n}</span><div class="bb"><div class="bf" style="width:${p}%;background:${s?col:'var(--sf2)'}"></div></div><span class="pc2">${s?p+'%':'-'}</span></div>`;
+    return`<div class="note-bar"><span class="nn">${n}</span><div class="bb"><div class="bf" style="width:${p}%;background:${s?col:'var(--sf2)'}"></div></div><span class="pc">${s?p+'%':'-'}</span></div>`;
+  }).join('');
+  // Session history
+  const sl=document.getElementById('sessionList');
+  if(!S.sessions||S.sessions.length===0){sl.innerHTML='<div style="text-align:center;color:var(--txd);font-size:13px;padding:20px;">아직 기록이 없어요</div>';return;}
+  sl.innerHTML=S.sessions.slice(0,10).map(s=>{
+    const d=new Date(s.date);
+    const ds=`${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;
+    const stars=s.pct>=90?'★★★':s.pct>=70?'★★☆':'★☆☆';
+    return`<div class="session-item"><span class="si-date">${ds}</span><div class="si-info"><div class="si-score">${s.lvTitle}</div><div class="si-sub">${s.ok}정답 / ${s.ok+s.ng}문제 · ${s.pct}% · +${s.xp}XP</div></div><span class="si-stars">${stars}</span></div>`;
   }).join('');
 }
-function resetSt(){if(confirm('통계를 초기화할까요?')){S.ns={};S.tc=0;S.tw=0;S.bc=0;S.sk=0;S.days=[];S.ld=null;S.xp=0;svS();rSt();}}
+function resetStats(){if(confirm('통계를 초기화할까요?')){S.ns={};S.tc=0;S.tw=0;S.bc=0;S.sk=0;S.days=[];S.ld=null;S.xp=0;S.xpDayStart=0;S.sessions=[];S.hasPerfect=false;S.unlockedAchs=[];S.lv100achieved=false;saveState();renderStats();}}
 
-// ===== Time Tracking =====
-var _sessionStart=null;
-var _sessionScreen=null;
-var _tickerId=null;
-
-function startSession(screen){
-  _sessionStart=Date.now();
-  _sessionScreen=screen;
-  // Live ticker for routine time display
-  if(_tickerId)clearInterval(_tickerId);
-  _tickerId=setInterval(updRoutineTime,1000);
+// ===== ACHIEVEMENTS =====
+function renderAch(){
+  document.getElementById('achGrid').innerHTML=ACHS.map(a=>{
+    const unlocked=S.unlockedAchs&&S.unlockedAchs.includes(a.id);
+    return`<div class="ach-card ${unlocked?'unlocked':'locked'}">
+      <div class="ach-icon">${a.icon}</div>
+      <div class="ach-name">${a.name}</div>
+      <div class="ach-desc">${a.desc}</div>
+      <span class="ach-badge ${unlocked?'gold':'locked'}">${unlocked?'달성':'미달성'}</span>
+    </div>`;
+  }).join('');
 }
 
+// ===== TIME TRACKING =====
+var _sessionStart=null,_tickerId=null;
+function startSession(screen){_sessionStart=Date.now();if(_tickerId)clearInterval(_tickerId);_tickerId=setInterval(updTodayTime,1000);}
 function endSession(){
   if(!_sessionStart)return;
   const sec=Math.round((Date.now()-_sessionStart)/1000);
-  if(sec<2)return; // ignore tiny sessions
-  const today=new Date().toISOString().slice(0,10);
-  if(!S.dailySec)S.dailySec={};
-  if(!S.dailySec[today])S.dailySec[today]=0;
-  S.dailySec[today]+=sec;
-  S.totalSec=(S.totalSec||0)+sec;
-  svS();
-  _sessionStart=null;_sessionScreen=null;
-  if(_tickerId){clearInterval(_tickerId);_tickerId=null;}
+  if(sec<2)return;
+  const td=new Date().toISOString().slice(0,10);
+  if(!S.dailySec)S.dailySec={};if(!S.dailySec[td])S.dailySec[td]=0;
+  S.dailySec[td]+=sec;S.totalSec=(S.totalSec||0)+sec;
+  saveState();_sessionStart=null;if(_tickerId){clearInterval(_tickerId);_tickerId=null;}
+}
+function getTodaySec(){const td=new Date().toISOString().slice(0,10);let b=(S.dailySec&&S.dailySec[td])||0;if(_sessionStart)b+=Math.round((Date.now()-_sessionStart)/1000);return b;}
+function fmtTime(s){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),ss=s%60;if(h>0)return h+':'+(m<10?'0':'')+m+':'+(ss<10?'0':'')+ss;return m+':'+(ss<10?'0':'')+ss;}
+function fmtHM(s){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60);if(h>0)return h+'h '+m+'m';return m+'m';}
+function getTodayXp(){return Math.max(0,S.xp-(S.xpDayStart||0));}
+function updTodayTime(){
+  const todayXp=getTodayXp();
+  const lv=getLevel(S.xp);
+  const dayCount=(S.days||[]).length;
+  const e=document.getElementById('tToday');if(e)e.textContent='+'+todayXp;
+  const e2=document.getElementById('tTotal');if(e2)e2.textContent='Lv.'+lv;
+  const e3=document.getElementById('tGoal');if(e3)e3.textContent=dayCount+'일';
 }
 
-function getTodaySec(){
-  const today=new Date().toISOString().slice(0,10);
-  let base=(S.dailySec&&S.dailySec[today])||0;
-  if(_sessionStart)base+=Math.round((Date.now()-_sessionStart)/1000);
-  return base;
-}
-
-function fmtTime(sec){
-  const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;
-  if(h>0)return h+':'+(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
-  return m+':'+(s<10?'0':'')+s;
-}
-
-function fmtHM(sec){
-  const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60);
-  if(h>0)return h+'h '+m+'m';
-  return m+'m';
-}
-
-function updRoutineTime(){
-  const todaySec=getTodaySec();
-  const totalSec=(S.totalSec||0)+(_sessionStart?Math.round((Date.now()-_sessionStart)/1000):0);
-  document.getElementById('rTodayTime').textContent=fmtTime(todaySec);
-  document.getElementById('rTotalTime').textContent=fmtHM(totalSec);
-  const goalPct=Math.min(Math.round(totalSec/72000*100),100); // 20h = 72000s
-  document.getElementById('rGoalPct').textContent=goalPct+'%';
-}
-
-// ===== Daily Routine =====
-function rRoutine(){
-  const today=new Date().toISOString().slice(0,10);
-  if(!S.routine||S.routine.date!==today){
-    S.routine={date:today,steps:[false,false,false]};
-    svS();
-  }
-  const r=S.routine;
-  const steps=[
-    {icon:'🎹',iconCls:'a',title:'단음 훈련 15분',sub:`현재 레벨: N-${S.nul}`,time:'15분',done:r.steps[0],idx:0,action:()=>{const lv=NL[S.nul-1];if(lv)startLv(lv.id,'note');}},
-    {icon:'🎨',iconCls:'b',title:'화음 색깔 훈련 10분',sub:`현재 레벨: C-${S.cul}`,time:'10분',done:r.steps[1],idx:1,action:()=>{const lv=CL[S.cul-1];if(lv)startLv(lv.id,'chord');}},
-    {icon:'♾️',iconCls:'c',title:'무한 퀴즈 5분',sub:'틀린 음 집중 반복',time:'5분',done:r.steps[2],idx:2,action:()=>{tab('endless');}},
-  ];
-
-  const dayNum=S.days.length||1;
-  document.getElementById('rDay').textContent=`Day ${dayNum}`;
-
-  document.getElementById('rSteps').innerHTML=steps.map((s,i)=>`
-    <div class="rstep ${s.done?'done':''}" onclick="routineAction(${i})" id="rstep${i}">
-      <div class="ricon ${s.iconCls}">${s.icon}</div>
-      <div class="rinfo"><div class="rtitle">${s.title}</div><div class="rsub">${s.sub}</div></div>
-      <span class="rtime">${s.time}</span>
-      <div class="rcheck">✓</div>
-    </div>`).join('');
-
-  const doneCount=r.steps.filter(Boolean).length;
-  document.getElementById('rPF').style.width=(doneCount/3*100)+'%';
-  document.getElementById('rPP').textContent=doneCount+'/3';
-  document.getElementById('rComplete').classList.toggle('show',doneCount===3);
-
-  updRoutineTime();
-  window._routineSteps=steps;
-}
-
-function routineAction(idx){
-  const steps=window._routineSteps;
-  if(!steps||!steps[idx])return;
-  window._activeRoutineStep=idx;
-  steps[idx].action();
-}
-
-function markRoutineStep(idx){
-  if(!S.routine)return;
-  S.routine.steps[idx]=true;
-  svS();
-}
-
-// Override finish to auto-mark routine + save session time
-const _origFinish=finish;
-finish=function(){
-  endSession(); // save time before finishing
-  _origFinish();
-  if(typeof window._activeRoutineStep==='number'){
-    markRoutineStep(window._activeRoutineStep);
-    window._activeRoutineStep=null;
-  }else{
-    if(Q.lv&&Q.lv.cat==='note')markRoutineStep(0);
-    else if(Q.lv&&Q.lv.cat==='chord')markRoutineStep(1);
-  }
-};
-
-// Override startLv to begin session tracking
-const _origStartLv=startLv;
-startLv=function(id,cat){
-  endSession(); // end previous if any
-  _origStartLv(id,cat);
-  startSession('quiz');
-};
-
-// Override tab to refresh routine + track endless quiz
-const _origTab=tab;
-tab=function(t){
-  endSession();
-  _origTab(t);
-  if(t==='train')rRoutine();
-};
-
-// Also update stats page with time
-const _origRSt=rSt;
-rSt=function(){
-  _origRSt();
-  const totalSec=S.totalSec||0;
-  document.getElementById('stTime').textContent=fmtHM(totalSec);
-  document.getElementById('stGoal').textContent=Math.min(Math.round(totalSec/72000*100),100)+'%';
-};
-
-// Save session on page unload
 window.addEventListener('beforeunload',()=>endSession());
 
-// ===== Init =====
-svS();rCards();rRoutine();
+// ===== INIT =====
+saveState();renderLevelMap();renderToday();
 </script>
 </body>
 </html>
