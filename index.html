@@ -491,75 +491,59 @@ img{-webkit-touch-callout:none;}
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── Hub 말풍선 메모 — Figma 팔레트 기반 큰 타원 ── */
-.hub-bubble-wrap{position:relative;max-width:100%;padding-bottom:52px;}
+/* ── Hub 메모 카드 — 미니멀 프리미엄 블랙 ── */
+.hub-bubble-wrap{position:relative;max-width:100%;padding-bottom:28px;}
 .hub-bubble-label{
-  font-family:'Nunito',sans-serif;font-size:10px;font-weight:800;
+  font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;
   letter-spacing:.20em;text-transform:uppercase;
   color:rgba(255,255,255,.22);margin-bottom:16px;
 }
 .hub-bubble{
   position:relative;
-  background-color:#faf9f6;
-  border-radius:96px;
-  padding:36px 44px 30px;
+  background-color:#0f0f0f;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.07);
+  padding:32px 48px 28px;
   min-height:160px;
-  filter:
-    drop-shadow(0 12px 40px rgba(0,0,0,0.52))
-    drop-shadow(0 3px 10px rgba(0,0,0,0.22));
+  box-shadow:0 8px 32px rgba(0,0,0,0.6),0 2px 8px rgba(0,0,0,0.4);
 }
-/* 구름 꼬리 — 큰 원 */
-.hub-bubble::before{
-  content:'';position:absolute;
-  bottom:-14px;left:60px;
-  width:28px;height:28px;
-  background:#faf9f6;
-  border-radius:50%;
-  filter:drop-shadow(0 6px 12px rgba(0,0,0,0.25));
-}
-/* 구름 꼬리 — 작은 원 */
-.hub-bubble::after{
-  content:'';position:absolute;
-  bottom:-30px;left:46px;
-  width:16px;height:16px;
-  background:#faf9f6;
-  border-radius:50%;
-}
+.hub-bubble::before{display:none;}
+.hub-bubble::after{display:none;}
 .hub-bubble-memo{
-  font-family:'Fredoka',sans-serif;
-  font-size:20px;font-weight:600;line-height:1.75;
-  color:rgba(28,18,18,0.74);
+  font-family:'Inter',sans-serif;
+  font-size:18px;font-weight:400;line-height:1.7;
+  color:rgba(255,255,255,0.82);
   outline:none;min-height:72px;
   cursor:text;white-space:pre-wrap;word-break:break-word;
-  caret-color:#333;
+  caret-color:rgba(255,255,255,0.6);
 }
 .hub-bubble-memo:empty::before{content:none;}
 .hub-bubble-footer{
   display:flex;justify-content:flex-end;margin-top:14px;
-  border-top:1px solid rgba(20,15,15,0.07);padding-top:9px;
+  border-top:1px solid rgba(255,255,255,0.06);padding-top:9px;
 }
 .hub-bubble-save{
-  font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;
+  font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:600;
   letter-spacing:.12em;text-transform:uppercase;
-  color:rgba(0,0,0,0.22);cursor:pointer;
+  color:rgba(255,255,255,0.22);cursor:pointer;
   transition:color .2s;background:none;border:none;padding:0;
 }
-.hub-bubble-save:hover{color:rgba(0,0,0,0.50);}
+.hub-bubble-save:hover{color:rgba(255,255,255,0.50);}
 .hub-bubble-saved{
-  font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;
+  font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:600;
   letter-spacing:.12em;text-transform:uppercase;
-  color:rgba(0,0,0,0.30);opacity:0;transition:opacity .4s;
+  color:rgba(255,255,255,0.30);opacity:0;transition:opacity .4s;
 }
 .hub-bubble-nav-row{display:flex;align-items:center;justify-content:center;margin-bottom:12px;padding:0 2px;}
-.hub-nav-btn{background:none;border:none;color:rgba(20,15,15,0.20);font-size:28px;line-height:1;cursor:pointer;padding:0 6px;border-radius:50%;transition:color .2s;font-family:'Nunito',sans-serif;position:absolute;top:50%;transform:translateY(-50%);z-index:2;}
-.hub-nav-btn:hover{color:rgba(20,15,15,0.55);}
+.hub-nav-btn{background:none;border:none;color:rgba(255,255,255,0.20);font-size:28px;line-height:1;cursor:pointer;padding:0 6px;border-radius:50%;transition:color .2s;font-family:'Inter',sans-serif;position:absolute;top:50%;transform:translateY(-50%);z-index:2;}
+.hub-nav-btn:hover{color:rgba(255,255,255,0.55);}
 #hubBubblePrev{left:14px;}
 #hubBubbleNext{right:14px;}
 .hub-page-dots{display:flex;gap:6px;align-items:center;}
-.hub-pdot{width:6px;height:6px;border-radius:50%;background:rgba(20,15,15,0.14);transition:background .25s,transform .25s;display:inline-block;}
-.hub-pdot.active{background:rgba(20,15,15,0.48);transform:scale(1.3);}
-.hub-quote-text{font-family:'Fredoka',sans-serif;font-size:20px;font-weight:600;line-height:1.75;color:rgba(28,18,18,0.74);margin-bottom:10px;min-height:72px;}
-.hub-quote-author{font-family:'Fredoka',sans-serif;font-size:14px;font-weight:500;color:rgba(28,18,18,0.45);text-align:right;}
+.hub-pdot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.18);transition:background .25s,transform .25s;display:inline-block;}
+.hub-pdot.active{background:rgba(255,255,255,0.65);transform:scale(1.3);}
+.hub-quote-text{font-family:'Inter',sans-serif;font-size:18px;font-weight:400;line-height:1.7;color:rgba(255,255,255,0.82);margin-bottom:10px;min-height:72px;}
+.hub-quote-author{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:500;letter-spacing:.05em;color:rgba(255,255,255,0.35);text-align:right;}
 .hub-bubble.hub-no-lines{background-image:none;}
 
 /* Todo day cells */
@@ -655,27 +639,22 @@ img{-webkit-touch-callout:none;}
     width:100%!important;padding-bottom:0!important;
   }
 
-  /* ══ 4. 말풍선 (모바일 축소) ══ */
-  .hub-bubble-wrap{max-width:100%!important;padding-bottom:44px!important;}
+  /* ══ 4. 메모 카드 (모바일 축소) ══ */
+  .hub-bubble-wrap{max-width:100%!important;padding-bottom:20px!important;}
   .hub-bubble{
-    border-radius:72px!important;
-    padding:26px 30px 20px!important;
+    border-radius:10px!important;
+    padding:24px 36px 22px!important;
     min-height:130px!important;
-    filter:drop-shadow(0 6px 20px rgba(0,0,0,0.45))!important;
+    box-shadow:0 4px 20px rgba(0,0,0,0.55)!important;
+    filter:none!important;
   }
-  .hub-quote-text{font-size:18px!important;min-height:56px!important;}
+  .hub-quote-text{font-size:16px!important;min-height:56px!important;}
   .hub-nav-btn{font-size:24px!important;}
   #hubBubblePrev{left:10px!important;}
   #hubBubbleNext{right:10px!important;}
-  .hub-bubble::before{
-    width:22px!important;height:22px!important;
-    bottom:-11px!important;left:48px!important;
-  }
-  .hub-bubble::after{
-    width:13px!important;height:13px!important;
-    bottom:-24px!important;left:38px!important;
-  }
-  .hub-bubble-memo{font-size:18px!important;min-height:56px!important;}
+  .hub-bubble::before{display:none!important;}
+  .hub-bubble::after{display:none!important;}
+  .hub-bubble-memo{font-size:16px!important;min-height:56px!important;}
 
   /* ══ 5. 앱 카드 세로 스택 ══ */
   #hubCardGrid{
