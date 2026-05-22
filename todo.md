@@ -27,10 +27,15 @@
 - [ ] Firestore 저장/불러오기 로직 (좋아하는 곡과 동일 포맷)
 - [ ] 추가/삭제 기능 구현
 
-### 2. 밝은 모드(Light Mode) 추가
-- [ ] CSS 변수 기반 light mode 정의
-- [ ] Settings 페이지에 라이트/다크 토글 버튼
-- [ ] `localStorage`에 모드 저장 및 복원
+### 2. 밝은 모드(Light Mode)
+- [x] CSS 변수 기반 light mode 정의
+- [x] Settings 페이지에 라이트/다크 토글 버튼
+- [x] `localStorage`에 모드 저장 및 복원
+- [x] 라이트모드 가독성 보정 (2026-05-23)
+  - 연한 글씨 진하기 상향 (`--mk-outline`/`--mk-outline-var` 다크닝 + `text-outline/40~70` 오버라이드)
+  - Weekly To-Do 박스 시그니처 연핑크 적용
+  - My Fragments/갤러리 라이트모드 색상 적용 + `#blackFadeOverlay` 라이트모드 비활성화
+- [ ] (선택) Todo 페이지(`#page-todo`) 라이트모드 보정 — `.todo-cal-num` 등 흰 글씨 안 보임
 
 ### 3. Obsidian 동기화 — 추가 개선 (선택)
 - [ ] Obsidian에서 수정한 내용 Pull 시 기존 메모 업데이트 (현재는 추가만)

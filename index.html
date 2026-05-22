@@ -72,8 +72,8 @@ html.light{
   --mk-border-hi:#d0c6c2;
   --mk-surface-lo:#ede6e3;
   --mk-on-surf:#1c1110;
-  --mk-outline:#6d5a56;
-  --mk-outline-var:#9b8480;
+  --mk-outline:#574741;
+  --mk-outline-var:#7b665f;
   --mk-card:rgba(0,0,0,.025);
   --mk-input:rgba(0,0,0,.03);
 }
@@ -874,6 +874,39 @@ html.light section[data-card] h2,html.light section[data-card] h3{color:var(--mk
 html.light section[data-card] li span.font-body{color:var(--mk-outline);}
 /* Music module app back button in light nav area */
 html.light .music-app-back{background:rgba(245,242,240,.9);border-color:var(--mk-border);color:#FF3B00;}
+/* ── Light mode: faint text contrast boost ── */
+html.light .text-outline\/40,html.light .text-outline\/50,html.light .text-outline\/60,html.light .text-outline\/70{color:var(--mk-outline) !important;}
+html.light .text-white\/40{color:var(--mk-outline) !important;}
+/* ── Light mode: Weekly To-Do — signature soft pink ── */
+html.light section.todo-hub{background:#ffe9e3 !important;border-color:#ffcabd !important;}
+html.light section.todo-hub:hover{border-color:#ffb4a2 !important;}
+html.light .todo-day{background:rgba(255,255,255,.6) !important;border-color:#ffd6cb !important;}
+html.light .todo-day:hover{border-color:#ffb4a2 !important;}
+html.light .todo-day.today{border-color:#FF3B00 !important;background:rgba(255,59,0,.06) !important;}
+html.light .todo-day-num{color:var(--mk-on-surf) !important;}
+html.light .todo-day.today .todo-day-num{color:#FF3B00 !important;}
+html.light .todo-mini{color:var(--mk-outline) !important;}
+/* ── Light mode: My Fragments / gallery ── */
+html.light #blackFadeOverlay{display:none !important;}
+html.light .gallery-marquee-wrap{background:var(--mk-bg) !important;border-top-color:rgba(0,0,0,.1) !important;border-bottom-color:rgba(0,0,0,.1) !important;}
+html.light .gallery-marquee-item{color:var(--mk-on-surf) !important;}
+html.light .gal-sep-num{color:rgba(255,59,0,.16) !important;border-right-color:rgba(0,0,0,.1) !important;}
+html.light .gal-sep-tag{color:var(--mk-outline) !important;}
+html.light .gallery-section::before,html.light .gallery-section::after{background:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.06) 8%,rgba(0,0,0,.06) 92%,transparent 100%) !important;}
+html.light .mob-feed-hdr{background:var(--mk-bg) !important;}
+html.light .mob-feed-hdr-title{color:var(--mk-on-surf) !important;}
+html.light .mob-feed-hdr-coll{color:var(--mk-outline) !important;}
+html.light .mob-feed-hdr-year{color:var(--mk-outline-var) !important;}
+html.light .mob-post{background:var(--mk-surface) !important;}
+html.light .mob-post:active{background:var(--mk-surface-lo) !important;}
+html.light .mob-post-avatar{background:var(--mk-surface-lo) !important;}
+html.light .mob-post-user{color:var(--mk-on-surf) !important;}
+html.light .mob-post-tag{color:var(--mk-outline) !important;}
+html.light .mob-post-more{color:var(--mk-outline-var) !important;}
+html.light .mob-post-img{background:var(--mk-surface-lo) !important;}
+html.light .mob-post-caption{color:var(--mk-outline) !important;}
+html.light .mob-post-caption-bold{color:var(--mk-on-surf) !important;}
+html.light .mob-post-cta{color:#FF3B00 !important;}
 </style>
 </head>
 <body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-on-primary-container">
