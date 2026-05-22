@@ -78,8 +78,9 @@ html.light{
   --mk-input:rgba(0,0,0,.03);
 }
 body{background:var(--mk-bg);color:var(--mk-on-surf);transition:background .3s,color .3s;}
-/* Light mode nav overrides */
-html.light nav.fixed.top-0{background:rgba(245,242,240,.93) !important;border-bottom-color:rgba(0,0,0,.07) !important;}
+/* Light mode nav overrides — 상단 바를 하단 바처럼 어두운 톤으로 */
+html.light nav.fixed.top-0{background:rgba(19,19,19,.6) !important;border-bottom-color:rgba(255,255,255,.06) !important;}
+html.light nav.fixed.top-0 .text-\[\#ffb4a2\]{color:#ffb4a2 !important;}
 html.light nav .bg-\[#131313\]\/60{background:rgba(245,242,240,.88) !important;border-color:var(--mk-border) !important;box-shadow:0 4px 20px rgba(0,0,0,.08) !important;}
 img,video,canvas{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;-o-user-drag:none;user-drag:none;pointer-events:none;}
 img{-webkit-touch-callout:none;}
