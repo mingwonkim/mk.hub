@@ -846,11 +846,11 @@ html.light .border-\[#252525\]{border-color:var(--mk-border) !important;}
 html.light .border-\[#353535\]{border-color:var(--mk-border-hi) !important;}
 html.light .border-white\/\[\.03\]{border-color:var(--mk-border) !important;}
 /* Hub card backgrounds */
-html.light section[data-card]{background:rgba(255,255,255,.9) !important;border-color:var(--mk-border) !important;}
+html.light section[data-card]{background:#ffe9e3 !important;border-color:#ffcabd !important;}
 /* Writing lines */
 html.light .writing-line{border-bottom-color:rgba(0,0,0,.06) !important;}
 /* folder-card additional */
-html.light .folder-card{background:var(--mk-surface) !important;border-color:var(--mk-border) !important;box-shadow:0 2px 8px rgba(0,0,0,.08);}
+html.light .folder-card{background:#ffe9e3 !important;border-color:#ffcabd !important;box-shadow:0 2px 8px rgba(0,0,0,.08);}
 html.light .folder-card.add-card{background:transparent !important;border-color:var(--mk-border-hi) !important;}
 /* mk-card hover */
 html.light .mk-card:hover{background:rgba(0,0,0,.04) !important;}
@@ -890,7 +890,7 @@ html.light .todo-mini{color:var(--mk-outline) !important;}
 html.light #blackFadeOverlay{display:none !important;}
 html.light .gallery-marquee-wrap{background:var(--mk-bg) !important;border-top-color:rgba(0,0,0,.1) !important;border-bottom-color:rgba(0,0,0,.1) !important;}
 html.light .gallery-marquee-item{color:var(--mk-on-surf) !important;}
-html.light .gal-sep-num{color:rgba(255,59,0,.16) !important;border-right-color:rgba(0,0,0,.1) !important;}
+html.light .gal-sep-num{color:rgba(255,59,0,.5) !important;border-right-color:rgba(0,0,0,.1) !important;}
 html.light .gal-sep-tag{color:var(--mk-outline) !important;}
 html.light .gallery-section::before,html.light .gallery-section::after{background:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.06) 8%,rgba(0,0,0,.06) 92%,transparent 100%) !important;}
 html.light .mob-feed-hdr{background:var(--mk-bg) !important;}
@@ -907,6 +907,19 @@ html.light .mob-post-img{background:var(--mk-surface-lo) !important;}
 html.light .mob-post-caption{color:var(--mk-outline) !important;}
 html.light .mob-post-caption-bold{color:var(--mk-on-surf) !important;}
 html.light .mob-post-cta{color:#FF3B00 !important;}
+/* ── Light mode: 흰 칸 → 시그니처 연핑크 ── */
+html.light .app-module-card{background:#ffe9e3 !important;border-color:#ffcabd !important;}
+html.light .amc-icon,html.light .amc-arrow{color:#FF3B00 !important;}
+html.light .folder-card .fc-icon .material-symbols-outlined{color:#FF3B00 !important;}
+/* ── Light mode: 옅은 글씨 가독성 (storage used 수준으로) ── */
+html.light .text-\[\#ffb4a2\]{color:#FF3B00 !important;}
+html.light .text-\[\#ffb4a2\]\/70{color:#FF3B00 !important;}
+html.light .text-\[\#ffb4a2\]\/30{color:var(--mk-outline) !important;}
+html.light .text-on-surface\/40,html.light .text-on-surface\/50,html.light .text-on-surface\/60,html.light .text-on-surface\/70{color:var(--mk-outline) !important;}
+html.light .writing-text{color:var(--mk-outline) !important;}
+/* ── Light mode: 하단 바 선택 안 된 칸 ── */
+html.light .bnav.is-active{color:#FF3B00 !important;}
+html.light .bnav:not(.is-active){color:var(--mk-outline) !important;}
 </style>
 </head>
 <body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-on-primary-container">
@@ -1413,32 +1426,18 @@ html.light .mob-post-cta{color:#FF3B00 !important;}
           <p class="amc-desc" style="font-family:'Noto Sans KR',sans-serif;">코드 사전 · 보이싱 · 진행<br>K-POP 코드 진행 분석</p>
           <div class="amc-arrow">→</div>
         </div>
-        <div class="app-module-card app-module-dim" data-module="dim">
-          <div class="amc-num">04</div>
-          <div class="amc-icon"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 300;">equalizer</span></div>
-          <h3 class="amc-title">Music Analysis</h3>
-          <p class="amc-desc" style="font-family:'Noto Sans KR',sans-serif;">앨범 · 곡 구조 분석<br>준비 중</p>
-          <div class="amc-badge">Soon</div>
-        </div>
         <div class="app-module-card" data-module="favwhy" onclick="openMusicApp('favwhy')">
-          <div class="amc-num">05</div>
+          <div class="amc-num">04</div>
           <div class="amc-icon"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 300;">favorite</span></div>
           <h3 class="amc-title">Favorite Songs</h3>
           <p class="amc-desc" style="font-family:'Noto Sans KR',sans-serif;">내가 좋아하는 곡과<br>그 이유를 기록하는 공간</p>
           <div class="amc-arrow">→</div>
         </div>
         <div class="app-module-card" data-module="playlist" onclick="openMusicApp('playlist')">
-          <div class="amc-num">06</div>
+          <div class="amc-num">05</div>
           <div class="amc-icon"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 300;">headphones</span></div>
           <h3 class="amc-title">My Playlist</h3>
           <p class="amc-desc" style="font-family:'Noto Sans KR',sans-serif;">좋아하는 노래 모음<br>플레이리스트 생성 · 관리</p>
-          <div class="amc-arrow">→</div>
-        </div>
-        <div class="app-module-card" data-module="interesting" onclick="openMusicApp('interesting')">
-          <div class="amc-num">07</div>
-          <div class="amc-icon"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 300;">star</span></div>
-          <h3 class="amc-title">Interesting Songs</h3>
-          <p class="amc-desc" style="font-family:'Noto Sans KR',sans-serif;">흥미로운 곡과<br>그 이유를 기록하는 공간</p>
           <div class="amc-arrow">→</div>
         </div>
       </div>
@@ -1494,43 +1493,6 @@ html.light .mob-post-cta{color:#FF3B00 !important;}
         <div class="flex gap-3">
           <button class="app-action-btn" onclick="saveFavSong()"><span class="material-symbols-outlined text-base">save</span> Save</button>
           <button class="app-ghost-btn" onclick="cancelFavSong()">Cancel</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Interesting Songs -->
-    <div id="musicInterestingView" style="display:none;">
-      <div class="app-subpage-header">
-        <h2 class="app-subpage-title mb-6">흥미로운 노래</h2>
-      </div>
-
-      <div id="intListView">
-        <div class="mb-6"><button class="app-action-btn" onclick="newIntSong()"><span class="material-symbols-outlined text-base">add</span> Add Song</button></div>
-        <div id="intSongList" class="space-y-3"></div>
-      </div>
-
-      <div id="intDetailView" style="display:none;overflow-x:hidden;">
-        <div class="flex items-center gap-4 mb-6">
-          <div style="min-width:0;overflow:hidden;">
-            <div class="font-headline text-xl font-bold tracking-tight" id="intDetailTitle" style="word-break:break-word;"></div>
-            <div class="text-sm text-outline mt-0.5" id="intDetailArtist" style="word-break:break-word;"></div>
-          </div>
-        </div>
-        <div class="int-yt-wrap mb-5">
-          <iframe id="intDetailFrame" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-        </div>
-        <div id="intDetailReason" class="fav-song-reason"></div>
-      </div>
-
-      <div id="intSongEditor" style="display:none;" class="app-editor-card mt-4">
-        <div class="app-editor-label">New Song</div>
-        <input type="text" class="mk-input" id="intSongTitle" placeholder="노래 제목">
-        <input type="text" class="mk-input" id="intSongArtist" placeholder="가수 / 아티스트">
-        <input type="url" class="mk-input" id="intSongYtUrl" placeholder="YouTube URL" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
-        <textarea class="mk-textarea !min-h-[110px]" id="intSongReason" placeholder="이 노래가 흥미로운 이유…"></textarea>
-        <div class="flex gap-3">
-          <button class="app-action-btn" onclick="saveIntSong()"><span class="material-symbols-outlined text-base">save</span> Save</button>
-          <button class="app-ghost-btn" onclick="cancelIntSong()">Cancel</button>
         </div>
       </div>
     </div>
@@ -1835,7 +1797,6 @@ window.openApp=openApp;window.goHub=goHub;window.goBack=goBack;
   hubMemoDoc=doc(db,'mk_app','hub_memo');hubMemo2Doc=doc(db,'mk_app','hub_memo2');
   musicNotesCol=collection(db,'mk_app','data','music_notes');
   favSongsCol=collection(db,'mk_app','data','fav_songs');
-  intSongsCol=collection(db,'mk_app','data','interesting_songs');
   ytKeyDoc=doc(db,'mk_app','settings');masterSettingsDoc=doc(db,'mk_app','master_settings');
   playlistsCol=collection(db,'mk_app','data','playlists');playlistSongsCol=collection(db,'mk_app','data','playlist_songs');
   gallerCol=collection(db,'mk_app','data','gallery');
@@ -2797,7 +2758,7 @@ async function renderBgImages(){
 
 /* ===== Music ===== */
 function openMusicApp(a){
-  ['musicHome','musicAppView','musicNotesView','musicFavWhyView','musicInterestingView','musicPlaylistView'].forEach(id=>{
+  ['musicHome','musicAppView','musicNotesView','musicFavWhyView','musicPlaylistView'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.style.display='none';
   });
   if(a==='pitch'){
@@ -2814,9 +2775,6 @@ function openMusicApp(a){
   }else if(a==='favwhy'){
     document.getElementById('musicFavWhyView').style.display='';
     renderFavSongs();
-  }else if(a==='interesting'){
-    document.getElementById('musicInterestingView').style.display='';
-    renderIntSongs();
   }else if(a==='playlist'){
     document.getElementById('musicPlaylistView').style.display='';
     renderPlaylists();
@@ -2829,7 +2787,7 @@ function closeMusicApp(){
   document.getElementById('bgGrid').style.display='';
 }
 function closeMusicSubView(){
-  ['musicNotesView','musicFavWhyView','musicInterestingView','musicPlaylistView'].forEach(id=>{
+  ['musicNotesView','musicFavWhyView','musicPlaylistView'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.style.display='none';
   });
   document.getElementById('musicHome').style.display='';
@@ -2844,7 +2802,7 @@ function favWhyBack(){
   }
 }
 // 상단 뒤로가기(←)는 항상 Hub
-function musicSmartBack(){var nv=document.getElementById('musicNotesView');var fv=document.getElementById('musicFavWhyView');var iv=document.getElementById('musicInterestingView');var pv=document.getElementById('musicPlaylistView');if(nv&&nv.style.display!=='none'){closeMusicSubView();return;}if(fv&&fv.style.display!=='none'){favWhyBack();return;}if(iv&&iv.style.display!=='none'){intBack();return;}if(pv&&pv.style.display!=='none'){closeMusicSubView();return;}goBack();}
+function musicSmartBack(){var nv=document.getElementById('musicNotesView');var fv=document.getElementById('musicFavWhyView');var pv=document.getElementById('musicPlaylistView');if(nv&&nv.style.display!=='none'){closeMusicSubView();return;}if(fv&&fv.style.display!=='none'){favWhyBack();return;}if(pv&&pv.style.display!=='none'){closeMusicSubView();return;}goBack();}
 window.openMusicApp=openMusicApp;window.closeMusicApp=closeMusicApp;window.closeMusicSubView=closeMusicSubView;window.musicSmartBack=musicSmartBack;window.favWhyBack=favWhyBack;
 
 // ---- Music Notes ----
@@ -3009,93 +2967,6 @@ function cancelFavSong(){
 
 async function delFavSong(id){if(!confirm('Delete?'))return;try{await deleteDoc(doc(db,'mk_app','data','fav_songs',id));}catch(e){}renderFavSongs();}
 window.newFavSong=newFavSong;window.saveFavSong=saveFavSong;window.cancelFavSong=cancelFavSong;window.delFavSong=delFavSong;window.openFavDetail=openFavDetail;window.closeFavDetail=closeFavDetail;
-
-// ---- Interesting Songs ----
-let intSongsCol=null;
-let cachedIntSongs=[],editIntSongId=null;
-
-async function renderIntSongs(){
-  document.getElementById('intListView').style.display='';
-  document.getElementById('intDetailView').style.display='none';
-  document.getElementById('intSongEditor').style.display='none';
-  const el=document.getElementById('intSongList');
-  el.innerHTML='<div class="text-center py-8 text-outline text-sm">Loading...</div>';
-  try{const s=await getDocs(query(intSongsCol,orderBy('c','desc')));cachedIntSongs=[];s.forEach(d=>cachedIntSongs.push({id:d.id,...d.data()}));}catch(e){cachedIntSongs=[];}
-  if(!cachedIntSongs.length){el.innerHTML='<div class="text-center py-12 text-outline text-sm">아직 없어요. 추가해보세요!</div>';return;}
-  el.innerHTML=cachedIntSongs.map(s=>`
-    <div class="fav-list-item" onclick="openIntDetail('${s.id}')">
-      <div class="fav-list-num">★</div>
-      <div class="fav-list-info">
-        <div class="fav-list-title">${escHtml(s.title)||'Untitled'}</div>
-        <div class="fav-list-artist">${escHtml(s.artist)||''}</div>
-      </div>
-      ${s.reason?`<div class="fav-list-reason-preview">${escHtml(s.reason.substring(0,28))}${s.reason.length>28?'…':''}</div>`:''}
-      <span class="fav-list-del" onclick="event.stopPropagation();delIntSong('${s.id}')">✕</span>
-    </div>`).join('');
-}
-
-async function openIntDetail(id){
-  const s=cachedIntSongs.find(x=>x.id===id);if(!s)return;
-  document.getElementById('intListView').style.display='none';
-  document.getElementById('intDetailView').style.display='';
-  document.getElementById('intDetailTitle').textContent=s.title||'Untitled';
-  document.getElementById('intDetailArtist').textContent=s.artist||'';
-  const wrap=document.querySelector('.int-yt-wrap');
-  if(!wrap)return;
-  if(s.videoId&&sanitizeVideoId(s.videoId)){
-    wrap.innerHTML=`<iframe id="intDetailFrame" src="https://www.youtube-nocookie.com/embed/${sanitizeVideoId(s.videoId)}?rel=0&modestbranding=1&autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
-  }else{
-    const q=encodeURIComponent((s.artist?s.artist+' ':'')+s.title+' official MV');
-    wrap.innerHTML=`<iframe id="intDetailFrame" src="https://www.youtube.com/embed?listType=search&list=${q}&rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
-  }
-  const reasonEl=document.getElementById('intDetailReason');
-  if(s.reason){reasonEl.style.display='';const lbl=document.createElement('span');lbl.className='fav-reason-label';lbl.textContent='이유';reasonEl.textContent='';reasonEl.appendChild(lbl);reasonEl.appendChild(document.createTextNode(s.reason));}
-  else{reasonEl.style.display='none';}
-}
-
-function closeIntDetail(){
-  const wrap=document.querySelector('.int-yt-wrap');
-  if(wrap)wrap.innerHTML=`<iframe id="intDetailFrame" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
-  document.getElementById('intDetailView').style.display='none';
-  document.getElementById('intListView').style.display='';
-}
-
-function intBack(){
-  const detailView=document.getElementById('intDetailView');
-  if(detailView&&detailView.style.display!=='none'){closeIntDetail();}
-  else{closeMusicSubView();}
-}
-
-function newIntSong(){
-  if(!isUnlocked){showTextPin(()=>newIntSong());return;}
-  editIntSongId=null;
-  ['intSongTitle','intSongArtist','intSongYtUrl','intSongReason'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('intListView').style.display='none';
-  document.getElementById('intSongEditor').style.display='flex';
-}
-
-async function saveIntSong(){
-  const title=document.getElementById('intSongTitle').value.trim();
-  const artist=document.getElementById('intSongArtist').value.trim();
-  const reason=document.getElementById('intSongReason').value.trim();
-  const ytRaw=document.getElementById('intSongYtUrl')?.value.trim()||'';
-  const videoId=parseVideoId(ytRaw)||null;
-  if(!title){toast('노래 제목을 입력하세요');return;}
-  if(!artist){toast('가수를 입력하세요');return;}
-  if(!ytRaw||!videoId){toast('YouTube URL을 입력하세요');return;}
-  if(!reason){toast('이유를 입력하세요');return;}
-  try{await addDoc(intSongsCol,{title,artist,reason,videoId,c:Date.now()});}catch(e){toast('Save failed');return;}
-  toast('Saved');cancelIntSong();
-}
-
-function cancelIntSong(){
-  document.getElementById('intSongEditor').style.display='none';
-  document.getElementById('intListView').style.display='';
-  renderIntSongs();
-}
-
-async function delIntSong(id){if(!confirm('Delete?'))return;try{await deleteDoc(doc(db,'mk_app','data','interesting_songs',id));}catch(e){}renderIntSongs();}
-window.newIntSong=newIntSong;window.saveIntSong=saveIntSong;window.cancelIntSong=cancelIntSong;window.delIntSong=delIntSong;window.openIntDetail=openIntDetail;window.closeIntDetail=closeIntDetail;window.intBack=intBack;
 
 // ---- Playlists ----
 let playlistsCol=null;
@@ -3750,8 +3621,8 @@ async function openReorderMemo(){
   _showReorderModal('메모 폴더 순서');
 }
 async function openReorderMusic(){
-  var moduleLabels={notes:'Music Notes',pitch:'Absolute Pitch Trainer',chord:'Chord Dictionary',dim:'Music Analysis (Soon)',favwhy:'Favorite Songs',playlist:'My Playlist'};
-  var allIds=['notes','pitch','chord','dim','favwhy','playlist'];
+  var moduleLabels={notes:'Music Notes',pitch:'Absolute Pitch Trainer',chord:'Chord Dictionary',favwhy:'Favorite Songs',playlist:'My Playlist'};
+  var allIds=['notes','pitch','chord','favwhy','playlist'];
   var saved=JSON.parse(localStorage.getItem('musicModuleOrder')||'null');
   var ids=saved||allIds;
   var ordered=ids.filter(function(id){return allIds.indexOf(id)>=0;});

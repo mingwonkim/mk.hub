@@ -22,10 +22,10 @@
 
 ## 남은 작업
 
-### 1. Music 페이지 — 흥미로운 곡 섹션 추가
-- [ ] "흥미로운 곡" 섹션 UI 추가 (뮤비 링크 + 흥미로운 이유 필드)
-- [ ] Firestore 저장/불러오기 로직 (좋아하는 곡과 동일 포맷)
-- [ ] 추가/삭제 기능 구현
+### 1. Music 페이지 — Interesting Songs / Music Analysis 제거 (2026-05-23)
+- [x] Interesting Songs 카드 + 뷰 + JS + Firestore 참조 전체 삭제
+- [x] Music Analysis(준비 중) 카드 삭제, 모듈 번호 재정렬(01~05)
+- 참고: Firestore `interesting_songs` 컬렉션 데이터는 DB에 남아있음 (참조만 제거)
 
 ### 2. 밝은 모드(Light Mode)
 - [x] CSS 변수 기반 light mode 정의
@@ -35,6 +35,8 @@
   - 연한 글씨 진하기 상향 (`--mk-outline`/`--mk-outline-var` 다크닝 + `text-outline/40~70` 오버라이드)
   - Weekly To-Do 박스 시그니처 연핑크 적용
   - My Fragments/갤러리 라이트모드 색상 적용 + `#blackFadeOverlay` 라이트모드 비활성화
+- [x] 흰 칸 → 시그니처 연핑크 (2026-05-23): Hub 카드·음악 모듈 카드·폴더 카드·`#ffe9e3`
+- [x] 옅은 글씨 추가 보정 (2026-05-23): `text-[#ffb4a2]`→`#FF3B00`, `text-on-surface/*`·`writing-text` 다크닝, 하단바 비선택 칸, My Fragments 번호
 - [ ] (선택) Todo 페이지(`#page-todo`) 라이트모드 보정 — `.todo-cal-num` 등 흰 글씨 안 보임
 
 ### 3. Obsidian 동기화 — 추가 개선 (선택)
