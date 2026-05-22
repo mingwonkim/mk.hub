@@ -42,10 +42,14 @@
 
 ### 3. Obsidian 동기화 — 추가 개선 (선택)
 - [x] Pull 시 기존 메모 업데이트 (2026-05-23) — `mk_id` 일치 시 `updateDoc`, 본문 끝 이미지 마크다운 제거
+- [x] `ghPullAll` dot-폴더(.obsidian 등) 제외 (2026-05-23)
 - [ ] 드로잉 전용(`draw` 타입) 메모도 텍스트 없이 이미지만 .md로 동기화
 - [ ] GitHub push 결과를 UI에 표시 (성공/실패 토스트)
 
-### 4. (검토 중) 아이폰 메모앱 → 사이트 자동 동기화
-- Apple Notes는 공개 API 없음 → iOS 단축어(Shortcuts)로 내보내기 필요
-- 유력안: 단축어가 메모를 GitHub repo에 `.md`로 PUT → mk.hub Pull로 가져오기
-- 과제: 단축어 생성 파일엔 `mk_id` 없음 → 재동기화 시 중복 방지 위해 파일경로 매칭 추가 필요
+### 4. 옵시디언 볼트 세팅 (2026-05-23 완료)
+- Obsidian 앱 설치 + 볼트 `C:\CodingProjects\obsidian-vault` 생성
+- 플러그인 6종 사전 설치: Excalidraw/Calendar/Dataview/Obsidian Git/Book Search/Copilot
+- 비공개 repo `mingwonkim/obsidian-vault` 생성 + push
+- 사용자 남은 단계: 볼트 열기·코어플러그인 2개·Copilot 키·mk.hub Settings 연결 (바탕화면 가이드 참고)
+
+### 5. (보류) 아이폰 메모앱 동기화 — 사용자가 안 하기로 함
