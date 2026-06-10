@@ -558,16 +558,14 @@ html.light #memoEditor{background:rgba(255,250,248,.9);}
 .hub-quote-author{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:500;letter-spacing:.05em;color:rgba(255,255,255,0.35);text-align:right;}
 .hub-bubble.hub-no-lines{background-image:none;}
 
-/* Todo day cells */
-.todo-day{background:rgba(255,255,255,.02);border:1px solid #1e1e24;border-radius:10px;padding:10px 8px;min-height:90px;transition:.2s;}
-.todo-day:hover{border-color:rgba(255,180,162,.12);}
-.todo-day.today{border-color:#FF3B00;background:rgba(255,59,0,.06);}
-.todo-day-head{font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#524340;margin-bottom:2px;}
-.todo-day-num{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:#e5e2e1;margin-bottom:6px;}
-.todo-day.today .todo-day-num{color:#FF3B00;}
-.todo-mini{font-family:'Noto Sans KR','Inter',sans-serif;font-size:13px;color:#c4b0ab;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.todo-mini.done{text-decoration:line-through;opacity:.35;}
-.todo-more{font-family:'Space Grotesk',sans-serif;font-size:10px;color:#FF3B00;margin-top:3px;}
+/* Todo day cells — 홈 위클리 위젯 (Todo 페이지 달력과 동일한 언어) */
+.todo-day{background:rgba(255,255,255,.025);border:1px solid #221c1c;border-radius:12px;padding:10px 8px;min-height:96px;transition:.2s;}
+.todo-day:hover{border-color:rgba(255,180,162,.25);}
+.todo-day.today{border-color:rgba(255,59,0,.4);background:rgba(255,59,0,.05);}
+.todo-day-head{font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#524340;margin-bottom:4px;}
+.todo-day-num{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:#e5e2e1;margin-bottom:7px;}
+.todo-day-num .n{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;border-radius:50%;padding:0 3px;margin-left:-4px;}
+.todo-day.today .todo-day-num .n{background:#FF3B00;color:#fff;}
 /* 더보기 버튼 */
 .todo-more-btn{display:flex;align-items:center;gap:2px;background:none;border:none;cursor:pointer;color:#FF3B00;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;padding:2px 0;margin-top:3px;line-height:1;}
 .todo-more-btn:hover{color:#ffb4a2;}
@@ -800,6 +798,12 @@ html.light #memoEditor{background:rgba(255,250,248,.9);}
   .todo-dots{display:flex!important;justify-content:center;}
   .todo-side{padding:18px 16px!important;}
   #page-todo .mb-8{margin-bottom:18px!important;}
+  /* 홈 위클리 위젯 — 모바일: 숫자+점만 */
+  .todo-day{min-height:0!important;padding:7px 4px!important;display:flex;flex-direction:column;align-items:center;}
+  .todo-day-head{margin-bottom:2px!important;}
+  .todo-day-num{margin-bottom:2px!important;}
+  .todo-day-num .n{margin-left:0!important;}
+  .todo-more-btn,.todo-hidden-items{display:none!important;}
 
   /* ══ 9. 기타 페이지 ══ */
   #page-memo,#page-files,#page-music{
@@ -943,7 +947,6 @@ html.light .todo-day:hover{border-color:#ffb4a2 !important;}
 html.light .todo-day.today{border-color:#FF3B00 !important;background:rgba(255,59,0,.06) !important;}
 html.light .todo-day-num{color:var(--mk-on-surf) !important;}
 html.light .todo-day.today .todo-day-num{color:#FF3B00 !important;}
-html.light .todo-mini{color:var(--mk-outline) !important;}
 /* ── Light mode: My Fragments / gallery ── */
 html.light #blackFadeOverlay{display:none !important;}
 html.light .gallery-marquee-wrap{background:var(--mk-bg) !important;border-top-color:rgba(0,0,0,.1) !important;border-bottom-color:rgba(0,0,0,.1) !important;}
@@ -3859,10 +3862,10 @@ function renderTodoHub(){
     var dt=_todos.filter(function(t){return t.date===ds;}).sort(function(a,b){return a.done-b.done;});
     html+='<div class="todo-day'+(isToday?' today':'')+'">';
     html+='<div class="todo-day-head">'+days[i]+'</div>';
-    html+='<div class="todo-day-num">'+d.getDate()+'</div>';
-    /* 처음 3개 */
+    html+='<div class="todo-day-num"><span class="n">'+d.getDate()+'</span></div>';
+    /* 처음 3개 — Todo 페이지와 동일한 칩 스타일 */
     for(var j=0;j<Math.min(dt.length,3);j++){
-      html+='<div class="todo-mini'+(dt[j].done?' done':'')+'">'+escHtml(dt[j].text)+'</div>';
+      html+='<div class="todo-chip'+(dt[j].done?' done':'')+'">'+escHtml(dt[j].text)+'</div>';
     }
     /* 3개 초과분 */
     if(dt.length>3){
@@ -3870,13 +3873,20 @@ function renderTodoHub(){
       /* 숨겨진 항목 */
       html+='<div class="todo-hidden-items" id="thi-'+ds+'">';
       for(var j=3;j<dt.length;j++){
-        html+='<div class="todo-mini'+(dt[j].done?' done':'')+'">'+escHtml(dt[j].text)+'</div>';
+        html+='<div class="todo-chip'+(dt[j].done?' done':'')+'">'+escHtml(dt[j].text)+'</div>';
       }
       html+='</div>';
       /* 더보기 버튼 */
       html+='<button class="todo-more-btn" id="tmb-'+ds+'" data-cnt="'+cnt+'" onclick="toggleTodoExpand(\''+ds+'\',event)">';
       html+='<span class="arrow">▾</span><span class="lbl">+'+cnt+'</span>';
       html+='</button>';
+    }
+    /* 모바일: 점 표시 */
+    if(dt.length){
+      html+='<div class="todo-dots">';
+      dt.slice(0,4).forEach(function(t){html+='<span class="todo-dot'+(t.done?' done':'')+'"></span>';});
+      if(dt.length>4)html+='<span class="todo-dot-more">+'+(dt.length-4)+'</span>';
+      html+='</div>';
     }
     html+='</div>';
   }
@@ -4068,8 +4078,9 @@ function _updateCarousel(animate){
   document.getElementById('picCarouselDots').innerHTML='';
 }
 
-/* 캐러셀 터치 — 수평 스와이프 전용 */
-(function(){
+/* 캐러셀 터치 — 수평 스와이프 전용
+   주의: 이 스크립트는 #picExpandModal 마크업보다 앞에 있어 DOM 준비 후 부착해야 함 */
+function _initCarouselTouch(){
   var cv=document.getElementById('picCarouselView');
   if(!cv)return;
   var tx=0,ty=0,locked=false;
@@ -4090,7 +4101,9 @@ function _updateCarousel(animate){
     locked=false;
   });
   cv.addEventListener('touchcancel',function(){locked=false;});
-})();
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',_initCarouselTouch);
+else _initCarouselTouch();
 
 /* ── 모바일 피드 액션: 좋아요(localStorage 저장) / 공유 / 썸네일 배율 맞춤 ── */
 var _feedLikes={};
@@ -4200,8 +4213,10 @@ function closePicExpand(){
 }
 window.openPicExpand=openPicExpand;window.closePicExpand=closePicExpand;
 
-/* ── iOS 스크롤 락: 모달 열릴 때 메인 스크롤 차단 ── */
-(function(){
+/* ── iOS 스크롤 락: 모달 열릴 때 메인 스크롤 차단 ──
+   주의: #picExpandModal 마크업보다 앞에 있어 DOM 준비 후 부착해야 함.
+   body touch-action은 건드리지 않음 — 5picture iframe 내부 스크롤이 막힘 */
+function _initPicScrollLock(){
   var savedTop=0;
   function lockBody(){
     savedTop=window.scrollY||document.documentElement.scrollTop||0;
@@ -4210,7 +4225,6 @@ window.openPicExpand=openPicExpand;window.closePicExpand=closePicExpand;
     document.body.style.position='fixed';
     document.body.style.top='-'+savedTop+'px';
     document.body.style.width='100%';
-    document.body.style.touchAction='none';
   }
   function unlockBody(){
     document.documentElement.style.overflow='';
@@ -4218,7 +4232,6 @@ window.openPicExpand=openPicExpand;window.closePicExpand=closePicExpand;
     document.body.style.position='';
     document.body.style.top='';
     document.body.style.width='';
-    document.body.style.touchAction='';
     window.scrollTo(0,savedTop);
   }
   /* 모달의 touchmove도 직접 막기 */
@@ -4230,7 +4243,9 @@ window.openPicExpand=openPicExpand;window.closePicExpand=closePicExpand;
     e.preventDefault();
   },{passive:false});
   new MutationObserver(function(muts){muts.forEach(function(m){if(m.attributeName==='style'){var d=modal.style.display;if(!d||d==='none'){unlockBody();}else{lockBody();}}});}).observe(modal,{attributes:true});
-})();
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',_initPicScrollLock);
+else _initPicScrollLock();
 
 /* ── 갤러리 카드 입장 애니메이션 (IntersectionObserver) ── */
 (function(){
@@ -4493,7 +4508,7 @@ setTimeout(function(){
 
 
 
-<div id="picExpandModal" style="display:none;position:fixed;inset:0;z-index:10000;background:#0a0a0a;overflow:hidden;touch-action:none;overscroll-behavior:none;">
+<div id="picExpandModal" style="display:none;position:fixed;inset:0;z-index:10000;background:#0a0a0a;overflow:hidden;overscroll-behavior:none;">
   <!-- 상단 바 -->
   <div style="position:absolute;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;padding:12px 16px;background:linear-gradient(180deg,rgba(10,8,8,.92) 60%,transparent);pointer-events:none;">
     <button onclick="closePicExpand()" style="pointer-events:auto;background:rgba(10,10,10,.8);border:1px solid #353535;border-radius:999px;padding:8px 16px;color:#ffb4a2;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;cursor:pointer;">← Back</button>

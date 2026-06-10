@@ -40,6 +40,16 @@
 - [x] 라이트 모드 대응 + 데스크탑/모바일/라이트 검증 + commit/push
 - 제거됨: addTodoInline / todoCalCellClick / .todo-inline-input (인라인 입력 경로)
 
+### 4차 요청 (2026-06-10)
+- [x] 홈 위클리 투두 위젯 UI를 Todo 페이지 스타일로 통일
+  - 계획 텍스트를 .todo-mini → .todo-chip(빨간 왼쪽 보더 칩, Pretendard)으로 교체
+  - 오늘 날짜 빨간 원형 pill, 셀 라운드/보더 페이지 달력과 통일
+  - 모바일: 칩 숨기고 숫자+점(dot) 표시 (더보기 버튼도 숨김)
+- [x] 모바일 picture1~5 확대 화면 버그 수정 — 원인 2가지
+  - 캐러셀 터치 IIFE·iOS 스크롤락 IIFE가 모달 마크업보다 먼저 실행돼 getElementById가 null → 핸들러 미부착 → DOMContentLoaded 후 초기화로 수정
+  - 모달 inline touch-action:none + lockBody의 body touch-action:none이 5picture iframe 스크롤 차단 → 제거
+- [x] 검증(스와이프 시뮬레이션 01→02→03 확인, 데스크탑/모바일/라이트) + commit/push
+
 ---
 
 ## 완료된 작업 (2026-04-28)
