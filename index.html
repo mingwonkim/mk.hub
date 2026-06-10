@@ -108,80 +108,87 @@ html.light #memoEditor{background:rgba(255,250,248,.9);}
 .mk-btn-danger{background:transparent;color:#ffb4ab;border:1px solid var(--mk-border-hi);}.mk-btn-danger:hover{border-color:#ffb4ab;}
 /* ===== Folder cards — complete redesign ===== */
 .folder-card{
-  background:var(--mk-surface-lo);
+  background:linear-gradient(160deg,rgba(34,30,29,.82),rgba(20,18,18,.82));
+  backdrop-filter:blur(14px);
   border:1px solid var(--mk-border);
-  border-radius:16px;
-  padding:20px 16px 16px;
+  border-radius:18px;
+  padding:18px 16px 16px;
   text-align:left;
   cursor:pointer;
-  transition:all .3s cubic-bezier(.22,.68,0,1.2);
+  transition:border-color .25s,transform .25s,box-shadow .25s;
   position:relative;
   overflow:hidden;
   display:flex;
   flex-direction:column;
   gap:0;
-  min-height:120px;
+  min-height:128px;
 }
 .folder-card::before{
   content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(255,180,162,.05) 0%,transparent 60%);
-  opacity:0;transition:opacity .3s;
+  background:radial-gradient(120% 90% at 18% 0%,rgba(255,180,162,.09),transparent 55%);
+  opacity:0;transition:opacity .3s;pointer-events:none;
 }
-.folder-card:hover{border-color:rgba(255,180,162,.35);transform:translateY(-5px);box-shadow:0 16px 40px rgba(0,0,0,.5);}
+.folder-card:hover{border-color:rgba(255,180,162,.4);transform:translateY(-3px);box-shadow:0 14px 34px rgba(0,0,0,.45);}
 .folder-card:hover::before{opacity:1;}
 .folder-card .fc-del{
-  position:absolute;top:10px;right:12px;
-  font-size:12px;color:rgba(255,255,255,.2);cursor:pointer;
-  transition:color .2s,background .2s;line-height:1;
-  font-family:'Space Grotesk',sans-serif;
-  padding:4px 6px;border-radius:6px;
-}
-.folder-card:hover .fc-del{color:rgba(255,255,255,.45);}
-.folder-card .fc-del:hover,.folder-card .fc-del:active{color:#FF3B00 !important;background:rgba(255,59,0,.1);}
-.folder-card .fc-lock{
-  position:absolute;top:10px;right:34px;
-  font-size:13px;cursor:pointer;
-  transition:opacity .2s;line-height:1;
-  padding:4px 5px;border-radius:6px;
+  position:absolute;top:10px;right:10px;
+  width:26px;height:26px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,.28);cursor:pointer;
+  transition:color .2s,background .2s,opacity .2s;
   opacity:0;
 }
-.folder-card:hover .fc-lock{opacity:1;}
-.folder-card .fc-lock:hover,.folder-card .fc-lock:active{color:#ffb4a2 !important;}
-.folder-card.locked{border-color:rgba(255,180,162,.2);}
-.folder-card.locked .fc-lock{opacity:1;color:rgba(255,180,162,.7);}
-.folder-card.locked .fc-icon{background:rgba(255,180,162,.12);border-color:rgba(255,180,162,.2);}
-.folder-card .fc-icon{
-  width:36px;height:36px;border-radius:10px;
-  background:rgba(255,180,162,.08);
-  border:1px solid rgba(255,180,162,.1);
+.folder-card .fc-del .material-symbols-outlined{font-size:14px;}
+.folder-card:hover .fc-del{opacity:1;}
+.folder-card .fc-del:hover,.folder-card .fc-del:active{color:#FF3B00 !important;background:rgba(255,59,0,.12);}
+.folder-card .fc-lock{
+  position:absolute;top:10px;right:40px;
+  width:26px;height:26px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  margin-bottom:12px;flex-shrink:0;
+  color:rgba(255,180,162,.85);cursor:pointer;
+  background:rgba(255,180,162,.1);
+  border:1px solid rgba(255,180,162,.18);
+  transition:background .2s,color .2s;
 }
-.folder-card .fc-icon .material-symbols-outlined{font-size:18px;color:#ffb4a2;font-variation-settings:'FILL' 1,'wght' 300;}
+.folder-card .fc-lock .material-symbols-outlined{font-size:13px;font-variation-settings:'FILL' 1;}
+.folder-card .fc-lock:hover,.folder-card .fc-lock:active{background:rgba(255,180,162,.2);color:#ffd2c6 !important;}
+.folder-card.locked{border-color:rgba(255,180,162,.22);background:linear-gradient(160deg,rgba(255,180,162,.05),rgba(255,255,255,.01));}
+.folder-card.locked .fc-icon{background:linear-gradient(135deg,rgba(255,180,162,.2),rgba(255,59,0,.1));border-color:rgba(255,180,162,.25);}
+.folder-card.locked .fc-name{letter-spacing:.2em;color:rgba(255,180,162,.55);}
+.folder-card .fc-icon{
+  width:46px;height:46px;border-radius:14px;
+  background:linear-gradient(135deg,rgba(255,180,162,.14),rgba(255,59,0,.06));
+  border:1px solid rgba(255,180,162,.14);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;flex-shrink:0;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+}
+.folder-card .fc-icon .material-symbols-outlined{font-size:22px;color:#ffb4a2;font-variation-settings:'FILL' 1,'wght' 300;}
 .folder-card .fc-name{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:13px;font-weight:700;
+  font-family:'Pretendard Variable',Pretendard,'Inter',sans-serif;
+  font-size:14.5px;font-weight:700;
   color:var(--mk-on-surf);
-  letter-spacing:-.2px;
-  margin-bottom:4px;
+  letter-spacing:-.01em;
+  margin-bottom:3px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .folder-card .fc-meta{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:9px;letter-spacing:.16em;
-  text-transform:uppercase;color:#353535;
+  font-family:'Pretendard Variable',Pretendard,'Inter',sans-serif;
+  font-size:11px;letter-spacing:.02em;
+  color:#6b5a55;
   margin-top:auto;
 }
 .folder-card.add-card{
   background:transparent;
   border-style:dashed;border-color:var(--mk-border);
-  align-items:center;justify-content:center;gap:6px;
+  align-items:center;justify-content:center;gap:7px;
 }
-.folder-card.add-card:hover{border-color:rgba(255,180,162,.3);}
-.folder-card.add-card .material-symbols-outlined{font-size:20px;color:#353535;transition:color .2s;}
-.folder-card.add-card:hover .material-symbols-outlined{color:rgba(255,180,162,.5);}
-.folder-card.add-card .fc-add-label{font-family:'Space Grotesk',sans-serif;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#353535;transition:color .2s;}
-.folder-card.add-card:hover .fc-add-label{color:rgba(255,180,162,.4);}
+.folder-card.add-card:hover{border-color:rgba(255,180,162,.35);transform:none;box-shadow:none;}
+.folder-card.add-card .material-symbols-outlined{font-size:22px;color:#4a3a35;transition:color .2s;}
+.folder-card.add-card:hover .material-symbols-outlined{color:#ffb4a2;}
+.folder-card.add-card .fc-add-label{font-family:'Space Grotesk',sans-serif;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#4a3a35;transition:color .2s;}
+.folder-card.add-card:hover .fc-add-label{color:rgba(255,180,162,.7);}
+@media(hover:none){.folder-card .fc-del{opacity:.55;}}
 
 /* Memo/file item cards */
 /* Draw tool 색상 팔레트 */
@@ -914,6 +921,12 @@ html.light .writing-line{border-bottom-color:rgba(0,0,0,.06) !important;}
 /* folder-card additional */
 html.light .folder-card{background:#ffe9e3 !important;border-color:#ffcabd !important;box-shadow:0 2px 8px rgba(0,0,0,.08);}
 html.light .folder-card.add-card{background:transparent !important;border-color:var(--mk-border-hi) !important;}
+html.light .folder-card .fc-del{color:rgba(0,0,0,.35) !important;}
+html.light .folder-card .fc-del:hover{color:#FF3B00 !important;}
+html.light .folder-card .fc-lock{background:rgba(255,59,0,.08) !important;color:#FF3B00 !important;border-color:rgba(255,59,0,.2) !important;}
+html.light .folder-card.locked{background:#ffe1d8 !important;}
+html.light .folder-card.locked .fc-name{color:rgba(255,59,0,.6) !important;}
+html.light .folder-card .fc-meta{color:var(--mk-outline) !important;}
 /* mk-card hover */
 html.light .mk-card:hover{background:rgba(0,0,0,.04) !important;}
 /* subpage title */
@@ -3080,7 +3093,7 @@ async function renderPlaylists(){
   try{const s=await getDocs(query(playlistsCol,orderBy('c','desc')));cachedPlaylists=[];s.forEach(d=>cachedPlaylists.push({id:d.id,...d.data()}));}catch(e){cachedPlaylists=[];}
   el.innerHTML=cachedPlaylists.map(p=>`
     <div class="folder-card" onclick="openPlaylist('${p.id}')">
-      <span class="fc-del" onclick="event.stopPropagation();delPlaylist('${p.id}')">✕</span>
+      <span class="fc-del" onclick="event.stopPropagation();delPlaylist('${p.id}')"><span class="material-symbols-outlined">close</span></span>
       <div class="fc-icon"><span class="material-symbols-outlined">headphones</span></div>
       <div class="fc-name">${p.name}</div>
       <div class="fc-meta">${p.count||0} songs</div>
@@ -3145,10 +3158,10 @@ async function renderMemoFolders(){
   try{const ms=await getDocs(memosCol);ms.forEach(d=>{const fd=d.data().folder||'none';counts[fd]=(counts[fd]||0)+1;});}catch(e){}
   el.innerHTML=fs.map(f=>`
     <div class="folder-card${f.locked?' locked':''}" onclick="openMemoFolder('${f.id}')">
-      ${f.locked?`<span class="fc-lock" onclick="event.stopPropagation();toggleFolderLock('memo','${f.id}',true)" title="잠금 해제">🔒</span>`:''}      <span class="fc-del" onclick="event.stopPropagation();delMemoFolder('${f.id}')">✕</span>
+      ${f.locked?`<span class="fc-lock" onclick="event.stopPropagation();toggleFolderLock('memo','${f.id}',true)" title="잠금 해제"><span class="material-symbols-outlined">lock</span></span>`:''}      <span class="fc-del" onclick="event.stopPropagation();delMemoFolder('${f.id}')"><span class="material-symbols-outlined">close</span></span>
       <div class="fc-icon"><span class="material-symbols-outlined">${f.locked&&!isUnlocked?'lock':escHtml(f.icon)||'folder'}</span></div>
       <div class="fc-name">${f.locked&&!isUnlocked?'· · ·':escHtml(f.name)}</div>
-      <div class="fc-meta">${f.locked&&!isUnlocked?'Locked':counts[f.id]||0+' notes'}</div>
+      <div class="fc-meta">${f.locked&&!isUnlocked?'Locked':(counts[f.id]||0)+' notes'}</div>
     </div>`).join('')+`
     <div class="folder-card add-card" onclick="newMemoFolder()">
       <span class="material-symbols-outlined">add</span>
@@ -3212,8 +3225,8 @@ function _doOpenMemoFolder(id){
   document.getElementById('memoFolderView').style.display='none';
   document.getElementById('memoInsideFolder').style.display='';
   const lockBtn=!isUnlocked?'':f?.locked
-    ?`<button onclick="toggleFolderLock('memo','${id}',true)" style="margin-left:auto;display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid rgba(255,180,162,.3);border-radius:8px;background:transparent;color:#ffb4a2;font-size:11px;font-family:'Space Grotesk',sans-serif;cursor:pointer;" onmouseover="this.style.background='rgba(255,180,162,.08)'" onmouseout="this.style.background='transparent'"><span style="font-size:14px;">🔒</span>잠금 해제</button>`
-    :`<button onclick="toggleFolderLock('memo','${id}',false)" style="margin-left:auto;display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid #353535;border-radius:8px;background:transparent;color:#a08d88;font-size:11px;font-family:'Space Grotesk',sans-serif;cursor:pointer;" onmouseover="this.style.borderColor='#524340'" onmouseout="this.style.borderColor='#353535'"><span style="font-size:14px;">🔓</span>잠금 설정</button>`;
+    ?`<button onclick="toggleFolderLock('memo','${id}',true)" style="margin-left:auto;display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid rgba(255,180,162,.3);border-radius:8px;background:transparent;color:#ffb4a2;font-size:11px;font-family:'Space Grotesk',sans-serif;cursor:pointer;" onmouseover="this.style.background='rgba(255,180,162,.08)'" onmouseout="this.style.background='transparent'"><span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1;">lock</span>잠금 해제</button>`
+    :`<button onclick="toggleFolderLock('memo','${id}',false)" style="margin-left:auto;display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid #353535;border-radius:8px;background:transparent;color:#a08d88;font-size:11px;font-family:'Space Grotesk',sans-serif;cursor:pointer;" onmouseover="this.style.borderColor='#524340'" onmouseout="this.style.borderColor='#353535'"><span class="material-symbols-outlined" style="font-size:14px;">lock_open</span>잠금 설정</button>`;
   document.getElementById('memoBreadcrumb').innerHTML=`<span class="cursor-pointer hover:text-[#ffb4a2] transition-colors" onclick="backToMemoFolders()">Notepad</span><span class="text-outline/40 mx-2">›</span><span class="text-on-surface font-bold flex items-center gap-1">${iconHtml(f?.icon||'folder','16px','#ffb4a2')} ${escHtml(f?.name)||'폴더'}</span>${lockBtn}`;
   renderMemos();
 }
@@ -3577,10 +3590,10 @@ async function renderFileFolders(){
     const sz=sizes[f.id]||0;
     const szStr=sz<1048576?(sz/1024).toFixed(0)+' KB':(sz/1048576).toFixed(1)+' MB';
     return`<div class="folder-card${f.locked?' locked':''}" onclick="openFileFolder('${f.id}')">
-      ${f.locked?`<span class="fc-lock" onclick="event.stopPropagation();toggleFolderLock('files','${f.id}',true)" title="잠금 해제">🔒</span>`:''}      <span class="fc-del" onclick="event.stopPropagation();delFileFolder('${f.id}')">✕</span>
+      ${f.locked?`<span class="fc-lock" onclick="event.stopPropagation();toggleFolderLock('files','${f.id}',true)" title="잠금 해제"><span class="material-symbols-outlined">lock</span></span>`:''}      <span class="fc-del" onclick="event.stopPropagation();delFileFolder('${f.id}')"><span class="material-symbols-outlined">close</span></span>
       <div class="fc-icon"><span class="material-symbols-outlined">${f.locked&&!isUnlocked?'lock':escHtml(f.icon)||'folder'}</span></div>
       <div class="fc-name">${f.locked&&!isUnlocked?'· · ·':escHtml(f.name)}</div>
-      <div class="fc-meta">${f.locked&&!isUnlocked?'Locked':counts[f.id]||0+' files · '+szStr}</div>
+      <div class="fc-meta">${f.locked&&!isUnlocked?'Locked':(counts[f.id]||0)+' files · '+szStr}</div>
     </div>`;
   }).join('')+`<div class="folder-card add-card" onclick="newFileFolder()">
     <span class="material-symbols-outlined">add</span>
@@ -3602,8 +3615,8 @@ function _doOpenFileFolder(id){
   document.getElementById('fileFolderView').style.display='none';
   document.getElementById('fileInsideFolder').style.display='';
   const lockBtn=!isUnlocked?'':f?.locked
-    ?`<button onclick="toggleFolderLock('files','${id}',true)" style="margin-left:auto;display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid rgba(255,180,162,.3);border-radius:8px;background:transparent;color:#ffb4a2;font-size:11px;font-family:'Space Grotesk',sans-serif;cursor:pointer;" onmouseover="this.style.background='rgba(255,180,162,.08)'" onmouseout="this.style.background='transparent'"><span style="font-size:14px;">🔒</span>잠금 해제</button>`
-    :`<button onclick="toggleFolderLock('files','${id}',false)" style="margin-left:auto;display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid #353535;border-radius:8px;background:transparent;color:#a08d88;font-size:11px;font-family:'Space Grotesk',sans-serif;cursor:pointer;" onmouseover="this.style.borderColor='#524340'" onmouseout="this.style.borderColor='#353535'"><span style="font-size:14px;">🔓</span>잠금 설정</button>`;
+    ?`<button onclick="toggleFolderLock('files','${id}',true)" style="margin-left:auto;display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid rgba(255,180,162,.3);border-radius:8px;background:transparent;color:#ffb4a2;font-size:11px;font-family:'Space Grotesk',sans-serif;cursor:pointer;" onmouseover="this.style.background='rgba(255,180,162,.08)'" onmouseout="this.style.background='transparent'"><span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1;">lock</span>잠금 해제</button>`
+    :`<button onclick="toggleFolderLock('files','${id}',false)" style="margin-left:auto;display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid #353535;border-radius:8px;background:transparent;color:#a08d88;font-size:11px;font-family:'Space Grotesk',sans-serif;cursor:pointer;" onmouseover="this.style.borderColor='#524340'" onmouseout="this.style.borderColor='#353535'"><span class="material-symbols-outlined" style="font-size:14px;">lock_open</span>잠금 설정</button>`;
   document.getElementById('fileBreadcrumb').innerHTML=`<span class="cursor-pointer hover:text-[#ffb4a2] transition-colors" onclick="backToFileFolders()">Vault</span><span class="text-outline/40 mx-2">›</span><span class="text-on-surface font-bold flex items-center gap-1">${iconHtml(f?.icon||'folder','16px','#ffb4a2')} ${escHtml(f?.name)||'폴더'}</span>${lockBtn}`;
   renderFiles();
 }

@@ -50,6 +50,14 @@
   - 모달 inline touch-action:none + lockBody의 body touch-action:none이 5picture iframe 스크롤 차단 → 제거
 - [x] 검증(스와이프 시뮬레이션 01→02→03 확인, 데스크탑/모바일/라이트) + commit/push
 
+### 5차 요청 (2026-06-10) — Notepad/Vault 폴더 UI 개선
+- [x] 폴더 카드 리디자인: 글래스 카드 + 46px 그라데이션 아이콘 타일 + Pretendard 이름/메타
+- [x] 🔒 이모지 → Material lock 아이콘 원형 배지 (폴더 내부 잠금 버튼 4곳도 lock/lock_open으로)
+- [x] ✕ 삭제 → Material close 원형 버튼 (호버 시 노출, 터치 기기는 반투명 상시)
+- [x] 잠긴 폴더 스타일: 살몬 틴트 카드 + 배지, fc-meta 개수 표기 버그 수정((counts||0)+' notes' 우선순위)
+- [x] Music 플레이리스트 카드(같은 .folder-card)도 ✕ → Material close 통일
+- [x] 라이트 모드 보정 + 다크/라이트/모바일/호버 검증 + commit/push
+
 ---
 
 ## 완료된 작업 (2026-04-28)
