@@ -423,6 +423,7 @@
 
 
 
+<script src="pic-store.js"></script>
 <script>
   // ── index.html postMessage로 인증 상태 수신 ──
   let edUnlocked = false;
@@ -479,51 +480,60 @@
       const slotNum = this.id.replace('input-', '');
       const slot = document.querySelector('.img-slot[data-slot="' + slotNum + '"]');
       const placeholder = document.getElementById('placeholder-' + slotNum);
-      const reader = new FileReader();
-      reader.onload = () => {
+      MKPics.fileToDataURL(file).then(durl => {
         if (placeholder) placeholder.remove();
         let img = slot.querySelector('img');
         if (!img) { img = document.createElement('img'); slot.prepend(img); }
-        img.src = reader.result;
+        img.src = durl;
+        MKPics.set('p1:s' + slotNum, durl);
         saveState();
-      };
-      reader.readAsDataURL(file);
+      });
       this.value = '';
     });
   });
 
-  // ── 상태 저장/복원 ──
+  // ── 상태 저장/복원 (텍스트: localStorage / 사진: IndexedDB) ──
   const STORAGE_KEY = 'editorial_layout_state_v1';
   function saveState() {
-    const state = { texts: {}, images: {} };
+    const state = { texts: {} };
     document.querySelectorAll('[contenteditable]').forEach((el, i) => {
       state.texts['t' + i] = el.innerHTML;
     });
-    document.querySelectorAll('.img-slot img').forEach(img => {
-      const slot = img.closest('.img-slot');
-      if (slot) state.images['s' + slot.dataset.slot] = img.src;
-    });
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
   }
+  function applyImage(slotNum, src) {
+    const slot = document.querySelector('.img-slot[data-slot="' + slotNum + '"]');
+    if (!slot || !src) return;
+    const placeholder = document.getElementById('placeholder-' + slotNum);
+    if (placeholder) placeholder.remove();
+    let img = slot.querySelector('img');
+    if (!img) { img = document.createElement('img'); slot.prepend(img); }
+    img.src = src;
+  }
   function loadState() {
+    let legacyImages = null;
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      const state = JSON.parse(raw);
-      document.querySelectorAll('[contenteditable]').forEach((el, i) => {
-        if (state.texts && state.texts['t' + i]) el.innerHTML = state.texts['t' + i];
-      });
-      Object.entries(state.images || {}).forEach(([k, src]) => {
-        const slotNum = k.replace('s', '');
-        const slot = document.querySelector('.img-slot[data-slot="' + slotNum + '"]');
-        if (!slot || !src) return;
-        const placeholder = document.getElementById('placeholder-' + slotNum);
-        if (placeholder) placeholder.remove();
-        let img = slot.querySelector('img');
-        if (!img) { img = document.createElement('img'); slot.prepend(img); }
-        img.src = src;
-      });
+      if (raw) {
+        const state = JSON.parse(raw);
+        document.querySelectorAll('[contenteditable]').forEach((el, i) => {
+          if (state.texts && state.texts['t' + i]) el.innerHTML = state.texts['t' + i];
+        });
+        if (state.images) legacyImages = state.images;
+      }
     } catch(e) {}
+    const slots = ['1','2','3','4','5'];
+    MKPics.getMany(slots.map(n => 'p1:s' + n)).then(vals => {
+      slots.forEach((n, i) => {
+        let src = vals[i];
+        if (!src && legacyImages && legacyImages['s' + n]) {
+          src = legacyImages['s' + n];
+          MKPics.set('p1:s' + n, src);
+        }
+        if (src) applyImage(n, src);
+      });
+      if (legacyImages) saveState(); /* 구버전 LS에서 images 제거 → 용량 확보 */
+    });
   }
   document.querySelectorAll('[contenteditable]').forEach(el => {
     el.addEventListener('input', saveState);

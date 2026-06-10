@@ -325,9 +325,32 @@
         </div>
 </footer>
 
+<script src="pic-store.js"></script>
 <script>
   let p5Unlocked = false;
   let p5EditMode = false;
+
+  /* 셀 인덱스 → IndexedDB 키, 저장된 사진 복원 */
+  function p5CellKey(cell) {
+    var cells = Array.prototype.slice.call(document.querySelectorAll('.grid-cell'));
+    return 'p5:cell-' + cells.indexOf(cell);
+  }
+  function p5ApplyImage(cell, src) {
+    var img = cell.querySelector('img');
+    if (!img) {
+      img = document.createElement('img');
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+      cell.innerHTML = '';
+      cell.appendChild(img);
+    }
+    img.src = src;
+  }
+  (function() {
+    var cells = Array.prototype.slice.call(document.querySelectorAll('.grid-cell'));
+    MKPics.getMany(cells.map(function(_, i) { return 'p5:cell-' + i; })).then(function(vals) {
+      cells.forEach(function(cell, i) { if (vals[i]) p5ApplyImage(cell, vals[i]); });
+    });
+  })();
 
   window.addEventListener('message', e => {
     if(e.origin!==window.location.origin)return;
@@ -359,19 +382,11 @@
           inp.onchange = function(e) {
             var file = e.target.files[0];
             if (!file) return;
-            var reader = new FileReader();
-            reader.onload = function(ev) {
+            MKPics.fileToDataURL(file).then(function(durl) {
               // 기존 img 있으면 교체, 없으면 새로 추가
-              var img = cell.querySelector('img');
-              if (!img) {
-                img = document.createElement('img');
-                img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
-                cell.innerHTML = '';
-                cell.appendChild(img);
-              }
-              img.src = ev.target.result;
-            };
-            reader.readAsDataURL(file);
+              p5ApplyImage(cell, durl);
+              MKPics.set(p5CellKey(cell), durl);
+            });
           };
           document.body.appendChild(inp);
           inp.click();

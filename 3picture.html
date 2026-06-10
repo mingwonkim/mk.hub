@@ -663,35 +663,42 @@ CMYK: 0 83 62 72</div>
     </section>
   </div>
 
+  <script src="pic-store.js"></script>
   <script>
     function loadImage(event, imageId) {
       const file = event.target.files && event.target.files[0];
       if (!file) return;
 
-      const reader = new FileReader();
-      reader.onload = function(e) {
+      MKPics.fileToDataURL(file).then(function(durl) {
         const img = document.getElementById(imageId);
-        img.src = e.target.result;
+        img.src = durl;
         const placeholder = document.querySelector(`[data-placeholder-for="${imageId}"]`);
         if (placeholder) placeholder.hidden = true;
-        // localStorage 저장
-        try { localStorage.setItem('mb_img_'+imageId, e.target.result); } catch(err) {}
-      };
-      reader.readAsDataURL(file);
+        MKPics.set('p3:'+imageId, durl);
+      });
     }
 
-    // 저장된 이미지 복원
-    ['img-1','img-2','img-3','img-4','img-5'].forEach(function(id) {
-      try {
-        const saved = localStorage.getItem('mb_img_'+id);
-        if (saved) {
-          const img = document.getElementById(id);
-          if (img) { img.src = saved; }
-          const ph = document.querySelector('[data-placeholder-for="'+id+'"]');
-          if (ph) ph.hidden = true;
-        }
-      } catch(err) {}
-    });
+    // 저장된 이미지 복원 (IndexedDB, 구버전 localStorage는 마이그레이션)
+    (function() {
+      const ids = ['img-1','img-2','img-3','img-4','img-5'];
+      MKPics.getMany(ids.map(function(id){ return 'p3:'+id; })).then(function(vals) {
+        ids.forEach(function(id, i) {
+          let saved = vals[i];
+          if (!saved) {
+            try {
+              saved = localStorage.getItem('mb_img_'+id);
+              if (saved) { MKPics.set('p3:'+id, saved); localStorage.removeItem('mb_img_'+id); }
+            } catch(err) {}
+          }
+          if (saved) {
+            const img = document.getElementById(id);
+            if (img) { img.src = saved; }
+            const ph = document.querySelector('[data-placeholder-for="'+id+'"]');
+            if (ph) ph.hidden = true;
+          }
+        });
+      });
+    })();
 
     function resetPhotos() {
       ['img-2', 'img-3', 'img-4', 'img-5'].forEach(id => {
@@ -776,12 +783,10 @@ document.getElementById('mb-global-file').addEventListener('change', function(e)
   if (img) img.src = URL.createObjectURL(file);
   var ph = document.querySelector('[data-placeholder-for="'+imgId+'"]');
   if (ph) ph.hidden = true;
-  // localStorage 저장 (백그라운드)
-  var reader = new FileReader();
-  reader.onload = function(ev) {
-    try { localStorage.setItem('mb_img_'+imgId, ev.target.result); } catch(err) {}
-  };
-  reader.readAsDataURL(file);
+  // IndexedDB 저장 (백그라운드, 축소·압축)
+  MKPics.fileToDataURL(file).then(function(durl) {
+    MKPics.set('p3:'+imgId, durl);
+  });
   // input 초기화는 표시 후 처리
   var inp = this;
   setTimeout(function(){ inp.value = ''; }, 100);

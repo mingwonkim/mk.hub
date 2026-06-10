@@ -2,6 +2,26 @@
 
 ---
 
+## 진행 중 — 갤러리 사진 버그 + Notepad 개선 (2026-06-10)
+
+작업 전 상태: git tag `pre-fix-20260610` (커밋 06d3d87)
+
+- [x] 필름 효과 버그 원인 확인 — 2picture 보드 사진(photo-1~5)에 grayscale/saturate 필터가 적용돼 있었음 (1picture 자체는 정상)
+- [x] 필름 효과 버그 수정 — 2picture·4picture 사용자 사진 슬롯의 탈색 필터 제거 (필름 스트립 효과는 유지)
+- [x] 2~5picture: 사진 저장 통일 — 공용 pic-store.js (IndexedDB + 1600px JPEG 압축), 1~5 전부 적용, 구버전 localStorage 자동 마이그레이션
+- [x] index.html: 모바일 캐러셀 IndexedDB 연동 + 모바일 피드 iframe sandbox에 allow-same-origin 추가 (사진 안 보이던 원인)
+- [x] 갤러리 수정 브라우저 검증 (5개 파일 모두 사진 삽입 → 새로고침 → 유지 확인, 허브 캐러셀 확인)
+- [x] Notepad: 에디터 가시성·글꼴 현대화 (Notion/Bear 스타일 참고)
+  - Pretendard Variable 폰트 도입 (CSP에 cdn.jsdelivr.net 허용 추가)
+  - 제목 28px 볼드 + 구분선, 본문 17px/행간 1.85, 박스 없는 문서형 에디터 (760px 중앙)
+  - 본문 textarea 자동 높이 확장 (memoBodyAutoGrow)
+  - 배경사진(bgGrid) 위 가독성 위해 글래스 카드 배경 적용 (라이트/다크 대응)
+  - 메모 리스트 제목 15px·미리보기 13px로 가독성 상향
+- [x] Notepad 수정 브라우저 검증 (다크/라이트 모드 스크린샷 확인)
+- [x] git commit + push
+
+---
+
 ## 완료된 작업 (2026-04-28)
 
 - [x] 모바일 캐러셀 스크롤바 제거
