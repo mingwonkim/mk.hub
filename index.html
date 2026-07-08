@@ -1055,12 +1055,73 @@ html.light .hub-bubble-tag{color:rgba(255,59,0,.65) !important;}
 html.light .hub-bubble-deco{color:rgba(255,59,0,.09) !important;}
 html.light .hub-quote-text{color:var(--mk-on-surf) !important;}
 html.light .hub-quote-author{color:#FF3B00 !important;}
+
+/* ===== MK Motion Layer ===== */
+/* ── Aurora 살아있는 배경 ── */
+#mkAurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+#mkAurora i{position:absolute;display:block;border-radius:50%;}
+#mkAurora i:nth-child(1){width:62vw;height:62vw;left:-14vw;top:-20vw;background:radial-gradient(closest-side,rgba(255,180,162,.055),transparent 70%);animation:mkDrift1 26s ease-in-out infinite alternate;}
+#mkAurora i:nth-child(2){width:52vw;height:52vw;right:-16vw;top:8vw;background:radial-gradient(closest-side,rgba(255,59,0,.035),transparent 70%);animation:mkDrift2 38s ease-in-out infinite alternate;}
+#mkAurora::after{content:'';position:absolute;inset:0;opacity:.02;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");}
+@keyframes mkDrift1{from{transform:translate(0,0) scale(1);}to{transform:translate(6vw,4vw) scale(1.15);}}
+@keyframes mkDrift2{from{transform:translate(0,0) scale(1.1);}to{transform:translate(-6vw,-3vw) scale(1);}}
+html.light #mkAurora i:nth-child(1){background:radial-gradient(closest-side,rgba(255,59,0,.05),transparent 70%);}
+html.light #mkAurora i:nth-child(2){background:radial-gradient(closest-side,rgba(255,180,162,.22),transparent 70%);}
+/* ── 스크롤 리빌 ── */
+.mk-reveal{opacity:0;transform:translateY(22px);}
+.mk-reveal.mk-in{opacity:1;transform:none;transition:opacity .65s cubic-bezier(.22,.61,.36,1),transform .65s cubic-bezier(.22,.61,.36,1);transition-delay:var(--rd,0ms);}
+/* ── 페이지 전환 ── */
+.page.active{animation:mkPageIn .38s cubic-bezier(.22,.61,.36,1);}
+@keyframes mkPageIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+/* ── 마우스 글로우 (데스크탑 전용, JS 게이트) ── */
+#mkGlow{position:fixed;left:0;top:0;width:520px;height:520px;margin:-260px 0 0 -260px;border-radius:50%;background:radial-gradient(circle,rgba(255,180,162,.06),transparent 65%);z-index:1;pointer-events:none;opacity:0;transition:opacity .5s ease;mix-blend-mode:screen;}
+#mkGlow.mk-on{opacity:1;}
+html.light #mkGlow{mix-blend-mode:multiply;background:radial-gradient(circle,rgba(255,59,0,.04),transparent 65%);}
+/* ── 인트로 시퀀스 ── */
+#mkIntro{position:fixed;inset:0;z-index:120;background:var(--mk-bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .6s ease;}
+#mkIntro.mk-intro-exit{opacity:0;}
+.mk-intro-word{font-family:'Space Grotesk',sans-serif;font-size:clamp(40px,8vw,88px);font-weight:800;text-transform:uppercase;color:var(--mk-on-surf);letter-spacing:.28em;opacity:0;transform:translateY(16px);animation:mkIntroWord .53s cubic-bezier(.22,.61,.36,1) .12s forwards;}
+@keyframes mkIntroWord{to{opacity:1;transform:none;letter-spacing:.02em;}}
+.mk-intro-exit .mk-intro-word{animation:mkIntroWordOut .35s ease forwards;}
+@keyframes mkIntroWordOut{from{opacity:1;transform:none;letter-spacing:.02em;}to{opacity:0;transform:translateY(-12px);letter-spacing:.02em;}}
+.mk-intro-rule{width:min(280px,60vw);height:1px;background:#ffb4a2;transform:scaleX(0);transform-origin:left;animation:mkIntroRule .6s cubic-bezier(.22,.61,.36,1) .35s forwards;}
+@keyframes mkIntroRule{to{transform:scaleX(1);}}
+.mk-intro-sub{font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:#ffb4a2;opacity:0;animation:mkIntroSub .35s ease .65s forwards;}
+@keyframes mkIntroSub{to{opacity:.85;}}
+html.mk-intro-hold{overflow:hidden;}
+html.mk-intro-hold #page-hub *{animation-play-state:paused!important;}
+/* ── reduced-motion 통합 가드 ── */
+@media (prefers-reduced-motion:reduce){
+  #mkAurora i{animation:none!important;}
+  .mk-reveal{opacity:1!important;transform:none!important;transition:none!important;}
+  .page.active{animation:none;}
+  #mkGlow{display:none;}
+}
 </style>
 </head>
 <body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-on-primary-container">
 
+<!-- MK Motion: 마우스 글로우 (blackFadeOverlay보다 먼저 → 동일 z-index에서 아래에 깔림) -->
+<div id="mkGlow" aria-hidden="true"></div>
+
 <!-- Black fade overlay -->
 <div id="blackFadeOverlay"></div>
+
+<!-- MK Motion: 인트로 시퀀스 (세션당 1회) -->
+<div id="mkIntro" aria-hidden="true">
+  <div class="mk-intro-word">MK.HUB</div>
+  <div class="mk-intro-rule"></div>
+  <div class="mk-intro-sub">Personal Archive — 2026</div>
+</div>
+<script>
+(function(){
+  var el=document.getElementById('mkIntro');
+  var skip=false;
+  try{skip=sessionStorage.getItem('mk_intro')==='1';}catch(e){}
+  if(skip||matchMedia('(prefers-reduced-motion: reduce)').matches){el.parentNode.removeChild(el);return;}
+  document.documentElement.classList.add('mk-intro-hold');
+})();
+</script>
 
 <!-- Top Nav -->
 <nav class="fixed top-0 w-full z-50 bg-[#131313]/85 backdrop-blur-2xl flex justify-between items-center px-6 md:px-8 py-5 border-b border-white/[.03]" style="will-change:transform;">
@@ -1132,6 +1193,9 @@ html.light .hub-quote-author{color:#FF3B00 !important;}
 
 <!-- Background Image Grid (dynamic) -->
 <div class="bg-grid" id="bgGrid"></div>
+
+<!-- MK Motion: Aurora 살아있는 배경 -->
+<div id="mkAurora" aria-hidden="true"><i></i><i></i></div>
 
 <!-- ============ HUB PAGE ============ -->
 <main class="page active relative min-h-screen pt-28 pb-40 px-6 overflow-hidden" id="page-hub">
@@ -2593,7 +2657,7 @@ function setPage(p){if(curPage&&curPage!==p)navHistory.push(curPage);
   const pg=document.getElementById('page-'+p);if(pg)pg.classList.add('active');curPage=p;
   document.querySelectorAll('.nav-link').forEach(a=>{const act=a.dataset.page===p;a.className=`nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer ${act?'text-[#ffb4a2] font-bold':'text-[#ffb4a2]/40 hover:text-[#ffb4a2]'}`;});
   document.querySelectorAll('.bnav').forEach(a=>{const act=a.dataset.page===p;a.classList.toggle('text-[#ffb4a2]',act);a.classList.toggle('text-[#ffb4a2]/30',!act);a.classList.toggle('is-active',act);a.classList.remove('text-white/40','scale-110');if(act)a.classList.add('scale-105');const ic=a.querySelector('.material-symbols-outlined');if(ic)ic.style.fontVariationSettings=act?"'FILL' 1":"'FILL' 0";});
-  window.scrollTo({top:0,behavior:'smooth'});
+  window.scrollTo({top:0,behavior:'auto'});
 }
 function goHub(){setPage('hub');}
 function goBack(){if(navHistory.length>0){var prev=navHistory.pop();setPage(prev);navHistory.pop();}else setPage('hub');}
@@ -4534,6 +4598,142 @@ renderGallery();
   const hubPage=document.getElementById('page-hub');
   if(hubPage)observer.observe(hubPage,{attributes:true,attributeFilter:['class']});
   onScroll();
+})();
+
+/* ===== MK Motion Layer — 리빌 / 패럴랙스 / 틸트 / 글로우 / 인트로 ===== */
+(function(){
+  var RM=matchMedia('(prefers-reduced-motion: reduce)');
+  var FINE=matchMedia('(hover:hover) and (pointer:fine)');
+  var DESK=matchMedia('(min-width:768px)');
+  var hub=document.getElementById('page-hub');
+  function hubActive(){return hub&&hub.classList.contains('active');}
+
+  /* ── 스크롤 리빌 ── */
+  function initReveal(){
+    if(RM.matches||!('IntersectionObserver' in window))return;
+    var targets=[];
+    document.querySelectorAll('#hubCardGrid > section').forEach(function(el,i){el.style.setProperty('--rd',(i*80)+'ms');targets.push(el);});
+    var td=document.querySelector('.todo-hub');if(td)targets.push(td);
+    var bw=document.querySelector('.hub-bubble-wrap');if(bw)targets.push(bw);
+    document.querySelectorAll('.gal-sep').forEach(function(el){targets.push(el);});
+    document.querySelectorAll('.mob-post').forEach(function(el){targets.push(el);});
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(!en.isIntersecting)return;
+        var el=en.target;io.unobserve(el);
+        requestAnimationFrame(function(){el.classList.add('mk-in');});
+        var done=false;
+        function cleanup(){if(done)return;done=true;el.classList.remove('mk-reveal','mk-in');el.style.removeProperty('--rd');el.removeEventListener('transitionend',cleanup);}
+        el.addEventListener('transitionend',cleanup);
+        setTimeout(cleanup,1200);
+      });
+    },{threshold:0,rootMargin:'0px 0px -8% 0px'});
+    targets.forEach(function(el){el.classList.add('mk-reveal');io.observe(el);});
+  }
+
+  /* ── Hero 패럴랙스 (데스크탑 전용) ── */
+  function initParallax(){
+    if(RM.matches||!FINE.matches||!DESK.matches)return;
+    var label=hub?hub.querySelector('.hub-hero-label'):null;
+    var heroWrap=label?label.parentElement:null;
+    var aurora=document.getElementById('mkAurora');
+    if(!heroWrap&&!aurora)return;
+    var tick=false,on=false;
+    function onScroll(){
+      if(tick)return;tick=true;
+      requestAnimationFrame(function(){
+        tick=false;
+        var y=window.scrollY;
+        if(!hubActive()||y>innerHeight*1.2){
+          if(on){if(heroWrap)heroWrap.style.transform='';if(aurora)aurora.style.transform='';on=false;}
+          return;
+        }
+        on=true;
+        if(heroWrap)heroWrap.style.transform='translateY('+(y*-0.10).toFixed(1)+'px)';
+        if(aurora)aurora.style.transform='translateY('+(y*0.05).toFixed(1)+'px)';
+      });
+    }
+    window.addEventListener('scroll',onScroll,{passive:true});
+  }
+
+  /* ── 카드 3D 틸트 (데스크탑 전용, 최대 ±2.5deg) ── */
+  function initTilt(){
+    if(RM.matches||!FINE.matches||!DESK.matches)return;
+    document.querySelectorAll('#hubCardGrid > section').forEach(function(card){
+      var baseY=null,rect=null,tick=false,px=0,py=0;
+      card.addEventListener('pointerenter',function(){
+        if(baseY===null){
+          baseY=0;
+          var m=getComputedStyle(card).transform;
+          if(m&&m!=='none'){var p=m.match(/matrix\(([^)]+)\)/);if(p)baseY=parseFloat(p[1].split(',')[5])||0;}
+        }
+        rect=card.getBoundingClientRect();
+        card.style.transition='transform .15s ease-out';
+      });
+      card.addEventListener('pointermove',function(e){
+        px=e.clientX;py=e.clientY;
+        if(tick)return;tick=true;
+        requestAnimationFrame(function(){
+          tick=false;
+          if(!rect)return;
+          var rx=(px-rect.left)/rect.width-.5,ry=(py-rect.top)/rect.height-.5;
+          card.style.transform='perspective(900px) rotateX('+(-ry*5).toFixed(2)+'deg) rotateY('+(rx*5).toFixed(2)+'deg) translateY('+(baseY-6)+'px)';
+        });
+      });
+      card.addEventListener('pointerleave',function(){
+        rect=null;card.style.transform='';card.style.transition='';
+      });
+    });
+  }
+
+  /* ── 마우스 글로우 (데스크탑 전용, lerp — idle 시 rAF 0) ── */
+  function initGlow(){
+    var glow=document.getElementById('mkGlow');
+    if(RM.matches||!FINE.matches||!glow)return;
+    var tx=0,ty=0,cx=null,cy=null,raf=null;
+    function loop(){
+      var dx=tx-cx,dy=ty-cy;
+      cx+=dx*.12;cy+=dy*.12;
+      glow.style.transform='translate3d('+cx.toFixed(1)+'px,'+cy.toFixed(1)+'px,0)';
+      if(Math.abs(dx)>.5||Math.abs(dy)>.5)raf=requestAnimationFrame(loop);
+      else raf=null;
+    }
+    document.addEventListener('pointermove',function(e){
+      if(!hubActive()){glow.classList.remove('mk-on');return;}
+      glow.classList.add('mk-on');
+      tx=e.clientX;ty=e.clientY;
+      if(cx===null){cx=tx;cy=ty;}
+      if(!raf)raf=requestAnimationFrame(loop);
+    },{passive:true});
+    /* 페이지 전환 시 즉시 숨김 (pointermove 대기 없이) */
+    if(hub)new MutationObserver(function(){if(!hubActive())glow.classList.remove('mk-on');}).observe(hub,{attributes:true,attributeFilter:['class']});
+  }
+
+  /* ── 인트로 컨트롤러 (게이트 스크립트가 mkIntro 존치 여부 결정) ── */
+  var intro=document.getElementById('mkIntro');
+  if(intro){
+    var ended=false;
+    var endIntro=function(){
+      if(ended)return;ended=true;
+      document.documentElement.classList.remove('mk-intro-hold');
+      try{sessionStorage.setItem('mk_intro','1');}catch(e){}
+      intro.classList.add('mk-intro-exit');
+      initReveal();
+      setTimeout(function(){if(intro.parentNode)intro.parentNode.removeChild(intro);},650);
+    };
+    setTimeout(endIntro,1250);
+    /* 하드 가드 — 어떤 경우에도 화면이 막히지 않게 */
+    setTimeout(function(){
+      endIntro();
+      document.documentElement.classList.remove('mk-intro-hold');
+      if(intro.parentNode)intro.parentNode.removeChild(intro);
+    },3500);
+  }else{
+    initReveal();
+  }
+  initParallax();
+  initTilt();
+  initGlow();
 })();
 </script>
 <script>

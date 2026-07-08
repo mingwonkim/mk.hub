@@ -145,3 +145,19 @@
 - 사용자 남은 단계: 볼트 열기·코어플러그인 2개·Copilot 키·mk.hub Settings 연결 (바탕화면 가이드 참고)
 
 ### 5. (보류) 아이폰 메모앱 동기화 — 사용자가 안 하기로 함
+
+---
+
+## 10차 — 인터랙티브 애니메이션 랜딩 개편 (2026-07-08)
+
+절제된 에디토리얼 톤, 기존 색감(#131313/#ffb4a2/#FF3B00) 유지. 전부 바닐라 CSS/JS(`mk-` 네임스페이스), 기존 마크업·기능 무수정 레이어 추가 방식.
+
+- [x] 인트로 시퀀스 — 첫 진입 시 MK.HUB 워드마크+살몬 룰+서브라벨 1.9s 오프닝 → hub 릴레이. 세션당 1회(sessionStorage `mk_intro`), reduced-motion 시 즉시 스킵, 3.5s 하드 가드
+- [x] 스크롤 리빌 — 카드 그리드(80ms 스태거)·Weekly To-Do·갤러리 구분선·모바일 피드가 IntersectionObserver로 순차 등장, 완료 후 클래스 클린업(카드 hover 원복 보장). iframe은 제외
+- [x] Hero 패럴랙스 — 타이틀 -0.10x / aurora +0.05x 속도차 (데스크탑 전용, hub 벗어나면 자동 리셋)
+- [x] 카드 3D 틸트(±2.5deg) + 마우스 글로우(lerp 추적, idle 시 rAF 0) — 데스크탑 전용, Vault 카드 -32px 오프셋 보존, 페이지 전환 시 글로우 즉시 숨김
+- [x] Aurora 살아있는 배경 — 살몬/오렌지 그라디언트 블롭 2개 드리프트(26s/38s) + feTurbulence 노이즈, blur 필터 없이 컴포지터 전용
+- [x] 페이지 전환 — `.page.active`에 mkPageIn(fade+10px) keyframe, setPage scrollTo smooth→auto
+- [x] 성능/접근성 — will-change 추가 0개, prefers-reduced-motion 통합 가드, 모바일은 aurora·리빌만 활성
+- [x] 검증 — 다크/라이트, 데스크탑/모바일(375px), 인트로 재생/세션 스킵, 틸트·글로우·패럴랙스·리빌 상태값 실측, 콘솔 신규 에러 0
+- [x] git commit + push
