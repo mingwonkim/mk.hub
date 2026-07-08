@@ -1099,17 +1099,17 @@ html.light #mkCursor{border-color:rgba(255,59,0,.55);}
 html.light #mkCursor.mk-cur-hot{border-color:#FF3B00;background-color:rgba(255,59,0,.05);}
 html.light #mkCursorDot{background:#FF3B00;}
 /* ── v2: 클릭 리플 ── */
-.mk-ripple{position:fixed;width:88px;height:88px;margin:-44px 0 0 -44px;border-radius:50%;border:1.5px solid rgba(255,180,162,.65);pointer-events:none;z-index:10001;animation:mkRipple .55s ease-out forwards;}
-@keyframes mkRipple{from{transform:scale(.1);opacity:.9;}to{transform:scale(1.6);opacity:0;}}
-html.light .mk-ripple{border-color:rgba(255,59,0,.5);}
+.mk-ripple{position:fixed;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;border:1px solid rgba(255,180,162,.4);pointer-events:none;z-index:10001;animation:mkRipple .5s ease-out forwards;}
+@keyframes mkRipple{from{transform:scale(.2);opacity:.55;}to{transform:scale(1.25);opacity:0;}}
+html.light .mk-ripple{border-color:rgba(255,59,0,.35);}
 /* ── v2: hero 타이틀 글자 인터랙션 ── */
 .mk-ch{display:inline-block;background:inherit;-webkit-background-clip:text;background-clip:text;transition:transform .3s cubic-bezier(.22,.61,.36,1);}
-@media(hover:hover){.mk-ch:hover{transform:translateY(-.06em) rotate(1.5deg);}}
+@media(hover:hover){.mk-ch:hover{transform:translateY(-.035em);}}
 .mk-title-in .mk-ch{opacity:0;transform:translateY(.35em);animation:mkChIn .6s cubic-bezier(.22,.61,.36,1) calc(var(--i)*55ms) forwards;}
 @keyframes mkChIn{to{opacity:1;transform:none;}}
-/* ── v2: 실시간 시계 / 스크롤 프로그레스 / 백투탑 ── */
-#mkClock{margin-left:10px;color:#ffb4a2;opacity:.75;font-variant-numeric:tabular-nums;letter-spacing:.14em;}
-html.light #mkClock{color:#FF3B00;}
+/* ── v2: 대형 반투명 시계 (hero 배경) / 스크롤 프로그레스 / 백투탑 ── */
+#mkBigClock{position:absolute;top:56px;right:-6px;z-index:0;font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:clamp(76px,15vw,220px);line-height:1;letter-spacing:-.03em;color:rgba(255,255,255,.045);pointer-events:none;font-variant-numeric:tabular-nums;user-select:none;white-space:nowrap;}
+html.light #mkBigClock{color:rgba(28,17,16,.055);}
 #mkScrollBar{position:fixed;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,#ffb4a2,#FF3B00);transform:scaleX(0);transform-origin:left;z-index:60;pointer-events:none;}
 #mkTop{position:fixed;right:22px;bottom:30px;width:44px;height:44px;border-radius:50%;background:rgba(28,27,27,.72);backdrop-filter:blur(12px);border:1px solid var(--mk-border-hi);color:#ffb4a2;display:flex;align-items:center;justify-content:center;z-index:55;cursor:pointer;opacity:0;transform:translateY(16px);transition:opacity .35s,transform .35s,border-color .25s;pointer-events:none;}
 #mkTop.mk-show{opacity:1;transform:none;pointer-events:auto;}
@@ -1122,7 +1122,7 @@ nav.fixed.top-0.mk-nav-hide{transform:translateY(-100%);}
 #hubCardGrid>section::before{content:'';position:absolute;inset:0;border-radius:inherit;background:radial-gradient(340px circle at var(--mx,50%) var(--my,50%),rgba(255,180,162,.09),transparent 65%);opacity:0;transition:opacity .35s;pointer-events:none;}
 #hubCardGrid>section:hover::before{opacity:1;}
 html.light #hubCardGrid>section::before{background:radial-gradient(340px circle at var(--mx,50%) var(--my,50%),rgba(255,59,0,.06),transparent 65%);}
-#hubCardGrid>section[data-card="music"]:hover .viz-bar{animation-duration:.32s;}
+#hubCardGrid>section[data-card="music"]:hover .viz-bar{animation-duration:.55s;}
 /* ── v2: Weekly To-Do 셀 팝 ── */
 #todoHubWeek>div{transition:transform .25s cubic-bezier(.22,.61,.36,1);}
 @media(hover:hover){#todoHubWeek>div:hover{transform:translateY(-4px);}}
@@ -1131,13 +1131,31 @@ html.light #hubCardGrid>section::before{background:radial-gradient(340px circle 
 .gal-sep-rule::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#ffb4a2,#FF3B00);transform:scaleX(var(--fill,0));transform-origin:left;opacity:.55;}
 /* ── v2: 더스트 파티클 캔버스 ── */
 #mkDust{position:fixed;inset:0;z-index:0;pointer-events:none;}
+/* ── v3: '기억의 이끼' 생성형 캔버스 ── */
+#mkMoss{position:fixed;inset:0;z-index:0;pointer-events:none;}
+/* ── v3: 내부 페이지 타이틀 룰 드로우 ── */
+.app-page-title{position:relative;display:inline-block;}
+.app-page-title::after{content:'';position:absolute;left:2px;bottom:-8px;width:64px;height:2px;background:linear-gradient(90deg,#ffb4a2,#FF3B00);transform:scaleX(0);transform-origin:left;}
+.page.active .app-page-title::after{animation:mkRuleIn .7s cubic-bezier(.22,.61,.36,1) .25s forwards;}
+@keyframes mkRuleIn{to{transform:scaleX(1);}}
+/* ── v3: 페이지 진입 콘텐츠 스태거 ── */
+.mk-stg{opacity:0;transform:translateY(14px);animation:mkStgIn .5s cubic-bezier(.22,.61,.36,1) calc(var(--i)*70ms) forwards;}
+@keyframes mkStgIn{to{opacity:1;transform:none;}}
+/* ── v3: 폴더/뮤직 카드 커서 스포트라이트 ── */
+.folder-card::before{background:radial-gradient(240px circle at var(--mx,18%) var(--my,0%),rgba(255,180,162,.10),transparent 60%);}
+#musicModuleGrid>[data-module]{position:relative;overflow:hidden;}
+#musicModuleGrid>[data-module]::before{content:'';position:absolute;inset:0;border-radius:inherit;background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),rgba(255,180,162,.08),transparent 60%);opacity:0;transition:opacity .3s;pointer-events:none;}
+#musicModuleGrid>[data-module]:hover::before{opacity:1;}
+html.light #musicModuleGrid>[data-module]::before{background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),rgba(255,59,0,.06),transparent 60%);}
 /* ── reduced-motion 통합 가드 ── */
 @media (prefers-reduced-motion:reduce){
   #mkAurora i{animation:none!important;}
   .mk-reveal{opacity:1!important;transform:none!important;transition:none!important;}
   .page.active{animation:none;}
-  #mkGlow,#mkCursor,#mkCursorDot,#mkDust,.mk-ripple{display:none!important;}
+  #mkGlow,#mkCursor,#mkCursorDot,#mkDust,#mkMoss,.mk-ripple{display:none!important;}
   .mk-title-in .mk-ch{animation:none;opacity:1;transform:none;}
+  .mk-stg{animation:none;opacity:1;transform:none;}
+  .page.active .app-page-title::after{animation:none;transform:scaleX(1);}
   nav.fixed.top-0{transition:none;}
 }
 </style>
@@ -2701,6 +2719,7 @@ function setPage(p){if(curPage&&curPage!==p)navHistory.push(curPage);
   document.querySelectorAll('.nav-link').forEach(a=>{const act=a.dataset.page===p;a.className=`nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer ${act?'text-[#ffb4a2] font-bold':'text-[#ffb4a2]/40 hover:text-[#ffb4a2]'}`;});
   document.querySelectorAll('.bnav').forEach(a=>{const act=a.dataset.page===p;a.classList.toggle('text-[#ffb4a2]',act);a.classList.toggle('text-[#ffb4a2]/30',!act);a.classList.toggle('is-active',act);a.classList.remove('text-white/40','scale-110');if(act)a.classList.add('scale-105');const ic=a.querySelector('.material-symbols-outlined');if(ic)ic.style.fontVariationSettings=act?"'FILL' 1":"'FILL' 0";});
   window.scrollTo({top:0,behavior:'auto'});
+  if(window.mkPageEnter)window.mkPageEnter(p);
 }
 function goHub(){setPage('hub');}
 function goBack(){if(navHistory.length>0){var prev=navHistory.pop();setPage(prev);navHistory.pop();}else setPage('hub');}
@@ -4688,11 +4707,14 @@ renderGallery();
         tick=false;
         var y=window.scrollY;
         if(!hubActive()||y>innerHeight*1.2){
-          if(on){if(heroWrap)heroWrap.style.transform='';if(aurora)aurora.style.transform='';on=false;}
+          if(on){if(heroWrap){heroWrap.style.transform='';heroWrap.style.opacity='';}if(aurora)aurora.style.transform='';on=false;}
           return;
         }
         on=true;
-        if(heroWrap)heroWrap.style.transform='translateY('+(y*-0.10).toFixed(1)+'px)';
+        if(heroWrap){
+          heroWrap.style.transform='translateY('+(y*-0.10).toFixed(1)+'px)';
+          heroWrap.style.opacity=Math.max(1-y/(innerHeight*.9),.15).toFixed(3);
+        }
         if(aurora)aurora.style.transform='translateY('+(y*0.05).toFixed(1)+'px)';
       });
     }
@@ -4820,11 +4842,10 @@ renderGallery();
     }
   }
 
-  /* ── 실시간 시계 (hero 라벨) ── */
-  var dateEl=document.getElementById('hubHeroDate');
-  if(dateEl){
-    var ck=document.createElement('span');ck.id='mkClock';
-    dateEl.insertAdjacentElement('afterend',ck);
+  /* ── 대형 반투명 시계 (hero 배경 워터마크) ── */
+  if(hub){
+    var ck=document.createElement('div');ck.id='mkBigClock';ck.setAttribute('aria-hidden','true');
+    hub.insertBefore(ck,hub.firstChild);
     var ckTick=function(){var d=new Date(),p=function(n){return n<10?'0'+n:n;};ck.textContent=p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());};
     ckTick();setInterval(ckTick,1000);
   }
@@ -4977,6 +4998,117 @@ renderGallery();
     if(hub)new MutationObserver(dKick).observe(hub,{attributes:true,attributeFilter:['class']});
     window.addEventListener('scroll',dKick,{passive:true});
   }
+})();
+
+/* ===== MK Motion Layer v3 — '기억의 이끼' 캔버스 + 내부 페이지 인터랙션 ===== */
+(function(){
+  var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var FINE=matchMedia('(hover:hover) and (pointer:fine)').matches;
+  var hub=document.getElementById('page-hub');
+  function hubActive(){return hub&&hub.classList.contains('active');}
+
+  /* ── 페이지 진입 콘텐츠 스태거 (setPage 훅) ── */
+  window.mkPageEnter=function(p){
+    if(RM||p==='hub')return;
+    var pg=document.getElementById('page-'+p);if(!pg)return;
+    var wrap=pg.firstElementChild;if(!wrap)return;
+    [].forEach.call(wrap.children,function(el,i){
+      if(i>7)return;
+      el.classList.remove('mk-stg');void el.offsetWidth;
+      el.style.setProperty('--i',i);
+      el.classList.add('mk-stg');
+      setTimeout(function(){el.classList.remove('mk-stg');el.style.removeProperty('--i');},1400+i*70);
+    });
+  };
+
+  /* ── 폴더/뮤직 카드 커서 스포트라이트 (위임) ── */
+  if(FINE&&!RM){
+    document.addEventListener('pointermove',function(e){
+      var el=e.target&&e.target.closest?e.target.closest('.folder-card,#musicModuleGrid>[data-module]'):null;
+      if(!el)return;
+      var r=el.getBoundingClientRect();
+      el.style.setProperty('--mx',(e.clientX-r.left).toFixed(0)+'px');
+      el.style.setProperty('--my',(e.clientY-r.top).toFixed(0)+'px');
+    },{passive:true});
+  }
+
+  /* ── '기억의 이끼' — 커서가 지나간 자리에 덩굴이 자라고 블룸이 피었다 서서히 사라짐 ── */
+  if(RM)return;
+  var cv=document.createElement('canvas');cv.id='mkMoss';
+  var dust=document.getElementById('mkDust');
+  if(dust&&dust.parentNode)dust.parentNode.insertBefore(cv,dust.nextSibling);
+  else document.body.appendChild(cv);
+  var ctx=cv.getContext('2d');
+  var DPR=Math.min(window.devicePixelRatio||1,1.5),W=0,H=0;
+  function mRs(){W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;cv.style.width=W+'px';cv.style.height=H+'px';ctx.setTransform(DPR,0,0,DPR,0,0);}
+  mRs();window.addEventListener('resize',mRs);
+  var branches=[],MAXB=70,raf=null,idle=0;
+  function spawn(x,y,ang,w0,gen){
+    if(branches.length>=MAXB)return;
+    branches.push({
+      x:x,y:y,
+      a:ang!==undefined?ang:Math.random()*6.283,
+      w:w0||(1.0+Math.random()*.9),
+      life:60+Math.random()*80,
+      gen:gen||0,
+      sp:.8+Math.random()*.9
+    });
+  }
+  var lx=null,ly=null;
+  document.addEventListener('pointermove',function(e){
+    if(!hubActive()||window.scrollY>innerHeight*2)return;
+    var x=e.clientX,y=e.clientY;
+    if(lx!==null){var dx=x-lx,dy=y-ly;if(dx*dx+dy*dy<2000)return;}
+    lx=x;ly=y;
+    spawn(x,y);
+    mKick();
+  },{passive:true});
+  document.addEventListener('pointerdown',function(e){
+    if(!hubActive()||window.scrollY>innerHeight*2)return;
+    spawn(e.clientX,e.clientY);spawn(e.clientX,e.clientY);
+    mKick();
+  },{passive:true});
+  /* 유휴 시에도 화면 하단에서 이끼가 천천히 자람 */
+  setInterval(function(){
+    if(hubActive()&&!document.hidden&&window.scrollY<innerHeight){
+      spawn(Math.random()*W,H-Math.random()*30,-1.5708+(Math.random()-.5)*.9,1.3,0);
+      mKick();
+    }
+  },1700);
+  function mStep(){
+    raf=null;
+    if(!hubActive()&&branches.length)branches.length=0; /* hub 이탈 시 성장 중단, 잉크는 페이드 */
+    ctx.globalCompositeOperation='destination-out';
+    ctx.fillStyle='rgba(0,0,0,'+(hubActive()?'.012':'.05')+')';
+    ctx.fillRect(0,0,W,H);
+    ctx.globalCompositeOperation='source-over';
+    var light=document.documentElement.classList.contains('light');
+    ctx.lineCap='round';
+    for(var i=branches.length-1;i>=0;i--){
+      var b=branches[i],px=b.x,py=b.y;
+      b.a+=(Math.random()-.5)*.42;
+      b.x+=Math.cos(b.a)*b.sp;b.y+=Math.sin(b.a)*b.sp;
+      b.w*=.992;b.life--;
+      ctx.strokeStyle=light?'rgba(96,74,66,'+(.16+b.w*.08).toFixed(3)+')':'rgba(255,180,162,'+(.13+b.w*.08).toFixed(3)+')';
+      ctx.lineWidth=b.w;
+      ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(b.x,b.y);ctx.stroke();
+      if(Math.random()<.05&&b.gen<3)spawn(b.x,b.y,b.a+(Math.random()<.5?-.7:.7),b.w*.72,b.gen+1);
+      if(Math.random()<.055){
+        ctx.beginPath();ctx.arc(b.x,b.y,.8+Math.random()*1.6,0,6.283);
+        ctx.fillStyle='rgba(255,59,0,'+(.10+Math.random()*.13).toFixed(3)+')';
+        ctx.fill();
+      }
+      if(b.life<=0||b.w<.22||b.x<-20||b.x>W+20||b.y<-20||b.y>H+20)branches.splice(i,1);
+    }
+    if(document.hidden){branches.length=0;ctx.clearRect(0,0,W,H);return;}
+    if(branches.length)idle=0;else idle++;
+    if(idle>700){ctx.clearRect(0,0,W,H);return;}
+    raf=requestAnimationFrame(mStep);
+  }
+  function mKick(){if(!raf&&!document.hidden){idle=0;raf=requestAnimationFrame(mStep);}}
+  mKick();
+  document.addEventListener('visibilitychange',mKick);
+  if(hub)new MutationObserver(mKick).observe(hub,{attributes:true,attributeFilter:['class']});
 })();
 </script>
 <script>
