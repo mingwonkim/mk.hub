@@ -1108,8 +1108,8 @@ html.light .mk-ripple{border-color:rgba(255,59,0,.35);}
 .mk-title-in .mk-ch{opacity:0;transform:translateY(.35em);animation:mkChIn .6s cubic-bezier(.22,.61,.36,1) calc(var(--i)*55ms) forwards;}
 @keyframes mkChIn{to{opacity:1;transform:none;}}
 /* ── v2: 대형 반투명 시계 (hero 배경) / 스크롤 프로그레스 / 백투탑 ── */
-#mkBigClock{position:absolute;top:56px;right:-6px;z-index:0;font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:clamp(76px,15vw,220px);line-height:1;letter-spacing:-.03em;color:rgba(255,255,255,.045);pointer-events:none;font-variant-numeric:tabular-nums;user-select:none;white-space:nowrap;}
-html.light #mkBigClock{color:rgba(28,17,16,.055);}
+#mkBigClock{position:absolute;top:50vh;left:50%;transform:translate(-50%,-50%);z-index:0;font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:clamp(64px,14vw,210px);line-height:1;letter-spacing:-.03em;color:rgba(255,255,255,.12);pointer-events:none;font-variant-numeric:tabular-nums;user-select:none;white-space:nowrap;text-shadow:0 0 60px rgba(255,180,162,.14);}
+html.light #mkBigClock{color:rgba(28,17,16,.11);text-shadow:0 0 60px rgba(255,59,0,.08);}
 #mkScrollBar{position:fixed;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,#ffb4a2,#FF3B00);transform:scaleX(0);transform-origin:left;z-index:60;pointer-events:none;}
 #mkTop{position:fixed;right:22px;bottom:30px;width:44px;height:44px;border-radius:50%;background:rgba(28,27,27,.72);backdrop-filter:blur(12px);border:1px solid var(--mk-border-hi);color:#ffb4a2;display:flex;align-items:center;justify-content:center;z-index:55;cursor:pointer;opacity:0;transform:translateY(16px);transition:opacity .35s,transform .35s,border-color .25s;pointer-events:none;}
 #mkTop.mk-show{opacity:1;transform:none;pointer-events:auto;}
@@ -1147,6 +1147,50 @@ html.light #hubCardGrid>section::before{background:radial-gradient(340px circle 
 #musicModuleGrid>[data-module]::before{content:'';position:absolute;inset:0;border-radius:inherit;background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),rgba(255,180,162,.08),transparent 60%);opacity:0;transition:opacity .3s;pointer-events:none;}
 #musicModuleGrid>[data-module]:hover::before{opacity:1;}
 html.light #musicModuleGrid>[data-module]::before{background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),rgba(255,59,0,.06),transparent 60%);}
+/* ── v4: 내부 페이지 인터랙션 확장 ── */
+/* 리스트·그리드 항목 스태거 등장 (렌더마다 재생) */
+#memoList>*,#fileList>*,#memoFolderGrid>*,#fileFolderGrid>*{animation:mkListIn .4s cubic-bezier(.22,.61,.36,1) backwards;}
+#memoList>:nth-child(2),#fileList>:nth-child(2),#memoFolderGrid>:nth-child(2),#fileFolderGrid>:nth-child(2){animation-delay:.05s;}
+#memoList>:nth-child(3),#fileList>:nth-child(3),#memoFolderGrid>:nth-child(3),#fileFolderGrid>:nth-child(3){animation-delay:.1s;}
+#memoList>:nth-child(4),#fileList>:nth-child(4),#memoFolderGrid>:nth-child(4),#fileFolderGrid>:nth-child(4){animation-delay:.15s;}
+#memoList>:nth-child(5),#fileList>:nth-child(5),#memoFolderGrid>:nth-child(5),#fileFolderGrid>:nth-child(5){animation-delay:.2s;}
+#memoList>:nth-child(6),#fileList>:nth-child(6),#memoFolderGrid>:nth-child(6),#fileFolderGrid>:nth-child(6){animation-delay:.25s;}
+#memoList>:nth-child(7),#fileList>:nth-child(7),#memoFolderGrid>:nth-child(7),#fileFolderGrid>:nth-child(7){animation-delay:.3s;}
+#memoList>:nth-child(n+8),#fileList>:nth-child(n+8),#memoFolderGrid>:nth-child(n+8),#fileFolderGrid>:nth-child(n+8){animation-delay:.35s;}
+@keyframes mkListIn{from{opacity:0;transform:translateY(12px);}}
+/* memo 노트 hover 살몬 액센트 바 */
+#memoList .mk-card{position:relative;overflow:hidden;}
+#memoList .mk-card::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#ffb4a2,#FF3B00);transform:scaleY(0);transform-origin:top;transition:transform .3s cubic-bezier(.22,.61,.36,1);}
+#memoList .mk-card:hover::after{transform:scaleY(1);}
+/* Vault 파일 카드 hover 리프트 */
+#fileList>div:hover{transform:translateY(-3px);border-color:rgba(255,180,162,.35)!important;box-shadow:0 12px 28px rgba(0,0,0,.35);}
+html.light #fileList>div:hover{box-shadow:0 12px 28px rgba(0,0,0,.1);}
+/* 폴더 카드 커서 틸트 + 아이콘 팝 */
+.folder-card:hover{transform:perspective(600px) rotateX(var(--ry,0deg)) rotateY(var(--rx,0deg)) translateY(-3px);}
+.folder-card .fc-icon{transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
+.folder-card:hover .fc-icon{transform:scale(1.1) rotate(-4deg);}
+/* Vault 드롭존 — 아이콘 부유 + 드래그오버 펄스 */
+.app-dropzone .material-symbols-outlined{transition:transform .3s cubic-bezier(.34,1.56,.64,1),color .3s;}
+.app-dropzone:hover .material-symbols-outlined{transform:translateY(-5px);color:#ffb4a2;}
+.app-dropzone.over{animation:mkDzPulse 1s ease-in-out infinite;}
+@keyframes mkDzPulse{50%{border-color:#FF3B00;background:rgba(255,59,0,.06);}}
+/* Music 모듈 카드 — 커서 틸트 + 화살표 슬라이드 + 아이콘 팝 + 넘버 하이라이트 */
+#musicModuleGrid>[data-module]:hover{transform:perspective(700px) rotateX(var(--ry,0deg)) rotateY(var(--rx,0deg)) translateY(-4px);}
+.amc-arrow{transition:transform .3s cubic-bezier(.22,.61,.36,1),color .3s;}
+.app-module-card:hover .amc-arrow{transform:translateX(8px);color:#FF3B00;}
+.amc-icon{transition:transform .35s cubic-bezier(.34,1.56,.64,1);}
+.app-module-card:hover .amc-icon{transform:scale(1.14) rotate(-6deg);}
+.amc-num{transition:color .3s,letter-spacing .3s;}
+.app-module-card:hover .amc-num{color:#ffb4a2;letter-spacing:.32em;}
+/* 페이지 라벨 트래킹 인 (01 — Notepad 등) */
+.page.active .app-page-label{animation:mkLabelIn .8s cubic-bezier(.22,.61,.36,1) both;}
+@keyframes mkLabelIn{from{letter-spacing:.5em;opacity:0;}to{letter-spacing:.22em;opacity:1;}}
+/* 버튼·검색창 마이크로 인터랙션 */
+.app-action-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(255,180,162,.28);}
+.app-action-btn:active{transform:scale(.96);}
+.app-ghost-btn:hover{border-color:rgba(255,180,162,.5);color:#ffb4a2;}
+html.light .app-ghost-btn:hover{border-color:rgba(255,59,0,.4);color:#FF3B00;}
+.app-search-wrap:focus-within{border-color:rgba(255,180,162,.55);box-shadow:0 0 0 3px rgba(255,180,162,.12);}
 /* ── reduced-motion 통합 가드 ── */
 @media (prefers-reduced-motion:reduce){
   #mkAurora i{animation:none!important;}
@@ -1156,6 +1200,9 @@ html.light #musicModuleGrid>[data-module]::before{background:radial-gradient(240
   .mk-title-in .mk-ch{animation:none;opacity:1;transform:none;}
   .mk-stg{animation:none;opacity:1;transform:none;}
   .page.active .app-page-title::after{animation:none;transform:scaleX(1);}
+  #memoList>*,#fileList>*,#memoFolderGrid>*,#fileFolderGrid>*{animation:none;}
+  .page.active .app-page-label{animation:none;}
+  .app-dropzone.over{animation:none;}
   nav.fixed.top-0{transition:none;}
 }
 </style>
@@ -4810,7 +4857,7 @@ renderGallery();
   var hub=document.getElementById('page-hub');
   function hubActive(){return hub&&hub.classList.contains('active');}
 
-  /* ── hero 타이틀: 글자 분해 → 스태거 등장 + 호버 리프트 + 스크램블 ── */
+  /* ── hero 타이틀: 글자 분해 → 스태거 등장 + 호버 리프트 ── */
   var h1=hub?hub.querySelector('h1.hub-hero-title'):null;
   if(h1&&!RM){
     var txt=h1.textContent;h1.textContent='';
@@ -4825,21 +4872,6 @@ renderGallery();
     };
     if(document.getElementById('mkIntro'))document.addEventListener('mk:introend',startTitle,{once:true});
     else startTitle();
-    if(FINE){
-      var scrambling=false,GLYPH='#@%&AZKX0147';
-      h1.addEventListener('pointerenter',function(){
-        if(scrambling||h1.classList.contains('mk-title-in'))return;scrambling=true;
-        h1.querySelectorAll('.mk-ch').forEach(function(s,i){
-          var orig=s.textContent,n=0,max=5+i*2;
-          var iv=setInterval(function(){
-            n++;
-            if(n>=max){s.textContent=orig;clearInterval(iv);}
-            else s.textContent=GLYPH[Math.random()*GLYPH.length|0];
-          },45);
-        });
-        setTimeout(function(){scrambling=false;},2600);
-      });
-    }
   }
 
   /* ── 대형 반투명 시계 (hero 배경 워터마크) ── */
@@ -5029,6 +5061,10 @@ renderGallery();
       var r=el.getBoundingClientRect();
       el.style.setProperty('--mx',(e.clientX-r.left).toFixed(0)+'px');
       el.style.setProperty('--my',(e.clientY-r.top).toFixed(0)+'px');
+      /* v4: 커서 위치 기반 3D 틸트 */
+      var cx=(e.clientX-r.left)/r.width-.5,cy=(e.clientY-r.top)/r.height-.5;
+      el.style.setProperty('--rx',(cx*5).toFixed(2)+'deg');
+      el.style.setProperty('--ry',(-cy*4).toFixed(2)+'deg');
     },{passive:true});
   }
 
