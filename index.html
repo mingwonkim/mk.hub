@@ -1223,6 +1223,14 @@ html.light #mkPalInput::placeholder{color:rgba(160,120,110,.5);}
 html.light .mk-pal-item{color:rgba(40,35,33,.85);}
 html.light .mk-pal-item.sel{background:rgba(255,59,0,.08);color:#111;}
 html.light .mk-pal-item .material-symbols-outlined{color:#FF3B00;}
+/* ── 12차: 루전식 베일 전환 ── */
+#mkVeil{position:fixed;left:0;right:0;top:-2vh;bottom:-2vh;z-index:105;pointer-events:none;background:#131313;transform:translateY(103%);display:none;}
+#mkVeil.sweep{display:block;pointer-events:auto;animation:mkVeilSweep .56s cubic-bezier(.76,0,.24,1) both;}
+@keyframes mkVeilSweep{
+  0%{transform:translateY(103%);border-radius:44% 44% 0 0/7vh 7vh 0 0;}
+  44%,56%{transform:translateY(0);border-radius:0;}
+  100%{transform:translateY(-103%);border-radius:0 0 44% 44%/0 0 7vh 7vh;}
+}
 /* ── 12차: 내부 페이지 에디토리얼 헤더 ── */
 .app-hero{position:relative;padding-bottom:22px;border-bottom:1px solid var(--mk-border);}
 .app-hero::before{content:attr(data-num);position:absolute;right:-4px;bottom:-6px;font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:clamp(84px,14vw,168px);line-height:.78;letter-spacing:-.06em;color:transparent;-webkit-text-stroke:1.5px rgba(255,180,162,.13);pointer-events:none;user-select:none;}
@@ -1248,6 +1256,7 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
 /* ── reduced-motion 통합 가드 ── */
 @media (prefers-reduced-motion:reduce){
   #mkPalette .mk-pal{animation:none;}
+  #mkVeil{display:none!important;}
   #mkAurora i{animation:none!important;}
   .mk-reveal{opacity:1!important;transform:none!important;transition:none!important;}
   .page.active{animation:none;}
@@ -2817,12 +2826,32 @@ window.updateRecoveryEmailDisplay=updateRecoveryEmailDisplay;
 
 /* ===== Navigation ===== */
 let curPage='hub';let navHistory=[];let mkPgOutTimer=0;
+/* 12차: 페이지 톤 맵 (daylight식 컬러 연속성) — hub는 갤러리 브리지가 소유 */
+const MK_TONE={
+  dark:{hub:'#131313',memo:'#1a1410',files:'#151413',music:'#190f14',settings:'#121214',todo:'#16150c'},
+  light:{hub:'#f5f2f0',memo:'#f7f1e8',files:'#f3f0eb',music:'#f6eeee',settings:'#f1f1f2',todo:'#f4f2e7'}
+};
+function mkToneOf(p){const L=document.documentElement.classList.contains('light');return (L?MK_TONE.light:MK_TONE.dark)[p]||(L?'#f5f2f0':'#131313');}
+function mkTonePaint(p){
+  if(p==='hub'){document.documentElement.style.removeProperty('--mk-bg');if(window.mkBridgeReset)window.mkBridgeReset();}
+  else document.documentElement.style.setProperty('--mk-bg',mkToneOf(p));
+}
+let mkVeilNode=null;
+function mkVeilEl(){
+  if(!mkVeilNode){
+    mkVeilNode=document.createElement('div');mkVeilNode.id='mkVeil';
+    document.body.appendChild(mkVeilNode);
+    mkVeilNode.addEventListener('animationend',()=>mkVeilNode.classList.remove('sweep'));
+  }
+  return mkVeilNode;
+}
 function setPage(p){if(curPage&&curPage!==p)navHistory.push(curPage);curPage=p;
   const commit=()=>{
     document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
     const pg=document.getElementById('page-'+p);if(pg)pg.classList.add('active');
     document.querySelectorAll('.nav-link').forEach(a=>{const act=a.dataset.page===p;a.className=`nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer ${act?'text-[#ffb4a2] font-bold':'text-[#ffb4a2]/40 hover:text-[#ffb4a2]'}`;});
     document.querySelectorAll('.bnav').forEach(a=>{const act=a.dataset.page===p;a.classList.toggle('text-[#ffb4a2]',act);a.classList.toggle('text-[#ffb4a2]/30',!act);a.classList.toggle('is-active',act);a.classList.remove('text-white/40','scale-110');if(act)a.classList.add('scale-105');const ic=a.querySelector('.material-symbols-outlined');if(ic)ic.style.fontVariationSettings=act?"'FILL' 1":"'FILL' 0";});
+    mkTonePaint(p);
     window.scrollTo({top:0,behavior:'auto'});
     if(window.mkPageEnter)window.mkPageEnter(p);
   };
@@ -2831,8 +2860,12 @@ function setPage(p){if(curPage&&curPage!==p)navHistory.push(curPage);curPage=p;
   document.querySelectorAll('.page.mk-page-out').forEach(el=>el.classList.remove('mk-page-out'));
   const out=document.querySelector('.page.active');
   if(out&&out.id!=='page-'+p&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    /* 12차: 루전식 베일 — 목적지 톤 색이 아래→위로 덮고 커밋 후 릴리즈 */
+    const veil=mkVeilEl();
+    veil.style.background=mkToneOf(p);
+    veil.classList.remove('sweep');void veil.offsetWidth;veil.classList.add('sweep');
     out.classList.add('mk-page-out');
-    mkPgOutTimer=setTimeout(()=>{mkPgOutTimer=0;out.classList.remove('mk-page-out');commit();},220);
+    mkPgOutTimer=setTimeout(()=>{mkPgOutTimer=0;out.classList.remove('mk-page-out');commit();},250);
   }else commit();
 }
 function goHub(){setPage('hub');}
@@ -5027,7 +5060,7 @@ renderGallery();
           brT=+Math.max(0,Math.min(1,(innerHeight*1.5-mw.top)/innerHeight)).toFixed(3);
         }
       }
-      if(brT!==brLast){
+      if(hubActive()&&brT!==brLast){ /* 12차: hub에서만 소유 — 내부 페이지 톤(mkTonePaint)과 충돌 방지 */
         brLast=brT;
         if(!brT)document.documentElement.style.removeProperty('--mk-bg');
         else{
@@ -5040,6 +5073,7 @@ renderGallery();
     });
   }
   window.addEventListener('scroll',onScroll2,{passive:true});
+  window.mkBridgeReset=function(){brLast=-1;onScroll2();}; /* hub 복귀 시 브리지 재계산 */
   onScroll2();
 
   /* ── 클릭 리플 ── */
