@@ -1203,8 +1203,34 @@ html.light #fileList>div:hover{box-shadow:0 12px 28px rgba(0,0,0,.1);}
 .app-ghost-btn:hover{border-color:rgba(255,180,162,.5);color:#ffb4a2;}
 html.light .app-ghost-btn:hover{border-color:rgba(255,59,0,.4);color:#FF3B00;}
 .app-search-wrap:focus-within{border-color:rgba(255,180,162,.55);box-shadow:0 0 0 3px rgba(255,180,162,.12);}
+/* ── v5: ⌘K 커맨드 팔레트 ── */
+#mkPalette{position:fixed;inset:0;z-index:110;display:none;align-items:flex-start;justify-content:center;padding-top:16vh;background:rgba(6,4,4,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+#mkPalette.open{display:flex;}
+#mkPalette .mk-pal{width:min(560px,92vw);background:rgba(26,24,24,.92);border:1px solid rgba(255,180,162,.16);border-radius:14px;box-shadow:0 30px 80px rgba(0,0,0,.5);overflow:hidden;animation:mkPalIn var(--mk-dur-1) var(--mk-ease) both;}
+@keyframes mkPalIn{from{opacity:0;transform:translateY(10px) scale(.985);}to{opacity:1;transform:none;}}
+#mkPalInput{width:100%;background:transparent;border:0;outline:0;padding:16px 18px;font:500 15px/1.4 'Pretendard Variable',Pretendard,sans-serif;color:#eee;border-bottom:1px solid rgba(255,180,162,.1);}
+#mkPalInput::placeholder{color:rgba(255,180,162,.35);}
+#mkPalList{max-height:46vh;overflow-y:auto;padding:6px;}
+.mk-pal-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;cursor:pointer;font:400 14px 'Pretendard Variable',Pretendard,sans-serif;color:rgba(229,226,225,.85);}
+.mk-pal-item .material-symbols-outlined{font-size:17px;color:#ffb4a2;}
+.mk-pal-item.sel{background:rgba(255,180,162,.1);color:#fff;}
+.mk-pal-item small{margin-left:auto;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,180,162,.4);font-family:'Space Grotesk',sans-serif;}
+.mk-pal-empty{padding:20px;text-align:center;font-size:13px;color:rgba(255,180,162,.4);}
+html.light #mkPalette{background:rgba(240,236,233,.5);}
+html.light #mkPalette .mk-pal{background:rgba(255,253,252,.95);border-color:rgba(0,0,0,.1);box-shadow:0 30px 80px rgba(0,0,0,.18);}
+html.light #mkPalInput{color:#222;border-bottom-color:rgba(0,0,0,.08);}
+html.light #mkPalInput::placeholder{color:rgba(160,120,110,.5);}
+html.light .mk-pal-item{color:rgba(40,35,33,.85);}
+html.light .mk-pal-item.sel{background:rgba(255,59,0,.08);color:#111;}
+html.light .mk-pal-item .material-symbols-outlined{color:#FF3B00;}
+/* ── v5: 시간대 색온도 — aurora 블롭 hue/알파 미세 조정 (다크 전용, 라이트는 이미 밝음) ── */
+html:not(.light).mk-tone-warm #mkAurora i:nth-child(1){background:radial-gradient(closest-side,rgba(255,196,150,.07),transparent 70%);}
+html:not(.light).mk-tone-warm #mkAurora i:nth-child(2){background:radial-gradient(closest-side,rgba(255,110,20,.04),transparent 70%);}
+html:not(.light).mk-tone-deep #mkAurora i:nth-child(1){background:radial-gradient(closest-side,rgba(255,150,150,.045),transparent 70%);}
+html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradient(closest-side,rgba(190,30,40,.05),transparent 70%);}
 /* ── reduced-motion 통합 가드 ── */
 @media (prefers-reduced-motion:reduce){
+  #mkPalette .mk-pal{animation:none;}
   #mkAurora i{animation:none!important;}
   .mk-reveal{opacity:1!important;transform:none!important;transition:none!important;}
   .page.active{animation:none;}
@@ -5215,6 +5241,91 @@ renderGallery();
   mKick();
   document.addEventListener('visibilitychange',mKick);
   if(hub)new MutationObserver(mKick).observe(hub,{attributes:true,attributeFilter:['class']});
+})();
+
+/* ===== MK v5 — ⌘K 커맨드 팔레트 + 시간대 색온도 ===== */
+(function(){
+  /* ── 시간대 색온도: 6-11시 warm / 18-24시 deep ── */
+  function mkTone(){
+    var h=new Date().getHours(),c=document.documentElement.classList;
+    c.remove('mk-tone-warm','mk-tone-deep');
+    if(h>=6&&h<12)c.add('mk-tone-warm');
+    else if(h>=18)c.add('mk-tone-deep');
+  }
+  mkTone();setInterval(mkTone,600000);
+
+  /* ── ⌘K 커맨드 팔레트 ── */
+  var pal=null,inp=null,list=null,items=[],sel=0;
+  var CMDS=[
+    {l:'Hub — 홈',i:'grid_view',k:'home hub 홈',run:function(){setPage('hub');}},
+    {l:'Notepad — 메모',i:'edit_note',k:'notepad memo 메모 노트',run:function(){openApp('memo');}},
+    {l:'Vault — 파일',i:'folder',k:'vault files 파일 볼트',run:function(){openApp('files');}},
+    {l:'Music — 음악',i:'music_note',k:'music 음악 뮤직',run:function(){openApp('music');}},
+    {l:'Todo — 할 일',i:'check_circle',k:'todo 할일 투두 calendar 달력',run:function(){openApp('todo');}},
+    {l:'Settings — 설정',i:'settings',k:'settings 설정',run:function(){openApp('settings');}},
+    {l:'Pitch Trainer 열기',i:'graphic_eq',k:'pitch trainer 절대음감 음감 피치',run:function(){openApp('music');openMusicApp('pitch');}},
+    {l:'Chord Dictionary 열기',i:'piano',k:'chord dictionary 코드 사전',run:function(){openApp('music');openMusicApp('chord');}},
+    {l:'테마 전환 (라이트/다크)',i:'contrast',k:'theme light dark 테마 라이트 다크 전환',run:function(){toggleTheme();}}
+  ];
+  function build(q){
+    q=(q||'').trim().toLowerCase();
+    var out=CMDS.filter(function(c){return !q||c.l.toLowerCase().includes(q)||c.k.includes(q);})
+      .map(function(c){return{l:c.l,i:c.i,tag:'명령',run:c.run};});
+    if(isUnlocked&&q){ /* 잠금 상태에선 메모 비노출 */
+      var lockedF={};(cachedMemoFolders||[]).forEach(function(f){if(f.locked)lockedF[f.id]=1;});
+      (cachedMemos||[]).forEach(function(m){
+        if(lockedF[m.folder])return; /* 잠긴 폴더 메모 제외 */
+        if((m.t||'').toLowerCase().includes(q))
+          out.push({l:m.t||'Untitled',i:'description',tag:'메모',run:function(){openApp('memo');editMemo(m.id);}});
+      });
+    }
+    return out.slice(0,12);
+  }
+  function render(){
+    if(!items.length){list.innerHTML='<div class="mk-pal-empty">결과 없음</div>';return;}
+    list.innerHTML=items.map(function(c,i){
+      return '<div class="mk-pal-item'+(i===sel?' sel':'')+'" data-i="'+i+'"><span class="material-symbols-outlined">'+c.i+'</span><span>'+esc(c.l)+'</span><small>'+c.tag+'</small></div>';
+    }).join('');
+    var s=list.children[sel];if(s&&s.scrollIntoView)s.scrollIntoView({block:'nearest'});
+  }
+  function ensure(){
+    if(pal)return;
+    pal=document.createElement('div');pal.id='mkPalette';
+    pal.innerHTML='<div class="mk-pal"><input id="mkPalInput" type="text" placeholder="명령 검색… (페이지 이동 · 메모 · 테마)" autocomplete="off"><div id="mkPalList"></div></div>';
+    document.body.appendChild(pal);
+    inp=pal.querySelector('#mkPalInput');list=pal.querySelector('#mkPalList');
+    pal.addEventListener('pointerdown',function(e){if(e.target===pal)palClose();});
+    inp.addEventListener('input',function(){sel=0;items=build(inp.value);render();});
+    list.addEventListener('click',function(e){var it=e.target.closest('.mk-pal-item');if(it){sel=+it.dataset.i;palRun();}});
+  }
+  function palOpen(){
+    ensure();
+    sel=0;inp.value='';items=build('');render();
+    pal.classList.add('open');inp.focus();
+    if(isUnlocked&&!(cachedMemos&&cachedMemos.length)){ /* 메모 캐시 없으면 백그라운드 로드 */
+      Promise.all([loadMemos(),loadMemoFolders()]).then(function(){
+        if(pal.classList.contains('open')){items=build(inp.value);render();}
+      }).catch(function(){});
+    }
+  }
+  function palClose(){if(pal)pal.classList.remove('open');}
+  function palRun(){
+    var c=items[sel];if(!c)return;
+    palClose();
+    try{c.run();}catch(e){}
+  }
+  document.addEventListener('keydown',function(e){
+    if((e.metaKey||e.ctrlKey)&&(e.key==='k'||e.key==='K')){
+      e.preventDefault();
+      (pal&&pal.classList.contains('open'))?palClose():palOpen();
+      return;
+    }
+    if(!pal||!pal.classList.contains('open'))return;
+    if(e.key==='Escape'){e.preventDefault();e.stopPropagation();palClose();}
+    else if(e.key==='ArrowDown'){e.preventDefault();if(items.length){sel=(sel+1)%items.length;render();}}
+    else if(e.key==='ArrowUp'){e.preventDefault();if(items.length){sel=(sel-1+items.length)%items.length;render();}}
+    else if(e.key==='Enter'){e.preventDefault();palRun();}
+  });
 })();
 </script>
 <script>
