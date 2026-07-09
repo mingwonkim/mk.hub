@@ -1223,6 +1223,23 @@ html.light #mkPalInput::placeholder{color:rgba(160,120,110,.5);}
 html.light .mk-pal-item{color:rgba(40,35,33,.85);}
 html.light .mk-pal-item.sel{background:rgba(255,59,0,.08);color:#111;}
 html.light .mk-pal-item .material-symbols-outlined{color:#FF3B00;}
+/* ── 12차: 내부 페이지 에디토리얼 헤더 ── */
+.app-hero{position:relative;padding-bottom:22px;border-bottom:1px solid var(--mk-border);}
+.app-hero::before{content:attr(data-num);position:absolute;right:-4px;bottom:-6px;font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:clamp(84px,14vw,168px);line-height:.78;letter-spacing:-.06em;color:transparent;-webkit-text-stroke:1.5px rgba(255,180,162,.13);pointer-events:none;user-select:none;}
+html.light .app-hero::before{-webkit-text-stroke-color:rgba(255,59,0,.14);}
+.app-page-title{font-size:clamp(34px,6vw,64px);}
+/* ── 12차: 컴포넌트 폴리시 ── */
+.app-action-btn{background:linear-gradient(135deg,#ffd0c4,#ff9d84);box-shadow:0 6px 18px rgba(255,110,80,.22);}
+.app-search-wrap{border-radius:9999px;padding:9px 18px;background:rgba(255,255,255,.035);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+html.light .app-search-wrap{background:rgba(255,255,255,.75);}
+#memoBreadcrumb,#fileBreadcrumb,#playlistBreadcrumb{font-size:11px;letter-spacing:.18em;text-transform:uppercase;}
+#memoList{counter-reset:mkmemo;}
+#memoList .mk-card{counter-increment:mkmemo;padding-left:66px;}
+#memoList .mk-card::before{content:counter(mkmemo,decimal-leading-zero);position:absolute;left:22px;top:24px;font-family:'Space Grotesk',sans-serif;font-size:11px;letter-spacing:.14em;color:rgba(255,59,0,.6);}
+.app-dropzone{border:1px solid var(--mk-border);border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.008));outline:1.5px dashed rgba(255,180,162,.22);outline-offset:-10px;}
+html.light .app-dropzone{background:linear-gradient(180deg,rgba(255,255,255,.8),rgba(255,255,255,.5));outline-color:rgba(255,59,0,.25);}
+.app-subpage-title{position:relative;display:inline-block;}
+.app-subpage-title::after{content:'';position:absolute;left:1px;bottom:-6px;width:40px;height:2px;background:linear-gradient(90deg,#ffb4a2,#FF3B00);}
 /* ── v5: 시간대 색온도 — aurora 블롭 hue/알파 미세 조정 (다크 전용, 라이트는 이미 밝음) ── */
 html:not(.light).mk-tone-warm #mkAurora i:nth-child(1){background:radial-gradient(closest-side,rgba(255,196,150,.07),transparent 70%);}
 html:not(.light).mk-tone-warm #mkAurora i:nth-child(2){background:radial-gradient(closest-side,rgba(255,110,20,.04),transparent 70%);}
@@ -1632,7 +1649,7 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
 <div class="page min-h-screen pt-24 pb-40 px-6" id="page-memo">
   <div class="max-w-4xl mx-auto">
     <!-- Page header -->
-    <div class="mb-10">
+    <div class="mb-10 app-hero" data-num="01">
       <button class="app-ghost-btn mb-3" onclick="memoSmartBack()">← Back</button>
       <div class="app-page-label">01 — Notepad</div>
       <h1 class="app-page-title">Records</h1>
@@ -1718,7 +1735,7 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
 <!-- ============ FILES PAGE ============ -->
 <div class="page min-h-screen pt-24 pb-40 px-6" id="page-files">
   <div class="max-w-4xl mx-auto">
-    <div class="flex items-center justify-between mb-10">
+    <div class="flex items-end justify-between mb-10 app-hero" data-num="02">
       <div>
         <button class="app-ghost-btn mb-3" onclick="fileSmartBack()">← Back</button>
         <div class="app-page-label">02 — Vault</div>
@@ -1753,7 +1770,7 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
 <!-- ============ MUSIC PAGE ============ -->
 <div class="page min-h-screen pt-24 pb-40 px-6" id="page-music">
   <div class="max-w-4xl mx-auto">
-    <div class="mb-10">
+    <div class="mb-10 app-hero" data-num="03">
       <button class="app-ghost-btn mb-3" onclick="musicSmartBack()">← Back</button>
       <div class="app-page-label">03 — Music</div>
       <h1 class="app-page-title">Studio</h1>
@@ -1884,7 +1901,7 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
 <!-- ============ SETTINGS PAGE ============ -->
 <div class="page min-h-screen pt-24 pb-40 px-6" id="page-settings">
   <div class="max-w-lg mx-auto">
-    <div class="mb-10">
+    <div class="mb-10 app-hero" data-num="SYS">
       <button class="app-ghost-btn mb-3" onclick="goBack()">← Back</button>
       <div class="app-page-label">System</div>
       <h1 class="app-page-title">Settings</h1>
@@ -5369,7 +5386,7 @@ setTimeout(function(){
 <iframe id="picPreloadFrame" src="" style="position:fixed;left:-9999px;top:0;width:1440px;height:900px;border:none;visibility:hidden;" allow="autoplay" sandbox="allow-scripts allow-same-origin"></iframe>
 <div class="page min-h-screen pt-24 pb-40 px-4 md:px-6" id="page-todo">
   <div class="w-full max-w-6xl mx-auto">
-    <div class="mb-8"><button class="app-ghost-btn mb-3" onclick="goBack()">← Back</button><div class="app-page-label">04 — Planner</div><h1 class="app-page-title">To-Do</h1></div>
+    <div class="mb-8 app-hero" data-num="04"><button class="app-ghost-btn mb-3" onclick="goBack()">← Back</button><div class="app-page-label">04 — Planner</div><h1 class="app-page-title">To-Do</h1></div>
     <div class="todo-layout">
     <!-- 선택한 날짜 패널 -->
     <aside class="todo-side">
