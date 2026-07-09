@@ -1665,10 +1665,6 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
       <h1 class="app-page-title">Records</h1>
     </div>
     <div id="memoFolderView">
-      <div class="flex gap-3 mb-8 flex-wrap items-center">
-        <button class="app-action-btn" onclick="newMemoFolder()"><span class="material-symbols-outlined text-base">create_new_folder</span> New Folder</button>
-        <div class="app-search-wrap"><span class="material-symbols-outlined text-[16px] text-outline/50">search</span><input class="app-search" id="memoFolderSearch" placeholder="Search folders…" oninput="renderMemoFolders()"></div>
-      </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5" id="memoFolderGrid"></div>
     </div>
     <div id="memoInsideFolder" style="display:none;">
@@ -1754,10 +1750,6 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
       <span class="font-label text-xs text-outline uppercase tracking-widest" id="storageUsage">-</span>
     </div>
     <div id="fileFolderView">
-      <div class="flex gap-3 mb-8 flex-wrap items-center">
-        <button class="app-action-btn" onclick="newFileFolder()"><span class="material-symbols-outlined text-base">create_new_folder</span> New Folder</button>
-        <div class="app-search-wrap"><span class="material-symbols-outlined text-[16px] text-outline/50">search</span><input class="app-search" id="fileFolderSearch" placeholder="Search folders…" oninput="renderFileFolders()"></div>
-      </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5" id="fileFolderGrid"></div>
     </div>
     <div id="fileInsideFolder" style="display:none;">
@@ -3462,12 +3454,11 @@ async function loadMemoFolders(){try{const s=await getDocs(query(memoFoldersCol,
 async function renderMemoFolders(){
   await loadMemoFolders();
   const el=document.getElementById('memoFolderGrid');
-  const q=(document.getElementById('memoFolderSearch').value||'').toLowerCase();
-  let fs=cachedMemoFolders;if(q)fs=fs.filter(f=>(f.name||'').toLowerCase().includes(q));
+  const fs=cachedMemoFolders.slice().sort((a,b)=>(a.locked?1:0)-(b.locked?1:0));
   let counts={};
   try{const ms=await getDocs(memosCol);ms.forEach(d=>{const fd=d.data().folder||'none';counts[fd]=(counts[fd]||0)+1;});}catch(e){}
   el.innerHTML=fs.map((f,i)=>`
-    <div class="app-module-card folder-card${f.locked?' locked':''}" onclick="openMemoFolder('${f.id}')">
+    <div class="app-module-card folder-card" onclick="openMemoFolder('${f.id}')">
       ${f.locked?`<span class="fc-lock" onclick="event.stopPropagation();toggleFolderLock('memo','${f.id}',true)" title="잠금 해제"><span class="material-symbols-outlined">lock</span></span>`:''}      <span class="fc-del" onclick="event.stopPropagation();delMemoFolder('${f.id}')"><span class="material-symbols-outlined">close</span></span>
       <div class="amc-num">${String(i+1).padStart(2,'0')}</div>
       <div class="amc-icon"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 300;">${f.locked&&!isUnlocked?'lock':escHtml(f.icon)||'folder'}</span></div>
@@ -3894,8 +3885,7 @@ async function loadFileFolders(){try{const s=await getDocs(query(fileFoldersCol,
 async function renderFileFolders(){
   await loadFileFolders();
   const el=document.getElementById('fileFolderGrid');
-  const q=(document.getElementById('fileFolderSearch').value||'').toLowerCase();
-  let fs=cachedFileFolders;if(q)fs=fs.filter(f=>(f.name||'').toLowerCase().includes(q));
+  const fs=cachedFileFolders.slice().sort((a,b)=>(a.locked?1:0)-(b.locked?1:0));
   let counts={},sizes={};
   try{const ms=await getDocs(filesCol);ms.forEach(d=>{const fd=d.data().folder||'none';counts[fd]=(counts[fd]||0)+1;sizes[fd]=(sizes[fd]||0)+(d.data().size||0);});}catch(e){}
   let totalSize=0;Object.values(sizes).forEach(s=>totalSize+=s);
@@ -3903,7 +3893,7 @@ async function renderFileFolders(){
   el.innerHTML=fs.map((f,i)=>{
     const sz=sizes[f.id]||0;
     const szStr=sz<1048576?(sz/1024).toFixed(0)+' KB':(sz/1048576).toFixed(1)+' MB';
-    return`<div class="app-module-card folder-card${f.locked?' locked':''}" onclick="openFileFolder('${f.id}')">
+    return`<div class="app-module-card folder-card" onclick="openFileFolder('${f.id}')">
       ${f.locked?`<span class="fc-lock" onclick="event.stopPropagation();toggleFolderLock('files','${f.id}',true)" title="잠금 해제"><span class="material-symbols-outlined">lock</span></span>`:''}      <span class="fc-del" onclick="event.stopPropagation();delFileFolder('${f.id}')"><span class="material-symbols-outlined">close</span></span>
       <div class="amc-num">${String(i+1).padStart(2,'0')}</div>
       <div class="amc-icon"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1,'wght' 300;">${f.locked&&!isUnlocked?'lock':escHtml(f.icon)||'folder'}</span></div>
