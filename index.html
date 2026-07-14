@@ -5086,6 +5086,8 @@ renderGallery();
           var mw=mqWrap.getBoundingClientRect();
           var ckStop=y+mw.top-innerHeight;
           ck.style.setProperty('--ckY',Math.max(0,Math.min(y,ckStop)).toFixed(0)+'px');
+          /* 모바일: 마우스 대신 손가락 스크롤 진행도로 주황 채움 (데스크탑 pointermove 대응) */
+          if(!FINE)ck.style.setProperty('--ckP',Math.max(0,Math.min(100,y/(innerHeight*.9)*100)).toFixed(1));
         }
       }
       if(hubActive()){ /* 12차: 갤러리 컬러 저니 — hub에서만 소유(내부 페이지 톤과 충돌 방지) */
@@ -5534,7 +5536,7 @@ setTimeout(function(){
           ready=true;player.setVolume(vol);
           player.loadPlaylist({list:BGM_LIST,listType:'playlist'});
           player.setShuffle(true);player.setLoop(true);
-          if(!on)player.pauseVideo();
+          if(on)player.playVideo();else player.pauseVideo();
         },
         onError:function(){try{player.nextVideo();}catch(e){}} /* 임베드 불가/삭제 곡은 스킵 */
       }});
