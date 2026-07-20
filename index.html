@@ -1325,8 +1325,7 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
   <div class="text-sm font-bold tracking-[.2em] text-[#ffb4a2] font-['Space_Grotesk'] uppercase cursor-pointer" data-elabel="brand" onclick="goHub()">MONOLITH_OS</div>
   <div class="hidden md:flex gap-8 items-center">
     <a class="nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer text-[#ffb4a2]/60 hover:text-[#ffb4a2]" data-page="hub" data-elabel="nav_hub" onclick="goHub()">Hub</a>
-    <a class="nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer text-[#ffb4a2]/60 hover:text-[#ffb4a2]" data-page="memo" data-elabel="nav_notepad" onclick="openApp('memo')">Notepad</a>
-    <a class="nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer text-[#ffb4a2]/60 hover:text-[#ffb4a2]" data-page="files" data-elabel="nav_vault" onclick="openApp('files')">Vault</a>
+    <a class="nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer text-[#ffb4a2]/60 hover:text-[#ffb4a2]" data-page="memo" data-elabel="nav_vault" onclick="openApp('memo')">Vault</a>
     <a class="nav-link font-['Space_Grotesk'] text-xs tracking-[.12em] uppercase transition-colors duration-300 cursor-pointer text-[#ffb4a2]/60 hover:text-[#ffb4a2]" data-page="music" data-elabel="nav_music" onclick="openApp('music')">Music</a>
   </div>
   <div class="flex gap-5 items-center">
@@ -1344,8 +1343,7 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
 <nav class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50">
   <div class="bg-[#131313]/60 backdrop-blur-3xl rounded-2xl px-5 py-2.5 shadow-2xl shadow-black/30 flex gap-7 md:gap-10 items-center justify-center border border-[#252525]" style="will-change:transform;">
     <a class="bnav is-active flex flex-col items-center justify-center transition-all duration-400 cursor-pointer py-1 px-2 text-[#ffb4a2]" data-page="hub" onclick="goHub()"><span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 1;">grid_view</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5" data-elabel="nav_hub">Hub</span></a>
-    <a class="bnav flex flex-col items-center justify-center transition-all duration-300 cursor-pointer py-1 px-2 text-[#ffb4a2]/30" data-page="memo" onclick="openApp('memo')"><span class="material-symbols-outlined text-[20px]">edit_note</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5" data-elabel="nav_notepad">Note</span></a>
-    <a class="bnav flex flex-col items-center justify-center transition-all duration-300 cursor-pointer py-1 px-2 text-[#ffb4a2]/30" data-page="files" onclick="openApp('files')"><span class="material-symbols-outlined text-[20px]">folder</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5" data-elabel="nav_vault">Vault</span></a>
+    <a class="bnav flex flex-col items-center justify-center transition-all duration-300 cursor-pointer py-1 px-2 text-[#ffb4a2]/30" data-page="memo" onclick="openApp('memo')"><span class="material-symbols-outlined text-[20px]">inventory_2</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5" data-elabel="nav_vault">Vault</span></a>
     <a class="bnav flex flex-col items-center justify-center transition-all duration-300 cursor-pointer py-1 px-2 text-[#ffb4a2]/30" data-page="music" onclick="openApp('music')"><span class="material-symbols-outlined text-[20px]">music_note</span><span class="font-['Space_Grotesk'] text-[9px] uppercase tracking-[.12em] mt-0.5" data-elabel="nav_music">Music</span></a>
   </div>
 </nav>
@@ -1689,8 +1687,8 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
     <!-- Page header -->
     <div class="mb-10 app-hero" data-num="01">
       <button class="app-ghost-btn mb-3" onclick="memoSmartBack()">← Back</button>
-      <div class="app-page-label">01 — Notepad</div>
-      <h1 class="app-page-title">Records</h1>
+      <div class="app-page-label">01 — Vault</div>
+      <h1 class="app-page-title">Vault</h1>
     </div>
     <div id="memoFolderView">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5" id="memoFolderGrid"></div>
@@ -1699,6 +1697,8 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
       <div class="flex items-center gap-2 mb-6 text-sm text-outline font-label" id="memoBreadcrumb"></div>
       <div class="flex gap-3 mb-8 flex-wrap items-center">
         <button class="app-action-btn" onclick="newMemo()"><span class="material-symbols-outlined text-base">edit_note</span> New Note</button>
+        <button class="app-action-btn" onclick="document.getElementById('memoFolderFileInput').click()"><span class="material-symbols-outlined text-base">upload</span> Upload</button>
+        <input type="file" id="memoFolderFileInput" multiple onchange="uploadToMemoFolder(this.files)" style="display:none;">
         <div class="app-search-wrap"><span class="material-symbols-outlined text-[16px] text-outline/50">search</span><input class="app-search" id="memoSearch" placeholder="Search…" oninput="renderMemos()"></div>
       </div>
       <div class="space-y-3" id="memoList"></div>
@@ -1712,7 +1712,13 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
         <button class="app-ghost-btn !py-2 !px-4 !text-xs" id="memoDrawToggle" onclick="toggleMemoCanvas()" style="display:flex;align-items:center;gap:6px;">
           <span class="material-symbols-outlined" style="font-size:16px;">brush</span><span id="memoDrawToggleLabel">Drawing</span>
         </button>
+        <button class="app-ghost-btn !py-2 !px-4 !text-xs" onclick="document.getElementById('memoAttInput').click()" style="display:flex;align-items:center;gap:6px;">
+          <span class="material-symbols-outlined" style="font-size:16px;">attach_file</span><span>Attach</span>
+        </button>
+        <input type="file" id="memoAttInput" multiple onchange="addMemoAtt(this.files)" style="display:none;">
       </div>
+      <!-- 첨부 파일 목록 -->
+      <div id="memoAttList" style="display:flex;flex-direction:column;gap:8px;"></div>
       <!-- 드로잉 캔버스 패널 (접기/펼치기) -->
       <div id="memoCanvasPanel" style="display:none;flex-direction:column;gap:8px;">
         <!-- 툴바 -->
@@ -1957,7 +1963,7 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
 
     <div class="app-settings-section">
       <div class="app-settings-tag">Security</div>
-      <div class="setting-row"><div><div class="setting-label">Password</div><div class="setting-sub">Protects Notepad, Vault & Settings</div></div><button class="app-action-btn !py-2 !px-5 !text-xs" onclick="changePw()">Change</button></div>
+      <div class="setting-row"><div><div class="setting-label">Password</div><div class="setting-sub">Protects Vault & Settings</div></div><button class="app-action-btn !py-2 !px-5 !text-xs" onclick="changePw()">Change</button></div>
       <div style="height:1px;background:#252525;margin:16px 0;"></div>
       <div class="setting-row">
         <div>
@@ -2029,6 +2035,12 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
         <div style="font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#a08d88;margin-bottom:12px;">허브 카드 순서</div>
         <div id="hubCardOrderList"></div>
       </div>
+    </div>
+
+    <div class="app-settings-section">
+      <div class="app-settings-tag">Vault 통합</div>
+      <p class="text-xs text-outline mb-4 leading-relaxed">기존 Vault의 파일 폴더·파일을 통합 저장소(노트+첨부)로 편입합니다. <b>Storage 원본은 삭제되지 않습니다.</b> 1회만 실행하세요.</p>
+      <button class="app-action-btn !py-2.5 !text-xs" onclick="runVaultMerge()"><span class="material-symbols-outlined text-base">merge</span> 파일 편입 실행</button>
     </div>
 
     <div class="app-settings-section">
@@ -3034,6 +3046,7 @@ function showTextPin(cb){
   setTimeout(()=>inp.focus(),100);
 }
 function doOpenApp(a){
+  if(a==='files')a='memo'; // Notepad↔Vault 통합: Vault 진입은 통합 페이지로
   if(a==='todo'){setPage('todo');renderTodoDay();loadTodos().then(function(){renderTodoCal();renderTodoDay();});return;}
   if(a==='memo'){curMemoFolder=null;document.getElementById('memoFolderView').style.display='';document.getElementById('memoInsideFolder').style.display='none';document.getElementById('memoEditor').style.display='none';renderMemoFolders();}
   if(a==='files'){curFileFolder=null;document.getElementById('fileFolderView').style.display='';document.getElementById('fileInsideFolder').style.display='none';renderFileFolders();}
@@ -3558,7 +3571,7 @@ function _doOpenMemoFolder(id){
   const lockBtn=!isUnlocked?'':f?.locked
     ?`<button onclick="toggleFolderLock('memo','${id}',true)" style="margin-left:auto;display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid rgba(255,180,162,.3);border-radius:8px;background:transparent;color:#ffb4a2;font-size:11px;font-family:'Space Grotesk',sans-serif;cursor:pointer;" onmouseover="this.style.background='rgba(255,180,162,.08)'" onmouseout="this.style.background='transparent'"><span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1;">lock</span>잠금 해제</button>`
     :`<button onclick="toggleFolderLock('memo','${id}',false)" style="margin-left:auto;display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid #353535;border-radius:8px;background:transparent;color:#a08d88;font-size:11px;font-family:'Space Grotesk',sans-serif;cursor:pointer;" onmouseover="this.style.borderColor='#524340'" onmouseout="this.style.borderColor='#353535'"><span class="material-symbols-outlined" style="font-size:14px;">lock_open</span>잠금 설정</button>`;
-  document.getElementById('memoBreadcrumb').innerHTML=`<span class="cursor-pointer hover:text-[#ffb4a2] transition-colors" onclick="backToMemoFolders()">Notepad</span><span class="text-outline/40 mx-2">›</span><span class="text-on-surface font-bold flex items-center gap-1">${iconHtml(f?.icon||'folder','16px','#ffb4a2')} ${escHtml(f?.name)||'폴더'}</span>${lockBtn}`;
+  document.getElementById('memoBreadcrumb').innerHTML=`<span class="cursor-pointer hover:text-[#ffb4a2] transition-colors" onclick="backToMemoFolders()">Vault</span><span class="text-outline/40 mx-2">›</span><span class="text-on-surface font-bold flex items-center gap-1">${iconHtml(f?.icon||'folder','16px','#ffb4a2')} ${escHtml(f?.name)||'폴더'}</span>${lockBtn}`;
   renderMemos();
 }
 function backToMemoFolders(){curMemoFolder=null;_hideCanvas();document.getElementById('memoInsideFolder').style.display='none';document.getElementById('memoEditor').style.display='none';document.getElementById('memoFolderView').style.display='';renderMemoFolders();}
@@ -3587,11 +3600,42 @@ window.newMemoFolder=newMemoFolder;window.delMemoFolder=delMemoFolder;window.ope
 /* ===== Memos ===== */
 let editId=null;
 async function loadMemos(){try{const s=await getDocs(query(memosCol,orderBy('u','desc')));cachedMemos=[];s.forEach(d=>{cachedMemos.push({id:d.id,...d.data()});});}catch(e){cachedMemos=[];}}
-async function renderMemos(){const el=document.getElementById('memoList');el.innerHTML='<div class="text-center py-10 text-outline text-sm">Loading...</div>';await loadMemos();const q=(document.getElementById('memoSearch').value||'').toLowerCase();let ms=cachedMemos.filter(m=>(m.folder||'none')===curMemoFolder);if(q)ms=ms.filter(m=>(m.t||'').toLowerCase().includes(q)||((m.type!=='draw')&&(m.b||'').toLowerCase().includes(q)));if(!ms.length){el.innerHTML=`<div class="text-center py-16 text-outline"><span class="material-symbols-outlined text-3xl mb-2 block">note_add</span><p class="text-sm">${q?'No results':'Create a new note'}</p></div>`;return;}el.innerHTML=ms.map(m=>{const d=new Date(m.u).toLocaleDateString('ko-KR',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});const isDraw=m.type==='draw';const isNote=m.type==='note';const thumbUrl=isDraw?m.b:(isNote?m.canvas_url:null);const thumb=thumbUrl?`<img class="memo-draw-thumb" src="${thumbUrl}" alt="drawing">` :'';const brushIcon=isDraw||isNote||m.canvas_url?'<span class="material-symbols-outlined" style="font-size:13px;color:#ffb4a2;margin-right:4px;vertical-align:middle;">brush</span>':'';const preview=isDraw?'그림 파일':esc((m.b||'').substring(0,80).replace(/\n/g,' ')||'—');return`<div class="mk-card" onclick="editMemo('${m.id}')">${thumb}<div class="flex justify-between items-start"><div class="flex-1 min-w-0"><div class="font-bold text-[15px] mb-1 text-on-surface" style="letter-spacing:-.01em;">${brushIcon}${esc(m.t||'Untitled')}</div><div class="text-[13px] text-on-surface-variant truncate" style="line-height:1.6;">${preview}</div><div class="text-[11px] text-outline mt-2 font-label">${d}</div></div><span class="text-xs text-outline hover:text-[#FF3B00] cursor-pointer ml-3 shrink-0 transition-colors" onclick="event.stopPropagation();delMemo('${m.id}')">Delete</span></div></div>`;}).join('');}
+async function renderMemos(){const el=document.getElementById('memoList');el.innerHTML='<div class="text-center py-10 text-outline text-sm">Loading...</div>';await loadMemos();const q=(document.getElementById('memoSearch').value||'').toLowerCase();let ms=cachedMemos.filter(m=>(m.folder||'none')===curMemoFolder);if(q)ms=ms.filter(m=>(m.t||'').toLowerCase().includes(q)||((m.type!=='draw')&&(m.b||'').toLowerCase().includes(q)));if(!ms.length){el.innerHTML=`<div class="text-center py-16 text-outline"><span class="material-symbols-outlined text-3xl mb-2 block">note_add</span><p class="text-sm">${q?'No results':'Create a new note'}</p></div>`;return;}el.innerHTML=ms.map(m=>{const d=new Date(m.u).toLocaleDateString('ko-KR',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});const isDraw=m.type==='draw';const isNote=m.type==='note';const thumbUrl=isDraw?m.b:(isNote?m.canvas_url:null);const thumb=thumbUrl?`<img class="memo-draw-thumb" src="${thumbUrl}" alt="drawing">` :'';const brushIcon=isDraw||isNote||m.canvas_url?'<span class="material-symbols-outlined" style="font-size:13px;color:#ffb4a2;margin-right:4px;vertical-align:middle;">brush</span>':'';const isFile=m.type==='file';const attN=Array.isArray(m.att)?m.att.length:0;const preview=isDraw?'그림 파일':(isFile?`${fIcon(m.att?.[0]?.type||'',m.att?.[0]?.n||'')} ${esc(m.att?.[0]?.n||'파일')}`:esc((m.b||'').substring(0,80).replace(/\n/g,' ')||'—'));return`<div class="mk-card" onclick="editMemo('${m.id}')">${thumb}<div class="flex justify-between items-start"><div class="flex-1 min-w-0"><div class="font-bold text-[15px] mb-1 text-on-surface" style="letter-spacing:-.01em;">${brushIcon}${esc(m.t||'Untitled')}</div><div class="text-[13px] text-on-surface-variant truncate" style="line-height:1.6;">${preview}</div><div class="text-[11px] text-outline mt-2 font-label">${d}${attN?` · 📎 ${attN}`:''}</div></div><span class="text-xs text-outline hover:text-[#FF3B00] cursor-pointer ml-3 shrink-0 transition-colors" onclick="event.stopPropagation();delMemo('${m.id}')">Delete</span></div></div>`;}).join('');}
 var _pendingCanvasUrl=null; // 편집 중인 기존 드로잉 URL
+let _editAtt=[]; // 편집 중인 노트의 첨부 목록
+function renderMemoAtt(){
+  const el=document.getElementById('memoAttList');if(!el)return;
+  el.innerHTML=_editAtt.map((a,i)=>{
+    const s=a.size||0;const sz=s<1024?s+'B':s<1048576?(s/1024).toFixed(1)+' KB':(s/1048576).toFixed(1)+' MB';
+    return`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(255,255,255,.03);border:1px solid #252525;border-radius:10px;">
+      <span style="font-size:18px;line-height:1;">${fIcon(a.type||'',a.n||'')}</span>
+      <div style="flex:1;min-width:0;"><div class="break-all" style="font-size:13px;font-weight:600;color:var(--mk-on-surf);">${escHtml(a.n)}</div><div style="font-size:10px;color:#a08d88;letter-spacing:.06em;">${sz}</div></div>
+      <a href="${a.url}" target="_blank" style="color:#ffb4a2;font-size:11px;text-transform:uppercase;letter-spacing:.06em;text-decoration:none;">Open</a>
+      <span onclick="removeMemoAtt(${i})" style="cursor:pointer;color:#a08d88;font-size:16px;line-height:1;" title="첨부 제거">✕</span>
+    </div>`;
+  }).join('');
+}
+async function addMemoAtt(fl){
+  for(const f of Array.from(fl)){
+    if(f.size>50*1024*1024){toast(f.name+': Max 50MB');continue;}
+    try{
+      const fid='f'+Date.now()+'_'+Math.random().toString(36).substr(2,4);
+      const fr=sRef(stg,'mk_files/'+fid+'_'+f.name);
+      toast('업로드 중: '+f.name);
+      await uploadBytes(fr,f);
+      const url=await getDownloadURL(fr);
+      _editAtt.push({n:f.name,url,path:fr.fullPath,size:f.size,type:f.type});
+    }catch(e){toast('Upload failed');}
+  }
+  const inp=document.getElementById('memoAttInput');if(inp)inp.value='';
+  renderMemoAtt();
+}
+// ponytail: 목록에서만 제거. Storage 정리는 saveMemo에서 diff로 처리(취소 시 저장본 안 깨지게). 취소 후 방금 올린 파일은 orphan으로 남음(사소).
+function removeMemoAtt(i){_editAtt.splice(i,1);renderMemoAtt();}
+window.addMemoAtt=addMemoAtt;window.removeMemoAtt=removeMemoAtt;
 function newMemo(){
   if(!isUnlocked){showTextPin(()=>newMemo());return;}
-  editId=null;_pendingCanvasUrl=null;
+  editId=null;_pendingCanvasUrl=null;_editAtt=[];renderMemoAtt();
   document.getElementById('memoTitleInput').value='';
   document.getElementById('memoBodyInput').value='';
   _hideCanvas();
@@ -3601,6 +3645,7 @@ function editMemo(id){
   const m=cachedMemos.find(x=>x.id===id);
   if(!m)return;
   editId=id;
+  _editAtt=Array.isArray(m.att)?m.att.map(a=>({...a})):[];renderMemoAtt();
   document.getElementById('memoTitleInput').value=m.t||'';
   // 'note' 타입: 텍스트+드로잉, 'draw' 타입: 드로잉만(레거시), 'text' 타입: 텍스트만
   if(m.type==='draw'){
@@ -3675,7 +3720,11 @@ async function saveMemo(){
   try{
     const f=cachedMemoFolders.find(x=>x.id===curMemoFolder);
     if(editId){
-      const upd={t,b,type:memoType,u:Date.now()};
+      // 제거된 첨부의 Storage 객체 정리 (원본 att 중 현재 목록에 없는 것)
+      const orig=(cachedMemos.find(x=>x.id===editId)?.att)||[];
+      const keep=new Set(_editAtt.map(a=>a.path));
+      orig.forEach(a=>{if(a.path&&!keep.has(a.path))deleteObject(sRef(stg,a.path)).catch(()=>{});});
+      const upd={t,b,type:memoType,att:_editAtt,u:Date.now()};
       if(hasCanvas){upd.canvas_url=canvas_url;upd.canvas_path=canvas_path;}
       else{upd.canvas_url=null;upd.canvas_path=null;}
       await updateDoc(doc(db,'mk_app','data','memos',editId),upd);
@@ -3684,7 +3733,7 @@ async function saveMemo(){
         _ghPush(f?f.name:'Uncategorized',{...m,...upd,id:editId,canvas_url:upd.canvas_url}).then(()=>toast('GitHub 동기화 완료')).catch(()=>toast('GitHub 동기화 실패'));
       }
     }else{
-      const data={t,b,type:memoType,c:Date.now(),u:Date.now(),folder:curMemoFolder};
+      const data={t,b,type:memoType,att:_editAtt,c:Date.now(),u:Date.now(),folder:curMemoFolder};
       if(hasCanvas){data.canvas_url=canvas_url;data.canvas_path=canvas_path;}
       const newDoc=await addDoc(memosCol,data);
       if(_ghEnabled()){
@@ -3701,8 +3750,50 @@ function cancelMemo(){
   document.getElementById('memoInsideFolder').style.display='';
   renderMemos();
 }
-async function delMemo(id){if(!isUnlocked){showTextPin(()=>delMemo(id));return;}if(!confirm('Delete this note?'))return;try{const m=cachedMemos.find(x=>x.id===id);const stoPath=m?.canvas_path||m?.path;if(stoPath)await deleteObject(sRef(stg,stoPath)).catch(()=>{});await deleteDoc(doc(db,'mk_app','data','memos',id));}catch(e){}renderMemos();}
+async function delMemo(id){if(!isUnlocked){showTextPin(()=>delMemo(id));return;}if(!confirm('Delete this note?'))return;try{const m=cachedMemos.find(x=>x.id===id);const stoPath=m?.canvas_path||m?.path;if(stoPath)await deleteObject(sRef(stg,stoPath)).catch(()=>{});if(Array.isArray(m?.att))for(const a of m.att){if(a.path)await deleteObject(sRef(stg,a.path)).catch(()=>{});}await deleteDoc(doc(db,'mk_app','data','memos',id));}catch(e){}renderMemos();}
 window.newMemo=newMemo;window.editMemo=editMemo;window.saveMemo=saveMemo;window.cancelMemo=cancelMemo;window.delMemo=delMemo;window.renderMemos=renderMemos;window.toggleMemoCanvas=toggleMemoCanvas;window.memoBodyAutoGrow=memoBodyAutoGrow;
+// 폴더에서 파일 직접 업로드 → 파일 노트(type:'file') 생성
+async function uploadToMemoFolder(fl){
+  if(!isUnlocked){showTextPin(()=>uploadToMemoFolder(fl));return;}
+  for(const f of Array.from(fl)){
+    if(f.size>50*1024*1024){toast(f.name+': Max 50MB');continue;}
+    try{
+      const fid='f'+Date.now()+'_'+Math.random().toString(36).substr(2,4);
+      const fr=sRef(stg,'mk_files/'+fid+'_'+f.name);
+      toast('업로드 중: '+f.name);
+      await uploadBytes(fr,f);
+      const url=await getDownloadURL(fr);
+      await addDoc(memosCol,{t:f.name,b:'',type:'file',att:[{n:f.name,url,path:fr.fullPath,size:f.size,type:f.type}],c:Date.now(),u:Date.now(),folder:curMemoFolder});
+      toast('Uploaded: '+f.name);
+    }catch(e){toast('Upload failed');}
+  }
+  const inp=document.getElementById('memoFolderFileInput');if(inp)inp.value='';
+  renderMemos();
+}
+window.uploadToMemoFolder=uploadToMemoFolder;
+// 일회성 마이그레이션: 기존 Vault(file_folders/files) → 통합 저장소(folders/memos). Storage 원본 보존.
+async function runVaultMerge(){
+  if(!isUnlocked){showTextPin(()=>runVaultMerge());return;}
+  if(localStorage.getItem('mk_merge_done')){if(!confirm('이미 통합을 실행했습니다. 남은 파일만 다시 편입할까요?'))return;}
+  else if(!confirm('기존 Vault의 파일 폴더·파일을 통합 저장소로 편입합니다.\n(Storage 원본은 삭제되지 않음)\n진행할까요?'))return;
+  toast('통합 중…');
+  try{
+    // 1) 파일 폴더 → folders 트리로 복제(같은 id 유지 → 파일의 folder 값 그대로 유효)
+    const ff=await getDocs(fileFoldersCol);
+    for(const d of ff.docs){await setDoc(doc(db,'mk_app','data','folders',d.id),d.data());}
+    // 2) 각 파일 → 파일 노트로 편입 후 원본 files 문서 삭제(Storage 객체는 보존)
+    const fsnap=await getDocs(filesCol);let n=0;
+    for(const d of fsnap.docs){
+      const x=d.data();
+      await addDoc(memosCol,{t:x.n||'파일',b:'',type:'file',att:[{n:x.n,url:x.url,path:x.path,size:x.size,type:x.type}],folder:x.folder||'none',c:x.c||Date.now(),u:x.c||Date.now()});
+      await deleteDoc(doc(db,'mk_app','data','files',d.id));n++;
+    }
+    localStorage.setItem('mk_merge_done','1');
+    toast('통합 완료: 파일 '+n+'개 편입');
+    if(curPage==='memo'){curMemoFolder=null;document.getElementById('memoFolderView').style.display='';document.getElementById('memoInsideFolder').style.display='none';document.getElementById('memoEditor').style.display='none';renderMemoFolders();}
+  }catch(e){toast('통합 실패');}
+}
+window.runVaultMerge=runVaultMerge;
 
 /* ── 그림판 엔진 ── */
 var _dc={tool:'pen',color:'#ffffff',size:5,drawing:false,history:[],ctx:null,canvas:null,lastX:0,lastY:0};
