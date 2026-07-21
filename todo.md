@@ -350,8 +350,25 @@ Firebase 프로젝트 `mingwon-hub`, 경로 `mk_app/data/briefs/{YYYY-MM-DD}`.
 - [x] 리더 오버레이(`#briefReader`, fixed) — AI/시장(▲▼●)/리뷰 렌더, 안읽음이면 '읽음' 버튼→read:true
 - [x] 데이터: `briefsCol`(mk_app/data/briefs), `cachedBriefs`, `loadBriefs`/`markBriefRead`; doOpenApp 'briefing' 라우팅
 - [x] 정적검증: 스크립트 8개 node --check 통과, 핸들러↔DOM id 연결 확인
-- [ ] **사용자 브라우저 검증** (카드 뱃지·우편함·달력·리더·읽음) 후 커밋 — 대기
+- [x] **사용자 브라우저 검증** 후 커밋 — 복원점 태그 `pre-briefing-2b`(9896dcc) 저장 후 커밋 `e67af82` + push 완료
 
 ### 2c — morning-brief 후속
 - [x] `_search_candidates`에 검색일 기준 14일 초과 기사 제외 (pub 불명은 유지), py_compile 통과
-- [ ] push (다음 06:00 실행부터 적용)
+- [x] push — 커밋 `fa765eb` + push 완료 (다음 06:00 실행부터 적용)
+
+### 2d — 브리핑 양식 원복 (원본 이메일 HTML 그대로) (2026-07-21)
+사용자 요청: 새로 타이핑 말고 기존 메일 양식 유지(이뻐야·하이퍼링크 작동), Firestore에 HTML 1덩어리로 저장.
+- [x] morning-brief: 제거됐던 `_esc`/`DIRECTION_STYLE`/`_raw_fallback_html`/`build_email_html` git에서 원복
+- [x] `write_brief_to_firestore` → 구조화 필드 대신 `html`(원본 이메일 렌더) 1덩어리 + `count`(티저용) 저장. 이메일 head에 `<base target="_blank">` 추가(iframe 내 링크 새탭)
+- [x] py_compile 통과
+- [x] mk.hub `openBriefReader`: `b.html` 있으면 iframe(srcdoc, 자동높이)로 원본 양식 렌더 / 없으면 옛 구조화 폴백 유지. 카드 티저 `n`은 `b.count` 우선
+- [x] 정적검증: openBriefReader node --check 통과
+- [ ] **사용자 브라우저 검증** — 다음 morning-brief 실행(html 필드 생성) 후 리더에서 원본 양식·하이퍼링크 확인
+- [ ] 커밋/푸시 (양쪽 레포) — 사용자 승인 대기
+
+### 2e — 기사 유효기간 1주 + 브리핑 서랍장 아카이브 (2026-07-21)
+- [x] morning-brief: 기사 cutoff 14일→7일 (`_search_candidates`), py_compile 통과
+- [x] mk.hub: 브리핑 페이지 달력 제거 → 서랍장 드릴다운(연도→월→주차→요일). 큰 가로 서랍칸(132px), 브레드크럼 네비, 미읽음 뱃지/요일 색상. `renderBriefCal`→`renderBriefDrawer`(+`_wom`/`briefDrill`/`briefDrillUp`)
+- [x] 정적검증: 서랍장 JS node --check 통과, `_wom`/그룹핑 assert 통과, stale ref 없음
+- [ ] **사용자 브라우저 검증** (연도→월→주차→요일 드릴다운, 요일칸→리더)
+- [ ] 커밋/푸시 — 사용자 승인 대기
