@@ -881,7 +881,7 @@ html.light #memoEditor{background:rgba(255,250,248,.9);}
   .mob-feed-hdr-right{text-align:right;}
   .mob-feed-hdr-coll{font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:.12em;color:#524340;}
   .mob-feed-hdr-year{font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:600;letter-spacing:.08em;color:#353535;margin-top:2px;}
-  .mob-feed-divider{height:1px;background:linear-gradient(90deg,#FF3B00,rgba(255,59,0,.22) 55%,transparent);margin:0 16px;}
+  .mob-feed-divider{height:1px;background:linear-gradient(90deg,#FF3B00,rgba(255,59,0,.22) 55%,transparent);margin:0 16px 9px;}
   /* 각 포스트 — 라운드 카드 (인스타그램 스타일) */
   .mob-post{cursor:pointer;background:#0b0808;transition:background .12s,transform .12s;margin:0 12px 22px!important;border-radius:18px;border:1px solid #1c1515;overflow:hidden;box-shadow:0 12px 32px rgba(0,0,0,.35);}
   .mob-post:active{background:#100c0c!important;transform:scale(.985);}
@@ -5246,7 +5246,7 @@ renderGallery();
     if(!FINE&&!RM){
       var tT=0,tP=0,tRaf=null,tDown=false,tLX=0;
       function tStep(){
-        tP+=(tT-tP)*.18;
+        tP+=(tT-tP)*.3;
         if(Math.abs(tT-tP)<.05){tP=tT;ck.style.setProperty('--ckP',tP.toFixed(2));tRaf=null;return;}
         ck.style.setProperty('--ckP',tP.toFixed(2));
         tRaf=requestAnimationFrame(tStep);
@@ -5255,7 +5255,7 @@ renderGallery();
       document.addEventListener('pointermove',function(e){
         if(!tDown||!hubActive())return;
         var dx=e.clientX-tLX;tLX=e.clientX;
-        tT=Math.max(0,Math.min(100,tT+dx/innerWidth*100));
+        tT=Math.max(0,Math.min(100,tT+dx/innerWidth*220));
         if(!tRaf)tRaf=requestAnimationFrame(tStep);
       },{passive:true});
       document.addEventListener('pointerup',function(){tDown=false;},{passive:true});
