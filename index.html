@@ -1108,8 +1108,9 @@ html.light #mkCursorDot{background:#FF3B00;}
 @keyframes mkRipple{from{transform:scale(.2);opacity:.55;}to{transform:scale(1.25);opacity:0;}}
 html.light .mk-ripple{border-color:rgba(255,59,0,.35);}
 /* ── v2: hero 타이틀 글자 인터랙션 ── */
-.mk-ch{display:inline-block;background:inherit;-webkit-background-clip:text;background-clip:text;transition:transform var(--mk-dur-1) var(--mk-ease);}
-@media(hover:hover){.mk-ch:hover{transform:translateY(-.035em);}}
+/* 글자별 :hover 리프트 없음 — h1 자체가 마우스 패럴랙스로 계속 움직여서(아래 hStep)
+   커서 아래 글자가 매 프레임 바뀌고, 리프트가 히트박스까지 옮겨 M 뒷 글자들이 끝없이 튀었음 */
+.mk-ch{display:inline-block;background:inherit;-webkit-background-clip:text;background-clip:text;}
 .mk-title-in .mk-ch{opacity:0;transform:translateY(.35em);animation:mkChIn var(--mk-dur-2) var(--mk-ease) calc(var(--i)*55ms) forwards;}
 @keyframes mkChIn{to{opacity:1;transform:none;}}
 /* ── v2: 대형 반투명 시계 (hero 배경) / 스크롤 프로그레스 / 백투탑 ── */
@@ -1801,8 +1802,8 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
       <div class="app-page-label">01 — Briefing</div>
       <h1 class="app-page-title">Archive</h1>
     </div>
-    <div id="briefCrumb" style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:22px;font-family:'Space Grotesk',sans-serif;font-size:13px;"></div>
-    <div id="briefDrawer" style="display:flex;gap:14px;overflow-x:auto;padding-bottom:14px;-webkit-overflow-scrolling:touch;"></div>
+    <div id="briefCrumb" style="margin-bottom:18px;font-family:'Space Grotesk',sans-serif;font-size:13px;"></div>
+    <div id="briefDrawer"></div>
   </div>
 </div>
 
@@ -3060,7 +3061,7 @@ function showTextPin(cb){
 }
 function doOpenApp(a){
   if(a==='files')a='memo'; // Notepad↔Vault 통합: Vault 진입은 통합 페이지로
-  if(a==='briefing'){document.getElementById('briefReader').style.display='none';_briefNav={y:null,m:null,w:null};renderBriefDrawer();loadBriefs().then(function(){renderBriefDrawer();renderBriefingCard();});setPage('briefing');return;}
+  if(a==='briefing'){document.getElementById('briefReader').style.display='none';renderBriefDrawer();loadBriefs().then(function(){renderBriefDrawer();renderBriefingCard();});setPage('briefing');return;}
   if(a==='todo'){setPage('todo');renderTodoDay();loadTodos().then(function(){renderTodoCal();renderTodoDay();});return;}
   if(a==='memo'){curMemoFolder=null;document.getElementById('memoFolderView').style.display='';document.getElementById('memoInsideFolder').style.display='none';document.getElementById('memoEditor').style.display='none';renderMemoFolders();}
   if(a==='files'){curFileFolder=null;document.getElementById('fileFolderView').style.display='';document.getElementById('fileInsideFolder').style.display='none';renderFileFolders();}
@@ -4399,7 +4400,7 @@ function renderTodoCal(){
 }
 
 /* ===== Briefing (morning-brief → Firestore → 브리핑 칸) ===== */
-var cachedBriefs=[];var _briefNav={y:null,m:null,w:null};
+var cachedBriefs=[];
 async function loadBriefs(){try{var s=await getDocs(query(briefsCol,orderBy('date','desc')));cachedBriefs=[];s.forEach(function(d){cachedBriefs.push({id:d.id,...d.data()});});}catch(e){cachedBriefs=[];}}
 function _briefUnread(){return cachedBriefs.filter(function(b){return !b.read;});}
 function renderBriefingCard(){
@@ -4407,66 +4408,54 @@ function renderBriefingCard(){
   if(!teaser)return;
   var unread=_briefUnread();
   if(badge){if(unread.length){badge.style.display='';badge.textContent=unread.length>9?'9+':unread.length;}else badge.style.display='none';}
-  if(!cachedBriefs.length){teaser.innerHTML='<div class="text-[13px] text-outline/50" style="line-height:1.7;">아직 브리핑이 없습니다.<br>매일 아침 자동으로 도착합니다.</div>';return;}
+  if(!cachedBriefs.length){teaser.innerHTML='<div class="text-[13px] text-outline/50" style="line-height:1.7;">아직 브리핑이 없습니다.<br>월·목 아침에 자동으로 도착합니다.</div>';return;}
   teaser.innerHTML=cachedBriefs.slice(0,4).map(function(b){
     var dot=b.read?'rgba(255,180,162,.3)':'#FF3B00';
-    return '<div style="display:flex;align-items:center;gap:10px;">'
+    // 카드에서 바로 열기 — 아카이브 페이지를 거치지 않도록
+    return '<div onclick="event.stopPropagation();openBriefReader(\''+b.id+'\')" style="display:flex;align-items:center;gap:10px;cursor:pointer;">'
       +'<span style="width:6px;height:6px;border-radius:50%;background:'+dot+';flex-shrink:0;"></span>'
       +'<span class="truncate" style="font-size:13px;color:rgba(229,226,225,.6);flex:1;min-width:0;">'+escHtml(b.dateDisplay||b.date)+'</span></div>';
   }).join('');
 }
+// 리더를 열면 자동 호출 — 별도의 '읽음 처리' 버튼 없음
 async function markBriefRead(dateId){
   try{await updateDoc(doc(db,'mk_app','data','briefs',dateId),{read:true});}catch(e){}
   var b=cachedBriefs.find(function(x){return x.id===dateId;});if(b)b.read=true;
   renderBriefingCard();
   var pg=document.getElementById('page-briefing');if(pg&&pg.classList.contains('active'))renderBriefDrawer();
-  var rd=document.getElementById('briefReader');if(rd&&rd.style.display!=='none')openBriefReader(dateId);
-  toast('읽음 처리됨');
 }
 function openMailbox(){var u=_briefUnread();if(!u.length){toast('새 브리핑이 없습니다');return;}openBriefReader(u[0].id);}
-// ── 서랍장 아카이브 (연도 → 월 → 주차 → 요일) ──
-function _wom(y,m,day){var f=new Date(y,m,1).getDay();f=f===0?6:f-1;return Math.floor((day-1+f)/7)+1;} // 월요일 시작 주차(1~)
-function _briefCell(label,sub,onclick,o){
-  o=o||{};
-  var badge=o.unread?'<span style="position:absolute;top:11px;right:11px;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#FF3B00;color:#fff;font-size:11px;font-weight:700;line-height:20px;text-align:center;">'+o.unread+'</span>':'';
-  var dot=o.dot?'<span style="width:8px;height:8px;border-radius:50%;background:'+(o.read?'rgba(255,180,162,.3)':'#FF3B00')+';display:block;margin:0 auto 6px;"></span>':'';
-  return '<button onclick="'+onclick+'" style="position:relative;flex:0 0 auto;width:132px;height:132px;border:1px solid #2c2a2a;border-radius:16px;background:linear-gradient(180deg,#201e1e,#181616);color:'+(o.color||'#e5e2e1')+';cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;transition:transform .2s,border-color .2s;" onmouseover="this.style.borderColor=\'#ffb4a2\';this.style.transform=\'translateY(-3px)\'" onmouseout="this.style.borderColor=\'#2c2a2a\';this.style.transform=\'\'">'
-    +'<span style="position:absolute;top:13px;left:50%;transform:translateX(-50%);width:34px;height:4px;border-radius:2px;background:#3a3736;"></span>'
-    +badge+dot
-    +'<span style="font-family:\'Space Grotesk\',sans-serif;font-size:'+(o.big?'30px':'22px')+';font-weight:700;line-height:1;">'+label+'</span>'
-    +(sub?'<span style="font-size:11px;color:#8a7a76;letter-spacing:.03em;">'+sub+'</span>':'')+'</button>';
+// ── 아카이브: 최신순 평면 목록 (cachedBriefs가 date desc라 그대로 최신이 맨 위) ──
+var _briefShow=20;
+function briefShowMore(){_briefShow+=30;renderBriefDrawer();}
+function _briefRow(b){
+  var p=(b.date||'').split('-'),y=+p[0],m=+p[1],d=+p[2];
+  var WD=['일','월','화','수','목','금','토'],dow=new Date(y,m-1,d).getDay();
+  var col=dow===0?'#f87171':(dow===6?'#7aa2f7':'#e5e2e1');
+  var tag=b.read
+    ?'<span style="font-size:11px;color:#524340;letter-spacing:.06em;">읽음</span>'
+    :'<span style="font-size:10px;font-family:\'Space Grotesk\',sans-serif;font-weight:700;letter-spacing:.12em;color:#FF3B00;border:1px solid rgba(255,59,0,.45);border-radius:999px;padding:3px 9px;">NEW</span>';
+  return '<button onclick="openBriefReader(\''+b.id+'\')" style="width:100%;display:flex;align-items:center;gap:14px;padding:15px 16px;margin-bottom:8px;border:1px solid '+(b.read?'#232323':'rgba(255,59,0,.28)')+';border-radius:12px;background:'+(b.read?'transparent':'rgba(255,59,0,.05)')+';cursor:pointer;text-align:left;transition:border-color .2s,background .2s;" onmouseover="this.style.borderColor=\'#ffb4a2\'" onmouseout="this.style.borderColor=\''+(b.read?'#232323':'rgba(255,59,0,.28)')+'\'">'
+    +'<span style="width:7px;height:7px;border-radius:50%;flex-shrink:0;background:'+(b.read?'rgba(255,180,162,.25)':'#FF3B00')+';"></span>'
+    +'<span style="font-family:\'Space Grotesk\',sans-serif;font-size:17px;font-weight:700;color:'+col+';flex-shrink:0;min-width:62px;">'+m+'/'+d+'</span>'
+    +'<span style="font-size:13px;color:#8a7a76;flex:1;min-width:0;">'+WD[dow]+'요일'+(b.count?' · '+b.count+'건':'')+'</span>'
+    +tag+'</button>';
 }
-function briefDrill(level,val){var n=_briefNav;if(level==='y'){n.y=val;n.m=null;n.w=null;}else if(level==='m'){n.m=val;n.w=null;}else if(level==='w'){n.w=val;}renderBriefDrawer();}
-function briefDrillUp(depth){var n=_briefNav;if(depth<=0){n.y=n.m=n.w=null;}else if(depth===1){n.m=n.w=null;}else if(depth===2){n.w=null;}renderBriefDrawer();}
 function renderBriefDrawer(){
-  var crumb=document.getElementById('briefCrumb'),wrap=document.getElementById('briefDrawer');if(!wrap)return;
-  if(!cachedBriefs.length){if(crumb)crumb.innerHTML='';wrap.innerHTML='<div style="font-size:13px;color:#524340;padding:24px 4px;line-height:1.7;">아직 브리핑이 없습니다.<br>매일 아침 자동으로 도착합니다.</div>';return;}
-  var it=cachedBriefs.map(function(b){var p=(b.date||'').split('-');var y=+p[0],m=+p[1]-1,d=+p[2];return {b:b,y:y,m:m,d:d,w:_wom(y,m,d),read:!!b.read};});
-  var n=_briefNav,sep='<span style="color:#3a3736;">›</span>';
-  var cb='<button onclick="briefDrillUp(0)" style="background:none;border:0;padding:0;cursor:pointer;font:inherit;color:'+(n.y==null?'#e5e2e1':'#ffb4a2')+';">전체</button>';
-  if(n.y!=null)cb+=sep+'<button onclick="briefDrillUp(1)" style="background:none;border:0;padding:0;cursor:pointer;font:inherit;color:'+(n.m==null?'#e5e2e1':'#ffb4a2')+';">'+n.y+'년</button>';
-  if(n.m!=null)cb+=sep+'<button onclick="briefDrillUp(2)" style="background:none;border:0;padding:0;cursor:pointer;font:inherit;color:'+(n.w==null?'#e5e2e1':'#ffb4a2')+';">'+(n.m+1)+'월</button>';
-  if(n.w!=null)cb+=sep+'<span style="color:#e5e2e1;">'+n.w+'주차</span>';
-  if(crumb)crumb.innerHTML=cb;
-  function uc(a){return a.filter(function(x){return !x.read;}).length;}
-  function distinct(a,key){var o=[],s={};a.forEach(function(x){var v=x[key];if(!s[v]){s[v]=1;o.push(v);}});return o;}
-  var cells='';
-  if(n.y==null){
-    distinct(it,'y').sort(function(a,b){return b-a;}).forEach(function(y){var g=it.filter(function(x){return x.y===y;});cells+=_briefCell(y,g.length+'건',"briefDrill('y',"+y+")",{unread:uc(g),big:true});});
-  }else if(n.m==null){
-    var g0=it.filter(function(x){return x.y===n.y;});
-    distinct(g0,'m').sort(function(a,b){return b-a;}).forEach(function(m){var g=g0.filter(function(x){return x.m===m;});cells+=_briefCell((m+1)+'월',g.length+'건',"briefDrill('m',"+m+")",{unread:uc(g),big:true});});
-  }else if(n.w==null){
-    var g1=it.filter(function(x){return x.y===n.y&&x.m===n.m;});
-    distinct(g1,'w').sort(function(a,b){return a-b;}).forEach(function(w){var g=g1.filter(function(x){return x.w===w;});cells+=_briefCell(w+'주차',g.length+'건',"briefDrill('w',"+w+")",{unread:uc(g)});});
-  }else{
-    var WD=['일','월','화','수','목','금','토'];
-    it.filter(function(x){return x.y===n.y&&x.m===n.m&&x.w===n.w;}).sort(function(a,b){return a.d-b.d;}).forEach(function(x){
-      var dow=new Date(x.y,x.m,x.d).getDay();var col=dow===0?'#f87171':(dow===6?'#7aa2f7':'#e5e2e1');
-      cells+=_briefCell(WD[dow],(x.m+1)+'/'+x.d,"openBriefReader('"+x.b.date+"')",{dot:true,read:x.read,color:col});
-    });
-  }
-  wrap.innerHTML=cells;
+  var head=document.getElementById('briefCrumb'),wrap=document.getElementById('briefDrawer');if(!wrap)return;
+  if(!cachedBriefs.length){if(head)head.innerHTML='';wrap.innerHTML='<div style="font-size:13px;color:#524340;padding:24px 4px;line-height:1.7;">아직 브리핑이 없습니다.<br>월요일·목요일 아침에 자동으로 도착합니다.</div>';return;}
+  var unread=_briefUnread();
+  if(head)head.innerHTML=unread.length
+    ?'<button onclick="openMailbox()" style="display:inline-flex;align-items:center;gap:9px;padding:10px 16px;border:1px solid #FF3B00;border-radius:999px;background:rgba(255,59,0,.08);color:#FF3B00;font:inherit;font-weight:700;letter-spacing:.04em;cursor:pointer;">안 읽음 '+unread.length+'건 · 최신부터 읽기 →</button>'
+    :'<span style="color:#524340;letter-spacing:.06em;">모두 읽음 · 전체 '+cachedBriefs.length+'건</span>';
+  var rows='',lastMon='';
+  cachedBriefs.slice(0,_briefShow).forEach(function(b){
+    var p=(b.date||'').split('-'),mon=p[0]+'-'+p[1];
+    if(mon!==lastMon){lastMon=mon;rows+='<div style="font-family:\'Space Grotesk\',sans-serif;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#524340;margin:22px 0 10px;">'+(+p[0])+'년 '+(+p[1])+'월</div>';}
+    rows+=_briefRow(b);
+  });
+  if(cachedBriefs.length>_briefShow)rows+='<button onclick="briefShowMore()" style="width:100%;padding:13px;margin-top:6px;border:1px dashed #353535;border-radius:12px;background:none;color:#8a7a76;font-family:\'Space Grotesk\',sans-serif;font-size:12px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;">더 보기 ('+(cachedBriefs.length-_briefShow)+')</button>';
+  wrap.innerHTML=rows;
 }
 var DIR_MARK={'상승':['#4ade80','▲'],'하락':['#f87171','▼'],'중립':['#facc15','●']};
 function _briefSection(title){return '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#FF3B00;margin:32px 0 14px;">'+title+'</div>';}
@@ -4493,11 +4482,10 @@ function openBriefReader(dateId){
   var rdEl=document.getElementById('briefReader');
   if(rdEl.style.display==='none'||!rdEl.style.display)_briefScrollY=window.scrollY; // 리더 새로 열 때만 배경 스크롤 위치 저장
   _briefOpenId=dateId;
-  var readBtn=!b.read?'<button onclick="markBriefRead(\''+b.id+'\')" style="margin-top:24px;width:100%;padding:14px;border:1px solid #FF3B00;border-radius:10px;background:rgba(255,59,0,.08);color:#FF3B00;font-family:\'Space Grotesk\',sans-serif;font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;">읽음 처리</button>':'';
   if(b.html){
     // 원본 이메일 HTML 양식 그대로 (하이퍼링크 포함) — iframe으로 격리 렌더
     document.getElementById('briefReaderDate').innerHTML='';
-    document.getElementById('briefReaderBody').innerHTML='<iframe id="briefFrame" style="width:100%;border:0;border-radius:14px;background:#fff;display:block;" scrolling="no"></iframe>'+readBtn;
+    document.getElementById('briefReaderBody').innerHTML='<iframe id="briefFrame" style="width:100%;border:0;border-radius:14px;background:#fff;display:block;" scrolling="no"></iframe>';
     var f=document.getElementById('briefFrame');
     f.onload=function(){try{f.style.height=(f.contentDocument.documentElement.scrollHeight)+'px';}catch(e){f.style.height='80vh';}};
     f.srcdoc=b.html;
@@ -4513,9 +4501,10 @@ function openBriefReader(dateId){
       html+=_briefSection('앱 리뷰');
       html+=b.reviews.map(function(r){return '<div style="margin-bottom:16px;"><div style="font-weight:700;font-size:14px;margin-bottom:5px;color:#e5e2e1;">'+escHtml(r.app||'')+'</div><div style="font-size:13px;color:#a8a29e;line-height:1.6;white-space:pre-line;">'+escHtml(r.summary||'')+'</div></div>';}).join('');
     }
-    document.getElementById('briefReaderBody').innerHTML=html+readBtn;
+    document.getElementById('briefReaderBody').innerHTML=html;
   }
   var rd=document.getElementById('briefReader');rd.style.display='block';rd.scrollTop=0;
+  if(!b.read)markBriefRead(dateId); // 열면 곧 읽음 — 버튼 없음. markBriefRead는 리더를 다시 그리지 않음(재귀 없음)
 }
 function closeBriefReader(){document.getElementById('briefReader').style.display='none';window.scrollTo(0,_briefScrollY);} // iframe 로드로 밀린 배경 스크롤 복원
 async function delBrief(dateId){
@@ -4526,7 +4515,7 @@ async function delBrief(dateId){
   cachedBriefs=cachedBriefs.filter(function(x){return x.id!==dateId;});
   closeBriefReader();renderBriefDrawer();renderBriefingCard();toast('삭제됨');
 }
-window.loadBriefs=loadBriefs;window.renderBriefingCard=renderBriefingCard;window.markBriefRead=markBriefRead;window.openMailbox=openMailbox;window.briefDrill=briefDrill;window.briefDrillUp=briefDrillUp;window.renderBriefDrawer=renderBriefDrawer;window.openBriefReader=openBriefReader;window.closeBriefReader=closeBriefReader;window.delBrief=delBrief;
+window.loadBriefs=loadBriefs;window.renderBriefingCard=renderBriefingCard;window.openMailbox=openMailbox;window.briefShowMore=briefShowMore;window.renderBriefDrawer=renderBriefDrawer;window.openBriefReader=openBriefReader;window.closeBriefReader=closeBriefReader;window.delBrief=delBrief;
 
 /* ===== Picture Gallery — v4 ===== */
 /* 1-4picture: 히든 iframe에서 이미지 추출 → 네이티브 div 캐러셀 (완벽한 스와이프)

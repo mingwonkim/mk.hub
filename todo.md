@@ -372,3 +372,35 @@ Firebase 프로젝트 `mingwon-hub`, 경로 `mk_app/data/briefs/{YYYY-MM-DD}`.
 - [x] 정적검증: 서랍장 JS node --check 통과, `_wom`/그룹핑 assert 통과, stale ref 없음
 - [ ] **사용자 브라우저 검증** (연도→월→주차→요일 드릴다운, 요일칸→리더)
 - [ ] 커밋/푸시 — 사용자 승인 대기
+
+### 2f — 브리핑 요약 실패 근본수정 + 주2회 전환 + 아카이브 UI 평면화 (2026-08-04)
+사용자 보고: `[1인치 영어] U.S. Stock Indexes~ ●요약 생성에 실패해 기사 제목만 표시합니다.`
++ 토큰 절감, 자동 읽음, MK.HUB 호버 글자 튐, 월·목만 수신, 최신순 배치, 서랍장 클릭 과다.
+
+**근본원인 (추측 아님 — Actions 로그 30857476773)**: `stop_reason=tool_use` 인데 "응답 비어있음".
+즉 도구 호출은 성공했고 모델이 `{"items": []}`(= 고를 만한 후보 없음)를 냈는데,
+`_extract_tool_items`가 실패와 구분을 못 해 같은 프롬프트를 재시도(토큰 낭비) → `_fallback_items`가
+모델이 방금 거른 쓰레기 후보를 '요약 생성에 실패…'로 덮어씀. 쓰레기의 출처는 한국어로 미국 증시를
+검색한 것(국내 매체 영어학습 칼럼이 후보를 채움).
+
+morning-brief (커밋 완료, push됨):
+- [x] `_extract_tool_items` → 실패는 `None`, 빈 선별은 `[]`. 호출부 전부 `if items is None`으로 교체
+- [x] 무의미한 재시도 루프 제거 (같은 프롬프트 = 같은 결과)
+- [x] 미국 증시 검색 영어 전환 (Reuters/CNBC/Bloomberg/AP 지정), 헤드라인·요약은 한국어 유지
+- [x] cron `0 21 * * 0,3` (KST 월·목 06:00). `_lookback_days()`로 조회 구간 자동 확장(월 4일/목 3일)
+- [x] 상한 자르기 전 최신순 정렬 추가 (구간이 3~4일이라 필수)
+- [x] 토큰: AI 검색 max_uses 3→2, MAX_CANDIDATES 20→12, 재시도 제거 + 주2회 → 월 비용 약 1/5
+- [x] `test_morning_brief.py` 자체 점검 5개 통과 / requirements에 tzdata (윈도우 zoneinfo)
+
+mk.hub:
+- [x] `.mk-ch:hover{translateY}` 삭제 — h1이 마우스 패럴랙스(hStep)로 계속 움직여서 커서 밑 글자가
+      매 프레임 바뀌고 리프트가 히트박스까지 옮겨 M 뒷 글자가 끝없이 튀었음
+- [x] `openBriefReader`가 열릴 때 자동 `markBriefRead` — '읽음 처리' 버튼 제거, 토스트 제거
+- [x] 서랍장 드릴다운(연도→월→주차→요일, 4클릭) 삭제 → 최신순 평면 목록 1클릭.
+      상단 '안 읽음 N건 · 최신부터 읽기' CTA, 월 구분선, NEW 뱃지, 20개 넘으면 '더 보기'
+- [x] 허브 카드 티저 행도 클릭 → 리더 직행
+- [x] `_briefNav`/`_wom`/`_briefCell`/`briefDrill`/`briefDrillUp` 제거 (내 변경으로 고아가 된 것만)
+- [x] 검증: inline script 6블록 node --check 통과 / 실제 Firestore 데이터로 브라우저 렌더 확인
+      (안읽음 7건, 15행, 최신 8/4 최상단) / JS 콘솔 에러 0 / 호버 시 글자 transform 전부 none
+- [ ] 사용자 확인: 안 읽은 브리핑을 소비하지 않으려고 자동 읽음은 **이미 읽은** 7/30으로만 테스트함.
+      실제 안읽음 1건 열어보고 뱃지·NEW가 사라지는지 확인 필요
