@@ -2880,7 +2880,7 @@ const MK_TONE={
 };
 function mkToneOf(p){const L=document.documentElement.classList.contains('light');return (L?MK_TONE.light:MK_TONE.dark)[p]||(L?'#f5f2f0':'#131313');}
 function mkTonePaint(p){
-  if(p==='hub'){document.documentElement.style.removeProperty('--mk-bg');if(window.mkBridgeReset)window.mkBridgeReset();}
+  if(p==='hub')document.documentElement.style.removeProperty('--mk-bg');
   else document.documentElement.style.setProperty('--mk-bg',mkToneOf(p));
 }
 let mkVeilNode=null;
@@ -5275,17 +5275,8 @@ renderGallery();
       mqSet(mqBoost);mqRaf=requestAnimationFrame(step);
     })();
   }
-  var lastY=window.scrollY,sTick=false,brLast='';
-  /* 12차: 갤러리 컬러 저니 스탑 — 각 섹션(1~5picture) 대표색으로 hub 배경이 구간별 lerp */
-  var brEls=[
-    {id:'galleryMarqueeWrap',c:[237,230,214],kd:.45,kl:.8},
-    {id:'edLayoutFrame',c:[74,14,14],kd:.85,kl:.25},
-    {id:'ltScaleFrame',c:[229,225,211],kd:.5,kl:.9},
-    {id:'mbFrame',c:[18,12,12],kd:1,kl:.2},
-    {id:'p4Frame',c:[251,249,244],kd:.5,kl:1},
-    {id:'p5Frame',c:null,kd:1,kl:1}
-  ].map(function(o){o.el=document.getElementById(o.id);return o;});
-  function brMix(a,b,t){t=Math.max(0,Math.min(1,t));return[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t];}
+  var lastY=window.scrollY,sTick=false;
+  /* ponytail: 갤러리 컬러 저니(스크롤 배경 그라데이션) 제거 — 배경은 --mk-bg 고정 */
   function onScroll2(){
     if(sTick)return;sTick=true;
     requestAnimationFrame(function(){
@@ -5313,45 +5304,9 @@ renderGallery();
           if(!FINE)ck.style.setProperty('--ckP',Math.max(0,Math.min(100,y/(innerHeight*.9)*100)).toFixed(1));
         }
       }
-      if(hubActive()){ /* 12차: 갤러리 컬러 저니 — hub에서만 소유(내부 페이지 톤과 충돌 방지) */
-        var L=document.documentElement.classList.contains('light');
-        var base=L?[245,242,240]:[19,19,19];
-        var probe=innerHeight*.68,pts=[];
-        for(var s2=0;s2<brEls.length;s2++){
-          var be=brEls[s2].el;if(!be)continue;
-          var r2=be.getBoundingClientRect();if(r2.height<2)continue;
-          var k2=L?brEls[s2].kl:brEls[s2].kd,c2=brEls[s2].c||base;
-          pts.push({pos:r2.top+r2.height/2,mix:brMix(base,c2,k2)});
-        }
-        var col=base;
-        if(pts.length){
-          if(probe>=pts[0].pos){
-            col=pts[pts.length-1].mix;
-            for(var q2=0;q2<pts.length-1;q2++){
-              if(probe>=pts[q2].pos&&probe<pts[q2+1].pos){
-                col=brMix(pts[q2].mix,pts[q2+1].mix,(probe-pts[q2].pos)/(pts[q2+1].pos-pts[q2].pos));break;
-              }
-            }
-          }else col=brMix(base,pts[0].mix,(probe-(pts[0].pos-innerHeight))/innerHeight);
-        }
-        var brC='rgb('+Math.round(col[0])+','+Math.round(col[1])+','+Math.round(col[2])+')';
-        if(brC!==brLast){
-          brLast=brC;
-          var baseC='rgb('+base[0]+','+base[1]+','+base[2]+')';
-          var bfo=document.getElementById('blackFadeOverlay'); /* 갤러리 구간 순흑 오버레이도 저니 색으로 */
-          if(brC===baseC){
-            document.documentElement.style.removeProperty('--mk-bg');
-            if(bfo)bfo.style.backgroundColor='';
-          }else{
-            document.documentElement.style.setProperty('--mk-bg',brC);
-            if(bfo)bfo.style.backgroundColor=brC;
-          }
-        }
-      }
     });
   }
   window.addEventListener('scroll',onScroll2,{passive:true});
-  window.mkBridgeReset=function(){brLast=-1;onScroll2();}; /* hub 복귀 시 브리지 재계산 */
   onScroll2();
 
   /* ── 클릭 리플 ── */
