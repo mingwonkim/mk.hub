@@ -486,6 +486,14 @@
       }
     }
   </style>
+<style class="mk-gallery-bridge-style">
+:root{--mk-gallery-stroke:rgba(255,180,162,.52);--mk-gallery-glow:rgba(255,180,162,.18)}
+html[data-mk-theme="light"]{--mk-gallery-stroke:rgba(126,48,36,.48);--mk-gallery-glow:rgba(126,48,36,.13)}
+.mk-gallery-slot{outline:1px solid transparent;outline-offset:3px;box-shadow:0 0 0 transparent;transition:outline-color .28s cubic-bezier(.22,.61,.36,1),box-shadow .32s cubic-bezier(.22,.61,.36,1),filter .32s cubic-bezier(.22,.61,.36,1)}
+.mk-gallery-slot.mk-gallery-hot,.mk-gallery-slot.mk-gallery-active{outline-color:var(--mk-gallery-stroke);box-shadow:0 0 0 4px var(--mk-gallery-glow);filter:saturate(1.03) contrast(1.01)}
+.mk-gallery-reveal .mk-gallery-slot{animation:mk-gallery-slot-in .56s cubic-bezier(.22,.61,.36,1) both}.mk-gallery-reveal .mk-gallery-slot:nth-child(2n){animation-delay:.06s}@keyframes mk-gallery-slot-in{from{opacity:.72}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.mk-gallery-slot{transition:none!important;animation:none!important}}
+</style>
 </head>
 <body style="background:transparent;overflow-x:hidden;">
 
@@ -805,5 +813,7 @@ document.querySelectorAll('.photo-placeholder').forEach(function(ph) {
   });
 });
 </script>
+<script src="gallery-motion.js"></script>
+<script>window.MKGalleryMotion&&window.MKGalleryMotion.init({root:'.board',slots:'.polaroid .photo'});</script>
 </body>
 </html>

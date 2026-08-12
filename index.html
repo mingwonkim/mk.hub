@@ -1297,6 +1297,20 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
   #hubCardGrid>section::after,.folder-card::after,#musicModuleGrid>[data-module]::after{transition:none;}
 }
 </style>
+<style id="mk-hub-design-bridge">
+/* Unified system bridge — additive only. */
+:root{--mk-accent:#ffb4a2;--mk-accent-strong:#ff8f75;--mk-accent-soft:rgba(255,180,162,.12);--mk-success:#8dd9b6;--mk-warning:#ffd08a;--mk-danger:#ff9b9b;--mk-radius-md:16px;--mk-shadow-card:0 14px 36px rgba(0,0,0,.18);--mk-shadow-float:0 22px 70px rgba(0,0,0,.28)}
+html.light{--mk-accent:#9b3f31;--mk-accent-strong:#7f2f24;--mk-accent-soft:rgba(155,63,49,.10);--mk-success:#167353;--mk-warning:#9a6400;--mk-danger:#b93434;--mk-shadow-card:0 14px 36px rgba(68,38,31,.10);--mk-shadow-float:0 22px 70px rgba(68,38,31,.16)}
+.page.active{animation:mk-page-in var(--mk-dur-1) var(--mk-ease) both}@keyframes mk-page-in{from{opacity:.001;transform:translateY(7px)}to{opacity:1;transform:none}}
+.mk-card,.folder-card,.app-module-card,.todo-hub{box-shadow:var(--mk-shadow-card)}.mk-card,.folder-card,.app-module-card{transition:border-color var(--mk-dur-1) var(--mk-ease),box-shadow var(--mk-dur-1) var(--mk-ease),transform var(--mk-dur-1) var(--mk-ease)}.mk-card:hover,.folder-card:hover,.app-module-card:hover{border-color:var(--mk-accent);box-shadow:var(--mk-shadow-float)}
+.mk-btn:focus-visible,.mk-input:focus-visible,.mk-textarea:focus-visible,button:focus-visible,[role="button"]:focus-visible{outline:2px solid var(--mk-accent);outline-offset:3px}
+.mk-skeleton{min-height:116px;border:1px solid var(--mk-border);border-radius:var(--mk-radius-md);background:linear-gradient(100deg,var(--mk-card) 20%,var(--mk-input) 50%,var(--mk-card) 80%);background-size:220% 100%;animation:mk-skeleton 1.3s linear infinite}@keyframes mk-skeleton{to{background-position:-220% 0}}
+.mk-empty-state{display:grid;place-items:center;gap:7px;min-height:146px;padding:24px;border:1px dashed var(--mk-border-hi);border-radius:var(--mk-radius-md);color:var(--mk-outline);text-align:center}.mk-empty-state .material-symbols-outlined{font-size:28px;color:var(--mk-accent)}.mk-empty-state strong{font:700 12px 'Space Grotesk',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--mk-on-surf)}.mk-empty-state p{margin:0;font-size:12px;line-height:1.6}
+.gallery-section iframe{border-radius:var(--mk-radius-md);background:var(--mk-surface-lo);box-shadow:0 16px 48px rgba(0,0,0,.14);transition:box-shadow var(--mk-dur-2) var(--mk-ease)}.gallery-section iframe:focus-visible{outline:2px solid var(--mk-accent);outline-offset:5px}.gallery-section .gal-sep-num{color:var(--mk-accent)}
+#musicAppView{transition:opacity var(--mk-dur-1) var(--mk-ease),filter var(--mk-dur-1) var(--mk-ease)}#musicAppView.mk-music-enter{animation:mk-music-enter var(--mk-dur-2) var(--mk-ease) both}#musicAppView.mk-music-exit{opacity:0;filter:blur(5px);pointer-events:none}@keyframes mk-music-enter{from{opacity:0;filter:blur(7px)}to{opacity:1;filter:none}}
+@media(max-width:767px){#memoEditor{padding:20px 18px;border-radius:14px}#memoTitleInput{font-size:24px}.mk-input,.mk-textarea{font-size:16px}.gallery-section iframe{border-radius:12px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.page.active{animation:none}}
+</style>
 </head>
 <body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-on-primary-container">
 
@@ -5739,6 +5753,47 @@ setTimeout(function(){
     on=true;start(true);icon();
     document.addEventListener('pointerdown',bgmUnmute,{once:true});
   }
+})();
+</script>
+<script id="mk-hub-design-bridge-script">
+/* Existing Firestore, PIN, iframe, storage and page-navigation contracts remain authoritative. */
+(function(){
+  function icon(kind){return kind==='file'?'drive_folder_upload':kind==='todo'?'task_alt':'edit_note';}
+  function loading(id){var el=document.getElementById(id);if(!el)return;el.dataset.mkState='loading';el.innerHTML='<div class="mk-skeleton" aria-label="불러오는 중"></div><div class="mk-skeleton" aria-hidden="true"></div>';}
+  function empty(el,kind,title,detail){if(!el)return;el.dataset.mkState='empty';el.innerHTML='<div class="mk-empty-state"><span class="material-symbols-outlined">'+icon(kind)+'</span><strong>'+title+'</strong><p>'+detail+'</p></div>';}
+  function ready(id){var el=document.getElementById(id);if(el)el.dataset.mkState='ready';}
+
+  var originalMemoFolders=renderMemoFolders;
+  renderMemoFolders=async function(){loading('memoFolderGrid');await originalMemoFolders();var el=document.getElementById('memoFolderGrid');if(!cachedMemoFolders.length)empty(el,'memo','첫 번째 메모 폴더를 만드세요','폴더를 만들어 생각과 자료를 한곳에 정리할 수 있습니다.');else ready('memoFolderGrid');};
+  window.renderMemoFolders=renderMemoFolders;
+
+  var originalFileFolders=renderFileFolders;
+  renderFileFolders=async function(){loading('fileFolderGrid');await originalFileFolders();var el=document.getElementById('fileFolderGrid');if(!cachedFileFolders.length)empty(el,'file','첫 번째 보관함을 만드세요','파일을 업로드할 폴더를 만들어 보관함을 시작할 수 있습니다.');else ready('fileFolderGrid');};
+  window.renderFileFolders=renderFileFolders;
+
+  var originalMemos=renderMemos;
+  renderMemos=async function(){var el=document.getElementById('memoList');if(el)loading('memoList');await originalMemos();if(!el)return;var query=(document.getElementById('memoSearch')||{}).value||'';var count=cachedMemos.filter(function(m){return(m.folder||'none')===curMemoFolder;}).length;if(!count&&!query)empty(el,'memo','아직 메모가 없습니다','새 메모를 작성해 이 폴더에 첫 기록을 남겨보세요.');else ready('memoList');};
+  window.renderMemos=renderMemos;
+
+  var originalFiles=renderFiles;
+  renderFiles=async function(){var el=document.getElementById('fileList');if(el)loading('fileList');await originalFiles();if(!el)return;var count=cachedFiles.filter(function(f){return(f.folder||'none')===curFileFolder;}).length;if(!count)empty(el,'file','보관된 파일이 없습니다','드래그하거나 업로드 버튼으로 첫 파일을 추가해보세요.');else ready('fileList');};
+  window.renderFiles=renderFiles;
+
+  var originalTodoDay=renderTodoDay;
+  renderTodoDay=function(){originalTodoDay();var el=document.getElementById('todoDayList');var state=el&&el.querySelector('.todo-empty');if(state){state.classList.add('mk-empty-state');state.dataset.mkState='empty';}};
+  window.renderTodoDay=renderTodoDay;
+
+  function galleryTheme(){return document.documentElement.classList.contains('light')?'light':'dark';}
+  function notifyGalleryTheme(){document.querySelectorAll('.gallery-section iframe[src$="picture.html"]').forEach(function(frame){if(frame.contentWindow)frame.contentWindow.postMessage({type:'mk_theme',value:galleryTheme()},location.origin);});}
+  var originalApplyTheme=applyTheme;
+  applyTheme=function(mode){originalApplyTheme(mode);notifyGalleryTheme();};window.applyTheme=applyTheme;
+  window.addEventListener('message',function(event){if(!event.data||event.data.type!=='mk_theme_ready'||!isTrustedOrigin(event.origin))return;try{event.source.postMessage({type:'mk_theme',value:galleryTheme()},event.origin);}catch(err){}});
+  notifyGalleryTheme();
+
+  var originalOpenMusic=openMusicApp,originalCloseMusic=closeMusicApp,musicTimer=0;
+  openMusicApp=function(app){if(musicTimer){clearTimeout(musicTimer);musicTimer=0;}originalOpenMusic(app);var view=document.getElementById('musicAppView');if(view&&/^(pitch|chord)$/.test(app)){view.classList.remove('mk-music-exit');view.classList.add('mk-music-enter');setTimeout(function(){view.classList.remove('mk-music-enter');},620);}};
+  closeMusicApp=function(){var view=document.getElementById('musicAppView');if(!view||window.matchMedia('(prefers-reduced-motion: reduce)').matches){originalCloseMusic();return;}view.classList.add('mk-music-exit');musicTimer=setTimeout(function(){musicTimer=0;view.classList.remove('mk-music-exit');originalCloseMusic();},180);};
+  window.openMusicApp=openMusicApp;window.closeMusicApp=closeMusicApp;
 })();
 </script>
 </body>
