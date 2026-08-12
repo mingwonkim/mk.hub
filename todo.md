@@ -408,3 +408,11 @@ mk.hub:
 ## 2026-08-10
 - [o] 23:10 갤러리 컬러 저니(1~5picture 스크롤 시 배경 그라데이션 변화) 제거 — 12차에서 넣은
       brEls/brMix/onScroll2 컬러 브리지 블록 + mkBridgeReset 삭제, 배경은 --mk-bg 고정
+
+## 2026-08-12
+- [o] 13:20 사이트 전체 디자인 고도화 브리프 작성 (MANUS_BRIEF.md, 454줄) — 허브/내부페이지/
+      갤러리5/서브앱4 현황 진단 + 유지해야 할 계약(postMessage·MKPics 키·CSP·함정) 정리
+- [o] 13:35 Manus 통합 디자인 패치 적용 (11개 파일) — index.html +55줄(삭제 0),
+      gallery-motion.js 신규, pitch-trainer 다크 전환, quotes 에디토리얼 그리드
+- [o] 14:05 허브 전체 블랙아웃 회귀 수정 — Manus가 넣은 .page.active{...both} 삭제.
+      헤드리스 크롬 이분탐색 6회로 `animation-fill-mode:both` 단독 원인 특정
