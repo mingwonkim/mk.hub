@@ -1301,7 +1301,9 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
 /* Unified system bridge — additive only. */
 :root{--mk-accent:#ffb4a2;--mk-accent-strong:#ff8f75;--mk-accent-soft:rgba(255,180,162,.12);--mk-success:#8dd9b6;--mk-warning:#ffd08a;--mk-danger:#ff9b9b;--mk-radius-md:16px;--mk-shadow-card:0 14px 36px rgba(0,0,0,.18);--mk-shadow-float:0 22px 70px rgba(0,0,0,.28)}
 html.light{--mk-accent:#9b3f31;--mk-accent-strong:#7f2f24;--mk-accent-soft:rgba(155,63,49,.10);--mk-success:#167353;--mk-warning:#9a6400;--mk-danger:#b93434;--mk-shadow-card:0 14px 36px rgba(68,38,31,.10);--mk-shadow-float:0 22px 70px rgba(68,38,31,.16)}
-.page.active{animation:mk-page-in var(--mk-dur-1) var(--mk-ease) both}@keyframes mk-page-in{from{opacity:.001;transform:translateY(7px)}to{opacity:1;transform:none}}
+/* 제거됨: .page.active 에 animation-fill-mode:both 를 걸면 opacity 애니메이션 fill이
+   영구히 남아 #page-hub 가 합성 레이어로 승격됨 → #mkDust/#mkMoss 고정 캔버스가
+   허브 콘텐츠 위로 합성되어 페이지가 점점 검어짐. 기존 mkPageIn 이 이미 같은 역할을 함. */
 .mk-card,.folder-card,.app-module-card,.todo-hub{box-shadow:var(--mk-shadow-card)}.mk-card,.folder-card,.app-module-card{transition:border-color var(--mk-dur-1) var(--mk-ease),box-shadow var(--mk-dur-1) var(--mk-ease),transform var(--mk-dur-1) var(--mk-ease)}.mk-card:hover,.folder-card:hover,.app-module-card:hover{border-color:var(--mk-accent);box-shadow:var(--mk-shadow-float)}
 .mk-btn:focus-visible,.mk-input:focus-visible,.mk-textarea:focus-visible,button:focus-visible,[role="button"]:focus-visible{outline:2px solid var(--mk-accent);outline-offset:3px}
 .mk-skeleton{min-height:116px;border:1px solid var(--mk-border);border-radius:var(--mk-radius-md);background:linear-gradient(100deg,var(--mk-card) 20%,var(--mk-input) 50%,var(--mk-card) 80%);background-size:220% 100%;animation:mk-skeleton 1.3s linear infinite}@keyframes mk-skeleton{to{background-position:-220% 0}}
