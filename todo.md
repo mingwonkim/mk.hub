@@ -488,4 +488,4 @@ mk.hub:
 - [x] Brief 전용 규칙 main 반영·기존 규칙 테스트 — 신규 4건·기존 Firestore/Storage 5건 통과
 - [x] 운영 Firestore 규칙 배포·배포 원문 확인 — 배포 API 원문과 테스트 규칙 일치
 - [x] SMTP 안내 정정 — Firebase 이메일 링크 기준으로 전환 문서 재작성
-- [ ] 최종 변경 커밋·푸시
+- [x] 최종 변경 커밋·푸시 — 2703b4f, origin/main 반영
