@@ -1,0 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
+/* Shared surfaces for the four standalone MK.HUB tools. Storage belongs to each app. */
+:root{color-scheme:dark;--bg:#131313;--sf:#1d1a15;--sf2:#252118;--bd:#393028;--tx:#eee5d1;--txd:#b1a79b;--txl:#9b8e7e;--acc:#FF3B00;--accd:#ff3b001a;--accg:#ff3b004d;--pink:#d69962;--pinkd:#d6996219;--blue:#c6b28c;--blued:#c6b28c15;--warm:#FF3B00;--warmd:#ff3b001a;--gold:#d9a85f;--goldd:#d9a85f1a;--warn:#e8a46b;--sky:#d5a378;--skyd:#d5a3781a;--ok:#92b38d;--okd:#92b38d1a;--okg:#92b38d4d;--ng:#ef8264;--ngd:#ef82641a;--shadow:0 10px 28px #0002;--shadow2:0 18px 48px #0004}
+body{background:radial-gradient(ellipse at 100% 0,#78532c16,transparent 55%),var(--bg);color:var(--tx);font-family:'Space Grotesk','Noto Sans KR',sans-serif}
+button,input,textarea,select{accent-color:var(--acc)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+::selection{background:#ff3b0045;color:#fff2de}
+.app{max-width:1120px;padding:0 clamp(14px,3vw,40px)}
+.hd{position:relative;padding:23px 4px 18px;border-bottom:1px solid var(--bd);margin-bottom:14px;background:transparent}
+.hd:before{content:'';position:absolute;left:4px;top:0;width:45px;height:2px;background:var(--acc)}
+.logo{font-family:'Space Grotesk','Noto Sans KR',sans-serif;font-size:clamp(19px,3vw,30px);letter-spacing:-.05em;font-weight:700;line-height:1.2}
+.logo em{text-shadow:none;color:#edb791}
+.mk-tool-label{display:block;font:8px 'Space Grotesk',sans-serif;letter-spacing:.23em;color:var(--txd);margin-bottom:9px;text-transform:uppercase}
+.tabs{background:#181611;border:1px solid var(--bd);padding:5px;gap:5px;border-radius:12px;margin-bottom:20px}
+.tb{background:transparent;border:1px solid transparent;border-radius:8px;color:var(--txd);font-weight:500;padding:11px 6px}
+.tb.on{background:#37271a;border-color:#8e5d38;color:#f5ddc0;box-shadow:inset 0 2px var(--acc)}
+.sc{scrollbar-width:thin;scrollbar-color:#68503a transparent;min-height:0}
+:is(.level-node,.pc,.cc,.stat-box,.ach-card,.add-form,.today-box,.result-card){border:1px solid var(--bd);background:linear-gradient(140deg,#252017,#191713);border-radius:16px;box-shadow:var(--shadow)}
+:is(.level-node,.pc,.cc):hover{border-color:#92663e;box-shadow:var(--shadow2)}
+:is(.level-node.current,.pc.playing,.cc.playing){border-color:var(--acc);background:linear-gradient(140deg,#352418,#1b1915)}
+:is(.sh,.section-label){letter-spacing:.05em;font-weight:500}
+:is(.key-btn,.mode-btn,.fc,.si,.add-form input){border-radius:8px}
+.key-btn.on,.mode-btn.on,.fc.on{color:#f5d7b4;background:#3d2a1a;border-color:#a86a3e}
+.btn-primary{background:var(--acc);border-radius:10px;box-shadow:0 6px 20px #ff3b0022;font-weight:600;color:#fff5e8}
+.play-btn{background:radial-gradient(circle at 35% 25%,#ff743b,#d9330a);box-shadow:0 16px 35px #0005,0 0 0 8px #ff3b0010}
+:is(.levelup-box,.lv100-box){background:linear-gradient(150deg,#2e2519,#191713);border-color:#a47b42;color:var(--tx)}
+.tool-pitch .today-stat,.tool-pitch .tstep{background:#262219;border-color:#453929}
+.tool-pitch .tstep.done{background:#263025;border-color:#516548}
+.tool-pitch .today-box{border-top:2px solid var(--acc)}
+.tool-pitch .today-stat .v{font-family:'Space Grotesk',sans-serif;font-weight:600}
+.tool-pitch .xpf{background:linear-gradient(90deg,var(--acc),#d69962);box-shadow:none}
+.tool-pitch .today-prog .fill{background:var(--ok);box-shadow:none}
+.tool-pitch .journey-bar{border-color:var(--bd)}
+.tool-pitch .stat-box[style*="background"]{background:linear-gradient(145deg,#342619,#191713)!important;border-color:var(--bd)!important}
+.tool-editor{height:100dvh;min-height:0}
+.tool-editor .hd{padding:17px 22px;margin-bottom:0;background:#191713;flex-wrap:wrap;gap:10px}
+.tool-editor .hd h1{font-size:18px;letter-spacing:-.04em;min-width:130px}
+.tool-editor .tabs{border:0;border-bottom:1px solid var(--bd);border-radius:0;padding:0;margin:0;background:#191713}
+.tool-editor .tab{padding:14px 20px;font-size:11px}
+.tool-editor .code-area{background:#131313;color:#e6d9c2}
+.tool-editor .line-numbers{background:#191713;border-color:var(--bd)}
+.tool-editor .preview-hd,.tool-editor .status{background:#1d1a15;border-color:var(--bd)}
+.tool-editor .editor-wrap,.tool-editor .split,.tool-editor .code-panel,.tool-editor .preview-panel{min-height:0}
+.tool-editor .hd-btn{border-radius:7px;font-size:10px;padding:8px 12px}
+.tool-editor .hd-btn.run{color:#fff3e5}
+.tool-quotes{max-width:1440px;margin:0 auto;padding:clamp(30px,7vw,90px) clamp(20px,5vw,70px)}
+.tool-quotes h1{font:700 clamp(42px,7vw,92px)/1 'Space Grotesk','Noto Sans KR',sans-serif;letter-spacing:-.07em;color:var(--tx);margin:18px 0 20px}
+.tool-quotes .sub{color:var(--txd);border-bottom:1px solid var(--bd);padding-bottom:30px;margin-bottom:35px;letter-spacing:.05em}
+.tool-quotes .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.tool-quotes .card{background:linear-gradient(150deg,#242017,#171613);border:1px solid var(--bd);border-top:2px solid #7f5132;border-radius:18px;padding:48px 26px 28px;box-shadow:var(--shadow);transition:translate .35s,border-color .35s}
+.tool-quotes .card:hover{translate:0 -5px;border-color:#c77943}
+.tool-quotes .num{color:#bc9064;font:10px 'Space Grotesk',sans-serif;letter-spacing:.12em;right:24px;top:20px}
+.tool-quotes .text{font-size:15px;line-height:1.85;color:var(--tx)}
+.tool-quotes .author{color:var(--txd)}
+@media(min-width:900px){.tool-pitch .level-path{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.tool-pitch .section-label{grid-column:1/-1}}
+@media(max-width:767px){
+ .hd{padding:16px 2px 12px;margin-bottom:10px}.mk-tool-label{font-size:7px;margin-bottom:6px}
+ .tabs{margin-bottom:14px}.tb{font-size:11px;padding:10px 3px}.hd .hr{gap:5px}
+ .tool-editor .hd{padding:12px;gap:8px}.tool-editor .hd h1{flex-basis:100%;font-size:16px}.tool-editor .hd-btn{padding:7px 9px}
+ .tool-quotes .grid{grid-template-columns:1fr}.tool-quotes .card{padding:42px 24px 24px}
+}
+@media(prefers-reduced-motion:reduce){.tool-quotes .card{transition:none}}

@@ -304,11 +304,13 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 @keyframes float100{0%,100%{transform:translateY(0) rotate(-5deg);}50%{transform:translateY(-12px) rotate(5deg);}}
 @keyframes confettiFall{0%{transform:translateY(-20px) rotateZ(0deg);opacity:1;}100%{transform:translateY(110vh) rotateZ(720deg);opacity:0;}}
 </style>
+<link rel="stylesheet" href="hub-tools.css">
+<link rel="stylesheet" href="hub-cursor.css">
 </head>
-<body>
+<body class="tool-pitch">
 <div class="app">
   <div class="hd">
-    <div class="logo">🎹 <em>PITCH</em> QUEST</div>
+    <div class="logo"><span class="mk-tool-label">MK.HUB / MUSIC LAB / 01</span><em>PITCH</em> QUEST</div>
     <div class="hr">
       <div class="pill fire"><span>🔥</span><span id="hSk">0</span></div>
       <div class="lv-badge" id="hRk">🥚 Lv.1</div>
@@ -1233,5 +1235,6 @@ window.addEventListener('beforeunload',()=>endSession());
 // ===== INIT =====
 saveState();renderLevelMap();renderToday();
 </script>
+<script src="hub-cursor.js"></script>
 </body>
 </html>

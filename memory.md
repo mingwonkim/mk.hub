@@ -116,3 +116,15 @@
 - 시안 검토 기록: docs/design-review-2026-09-10.md. 운영 DB 대신 격리 fixture로 검증, 디자인 브랜치에서 사용자 검토 후 배포.
 
 - 초록 잎 그림자: 진입 8초 후, 이후 35초 주기/12초 표시. pointer-events:none·최대 opacity .14, 메인 활성/탭 표시 상태에서만 실행.
+
+## 2026-09-10 후속 시안·보안 전환 (운영 미반영)
+- 명언 좌우 메모: 기존 hub_memo/hub_memo2 문서 유지, 읽기 완료 후 편집 허용.
+- 내부 앱: hub-tools.css와 화살표 커서 공유; pitchquest2/cd_us/mk_code_editor/mk_code_saves 유지.
+- 그림 저장: 접기와 삭제 분리, 로드 완료 대기, 고유 파일 업로드 후 문서 성공 시 이전 자산 정리; 첨부 업로드 중 저장/이동 차단.
+- 암호: IME·보기·중복 제출 수정. 서버 OTP+scrypt 인증이 실제 접근 권한이며 기존 브라우저 PIN은 보안 경계로 사용하지 않음.
+- 복구 수신자 고정: kmin5940@naver.com. 설정 UI에 이메일·GitHub 토큰/레포/경로 입력 없음.
+- GitHub: 브라우저 잔여 토큰 제거, 서버 Secret Manager 연결로 교체. 위의 과거 localStorage PAT 방식은 새 시안에서 폐기.
+- 운영 규칙이 익명 계정에도 열려 있음 확인. 새 규칙·파일 토큰 폐기는 SMTP 설정과 소유자 실제 로그인 검증 후 전환.
+- 자세한 배포 순서/제약: docs/private-vault-rollout.md. 브랜치 design/woodland-interactive, main 시안 검토 대기.
+
+- 파일 다운로드 버튼도 getBlob 경유. 파일 삭제 문서 실패 시 원본 보존, 업로드 시작 시 대상 폴더 고정.

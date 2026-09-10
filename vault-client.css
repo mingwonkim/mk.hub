@@ -1,0 +1,19 @@
+.vault-access{margin:auto;width:min(460px,calc(100vw - 32px));max-height:calc(100dvh - 40px);padding:0;border:1px solid #67503a;border-radius:22px;color:#eee5d1;background:#191713;box-shadow:0 30px 100px #0009}
+.vault-access::backdrop{background:#050504d9;backdrop-filter:blur(16px)}
+.vault-access-sheet{padding:30px}
+.vault-access-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:38px;font:8px 'Space Grotesk',sans-serif;letter-spacing:.2em;color:#bd976e}
+.vault-access-top button{background:none;border:0;font-size:25px;color:#b7a58e;cursor:pointer}
+.vault-access h2{font:600 32px/1.15 'Space Grotesk','Noto Sans KR',sans-serif;letter-spacing:-.055em;margin:0 0 18px}
+.vault-access-description{font-size:12px;line-height:1.9;color:#b4a38f;margin:0 0 28px;overflow-wrap:anywhere}
+.vault-secret-label{display:block;font-size:11px;color:#c4b5a1;margin:0 0 18px}
+.vault-secret-label>span{position:relative;display:block}
+.vault-secret-label input{box-sizing:border-box;display:block;width:100%;margin-top:8px;padding:14px 55px 14px 14px;border:1px solid #51402f;border-radius:9px;background:#11110e;color:#f1e5cf;font:17px 'Noto Sans KR',sans-serif;outline:none}
+.vault-secret-label input:focus{border-color:#FF3B00;box-shadow:0 0 0 3px #ff3b0012}
+.vault-secret-label [data-eye]{position:absolute;right:12px;top:50%;translate:0 -50%;border:0;background:none;color:#bda17e;cursor:pointer;font-size:10px}
+.vault-access-error{color:#f09d72;font-size:12px;min-height:20px;line-height:1.6}
+.vault-access-submit{width:100%;padding:15px;border:0;border-radius:9px;background:#FF3B00;color:#fff2de;font-weight:600;cursor:pointer}
+.vault-access-secondary{display:block;margin:22px auto 0;background:none;border:0;color:#c4ad8e;font-size:11px;cursor:pointer}
+.vault-access button:disabled{opacity:.4;cursor:wait}
+.vault-access-secondary[hidden]{display:none}
+.vault-access button:focus-visible{outline:2px solid #ff9d62;outline-offset:4px}
+@media(max-width:480px){.vault-access-sheet{padding:26px 22px}.vault-access h2{font-size:28px}.vault-access-top{margin-bottom:26px}}

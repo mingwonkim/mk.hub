@@ -1,0 +1,9 @@
+{
+  "name": "mk-hub-checks",
+  "private": true,
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "5.0.2",
+    "firebase": "12.19.0",
+    "playwright": "1.63.0"
+  }
+}

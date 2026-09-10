@@ -1,0 +1,12 @@
+@media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+ html.mk-cursor-on,html.mk-cursor-on *{cursor:none!important}
+ html.mk-cursor-on.mk-cursor-text,html.mk-cursor-on.mk-cursor-text *{cursor:text!important}
+ html.mk-cursor-on.mk-cursor-draw,html.mk-cursor-on.mk-cursor-draw *{cursor:crosshair!important}
+ #mkCursor{position:fixed;left:0;top:0;width:27px;height:32px;margin:0;border:0;background:none;pointer-events:none!important;z-index:2147483647;opacity:0;transition:opacity .1s;contain:layout style;isolation:isolate}
+ #mkCursor svg{display:block;width:27px;height:32px;overflow:visible;transform-origin:3px 2px;transition:transform .1s cubic-bezier(.2,.8,.2,1);filter:drop-shadow(1px 3px 2px #0009)}
+ #mkCursor path{fill:#f1eadc;stroke:#242119;stroke-width:1.1;stroke-linejoin:round;transition:fill .12s}
+ #mkCursor.mk-cur-hot path{fill:#FF6B2E;stroke:#321d10}
+ #mkCursor.mk-cur-down svg{transform:scale(.76) rotate(-7deg);filter:drop-shadow(0 1px 1px #0008)}
+ #mkCursor.mk-cur-down path{fill:#ffd3a3}
+}
+@media(hover:none),(pointer:coarse),(prefers-reduced-motion:reduce){#mkCursor{display:none!important}}

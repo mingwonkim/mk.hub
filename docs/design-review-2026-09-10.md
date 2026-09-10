@@ -59,3 +59,24 @@
 
 `assets/archive-walnut.png` — 내장 image generation 도구로 생성한 신규 비트맵. 비둘기·수액·테이프는 SVG/CSS.
 생성 방향: 정면에서 본 어두운 walnut/smoked oak 벽면, charcoal/tobacco 갈색, 은은한 결, 무광, 반복 가능한 질감. 물체·문자·핑크·주황 선 제외.
+
+## 후속 시안: 내부 화면과 인증
+
+명언 좌우 두 메모를 같은 카드로 배치. 할 일, 폴더, 메모, 음악의 표면과 서체를 통일하고 4개 독립 앱도 검정과 주황으로 연결했다. 커서는 누름 상태가 있는 화살표로 교체. 글쓰기와 그림 영역은 기본 I-beam/crosshair 사용.
+
+![명언과 두 메모](design-review/v2-desk.png)
+![본문과 그림 통합 메모](design-review/v2-memo-editor.png)
+![모바일 메모](design-review/v2-memo-editor-mobile.png)
+![음감 훈련](design-review/v2-pitch-trainer-mobile.png)
+![코드 편집기](design-review/v2-code-editor-mobile.png)
+
+비둘기는 측면에서 작은 크기로 접근하고 부리에 문 신문을 투입한 뒤 떠난다. 깃털 음영과 카메라 줌을 추가한 SVG 연출이며 실사 3D 모델은 아니다. 스크롤 제어, MK.HUB 타이틀, 우체통 위치 공개 흐름 유지.
+
+![측면 배달](design-review/v2-delivery.png)
+
+복구 수신자 고정, GitHub 입력칸 제거. 아래 인증 화면은 모의 응답으로 촬영했으며 실제 메일 발송 결과가 아니다.
+
+![설정](design-review/v2-settings.png)
+![고정 이메일 인증](design-review/v2-recovery.png)
+
+운영 전환 조건과 검증 결과는 [개인 저장고 전환 문서](private-vault-rollout.md) 참조. SMTP/GitHub 비밀값 미등록, 운영 보안 규칙 미반영. 기존 저장 문서, 사진, 학습 키 유지. 변경 시안은 사용자 검토 대기.

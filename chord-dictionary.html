@@ -61,10 +61,12 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 .empty{text-align:center;padding:40px 20px;color:var(--txd);font-size:13px;}
 @media(max-width:400px){.chord-grid{grid-template-columns:repeat(auto-fill,minmax(95px,1fr));}}
 </style>
+<link rel="stylesheet" href="hub-tools.css">
+<link rel="stylesheet" href="hub-cursor.css">
 </head>
-<body>
+<body class="tool-chord">
 <div class="app">
-<div class="hd"><div class="logo">CHORD DICTIONARY<em>K-POP · 코드진행 · 이론</em></div></div>
+<div class="hd"><div class="logo"><span class="mk-tool-label">MK.HUB / MUSIC LAB / 02</span>CHORD DICTIONARY<em>K-POP · 코드진행 · 이론</em></div></div>
 <div class="tabs">
   <button class="tb on" onclick="tab('chords')">코드</button>
   <button class="tb" onclick="tab('prog')">코드진행</button>
@@ -587,5 +589,6 @@ E7 → Am (마이너) ← 이것도 해결감이 강함!<br><br>
 
 rChords();rProgs();
 </script>
+<script src="hub-cursor.js"></script>
 </body>
 </html>

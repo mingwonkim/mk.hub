@@ -5,3 +5,9 @@ test_*.html
 .claude/
 .gstack/
 CNAME.txt
+node_modules/
+.env*
+!.env.example
+.secret*
+.firebase/
+*-debug.log

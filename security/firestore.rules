@@ -1,0 +1,17 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function owner() {
+      return request.auth != null
+        && request.auth.token.email == 'kmin5940@naver.com'
+        && request.auth.token.email_verified == true
+        && request.auth.token.vault_owner == true
+        && request.auth.token.vault_access == true
+        && request.auth.token.vault_otp_at <= request.time.toMillis()
+        && request.time.toMillis() - request.auth.token.vault_otp_at < 43200000
+        && request.auth.token.vault_version == get(/databases/$(database)/documents/mk_security/access).data.version;
+    }
+    match /mk_app/{document=**} { allow read, write: if owner(); }
+    match /{document=**} { allow read, write: if false; }
+  }
+}

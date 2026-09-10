@@ -1,0 +1,19 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function owner() {
+      return request.auth != null
+        && request.auth.token.email == 'kmin5940@naver.com'
+        && request.auth.token.email_verified == true
+        && request.auth.token.vault_owner == true
+        && request.auth.token.vault_access == true
+        && request.auth.token.vault_otp_at <= request.time.toMillis()
+        && request.time.toMillis() - request.auth.token.vault_otp_at < 43200000
+        && request.auth.token.vault_version == firestore.get(/databases/(default)/documents/mk_security/access).data.version;
+    }
+    match /{allPaths=**} {
+      allow read, delete: if owner();
+      allow create, update: if owner() && request.resource.size <= 50 * 1024 * 1024;
+    }
+  }
+}

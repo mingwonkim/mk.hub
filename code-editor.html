@@ -67,11 +67,13 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tx)
 .saved-item .del{font-size:10px;color:var(--ng);cursor:pointer;padding:2px 6px;border-radius:4px;}
 .saved-item .del:hover{background:rgba(255,107,107,.1);}
 </style>
+<link rel="stylesheet" href="hub-tools.css">
+<link rel="stylesheet" href="hub-cursor.css">
 </head>
-<body>
+<body class="tool-editor">
 
 <div class="hd">
-  <h1>🛠️ 코드 수정 도구</h1>
+  <h1><span class="mk-tool-label">MK.HUB / WORKSPACE</span>🛠️ 코드 수정 도구</h1>
   <div class="saved-menu">
     <button class="hd-btn" onclick="toggleSaved()">📂 저장 목록</button>
     <div class="saved-list" id="savedList"></div>
@@ -102,7 +104,7 @@ body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tx)
           <input type="checkbox" id="autoRun" checked style="accent-color:var(--acc);"> 자동 실행
         </label>
       </div>
-      <iframe class="preview-frame" id="previewFrame" sandbox="allow-scripts allow-modals allow-forms allow-same-origin"></iframe>
+      <iframe class="preview-frame" id="previewFrame" sandbox="allow-scripts allow-modals allow-forms"></iframe>
     </div>
   </div>
 </div>
@@ -354,5 +356,6 @@ document.getElementById('codeArea').value=codes[mode]||codes.all||DEFAULT_ALL;
 updateLines();
 runCode();
 </script>
+<script src="hub-cursor.js"></script>
 </body>
 </html>
