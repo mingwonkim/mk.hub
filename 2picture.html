@@ -1,714 +1,133 @@
 <!DOCTYPE html>
-<html class="light" lang="ko"><head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>lowtheory® | Editorial Editable</title>
-<script>(function(){document.addEventListener('contextmenu',function(e){e.preventDefault();},true);document.addEventListener('dragstart',function(e){e.preventDefault();},true);['copy','cut'].forEach(function(ev){document.addEventListener(ev,function(e){var t=e.target;if(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable)return;e.preventDefault();},true);});document.addEventListener('keydown',function(e){if(e.key==='F12')e.preventDefault();if(e.ctrlKey&&e.shiftKey&&/^[IJCijc]$/.test(e.key))e.preventDefault();if(e.ctrlKey&&/^[uUsSpP]$/.test(e.key))e.preventDefault();},true);})();</script>
-<style>*{-webkit-user-select:none;-moz-user-select:none;user-select:none;}input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:text;}img{-webkit-user-drag:none;user-drag:none;pointer-events:none;-webkit-touch-callout:none;}</style>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@700;800;900&amp;family=Inter:wght@400;500&amp;family=Work+Sans:wght@400;500&amp;display=swap" rel="stylesheet">
-<script id="tailwind-config">
-  tailwind.config = {
-    darkMode: "class",
-    theme: {
-      extend: {
-        colors: {
-          "background": "#e5e1d3",
-          "surface": "#e5e1d3",
-          "surface-bright": "#ece7da",
-          "surface-dim": "#d8d2c0",
-          "surface-container": "#dcd7c4",
-          "surface-container-low": "#dfdbca",
-          "surface-container-high": "#d5cfbb",
-          "surface-container-lowest": "#ffffff",
-          "on-background": "#1b1c15",
-          "on-surface": "#1b1c15",
-          "primary": "#930009",
-          "primary-container": "#b1231c",
-          "secondary": "#8e6f54",
-          "outline": "#b7a894",
-          "outline-variant": "#dcc9b8",
-          "paper": "#b39d7d",
-          "paper-dark": "#9f896a",
-          "tape-light": "#d9ceb7",
-          "tape-dark": "#b9ab8f"
-        },
-        fontFamily: {
-          "headline": ["Epilogue"],
-          "body": ["Inter"],
-          "label": ["Work Sans"]
-        },
-        boxShadow: {
-          'paper': '0 20px 40px rgba(27, 28, 21, 0.06)',
-          'paper-lg': '0 26px 56px rgba(27, 28, 21, 0.10)',
-        }
-      },
-    },
-  }
-</script>
-<style>
-  body {
-    background: #e5e1d3;
-    color: #1b1c15;
-  }
-
-  .tape-texture {
-    background: linear-gradient(180deg, rgba(229, 221, 198, 0.96) 0%, rgba(214, 205, 180, 0.94) 100%);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 1px 2px rgba(74, 60, 43, 0.12);
-    border-left: 1px solid rgba(255,255,255,0.16);
-    border-right: 1px solid rgba(120,100,75,0.08);
-    opacity: 0.95;
-  }
-
-  .paper-board {
-    background:
-      radial-gradient(circle at 30% 28%, rgba(255,255,255,0.08), transparent 30%),
-      radial-gradient(circle at 72% 64%, rgba(80, 55, 35, 0.06), transparent 34%),
-      linear-gradient(180deg, rgba(184,161,129,0.95), rgba(171,149,117,0.96));
-  }
-
-  .paper-grain {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .paper-grain::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(circle at 15% 20%, rgba(255,255,255,0.06), transparent 18%),
-      radial-gradient(circle at 80% 35%, rgba(0,0,0,0.05), transparent 22%),
-      radial-gradient(circle at 45% 80%, rgba(255,255,255,0.04), transparent 18%);
-    mix-blend-mode: multiply;
-    pointer-events: none;
-  }
-
-  .footer-rule {
-    border-top: 1px solid rgba(27, 28, 21, 0.22);
-  }
-
-  [data-editable].is-editing {
-    outline: 2px dashed rgba(147, 0, 9, 0.5);
-    outline-offset: 6px;
-    background: rgba(255,255,255,0.2);
-    cursor: text;
-  }
-
-  [data-image].is-editing {
-    outline: 2px dashed rgba(147, 0, 9, 0.45);
-    outline-offset: 8px;
-    cursor: pointer;
-    position: relative;
-  }
-
-  [data-image].is-editing::after {
-    content: "클릭해서 사진 바꾸기";
-    position: absolute;
-    right: 12px;
-    bottom: 12px;
-    background: rgba(27, 28, 21, 0.78);
-    color: white;
-    font-family: Inter, sans-serif;
-    font-size: 12px;
-    padding: 6px 10px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
-
-  #editor-panel {
-    backdrop-filter: blur(16px);
-  }
-
-
-  .copy-ribbon {
-    background: linear-gradient(180deg, rgba(236, 231, 218, 0.72), rgba(223, 216, 201, 0.72));
-  }
-
-  .polaroid-copy {
-    position: absolute;
-    background: #ffffff;
-    padding: 16px 16px 18px;
-    box-shadow: 0 18px 40px rgba(27, 28, 21, 0.10);
-  }
-
-  .copy-stack::before {
-    content: "";
-    position: absolute;
-    left: 124px;
-    top: 12px;
-    bottom: 12px;
-    width: 2px;
-    background: linear-gradient(180deg, rgba(147,0,9,0.00), rgba(147,0,9,0.25), rgba(147,0,9,0.00));
-    pointer-events: none;
-  }
-
-  .copy-order-note {
-    background: rgba(255,255,255,0.56);
-    backdrop-filter: blur(8px);
-  }
-
-  .polaroid-copy .caption-rule {
-    border-top: 1px solid rgba(147, 0, 9, 0.16);
-  }
-
-
-  .film-layout {
-    align-items: start;
-    position: relative;
-  }
-
-  .film-strip {
-    position: relative;
-    width: min(100%, 248px);
-    background: #060504;
-    padding: 16px 24px;
-    box-shadow: 0 22px 48px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.04);
-    overflow: visible;
-    justify-self: end;
-    align-self: start;
-    z-index: 18;
-    transform: none;
-    align-self: stretch;
-  }
-
-  .film-tape {
-    display: none;
-    position: absolute;
-    top: -4px;
-    width: 74px;
-    height: 24px;
-    border-radius: 2px;
-    background: linear-gradient(180deg, rgba(229, 221, 198, 0.98) 0%, rgba(214, 205, 180, 0.94) 100%);
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,0.28),
-      0 2px 6px rgba(74, 60, 43, 0.12);
-    border-left: 1px solid rgba(255,255,255,0.16);
-    border-right: 1px solid rgba(120,100,75,0.08);
-    opacity: 0.95;
-    pointer-events: none;
-    z-index: 26;
-  }
-
-  .film-tape-left {
-    left: 30px;
-    transform: rotate(-8deg);
-  }
-
-  .film-tape-right {
-    right: 30px;
-    transform: rotate(7deg);
-  }
-
-  .film-strip.is-draggable {
-    cursor: grab;
-  }
-
-  .film-strip.is-dragging,
-  .film-strip.is-dragging * {
-    cursor: grabbing !important;
-    user-select: none !important;
-  }
-
-  .film-strip::before,
-  .film-strip::after {
-    content: "";
-    position: absolute;
-    top: 8px;
-    bottom: 8px;
-    width: 16px;
-    background:
-      repeating-linear-gradient(
-        180deg,
-        rgba(255,255,255,0.0) 0 4px,
-        #060504 4px 8px,
-        rgba(255,255,255,0.0) 8px 10px,
-        #060504 10px 22px
-      );
-    border: 1px solid rgba(255,255,255,0.06);
-    opacity: 1;
-  }
-
-  .film-strip::before { left: 7px; }
-  .film-strip::after { right: 7px; }
-
-  .film-track {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    height: 100%;
-  }
-
-  .opening-composition {
-    position: relative;
-  }
-
-  @media (min-width: 1025px) {
-    .opening-composition {
-      zoom: 0.7;
-    }
-  }
-
-  @media (min-width: 1025px) {
-    .film-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) clamp(204px, 16.5vw, 248px);
-      column-gap: clamp(24px, 2.6vw, 42px);
-      align-items: start;
-    }
-
-    .film-layout > .relative:first-child {
-      min-width: 0;
-      padding-right: 0;
-    }
-
-    .film-strip {
-      position: relative;
-      top: 0;
-      right: 0;
-      margin-top: 0 !important;
-      width: clamp(204px, 16.5vw, 248px);
-      justify-self: end;
-      align-self: start;
-    }
-  }
-
-  .film-chip {
-    display: none !important;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 16px;
-    padding: 7px 10px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.14);
-    cursor: grab;
-    touch-action: none;
-  }
-
-  .film-chip::after {
-    content: 'drag';
-    margin-left: 4px;
-    font-size: 9px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.38);
-  }
-
-  .film-frame {
-    width: 100%;
-    padding: 8px 0 0;
-    border-top: 1px solid rgba(255,255,255,0.12);
-  }
-
-  .film-frame:first-child {
-    border-top: none;
-    padding-top: 0;
-  }
-
-  .film-image-wrap {
-    position: relative;
-    width: 100%;
-    padding: 6px;
-    background: #030201;
-    border: 1px solid rgba(255,255,255,0.14);
-    overflow: hidden;
-    isolation: isolate;
-    box-shadow:
-      inset 0 0 0 1px rgba(255,255,255,0.03),
-      inset 0 0 28px rgba(0,0,0,0.28);
-  }
-
-  .film-image-wrap::before {
-    content: "";
-    position: absolute;
-    inset: 8px;
-    background:
-      linear-gradient(180deg, rgba(245,220,186,0.22), rgba(0,0,0,0.14) 38%, rgba(0,0,0,0.38)),
-      repeating-linear-gradient(180deg, rgba(255,255,255,0.07) 0 1px, transparent 1px 2px),
-      radial-gradient(circle at 20% 14%, rgba(255,255,255,0.18), transparent 28%),
-      radial-gradient(circle at 84% 84%, rgba(0,0,0,0.38), transparent 34%);
-    background-blend-mode: soft-light, normal, screen, multiply;
-    mix-blend-mode: screen;
-    opacity: 0.82;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  .film-image-wrap::after {
-    content: "";
-    position: absolute;
-    inset: 8px;
-    background: linear-gradient(180deg, rgba(16,12,10,0.08), rgba(10,8,7,0.28));
-    box-shadow:
-      inset 0 0 0 1px rgba(255,255,255,0.06),
-      inset 0 0 34px rgba(0,0,0,0.34),
-      inset 0 0 88px rgba(0,0,0,0.18);
-    pointer-events: none;
-    z-index: 2;
-  }
-
-  .film-image-wrap img {
-    position: relative;
-    z-index: 0;
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: saturate(0.45) contrast(1.25) brightness(0.82) sepia(0.28) hue-rotate(-6deg) grayscale(0.25);
-    transform: scale(1.035);
-  }
-
-  .film-caption {
-    margin-top: 7px;
-    color: #d24e45;
-    font-family: "Work Sans", sans-serif;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    line-height: 1.45;
-  }
-
-  @media (max-width: 1024px) {
-    .film-layout {
-      gap: 2rem;
-    }
-
-    .film-layout > .relative:first-child {
-      padding-right: 0;
-    }
-
-    .film-strip {
-      position: relative;
-      top: auto;
-      right: auto;
-      width: min(100%, 296px);
-      margin-inline: auto;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .copy-ribbon {
-      padding-top: 2rem;
-      padding-bottom: 0;
-    }
-
-    .copy-stack {
-      height: auto !important;
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-      align-items: center;
-    }
-
-    .copy-stack::before {
-      display: none;
-    }
-
-    .polaroid-copy {
-      position: relative !important;
-      left: auto !important;
-      top: auto !important;
-      transform: none !important;
-      width: min(88vw, 340px) !important;
-      height: auto !important;
-    }
-
-    .polaroid-copy .copy-image {
-      height: 440px !important;
-    }
-
-    .copy-text-col {
-      order: -1;
-      padding-top: 0 !important;
-    }
-  }
-
-  @media (max-width: 768px) {
-    main section:first-child {
-      height: auto !important;
-    }
-  }
-
-  @media print {
-    #editor-panel { display: none !important; }
-    [data-editable], [data-image] { outline: none !important; }
-  }
-
-  /* 배경 완전 투명 */
-  html, body, main, .opening-composition, section { background: transparent !important; }
-
-  /* film-strip 폴라로이드 section 오른쪽 상단에 고정 */
-  [data-film-strip] {
-    display: block !important;
-    position: static !important;
-    transform: none !important;
-    width: 220px !important;
-  }
-  .film-track {
-    height: auto !important;
-  }
-
-  main section:first-child { overflow: visible !important; }
-  .opening-composition { overflow: visible !important; }
-
-  /* === 모바일: 강제 와이드 레이아웃 + zoom 축소 === */
-  @media (max-width: 767px) {
-    html {
-      width: 1440px !important;
-      zoom: 0.26 !important;
-      overflow: hidden !important;
-    }
-    body {
-      transform: none !important;
-      width: 100% !important;
-      overflow: hidden !important;
-    }
-  }
-</style>
-<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}[type='text'],input:where(:not([type])),[type='email'],[type='url'],[type='password'],[type='number'],[type='date'],[type='datetime-local'],[type='month'],[type='search'],[type='tel'],[type='time'],[type='week'],[multiple],textarea,select{-webkit-appearance:none;appearance:none;background-color:#fff;border-color:#6b7280;border-width:1px;border-radius:0px;padding-top:0.5rem;padding-right:0.75rem;padding-bottom:0.5rem;padding-left:0.75rem;font-size:1rem;line-height:1.5rem;--tw-shadow:0 0 #0000;}[type='text']:focus, input:where(:not([type])):focus, [type='email']:focus, [type='url']:focus, [type='password']:focus, [type='number']:focus, [type='date']:focus, [type='datetime-local']:focus, [type='month']:focus, [type='search']:focus, [type='tel']:focus, [type='time']:focus, [type='week']:focus, [multiple]:focus, textarea:focus, select:focus{outline:2px solid transparent;outline-offset:2px;--tw-ring-inset:var(--tw-empty,/*!*/ /*!*/);--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:#2563eb;--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);border-color:#2563eb}input::placeholder,textarea::placeholder{color:#6b7280;opacity:1}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-date-and-time-value{min-height:1.5em;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit,::-webkit-datetime-edit-year-field,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute-field,::-webkit-datetime-edit-second-field,::-webkit-datetime-edit-millisecond-field,::-webkit-datetime-edit-meridiem-field{padding-top:0;padding-bottom:0}select{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");background-position:right 0.5rem center;background-repeat:no-repeat;background-size:1.5em 1.5em;padding-right:2.5rem;print-color-adjust:exact}[multiple],[size]:where(select:not([size="1"])){background-image:initial;background-position:initial;background-repeat:unset;background-size:initial;padding-right:0.75rem;print-color-adjust:unset}[type='checkbox'],[type='radio']{-webkit-appearance:none;appearance:none;padding:0;print-color-adjust:exact;display:inline-block;vertical-align:middle;background-origin:border-box;-webkit-user-select:none;user-select:none;flex-shrink:0;height:1rem;width:1rem;color:#2563eb;background-color:#fff;border-color:#6b7280;border-width:1px;--tw-shadow:0 0 #0000}[type='checkbox']{border-radius:0px}[type='radio']{border-radius:100%}[type='checkbox']:focus,[type='radio']:focus{outline:2px solid transparent;outline-offset:2px;--tw-ring-inset:var(--tw-empty,/*!*/ /*!*/);--tw-ring-offset-width:2px;--tw-ring-offset-color:#fff;--tw-ring-color:#2563eb;--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}[type='checkbox']:checked,[type='radio']:checked{border-color:transparent;background-color:currentColor;background-size:100% 100%;background-position:center;background-repeat:no-repeat}[type='checkbox']:checked{background-image:url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");}@media (forced-colors: active) {[type='checkbox']:checked{-webkit-appearance:auto;appearance:auto}}[type='radio']:checked{background-image:url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");}@media (forced-colors: active) {[type='radio']:checked{-webkit-appearance:auto;appearance:auto}}[type='checkbox']:checked:hover,[type='checkbox']:checked:focus,[type='radio']:checked:hover,[type='radio']:checked:focus{border-color:transparent;background-color:currentColor}[type='checkbox']:indeterminate{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 16 16'%3e%3cpath stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 8h8'/%3e%3c/svg%3e");border-color:transparent;background-color:currentColor;background-size:100% 100%;background-position:center;background-repeat:no-repeat;}@media (forced-colors: active) {[type='checkbox']:indeterminate{-webkit-appearance:auto;appearance:auto}}[type='checkbox']:indeterminate:hover,[type='checkbox']:indeterminate:focus{border-color:transparent;background-color:currentColor}[type='file']{background:unset;border-color:inherit;border-width:0;border-radius:0;padding:0;font-size:unset;line-height:inherit}[type='file']:focus{outline:1px solid ButtonText;outline:1px auto -webkit-focus-ring-color}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-0{inset:0px}.-top-4{top:-1rem}.left-1\/2{left:50%}.right-4{right:1rem}.top-4{top:1rem}.top-\[20\%\]{top:20%}.-bottom-4{bottom:-1rem}.-bottom-8{bottom:-2rem}.-right-4{right:-1rem}.-top-2{top:-0.5rem}.-top-3{top:-0.75rem}.left-0{left:0px}.left-1\/3{left:33.333333%}.left-\[10\%\]{left:10%}.left-\[15\%\]{left:15%}.left-\[2\.5\%\]{left:2.5%}.right-6{right:1.5rem}.right-8{right:2rem}.right-\[12\%\]{right:12%}.right-\[15\%\]{right:15%}.top-\[10\%\]{top:10%}.top-\[26\%\]{top:26%}.top-\[3\%\]{top:3%}.top-\[38\%\]{top:38%}.top-\[48\%\]{top:48%}.top-\[5\%\]{top:5%}.top-\[82\%\]{top:82%}.z-30{z-index:30}.z-50{z-index:50}.z-\[9999\]{z-index:9999}.z-20{z-index:20}.z-40{z-index:40}.z-\[60\]{z-index:60}.mx-auto{margin-left:auto;margin-right:auto}.mb-3{margin-bottom:0.75rem}.mt-1{margin-top:0.25rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}.-mt-5{margin-top:-1.25rem}.mb-2{margin-bottom:0.5rem}.mb-24{margin-bottom:6rem}.mb-28{margin-bottom:7rem}.mt-20{margin-top:5rem}.flex{display:flex}.grid{display:grid}.aspect-\[4\/5\]{aspect-ratio:4/5}.aspect-\[21\/9\]{aspect-ratio:21/9}.h-8{height:2rem}.h-\[1100px\]{height:1100px}.h-full{height:100%}.h-10{height:2.5rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-\[154px\]{height:154px}.h-\[182px\]{height:182px}.h-\[212px\]{height:212px}.h-\[245px\]{height:245px}.h-\[280px\]{height:280px}.h-auto{height:auto}.w-32{width:8rem}.w-80{width:20rem}.w-\[320px\]{width:320px}.w-full{width:100%}.w-16{width:4rem}.w-20{width:5rem}.w-24{width:6rem}.w-28{width:7rem}.w-40{width:10rem}.w-52{width:13rem}.w-56{width:14rem}.w-60{width:15rem}.w-64{width:16rem}.max-w-\[1440px\]{max-width:1440px}.max-w-\[calc\(100vw-2rem\)\]{max-width:calc(100vw - 2rem)}.max-w-7xl{max-width:80rem}.-translate-x-1\/2{--tw-translate-x:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-rotate-3{--tw-rotate:-3deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-rotate-6{--tw-rotate:-6deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.rotate-1{--tw-rotate:1deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.rotate-12{--tw-rotate:12deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.rotate-2{--tw-rotate:2deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.rotate-90{--tw-rotate:90deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.rotate-\[-10deg\]{--tw-rotate:-10deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.rotate-\[-12deg\]{--tw-rotate:-12deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.rotate-\[-4deg\]{--tw-rotate:-4deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.rotate-\[10deg\]{--tw-rotate:10deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.rotate-\[12deg\]{--tw-rotate:12deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.rotate-\[15deg\]{--tw-rotate:15deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.rotate-\[1deg\]{--tw-rotate:1deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.select-none{-webkit-user-select:none;user-select:none}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-start{align-items:flex-start}.justify-between{justify-content:space-between}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-6{gap:1.5rem}.gap-8{gap:2rem}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-visible{overflow:visible}.overflow-x-hidden{overflow-x:hidden}.whitespace-pre-line{white-space:pre-line}.border{border-width:1px}.border-black\/10{border-color:rgb(0 0 0 / 0.1)}.border-black\/15{border-color:rgb(0 0 0 / 0.15)}.bg-primary{--tw-bg-opacity:1;background-color:rgb(147 0 9 / var(--tw-bg-opacity, 1))}.bg-surface{--tw-bg-opacity:1;background-color:rgb(229 225 211 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-white\/85{background-color:rgb(255 255 255 / 0.85)}.bg-surface-container{--tw-bg-opacity:1;background-color:rgb(220 215 196 / var(--tw-bg-opacity, 1))}.bg-surface-container-low{--tw-bg-opacity:1;background-color:rgb(223 219 202 / var(--tw-bg-opacity, 1))}.bg-surface-container-lowest{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.object-cover{object-fit:cover}.p-4{padding:1rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-8{padding-left:2rem;padding-right:2rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.px-4{padding-left:1rem;padding-right:1rem}.py-16{padding-top:4rem;padding-bottom:4rem}.pb-10{padding-bottom:2.5rem}.pb-12{padding-bottom:3rem}.pb-14{padding-bottom:3.5rem}.text-center{text-align:center}.font-body{font-family:Inter}.font-headline{font-family:Epilogue}.font-\[\'Epilogue\'\]{font-family:'Epilogue'}.font-label{font-family:Work Sans}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-\[10px\]{font-size:10px}.text-\[12vw\]{font-size:12vw}.text-xs{font-size:0.75rem;line-height:1rem}.font-black{font-weight:900}.font-medium{font-weight:500}.font-semibold{font-weight:600}.font-bold{font-weight:700}.uppercase{text-transform:uppercase}.lowercase{text-transform:lowercase}.leading-5{line-height:1.25rem}.leading-none{line-height:1}.leading-\[0\.88\]{line-height:0.88}.tracking-\[-0\.045em\]{letter-spacing:-0.045em}.tracking-\[-0\.08em\]{letter-spacing:-0.08em}.tracking-\[0\.14em\]{letter-spacing:0.14em}.tracking-\[0\.18em\]{letter-spacing:0.18em}.tracking-\[0\.28em\]{letter-spacing:0.28em}.tracking-\[0\.2em\]{letter-spacing:0.2em}.tracking-tight{letter-spacing:-0.025em}.tracking-tighter{letter-spacing:-0.05em}.tracking-widest{letter-spacing:0.1em}.text-black\/65{color:rgb(0 0 0 / 0.65)}.text-black\/70{color:rgb(0 0 0 / 0.7)}.text-on-surface{--tw-text-opacity:1;color:rgb(27 28 21 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-on-surface\/70{color:rgb(27 28 21 / 0.7)}.text-primary{--tw-text-opacity:1;color:rgb(147 0 9 / var(--tw-text-opacity, 1))}.text-white\/30{color:rgb(255 255 255 / 0.3)}.opacity-80{opacity:0.8}.opacity-85{opacity:0.85}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-paper-lg{--tw-shadow:0 26px 56px rgba(27, 28, 21, 0.10);--tw-shadow-colored:0 26px 56px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-paper{--tw-shadow:0 20px 40px rgba(27, 28, 21, 0.06);--tw-shadow-colored:0 20px 40px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);--tw-shadow-color:#b39d7d;--tw-shadow:var(--tw-shadow-colored)}.brightness-95{--tw-brightness:brightness(.95);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.brightness-\[0\.98\]{--tw-brightness:brightness(0.98);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.grayscale{--tw-grayscale:grayscale(100%);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.sepia-\[0\.06\]{--tw-sepia:sepia(0.06);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-500{transition-duration:500ms}.selection\:bg-primary *::selection{--tw-bg-opacity:1;background-color:rgb(147 0 9 / var(--tw-bg-opacity, 1))}.selection\:text-white *::selection{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.selection\:bg-primary::selection{--tw-bg-opacity:1;background-color:rgb(147 0 9 / var(--tw-bg-opacity, 1))}.selection\:text-white::selection{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:rotate-0:hover{--tw-rotate:0deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@media (min-width: 768px){.md\:right-16{right:4rem}.md\:w-\[480px\]{width:480px}.md\:w-64{width:16rem}.md\:w-72{width:18rem}.md\:w-80{width:20rem}.md\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.md\:text-5xl{font-size:3rem;line-height:1}}@media (min-width: 1024px){.lg\:text-7xl{font-size:4.5rem;line-height:1}}</style></head>
-<body style="transform:scale(0.9);transform-origin:top left;width:111.11%;background:transparent;overflow:visible;margin:0;padding:0;">
-<button id="lt-edit-btn"
-  style="display:none;position:sticky;top:12px;float:right;z-index:9999;
-    align-items:center;gap:6px;padding:7px 16px;
-    border:1px solid #353535;border-radius:9999px;
-    background:rgba(14,14,14,.85);backdrop-filter:blur(8px);color:#a08d88;
-    font-size:11px;font-family:'Space Grotesk',sans-serif;font-weight:700;
-    letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin:12px 12px 0 0;"
-  onclick="setEditMode(!editMode)">✎ 편집</button>
->
-
-<main class="relative">
-  <div class="opening-composition">
-  <section class="relative h-[1300px] w-full max-w-[1440px] mx-auto mt-6 px-8" style="overflow:visible;background:transparent;">
-    <div class="absolute top-[20%] left-1/2 -translate-x-1/2 z-30 w-80 md:w-[480px] transition-all duration-500">
-      <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-32 h-8 tape-texture -rotate-3 z-50"></div>
-      <div class="relative paper-board paper-grain w-full aspect-[4/5] shadow-paper-lg overflow-hidden">
-        <img data-image="center-photo" alt="center collage photo" class="absolute inset-0 w-full h-full object-cover" src="" tabindex="-1">
-      </div>
-      <div class="absolute top-[10%] -right-4 w-24 h-6 tape-texture rotate-90 z-50"></div>
-    </div>
-
-    <div class="absolute top-[3%] left-[10%] rotate-[-12deg] z-20 shadow-paper p-4 bg-surface-container-lowest pb-12 w-64 md:w-72 transition-all duration-500 hover:rotate-0">
-      <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-20 h-6 tape-texture rotate-2"></div>
-      <img data-image="photo-1" alt="photo 1" class="w-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOEm4el6idUuk6ESAbdJcYz5ONVE3PbgeWoMFJjauH-UiXxmujH8AMlD3SLIDtX39SSn60lTbWIlezsZIOCzy0935flwjrjV6jQ2KQ3cFPa43aPF_TuMoLqsfZnFWzSPt-cOq9vX0I1XkOHZyyXgokAQeVzXJxe2EAUG9YIL3D2mdzHEkvQxlmycmgmQXSW6EwkMC6RWyErM_irFR4OUS11E0PuqVPFqb5pJtIp7YcpknfwCocHsgandBbzz2iAzyEy-X0WqtmlWhr" tabindex="-1">
-      <p data-editable="copy-1" class="mt-4 font-label text-xs text-primary font-semibold tracking-widest uppercase" spellcheck="false">РАЗНЫЕ ФОРМЫ МЕДИА, АНАЛОГОВЫЕ МАШИНЫ</p>
-    </div>
-
-    <div class="absolute top-[5%] right-[12%] rotate-[10deg] z-20 shadow-paper p-4 bg-surface-container-lowest pb-12 w-56 md:w-64 transition-all duration-500 hover:rotate-0">
-      <div class="absolute -top-2 right-4 w-20 h-6 tape-texture rotate-12"></div>
-      <img data-image="photo-2" alt="photo 2" class="w-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7ADqfuOUM_ZqLhfiybPY_9IVhlWEjQYlzz6FFAwn36NDgiiDDLP9llEtm6tZ3cAXR4jtJD83gWKfNWxeXLG_NqT7a1hCa_j-R_RG27LulQP8GMcQ3n3qgUsunWEHid8MQxvyELQ4uo5Uwk5CIzdsoJArqceIX9431wJ8gFclIQomfLE2L4tZXzOafIdVb_5yTZ3EG5AFVTGrLaHJCzHaOlukWzzGBCK43B83vqvCYGTYikvfLTkaaxg091N7uDb0j6Ua6DL0CA6dx" tabindex="-1">
-      <p data-editable="copy-2" class="mt-4 font-label text-[10px] text-primary uppercase text-center opacity-80" spellcheck="false">다양한 메시의 방식, 아날로그 기계</p>
-    </div>
-
-    <div class="absolute top-[48%] left-[15%] rotate-[-4deg] z-40 shadow-paper-lg p-4 bg-surface-container-lowest pb-10 w-60 md:w-72 transition-all duration-500 hover:rotate-0">
-      <div class="absolute -top-4 left-1/3 w-16 h-6 tape-texture rotate-[15deg]"></div>
-      <img data-image="photo-3" alt="photo 3" class="w-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_lYnYVmWF7aNukZgQDwcxjRWphf-6zq8q01YlkUDy1Z28zhbr79JY39DlP-U0CfxToIMHRgxYNNd5IUikT2A3SR7199ZR91AGWj6e7IlJlD-gKqTC-BB43jLyurPuEjymJR4nS6g-xUaT3TkIAL3jjExxLqCeHyNZpIzj30RSmjqcVYGaRec6HVTydhOjlizwd645ZrSwRjzoALazAe0_9K6L0CWP2PvNEzcisRUtzgYwoRn5ciCJ2OM_bRbwhjXhFYxeIzuO5NFq" tabindex="-1">
-      <p data-editable="copy-3" class="mt-4 font-label text-xs text-primary font-semibold tracking-[0.14em] uppercase" spellcheck="false">LONDON ARC. BARCELONA BARRI. ISLANDS</p>
-    </div>
-
-    <div class="absolute top-[38%] right-[12%] rotate-[12deg] z-40 shadow-paper p-4 bg-surface-container-lowest pb-14 w-64 md:w-80 transition-all duration-500 hover:rotate-0">
-      <div class="absolute -top-3 right-8 w-20 h-8 tape-texture -rotate-6"></div>
-      <img data-image="photo-4" alt="photo 4" class="w-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQTbzJGOF1O_WqL1cNOjMyiglhmsZ3OaP9k88UUMICK1j6Nf4BJvjaxt15cPcMWUJlF4krsnGRq1qEd91XX1EepE_l_ipaZICpsbAvPeupqVmDjXGEXFoENjN9gJoc9e1mHYW4UDdKcCmIIdpPSjFAgTzA-GAEfzPpUf54oKteR__ZKEv1bX_rGH149oP2FEtj0k-yenjO6baOnzdaFK3HD8_9lDKnmEuC_ZzkjK7oAGGnJxOyiXvOhz0jfbM31muXuW_cLT7ERtLl" tabindex="-1">
-      <p data-editable="copy-4" class="mt-4 font-label text-xs text-primary font-semibold tracking-[0.14em] uppercase" spellcheck="false">ALANA SHOT ON 35MM, EAST LONDON (CIRCA 2022)</p>
-    </div>
-
-    <div class="absolute top-[26%] left-[2.5%] rotate-[1deg] z-40 shadow-paper-lg p-4 bg-surface-container-lowest pb-10 w-52 md:w-64 transition-all duration-500 hover:rotate-0">
-      <div class="absolute -top-2 left-1/2 -translate-x-1/2 w-16 h-5 tape-texture rotate-[-10deg]"></div>
-      <img data-image="photo-5" alt="photo 5" class="w-full" src="" tabindex="-1">
-    </div>
-    
-
-    <div class="absolute top-[82%] left-0 w-full z-[60] px-4 text-center">
-      <h2 data-editable="headline" class="font-headline text-3xl md:text-5xl lg:text-7xl font-black text-primary leading-[0.88] tracking-[-0.045em] uppercase max-w-7xl mx-auto" spellcheck="false">
-        ARE WE TALKING TO EACH OTHER THROUGH OUR SCREENS OR ARE OUR SCREENS TALKING TO EAC</h2>
-    </div>
-  
-    <div style="position:absolute;top:12%;right:-180px;z-index:50;width:220px;">
-      <!-- 필름 맨 위 테이프 2개 -->
-      <div style="position:absolute;top:-14px;left:18%;width:80px;height:22px;transform:rotate(-4deg);z-index:60;" class="tape-texture"></div>
-      <div style="position:absolute;top:-10px;right:10%;width:60px;height:18px;transform:rotate(7deg);z-index:60;" class="tape-texture"></div>
-      <!-- 필름 중간 테이프 1개 -->
-      <div style="position:absolute;top:50%;left:-12px;width:24px;height:72px;transform:rotate(2deg);z-index:60;" class="tape-texture"></div>
-      <aside data-film-strip="" class="film-strip" data-offset-x="457" data-offset-y="-750" style="--film-offset-x: 0px; --film-offset-y: 0px;" data-initial-view="screen-position-v10">
-        <div aria-hidden="true" class="film-tape film-tape-left"></div>
-        <div aria-hidden="true" class="film-tape film-tape-right"></div>
-        
-
-        <div data-film-track="" class="film-track">
-          
-
-          
-
-          
-
-          
-
-          
-        <figure data-film-frame="" class="film-frame" data-film-order="1">
-            <div data-film-wrap="" class="film-image-wrap h-[320px]" style="height: 320px;">
-              <img data-image="copy-02" alt="copy 02" src="" data-film-source="photo-5" style="object-position: center 52%;" tabindex="-1" class="">
-            </div>
-            <figcaption data-editable="copy-02-caption" class="film-caption" spellcheck="false">copy 02 / long portrait</figcaption>
-          </figure><figure data-film-frame="" class="film-frame" data-film-order="2">
-            <div data-film-wrap="" class="film-image-wrap h-[300px]" style="height: 300px;">
-              <img data-image="copy-03" alt="copy 03" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOEm4el6idUuk6ESAbdJcYz5ONVE3PbgeWoMFJjauH-UiXxmujH8AMlD3SLIDtX39SSn60lTbWIlezsZIOCzy0935flwjrjV6jQ2KQ3cFPa43aPF_TuMoLqsfZnFWzSPt-cOq9vX0I1XkOHZyyXgokAQeVzXJxe2EAUG9YIL3D2mdzHEkvQxlmycmgmQXSW6EwkMC6RWyErM_irFR4OUS11E0PuqVPFqb5pJtIp7YcpknfwCocHsgandBbzz2iAzyEy-X0WqtmlWhr" data-film-source="photo-1" style="object-position: center 24%;" tabindex="-1" class="">
-            </div>
-            <figcaption data-editable="copy-03-caption" class="film-caption" spellcheck="false">copy 03 / mask frame</figcaption>
-          </figure><figure data-film-frame="" class="film-frame" data-film-order="3">
-            <div data-film-wrap="" class="film-image-wrap h-[280px]" style="height: 280px;">
-              <img data-image="copy-04" alt="copy 04" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7ADqfuOUM_ZqLhfiybPY_9IVhlWEjQYlzz6FFAwn36NDgiiDDLP9llEtm6tZ3cAXR4jtJD83gWKfNWxeXLG_NqT7a1hCa_j-R_RG27LulQP8GMcQ3n3qgUsunWEHid8MQxvyELQ4uo5Uwk5CIzdsoJArqceIX9431wJ8gFclIQomfLE2L4tZXzOafIdVb_5yTZ3EG5AFVTGrLaHJCzHaOlukWzzGBCK43B83vqvCYGTYikvfLTkaaxg091N7uDb0j6Ua6DL0CA6dx" data-film-source="photo-2" style="object-position: center 20%;" tabindex="-1" class="">
-            </div>
-            <figcaption data-editable="copy-04-caption" class="film-caption" spellcheck="false">copy 04 / cropped repeat</figcaption>
-          </figure><figure data-film-frame="" class="film-frame" data-film-order="4">
-            <div data-film-wrap="" class="film-image-wrap h-[154px]" style="height: 246px;">
-              <img data-image="copy-05" alt="copy 05" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQTbzJGOF1O_WqL1cNOjMyiglhmsZ3OaP9k88UUMICK1j6Nf4BJvjaxt15cPcMWUJlF4krsnGRq1qEd91XX1EepE_l_ipaZICpsbAvPeupqVmDjXGEXFoENjN9gJoc9e1mHYW4UDdKcCmIIdpPSjFAgTzA-GAEfzPpUf54oKteR__ZKEv1bX_rGH149oP2FEtj0k-yenjO6baOnzdaFK3HD8_9lDKnmEuC_ZzkjK7oAGGnJxOyiXvOhz0jfbM31muXuW_cLT7ERtLl" data-film-source="photo-4" style="object-position: center 22%;" tabindex="-1" class="">
-            </div>
-            <figcaption data-editable="copy-05-caption" class="film-caption" spellcheck="false">copy 05 / shortest cut</figcaption>
-          </figure><figure data-film-frame="" class="film-frame" data-film-order="5">
-            <div data-film-wrap="" class="film-image-wrap h-[280px]" style="height: 168px;">
-              <img data-image="copy-01" alt="copy 01" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBY6iaytnpst8D6KXyHJ-IEmqAV11l_aLI0Yxf20SO2aUXKXhNWwk91hWSZLZfWVCVX7mruGspfPB4CNPkhuUHv6vDMVpDvNh_j42erckQypyqh6vGVR-YnW9HRo6t9l7gB1BTJEJgqIP4AozR7ACFrFA5FHED1su0mBjQcDWYmHIfEtAGLnHwBab4wLWAEZLmhjOo9EzaxNAWiYowjPUSHKqZU0ddStIZgIPoFpJ5kKJLSaCKAcS5voqy0NS0bxHTwwmFU424Cgv5j" data-film-source="hero" style="object-position: 34% center;" tabindex="-1" class="">
-            </div>
-            <figcaption data-editable="copy-01-caption" class="film-caption" spellcheck="false">copy 01 / tallest cut</figcaption>
-          </figure></div>
-      </aside>
-    </div>
-  </section>
-
-
-  <section class="w-full max-w-[1440px] mx-auto px-8 -mt-5 mb-6 relative">
-    <div class="film-layout">
-      <div class="relative">
-        <div data-main-screen="" class="relative w-full h-auto aspect-[21/9] bg-surface-container overflow-visible shadow-paper">
-          <div class="absolute -top-4 left-[10%] w-32 h-10 tape-texture -rotate-3 z-20"></div>
-          <div class="absolute -top-3 right-[15%] w-28 h-8 tape-texture rotate-2 z-20"></div>
-          <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 w-40 h-10 tape-texture rotate-1 z-20"></div>
-          <img data-image="hero" alt="hero photo" class="w-full h-full object-cover saturate-95" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBY6iaytnpst8D6KXyHJ-IEmqAV11l_aLI0Yxf20SO2aUXKXhNWwk91hWSZLZfWVCVX7mruGspfPB4CNPkhuUHv6vDMVpDvNh_j42erckQypyqh6vGVR-YnW9HRo6t9l7gB1BTJEJgqIP4AozR7ACFrFA5FHED1su0mBjQcDWYmHIfEtAGLnHwBab4wLWAEZLmhjOo9EzaxNAWiYowjPUSHKqZU0ddStIZgIPoFpJ5kKJLSaCKAcS5voqy0NS0bxHTwwmFU424Cgv5j" tabindex="-1">
-        </div>
-        <div class="absolute -bottom-8 right-6 md:right-16 z-50">
-          <span data-editable="subline" class="font-label text-primary font-bold text-lg tracking-widest uppercase" spellcheck="false">THE RED COLLECTION / SS24</span>
-        </div>
-      </div>
-
-      
-    </div>
-  </section>
-  </div>
-<script src="pic-store.js"></script>
-<script>
-const STORAGE_KEY='lowtheory_editable_state_v10';
-const PIC_PREFIX='p2:';
-const editableNodes=[...document.querySelectorAll('[data-editable]')];
-const imageNodes=[...document.querySelectorAll('[data-image]')];
-let editMode=false,unlocked=false;
-
-window.addEventListener('message',e=>{
-  if(e.origin!==window.location.origin)return;
-  if(e.data&&e.data.type==='mk_unlock'){
-    unlocked=e.data.value;
-    const btn=document.getElementById('lt-edit-btn');
-    if(btn)btn.style.display=unlocked?'flex':'none';
-    if(!unlocked&&editMode)setEditMode(false);
-  }
-});
-
-function getState(){
-  const s={text:{},images:{}};
-  editableNodes.forEach(n=>{s.text[n.dataset.editable]=n.innerHTML;});
-  imageNodes.forEach(n=>{s.images[n.dataset.image]=n.getAttribute('src');});
-  return s;
-}
-/* 텍스트만 localStorage, 사진은 IndexedDB(MKPics)에 저장 */
-function persist(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({text:getState().text}));}catch(e){}}
-function applyState(s){
-  if(!s)return;
-  editableNodes.forEach(n=>{const k=n.dataset.editable;if(s.text&&typeof s.text[k]==='string')n.innerHTML=s.text[k];});
-  imageNodes.forEach(n=>{const k=n.dataset.image;if(s.images&&typeof s.images[k]==='string')n.src=s.images[k];});
-}
-function loadState(){
-  let legacyImages=null;
-  try{
-    const r=localStorage.getItem(STORAGE_KEY);
-    if(r){const s=JSON.parse(r);applyState({text:s.text});if(s.images)legacyImages=s.images;}
-  }catch(e){}
-  const keys=imageNodes.map(n=>n.dataset.image);
-  MKPics.getMany(keys.map(k=>PIC_PREFIX+k)).then(vals=>{
-    let migrated=false;
-    keys.forEach((k,i)=>{
-      let src=vals[i];
-      if(!src&&legacyImages&&typeof legacyImages[k]==='string'&&legacyImages[k]){
-        src=legacyImages[k];MKPics.set(PIC_PREFIX+k,src);migrated=true;
-      }
-      if(src){const n=document.querySelector('[data-image="'+k+'"]');if(n)n.src=src;}
-    });
-    if(legacyImages){persist();}/* 구버전 LS에서 images 제거 → 용량 확보 */
-  });
-}
-
-const filmSourceMap={'photo-5':['copy-02'],'photo-1':['copy-03'],'photo-2':['copy-04'],'photo-4':['copy-05'],'hero':['copy-01']};
-function syncFilm(k){
-  const src=document.querySelector('[data-image="'+k+'"]');
-  if(!src||!filmSourceMap[k])return;
-  filmSourceMap[k].forEach(ck=>{
-    const t=document.querySelector('[data-image="'+ck+'"]');
-    if(t){t.src=src.getAttribute('src');MKPics.set(PIC_PREFIX+ck,t.src);}
-  });
-}
-function chooseImage(img){
-  if(!editMode)return;
-  const inp=document.createElement('input');inp.type='file';inp.accept='image/*,.dng';
-  inp.onchange=e=>{
-    const f=e.target.files[0];if(!f)return;
-    MKPics.fileToDataURL(f).then(durl=>{
-      img.src=durl;
-      MKPics.set(PIC_PREFIX+img.dataset.image,durl);
-      if(filmSourceMap[img.dataset.image])syncFilm(img.dataset.image);
-      persist();
-    });
-  };
-  inp.click();
-}
-function setEditMode(next){
-  if(next&&!unlocked)return;
-  editMode=next;
-  const btn=document.getElementById('lt-edit-btn');
-  if(btn){btn.textContent=editMode?'✓ 완료':'✎ 편집';btn.style.background=editMode?'rgba(255,180,162,.15)':'transparent';btn.style.borderColor=editMode?'#ffb4a2':'#353535';btn.style.color=editMode?'#ffb4a2':'#a08d88';}
-  editableNodes.forEach(n=>{n.contentEditable=editMode?'true':'false';n.spellcheck=false;n.style.outline=editMode?'1.5px dashed rgba(255,180,162,.5)':'';n.style.cursor=editMode?'text':'';});
-  imageNodes.forEach(n=>{n.style.cursor=editMode?'pointer':'';n.style.outline=editMode?'1.5px dashed rgba(255,180,162,.5)':'';n.tabIndex=editMode?0:-1;});
-}
-editableNodes.forEach(n=>{n.addEventListener('input',persist);n.addEventListener('blur',persist);});
-imageNodes.forEach(n=>{n.addEventListener('click',()=>chooseImage(n));});
-loadState();
-setEditMode(false);
-</script>
-
-<script>
-// 부모 iframe 높이 자동 조절
-function sendHeight(){
-  const h=document.documentElement.scrollHeight||document.body.scrollHeight;
-  const isMobile=window.matchMedia('(max-width:767px)').matches;
-  const val=isMobile?Math.ceil(h*0.26):h;
-  window.parent.postMessage({type:'lt_height',value:val},location.origin);
-}
-if(window.ResizeObserver){
-  new ResizeObserver(sendHeight).observe(document.body);
-}
-window.addEventListener('load',sendHeight);
-</script>
-
-<script>
-(function(){
-  function sendH(){
-    var h = document.documentElement.scrollHeight;
-    var isMobile = window.matchMedia('(max-width:767px)').matches;
-    var val = isMobile ? Math.ceil(h * 0.26) : h - 40;
-    window.parent.postMessage({type:'iframe_height',id:'ltScaleFrame',value:val},location.origin);
-  }
-  if(window.ResizeObserver){new ResizeObserver(sendH).observe(document.body);}
-  window.addEventListener('load', sendH);
-  setTimeout(sendH, 500);
-  setTimeout(sendH, 1500);
-})();
-</script>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Verse — MK.HUB</title>
+<link rel="stylesheet" href="gallery.css"/>
+<script src="pic-store.js" defer></script>
+<script src="gallery.js" defer></script>
+</head>
+<body class="archive-page archive-p2">
+<main id="archiveRoot">
+  <header class="archive-header">
+    <div class="archive-meta"><span>MK.HUB / VISUAL ARCHIVE</span><span>02 — 05</span></div>
+    <div class="archive-title-row"><h1>Verse<span class="archive-title-dot">.</span></h1><button id="archiveEdit" type="button" hidden>편집 ↗</button></div>
+    <div class="archive-subline"><p>A different point of view.</p><span>SCROLL TO EXPLORE ↓</span></div>
+  </header>
+  <div class="archive-grid"><figure class="archive-card" data-pic-key="p2:center-photo" >
+  <button class="archive-photo" type="button" aria-label="사진 1 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 01</span></span>
+    <img id="center-photo" data-image="center-photo"  alt="Verse 사진 1" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>01 / 12</span><span>VERSE</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p2:photo-1" >
+  <button class="archive-photo" type="button" aria-label="사진 2 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 02</span></span>
+    <img id="photo-1" data-image="photo-1" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOEm4el6idUuk6ESAbdJcYz5ONVE3PbgeWoMFJjauH-UiXxmujH8AMlD3SLIDtX39SSn60lTbWIlezsZIOCzy0935flwjrjV6jQ2KQ3cFPa43aPF_TuMoLqsfZnFWzSPt-cOq9vX0I1XkOHZyyXgokAQeVzXJxe2EAUG9YIL3D2mdzHEkvQxlmycmgmQXSW6EwkMC6RWyErM_irFR4OUS11E0PuqVPFqb5pJtIp7YcpknfwCocHsgandBbzz2iAzyEy-X0WqtmlWhr" alt="Verse 사진 2" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>02 / 12</span><span>VERSE</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p2:photo-2" >
+  <button class="archive-photo" type="button" aria-label="사진 3 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 03</span></span>
+    <img id="photo-2" data-image="photo-2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7ADqfuOUM_ZqLhfiybPY_9IVhlWEjQYlzz6FFAwn36NDgiiDDLP9llEtm6tZ3cAXR4jtJD83gWKfNWxeXLG_NqT7a1hCa_j-R_RG27LulQP8GMcQ3n3qgUsunWEHid8MQxvyELQ4uo5Uwk5CIzdsoJArqceIX9431wJ8gFclIQomfLE2L4tZXzOafIdVb_5yTZ3EG5AFVTGrLaHJCzHaOlukWzzGBCK43B83vqvCYGTYikvfLTkaaxg091N7uDb0j6Ua6DL0CA6dx" alt="Verse 사진 3" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>03 / 12</span><span>VERSE</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p2:photo-3" >
+  <button class="archive-photo" type="button" aria-label="사진 4 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 04</span></span>
+    <img id="photo-3" data-image="photo-3" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_lYnYVmWF7aNukZgQDwcxjRWphf-6zq8q01YlkUDy1Z28zhbr79JY39DlP-U0CfxToIMHRgxYNNd5IUikT2A3SR7199ZR91AGWj6e7IlJlD-gKqTC-BB43jLyurPuEjymJR4nS6g-xUaT3TkIAL3jjExxLqCeHyNZpIzj30RSmjqcVYGaRec6HVTydhOjlizwd645ZrSwRjzoALazAe0_9K6L0CWP2PvNEzcisRUtzgYwoRn5ciCJ2OM_bRbwhjXhFYxeIzuO5NFq" alt="Verse 사진 4" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>04 / 12</span><span>VERSE</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p2:photo-4" >
+  <button class="archive-photo" type="button" aria-label="사진 5 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 05</span></span>
+    <img id="photo-4" data-image="photo-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQTbzJGOF1O_WqL1cNOjMyiglhmsZ3OaP9k88UUMICK1j6Nf4BJvjaxt15cPcMWUJlF4krsnGRq1qEd91XX1EepE_l_ipaZICpsbAvPeupqVmDjXGEXFoENjN9gJoc9e1mHYW4UDdKcCmIIdpPSjFAgTzA-GAEfzPpUf54oKteR__ZKEv1bX_rGH149oP2FEtj0k-yenjO6baOnzdaFK3HD8_9lDKnmEuC_ZzkjK7oAGGnJxOyiXvOhz0jfbM31muXuW_cLT7ERtLl" alt="Verse 사진 5" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>05 / 12</span><span>VERSE</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p2:photo-5" >
+  <button class="archive-photo" type="button" aria-label="사진 6 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 06</span></span>
+    <img id="photo-5" data-image="photo-5"  alt="Verse 사진 6" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>06 / 12</span><span>VERSE</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p2:copy-02" >
+  <button class="archive-photo" type="button" aria-label="사진 7 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 07</span></span>
+    <img id="copy-02" data-image="copy-02"  alt="Verse 사진 7" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>07 / 12</span><span>VERSE</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p2:copy-03" >
+  <button class="archive-photo" type="button" aria-label="사진 8 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 08</span></span>
+    <img id="copy-03" data-image="copy-03" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOEm4el6idUuk6ESAbdJcYz5ONVE3PbgeWoMFJjauH-UiXxmujH8AMlD3SLIDtX39SSn60lTbWIlezsZIOCzy0935flwjrjV6jQ2KQ3cFPa43aPF_TuMoLqsfZnFWzSPt-cOq9vX0I1XkOHZyyXgokAQeVzXJxe2EAUG9YIL3D2mdzHEkvQxlmycmgmQXSW6EwkMC6RWyErM_irFR4OUS11E0PuqVPFqb5pJtIp7YcpknfwCocHsgandBbzz2iAzyEy-X0WqtmlWhr" alt="Verse 사진 8" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>08 / 12</span><span>VERSE</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p2:copy-04" >
+  <button class="archive-photo" type="button" aria-label="사진 9 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 09</span></span>
+    <img id="copy-04" data-image="copy-04" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7ADqfuOUM_ZqLhfiybPY_9IVhlWEjQYlzz6FFAwn36NDgiiDDLP9llEtm6tZ3cAXR4jtJD83gWKfNWxeXLG_NqT7a1hCa_j-R_RG27LulQP8GMcQ3n3qgUsunWEHid8MQxvyELQ4uo5Uwk5CIzdsoJArqceIX9431wJ8gFclIQomfLE2L4tZXzOafIdVb_5yTZ3EG5AFVTGrLaHJCzHaOlukWzzGBCK43B83vqvCYGTYikvfLTkaaxg091N7uDb0j6Ua6DL0CA6dx" alt="Verse 사진 9" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>09 / 12</span><span>VERSE</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p2:copy-05" >
+  <button class="archive-photo" type="button" aria-label="사진 10 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 10</span></span>
+    <img id="copy-05" data-image="copy-05" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQTbzJGOF1O_WqL1cNOjMyiglhmsZ3OaP9k88UUMICK1j6Nf4BJvjaxt15cPcMWUJlF4krsnGRq1qEd91XX1EepE_l_ipaZICpsbAvPeupqVmDjXGEXFoENjN9gJoc9e1mHYW4UDdKcCmIIdpPSjFAgTzA-GAEfzPpUf54oKteR__ZKEv1bX_rGH149oP2FEtj0k-yenjO6baOnzdaFK3HD8_9lDKnmEuC_ZzkjK7oAGGnJxOyiXvOhz0jfbM31muXuW_cLT7ERtLl" alt="Verse 사진 10" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>10 / 12</span><span>VERSE</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p2:copy-01" >
+  <button class="archive-photo" type="button" aria-label="사진 11 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 11</span></span>
+    <img id="copy-01" data-image="copy-01" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBY6iaytnpst8D6KXyHJ-IEmqAV11l_aLI0Yxf20SO2aUXKXhNWwk91hWSZLZfWVCVX7mruGspfPB4CNPkhuUHv6vDMVpDvNh_j42erckQypyqh6vGVR-YnW9HRo6t9l7gB1BTJEJgqIP4AozR7ACFrFA5FHED1su0mBjQcDWYmHIfEtAGLnHwBab4wLWAEZLmhjOo9EzaxNAWiYowjPUSHKqZU0ddStIZgIPoFpJ5kKJLSaCKAcS5voqy0NS0bxHTwwmFU424Cgv5j" alt="Verse 사진 11" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>11 / 12</span><span>VERSE</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p2:hero" >
+  <button class="archive-photo" type="button" aria-label="사진 12 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 12</span></span>
+    <img id="hero" data-image="hero" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBY6iaytnpst8D6KXyHJ-IEmqAV11l_aLI0Yxf20SO2aUXKXhNWwk91hWSZLZfWVCVX7mruGspfPB4CNPkhuUHv6vDMVpDvNh_j42erckQypyqh6vGVR-YnW9HRo6t9l7gB1BTJEJgqIP4AozR7ACFrFA5FHED1su0mBjQcDWYmHIfEtAGLnHwBab4wLWAEZLmhjOo9EzaxNAWiYowjPUSHKqZU0ddStIZgIPoFpJ5kKJLSaCKAcS5voqy0NS0bxHTwwmFU424Cgv5j" alt="Verse 사진 12" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>12 / 12</span><span>VERSE</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure></div>
+  <details class="archive-notes"><summary>Field notes <span>11 문구 <span aria-hidden="true">＋</span></span></summary><div class="archive-notes-grid"><div class="archive-copy" data-text-key="copy-1" contenteditable="false" spellcheck="false" aria-label="문구 copy-1">РАЗНЫЕ ФОРМЫ МЕДИА, АНАЛОГОВЫЕ МАШИНЫ</div>
+<div class="archive-copy" data-text-key="copy-2" contenteditable="false" spellcheck="false" aria-label="문구 copy-2">다양한 메시의 방식, 아날로그 기계</div>
+<div class="archive-copy" data-text-key="copy-3" contenteditable="false" spellcheck="false" aria-label="문구 copy-3">LONDON ARC. BARCELONA BARRI. ISLANDS</div>
+<div class="archive-copy" data-text-key="copy-4" contenteditable="false" spellcheck="false" aria-label="문구 copy-4">ALANA SHOT ON 35MM, EAST LONDON (CIRCA 2022)</div>
+<div class="archive-copy" data-text-key="headline" contenteditable="false" spellcheck="false" aria-label="문구 headline">
+        ARE WE TALKING TO EACH OTHER THROUGH OUR SCREENS OR ARE OUR SCREENS TALKING TO EAC</div>
+<div class="archive-copy" data-text-key="copy-02-caption" contenteditable="false" spellcheck="false" aria-label="문구 copy-02-caption">copy 02 / long portrait</div>
+<div class="archive-copy" data-text-key="copy-03-caption" contenteditable="false" spellcheck="false" aria-label="문구 copy-03-caption">copy 03 / mask frame</div>
+<div class="archive-copy" data-text-key="copy-04-caption" contenteditable="false" spellcheck="false" aria-label="문구 copy-04-caption">copy 04 / cropped repeat</div>
+<div class="archive-copy" data-text-key="copy-05-caption" contenteditable="false" spellcheck="false" aria-label="문구 copy-05-caption">copy 05 / shortest cut</div>
+<div class="archive-copy" data-text-key="copy-01-caption" contenteditable="false" spellcheck="false" aria-label="문구 copy-01-caption">copy 01 / tallest cut</div>
+<div class="archive-copy" data-text-key="subline" contenteditable="false" spellcheck="false" aria-label="문구 subline">THE RED COLLECTION / SS24</div></div></details>
+  <footer class="archive-footer"><span>PERSONAL FRAGMENTS / VERSE</span><span id="archiveStatus" role="status" aria-live="polite"></span><span>민권.com ↗</span></footer>
+</main>
+<dialog id="archiveLightbox" aria-label="사진 확대 보기"><div class="archive-lightbox-bar"><span id="archiveCounter"></span><button type="button" id="archiveClose" aria-label="확대 보기 닫기">닫기 ×</button></div><img id="archiveLarge" alt=""/><div class="archive-lightbox-nav"><button id="archivePrev" type="button" aria-label="이전 사진">←</button><button id="archiveNext" type="button" aria-label="다음 사진">→</button></div></dialog>
+<input id="archiveFile" type="file" accept="image/*,.dng" hidden/>
+<script type="application/json" id="archiveConfig">{"page": 2, "frame": "ltScaleFrame", "title": "Verse", "storageKey": "lowtheory_editable_state_v10", "textField": "text"}</script>
 </body>
 </html>

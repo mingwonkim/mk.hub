@@ -1,519 +1,76 @@
 <!DOCTYPE html>
-<html class="light" lang="en"><head>
+<html lang="ko">
+<head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>ARCHIVE | LOWTHEORY EDITORIAL — PHOTO EDITOR</title>
-<script>(function(){document.addEventListener('contextmenu',function(e){e.preventDefault();},true);document.addEventListener('dragstart',function(e){e.preventDefault();},true);['copy','cut'].forEach(function(ev){document.addEventListener(ev,function(e){var t=e.target;if(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable)return;e.preventDefault();},true);});document.addEventListener('keydown',function(e){if(e.key==='F12')e.preventDefault();if(e.ctrlKey&&e.shiftKey&&/^[IJCijc]$/.test(e.key))e.preventDefault();if(e.ctrlKey&&/^[uUsSpP]$/.test(e.key))e.preventDefault();},true);})();</script>
-<style>*{-webkit-user-select:none;-moz-user-select:none;user-select:none;}input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:text;}img{-webkit-user-drag:none;user-drag:none;pointer-events:none;-webkit-touch-callout:none;}</style>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@700;900&family=Space+Grotesk:wght@300;400;500;700&family=La+Belle+Aurore&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<script>
-    tailwind.config = {
-        darkMode: "class",
-        theme: {
-            extend: {
-                colors: {
-                    "surface-bright": "#fbf9f4",
-                    "on-primary": "#fff6f4",
-                    "surface": "#fbf9f4",
-                    "surface-container": "#efeee6",
-                    "surface-container-lowest": "#ffffff",
-                    "surface-container-low": "#f5f4ed",
-                    "surface-container-high": "#e8e9e0",
-                    "surface-container-highest": "#e2e3d9",
-                    "outline": "#797c73",
-                    "outline-variant": "#b1b3a9",
-                    "on-surface": "#31332c",
-                    "primary": "#b91d20",
-                    "background": "#fbf9f4",
-                },
-                fontFamily: {
-                    "headline": ["Epilogue", "sans-serif"],
-                    "body": ["Space Grotesk", "sans-serif"],
-                    "handwritten": ["La Belle Aurore", "cursive"],
-                    "mono": ["Courier New", "monospace"]
-                },
-                borderRadius: {"none": "0px", "DEFAULT": "0px"},
-            },
-        },
-    }
-</script>
-<style>
-    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-    .grain-overlay {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: url("https://www.transparenttextures.com/patterns/p6.png");
-        opacity: 0.05; pointer-events: none; z-index: 50;
-    }
-    .tape-effect {
-        position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
-        width: 60px; height: 20px;
-        background: rgba(226, 227, 217, 0.6);
-        backdrop-blur: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    }
-    .vertical-text { writing-mode: vertical-rl; transform: rotate(180deg); }
-    .stamped { border: 1px solid #b91d20; padding: 2px 6px; color: #b91d20; font-family: 'Space Grotesk'; font-weight: bold; text-transform: uppercase; }
-
-    /* === PHOTO EDITOR STYLES === */
-    .photo-slot {
-        position: relative;
-        cursor: default;
-        transition: outline 0.15s ease;
-    }
-    .photo-slot.edit-active {
-        cursor: pointer;
-    }
-    .photo-slot.edit-active:hover {
-        outline: 3px solid #b91d20;
-        outline-offset: 2px;
-    }
-    .photo-slot.edit-active:hover .photo-overlay {
-        opacity: 1;
-    }
-    .photo-overlay {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background: rgba(49, 51, 44, 0.55);
-        opacity: 0;
-        transition: opacity 0.2s ease;
-        pointer-events: none;
-        z-index: 10;
-    }
-    .photo-overlay span {
-        color: #fff;
-        font-family: 'Space Grotesk', sans-serif;
-        font-size: 13px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        margin-top: 6px;
-    }
-    .photo-overlay .material-symbols-outlined {
-        color: #fff;
-        font-size: 32px;
-    }
-
-    /* Editor toolbar */
-    .editor-bar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 100;
-        background: #31332c;
-        color: #fbf9f4;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 10px 20px;
-        font-family: 'Space Grotesk', sans-serif;
-        font-size: 13px;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-    }
-    .editor-bar .badge {
-        background: #b91d20;
-        color: white;
-        padding: 3px 10px;
-        font-weight: 700;
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-    }
-    .editor-bar button {
-        background: transparent;
-        border: 1px solid rgba(251,249,244,0.3);
-        color: #fbf9f4;
-        padding: 6px 16px;
-        font-family: 'Space Grotesk', sans-serif;
-        font-size: 12px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        cursor: pointer;
-        transition: all 0.15s ease;
-    }
-    .editor-bar button:hover {
-        background: #fbf9f4;
-        color: #31332c;
-    }
-
-    /* Toast notification */
-    .toast {
-        position: fixed;
-        bottom: 24px;
-        left: 50%;
-        transform: translateX(-50%) translateY(80px);
-        background: #31332c;
-        color: #fbf9f4;
-        padding: 12px 24px;
-        font-family: 'Space Grotesk', sans-serif;
-        font-size: 13px;
-        font-weight: 500;
-        z-index: 200;
-        opacity: 0;
-        transition: all 0.3s ease;
-        pointer-events: none;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-    }
-    .toast.show {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-    }
-
-    /* === 모바일 최적화 === */
-    @media(max-width:767px){
-        html {
-            width: 1400px !important;
-            zoom: 0.27 !important;
-            overflow: hidden !important;
-        }
-        body {
-            overflow: hidden !important;
-        }
-    }
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Sabi — MK.HUB</title>
+<link rel="stylesheet" href="gallery.css"/>
+<script src="pic-store.js" defer></script>
+<script src="gallery.js" defer></script>
 </head>
-<body class="bg-surface-bright text-on-surface font-body selection:bg-primary selection:text-white overflow-x-hidden">
-<button id="p4-edit-btn"
-  style="display:none;position:sticky;top:12px;float:right;z-index:9999;
-    align-items:center;gap:6px;padding:7px 16px;margin:12px 12px 0 0;
-    border:1px solid #353535;border-radius:9999px;
-    background:rgba(14,14,14,.85);color:#a08d88;
-    font-size:11px;font-family:'Space Grotesk',sans-serif;font-weight:700;
-    letter-spacing:.08em;text-transform:uppercase;cursor:pointer;"
-  onclick="p4ToggleEdit()">✎ 편집</button>
-
-<!-- EDITOR TOOLBAR -->
-<div class="editor-bar" style="display:none;">
-    <div style="display:flex; align-items:center; gap:12px;">
-        <span class="badge">EDIT MODE</span>
-        <span style="opacity:0.6;">사진을 클릭하면 내 이미지로 교체됩니다</span>
-    </div>
-    <div style="display:flex; gap:8px;">
-        <button onclick="resetAll()">초기화</button>
-        <button onclick="downloadPage()" style="background:#b91d20; color:white; border-color:#b91d20;">HTML 저장</button>
-    </div>
-</div>
-
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
-
-<!-- HIDDEN FILE INPUT -->
-<input type="file" id="fileInput" accept="image/*,.dng" style="display:none;" />
-
-<div class="grain-overlay"></div>
-
-<!-- LEFT MARGIN ANNOTATIONS -->
-<aside class="fixed left-4 top-1/4 h-fit hidden lg:flex flex-col gap-12 text-[10px] tracking-[0.3em] font-bold text-outline-variant vertical-text z-40">
-    <span contenteditable="false">ISSUE 01</span>
-    <span contenteditable="false">WINTER 2024</span>
-    <span contenteditable="false">EDITORIAL FOCUS</span>
-</aside>
-
-<!-- HEADER / TOP NAV -->
-<header class="flex justify-end items-center w-full px-6 py-4 font-headline font-bold uppercase tracking-tighter sticky top-0 bg-surface-bright/80 backdrop-blur-sm z-50 border-none" style="display:none;">
-    <div class="flex gap-6 items-center">
-        <span class="material-symbols-outlined cursor-pointer hover:bg-surface-container-high transition-transform duration-75 active:translate-y-0.5">search</span>
-        <span class="material-symbols-outlined cursor-pointer hover:bg-surface-container-high transition-transform duration-75 active:translate-y-0.5">menu</span>
-    </div>
-</header>
-
-<main class="relative pt-4">
-    <div class="relative w-full max-w-[1400px] mx-auto grid grid-cols-12 gap-4 px-4 pb-8">
-
-        <!-- Item 1: Large Central Overlay -->
-        <div class="col-span-12 md:col-span-7 relative z-20 mt-8">
-            <div class="relative p-3 bg-surface-container-lowest shadow-2xl rotate-1 group">
-                <div class="tape-effect"></div>
-                <div class="photo-slot" data-slot="0" data-slot-click="0">
-                    <div class="photo-overlay">
-                        <span class="material-symbols-outlined">add_photo_alternate</span>
-                        <span>사진 교체</span>
-                    </div>
-                    <img id="img-0" class="w-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPvoGexOwIzsnprnsTUar1VVQ9M72ybOvDmqdeUwyj2Dyf_Dc3SSlw_Q3Q5J_RB3xD_1YfjuaXb64dtjQy7czbRBju6f7cShphqiuyY1Qr8Jr2Ais7PEf0tvoMsnyThnv6RdFFRzSE0byoQLEfsMtnMiF25itoGlLUQ73ZLs3h3nk8vA6uspRlAE2_A8CZQqOfhDMdMCplVwtp-3EhNsXpaObG7hCwGE9bs4f_rT3VIRQOW8Uj3MvM9oTL2e5579d_qFH3sdv_6mQ"/>
-                </div>
-                <div class="mt-4 flex justify-between items-start">
-                    <div>
-                        <span class="text-[10px] font-mono opacity-50 block">REF: 2024-X01</span>
-                        <span class="text-lg font-headline font-bold uppercase">Primary Artifact</span>
-                    </div>
-                    <span class="font-handwritten text-primary text-2xl -rotate-6">LAYOUT PROOF</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Item 2: Polaroid 1 -->
-        <div class="col-span-6 md:col-span-3 mt-12 md:mt-24 relative z-10">
-            <div class="p-4 pb-12 bg-surface-container-lowest shadow-lg -rotate-3 border border-outline-variant/10">
-                <div class="photo-slot" data-slot="1" data-slot-click="1">
-                    <div class="photo-overlay">
-                        <span class="material-symbols-outlined">add_photo_alternate</span>
-                        <span>사진 교체</span>
-                    </div>
-                    <img id="img-1" class="w-full aspect-square object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqXWJInjce4HplbGB9WeeP2vg83Pkjt2mLMhRAACrScfq-TRhf6g4PMPej35AFYVRqk2o0U2y8LYCdSJvRrdIq1tCeExUG_a73EqaN4lbY6JSPa5j0N4Ck79Qqtso_OClD8GD2kPbx2Qi8qLZbNbMKvJDvziUYb8yTs1AN66QYpqusQv-FQrReQPZ5gHvS4Yuj-4SjMZCbZjUbL_Cdy7EDy7KACHSF2l9TN4QILT4bC8PwEJMpGFsQEuDBKDcMOoNDjUDZbapnAPY"/>
-                </div>
-                <div class="pt-4 font-handwritten text-on-surface/80 text-xl leading-none" contenteditable="false">
+<body class="archive-page archive-p4">
+<main id="archiveRoot">
+  <header class="archive-header">
+    <div class="archive-meta"><span>MK.HUB / VISUAL ARCHIVE</span><span>04 — 05</span></div>
+    <div class="archive-title-row"><h1>Sabi<span class="archive-title-dot">.</span></h1><button id="archiveEdit" type="button" hidden>편집 ↗</button></div>
+    <div class="archive-subline"><p>Small details. Full feeling.</p><span>SCROLL TO EXPLORE ↓</span></div>
+  </header>
+  <div class="archive-grid"><figure class="archive-card has-image" data-pic-key="p4:img-0" data-slot="0">
+  <button class="archive-photo" type="button" aria-label="사진 1 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 01</span></span>
+    <img id="img-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPvoGexOwIzsnprnsTUar1VVQ9M72ybOvDmqdeUwyj2Dyf_Dc3SSlw_Q3Q5J_RB3xD_1YfjuaXb64dtjQy7czbRBju6f7cShphqiuyY1Qr8Jr2Ais7PEf0tvoMsnyThnv6RdFFRzSE0byoQLEfsMtnMiF25itoGlLUQ73ZLs3h3nk8vA6uspRlAE2_A8CZQqOfhDMdMCplVwtp-3EhNsXpaObG7hCwGE9bs4f_rT3VIRQOW8Uj3MvM9oTL2e5579d_qFH3sdv_6mQ" alt="Sabi 사진 1" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>01 / 04</span><span>SABI</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p4:img-1" data-slot="1">
+  <button class="archive-photo" type="button" aria-label="사진 2 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 02</span></span>
+    <img id="img-1" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqXWJInjce4HplbGB9WeeP2vg83Pkjt2mLMhRAACrScfq-TRhf6g4PMPej35AFYVRqk2o0U2y8LYCdSJvRrdIq1tCeExUG_a73EqaN4lbY6JSPa5j0N4Ck79Qqtso_OClD8GD2kPbx2Qi8qLZbNbMKvJDvziUYb8yTs1AN66QYpqusQv-FQrReQPZ5gHvS4Yuj-4SjMZCbZjUbL_Cdy7EDy7KACHSF2l9TN4QILT4bC8PwEJMpGFsQEuDBKDcMOoNDjUDZbapnAPY" alt="Sabi 사진 2" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>02 / 04</span><span>SABI</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p4:img-2" data-slot="2">
+  <button class="archive-photo" type="button" aria-label="사진 3 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 03</span></span>
+    <img id="img-2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQoP9olYwrQMXgWdGHnnFDzvNvZrpbU6TQ1GEeRY2GL3RTr2NFZXHMdCH_kyZSLkVmKTwgl94gKshlAE2dbQ8d-mkluQYTtChivkICFXsbz6pCCecfhveozxb0MDwaJLh2z3RI6HU1AW970acx0hlU73r7_CtO_lF0tLh8wWSVvEFSiZHqiEYoee83eIjzFRiq--w2jPT6Lnr9LUofXkyORiEpXMwaTwRfD3RnE4CKWeKpF7SIhLJ_ZxrGTY-_G8HEhvh-TOM-Md0" alt="Sabi 사진 3" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>03 / 04</span><span>SABI</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p4:img-3" data-slot="3">
+  <button class="archive-photo" type="button" aria-label="사진 4 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 04</span></span>
+    <img id="img-3" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6Gi_CXZ_fA-tfBFWdvSOW2xKoQOvyh7R7rANjvXr-Ahyth7WvcJXBdhWKNY3QKo3AoylhPbaCNAQB8mno58FEbpv_fV62j7Ogd6KEbY3Ewk3HXCPMiC5DxvKgSFF8fP1GAliDE4kJinDEz1w1KWDK6b7eNX6TDsX_I4daBmDPKg8Bdyv_OwrPfs-HjeGstxEZk2k61_8tAd_wkRVxEUIU0ChWnmha2vuyWGEJWCpE_MzUFzZAWPodvIouCMu-mf307NVOHpnlY00" alt="Sabi 사진 4" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>04 / 04</span><span>SABI</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure></div>
+  <details class="archive-notes"><summary>Field notes <span>15 문구 <span aria-hidden="true">＋</span></span></summary><div class="archive-notes-grid"><div class="archive-copy" data-text-key="t0" contenteditable="false" spellcheck="false" aria-label="문구 t0">ISSUE 01</div>
+<div class="archive-copy" data-text-key="t1" contenteditable="false" spellcheck="false" aria-label="문구 t1">WINTER 2024</div>
+<div class="archive-copy" data-text-key="t2" contenteditable="false" spellcheck="false" aria-label="문구 t2">EDITORIAL FOCUS</div>
+<div class="archive-copy" data-text-key="t3" contenteditable="false" spellcheck="false" aria-label="문구 t3">
                     Evening in Paris
                 </div>
-            </div>
-            <div class="absolute -right-4 -top-4 font-handwritten text-primary text-3xl rotate-12" contenteditable="false">RAW</div>
-        </div>
-
-        <!-- Item 3: Deep Red Block -->
-        <div class="col-span-12 md:col-span-5 bg-[#470C0D] p-8 md:p-12 text-white relative flex flex-col justify-center min-h-[400px]">
-            <div class="absolute top-4 right-4 text-xs font-mono opacity-40">01 / 24</div>
-            <h2 class="text-4xl font-headline font-black uppercase mb-6 leading-none" contenteditable="false">Texture Overlays</h2>
-            <div class="flex items-center gap-4 mb-8">
-                <span class="font-mono text-xs border border-white/30 px-2 py-1 uppercase" contenteditable="false">London</span>
-                <span class="material-symbols-outlined text-white/50">trending_flat</span>
-                <span class="font-mono text-xs border border-white/30 px-2 py-1 uppercase" contenteditable="false">Paris</span>
-            </div>
-            <p class="text-sm font-light leading-relaxed opacity-80 mb-8" contenteditable="false">
+<div class="archive-copy" data-text-key="t4" contenteditable="false" spellcheck="false" aria-label="문구 t4">RAW</div>
+<div class="archive-copy" data-text-key="t5" contenteditable="false" spellcheck="false" aria-label="문구 t5">Texture Overlays</div>
+<div class="archive-copy" data-text-key="t6" contenteditable="false" spellcheck="false" aria-label="문구 t6">London</div>
+<div class="archive-copy" data-text-key="t7" contenteditable="false" spellcheck="false" aria-label="문구 t7">Paris</div>
+<div class="archive-copy" data-text-key="t8" contenteditable="false" spellcheck="false" aria-label="문구 t8">
                 The intersection of geography and grain. We trace the lineage of the ephemeral from urban decay to high-fashion brutality.
-            </p>
-            <div class="flex gap-2">
-                <div class="w-12 h-1 bg-white/20"></div>
-                <div class="w-24 h-1 bg-primary"></div>
             </div>
-        </div>
-
-        <!-- Item 4: Overlapping Fragment -->
-        <div class="col-span-6 md:col-span-4 -ml-4 md:-ml-12 mt-4 relative z-30">
-            <div class="p-2 bg-surface-container-high shadow-xl rotate-1">
-                <div class="photo-slot" data-slot="2" data-slot-click="2">
-                    <div class="photo-overlay">
-                        <span class="material-symbols-outlined">add_photo_alternate</span>
-                        <span>사진 교체</span>
-                    </div>
-                    <img id="img-2" class="w-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQoP9olYwrQMXgWdGHnnFDzvNvZrpbU6TQ1GEeRY2GL3RTr2NFZXHMdCH_kyZSLkVmKTwgl94gKshlAE2dbQ8d-mkluQYTtChivkICFXsbz6pCCecfhveozxb0MDwaJLh2z3RI6HU1AW970acx0hlU73r7_CtO_lF0tLh8wWSVvEFSiZHqiEYoee83eIjzFRiq--w2jPT6Lnr9LUofXkyORiEpXMwaTwRfD3RnE4CKWeKpF7SIhLJ_ZxrGTY-_G8HEhvh-TOM-Md0"/>
-                </div>
-                <div class="mt-2 text-[10px] font-mono text-right opacity-50">PLATE NO. 042</div>
-            </div>
-            <div class="mt-4 font-handwritten text-primary text-2xl">
-                IDENTITY -&gt; TEXTURE
-            </div>
-        </div>
-
-        <!-- Item 5: Tilted Index Card -->
-        <div class="col-span-6 md:col-span-3 mt-8 relative">
-            <div class="p-6 bg-surface-container-low border border-outline-variant/20 shadow-sm rotate-2 h-full">
-                <div class="flex justify-between border-b border-outline-variant/30 pb-2 mb-4">
-                    <span class="text-[10px] font-bold uppercase">Index Card</span>
-                    <span class="material-symbols-outlined text-xs">more_horiz</span>
-                </div>
-                <ul class="space-y-3">
-                    <li class="flex items-center gap-2">
-                        <span class="w-1.5 h-1.5 bg-primary rounded-none"></span>
-                        <span class="text-xs font-bold uppercase tracking-tighter" contenteditable="false">Color Grading</span>
-                    </li>
-                    <li class="flex items-center gap-2">
-                        <span class="w-1.5 h-1.5 bg-on-surface rounded-none"></span>
-                        <span class="text-xs font-bold uppercase tracking-tighter" contenteditable="false">Print specs</span>
-                    </li>
-                    <li class="flex items-center gap-2">
-                        <span class="w-1.5 h-1.5 bg-on-surface/20 rounded-none"></span>
-                        <span class="text-xs font-bold uppercase tracking-tighter" contenteditable="false">Masthead V2</span>
-                    </li>
-                </ul>
-                <div class="mt-8 font-handwritten text-primary text-3xl opacity-60" contenteditable="false">NOSTALGIC</div>
-            </div>
-        </div>
-
-        <!-- Item 6: Large Polaroid Bottom Section -->
-        <div class="col-span-12 md:col-span-6 mt-16 md:mt-24 relative z-10">
-            <div class="p-5 bg-surface-container-lowest shadow-2xl">
-                <div class="photo-slot" data-slot="3" data-slot-click="3">
-                    <div class="photo-overlay">
-                        <span class="material-symbols-outlined">add_photo_alternate</span>
-                        <span>사진 교체</span>
-                    </div>
-                    <img id="img-3" class="w-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6Gi_CXZ_fA-tfBFWdvSOW2xKoQOvyh7R7rANjvXr-Ahyth7WvcJXBdhWKNY3QKo3AoylhPbaCNAQB8mno58FEbpv_fV62j7Ogd6KEbY3Ewk3HXCPMiC5DxvKgSFF8fP1GAliDE4kJinDEz1w1KWDK6b7eNX6TDsX_I4daBmDPKg8Bdyv_OwrPfs-HjeGstxEZk2k61_8tAd_wkRVxEUIU0ChWnmha2vuyWGEJWCpE_MzUFzZAWPodvIouCMu-mf307NVOHpnlY00"/>
-                </div>
-                <div class="mt-6 flex flex-col gap-2">
-                    <div class="h-1 bg-on-surface w-full"></div>
-                    <div class="h-0.5 bg-on-surface w-2/3"></div>
-                    <p class="font-headline font-black text-4xl uppercase tracking-tighter mt-4" contenteditable="false">THE HUMAN ELEMENT</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Floating Notes -->
-        <div class="absolute right-4 bottom-24 hidden lg:block">
-            <div class="p-4 bg-yellow-50/80 shadow-md -rotate-6 max-w-[180px] border-l-4 border-yellow-200">
-                <p class="font-handwritten text-sm text-on-surface/70" contenteditable="false">Ensure all print artifacts are scanned at 1200 DPI. No exceptions.</p>
-            </div>
-        </div>
-
-    </div>
+<div class="archive-copy" data-text-key="t9" contenteditable="false" spellcheck="false" aria-label="문구 t9">Color Grading</div>
+<div class="archive-copy" data-text-key="t10" contenteditable="false" spellcheck="false" aria-label="문구 t10">Print specs</div>
+<div class="archive-copy" data-text-key="t11" contenteditable="false" spellcheck="false" aria-label="문구 t11">Masthead V2</div>
+<div class="archive-copy" data-text-key="t12" contenteditable="false" spellcheck="false" aria-label="문구 t12">NOSTALGIC</div>
+<div class="archive-copy" data-text-key="t13" contenteditable="false" spellcheck="false" aria-label="문구 t13">THE HUMAN ELEMENT</div>
+<div class="archive-copy" data-text-key="t14" contenteditable="false" spellcheck="false" aria-label="문구 t14">Ensure all print artifacts are scanned at 1200 DPI. No exceptions.</div></div></details>
+  <footer class="archive-footer"><span>PERSONAL FRAGMENTS / SABI</span><span id="archiveStatus" role="status" aria-live="polite"></span><span>민권.com ↗</span></footer>
 </main>
-
-<script src="pic-store.js"></script>
-<script>
-    // === PHOTO EDITOR LOGIC ===
-    let activeSlot = null;
-    const fileInput = document.getElementById('fileInput');
-    const toastEl = document.getElementById('toast');
-
-    // Original image sources for reset
-    const originalSrc = {};
-    document.querySelectorAll('.photo-slot img').forEach(img => {
-        const slot = img.closest('.photo-slot').dataset.slot;
-        originalSrc[slot] = img.src;
-    });
-
-    // 저장된 사진 복원 (IndexedDB)
-    ['0','1','2','3'].forEach(slot => {
-        MKPics.get('p4:img-' + slot).then(saved => {
-            if (saved) {
-                const img = document.getElementById('img-' + slot);
-                if (img) img.src = saved;
-            }
-        });
-    });
-
-    function openFilePicker(slot) {
-        activeSlot = slot;
-        fileInput.value = '';
-        fileInput.click();
-    }
-
-    fileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file || activeSlot === null) return;
-        const slot = activeSlot;
-        activeSlot = null;
-
-        MKPics.fileToDataURL(file).then(durl => {
-            const img = document.getElementById(`img-${slot}`);
-            img.src = durl;
-            MKPics.set('p4:img-' + slot, durl);
-            showToast(`사진 ${Number(slot) + 1} 교체 완료`);
-        });
-    });
-
-    function resetAll() {
-        // Restore originals + 저장본 삭제
-        Object.entries(originalSrc).forEach(([slot, src]) => {
-            document.getElementById(`img-${slot}`).src = src;
-            MKPics.set('p4:img-' + slot, null);
-        });
-
-        showToast('모든 사진이 원본으로 초기화되었습니다');
-    }
-
-    function downloadPage() {
-        // Clone the document
-        const clone = document.documentElement.cloneNode(true);
-
-        // Remove editor-only elements
-        clone.querySelector('.editor-bar')?.remove();
-        clone.querySelector('#toast')?.remove();
-        clone.querySelector('#fileInput')?.remove();
-
-        // Remove photo-slot interactivity (overlays, click handlers)
-        clone.querySelectorAll('.photo-overlay').forEach(el => el.remove());
-        clone.querySelectorAll('.photo-slot').forEach(el => {
-            el.removeAttribute('onclick');
-            el.style.cursor = '';
-            el.classList.remove('photo-slot');
-        });
-
-        // Remove the editor script block
-        const scripts = clone.querySelectorAll('script');
-        scripts.forEach(s => {
-            if (s.textContent.includes('PHOTO EDITOR LOGIC')) s.remove();
-        });
-
-        // Remove editor-specific styles
-        const styles = clone.querySelectorAll('style');
-        styles.forEach(s => {
-            if (s.textContent.includes('photo-slot') || s.textContent.includes('editor-bar')) {
-                // Strip editor CSS lines but keep original styles
-                s.textContent = s.textContent
-                    .replace(/\/\*\s*=== PHOTO EDITOR[\s\S]*$/, '');
-            }
-        });
-
-        // Fix header margin (remove editor bar offset)
-        const header = clone.querySelector('header');
-        if (header) header.style.marginTop = '';
-
-        const html = '<!DOCTYPE html>\n<html ' + 
-            Array.from(clone.attributes).map(a => `${a.name}="${a.value}"`).join(' ') + 
-            '>' + clone.innerHTML + '</html>';
-        
-        const blob = new Blob([html], { type: 'text/html' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'lowtheory_edited.html';
-        a.click();
-        URL.revokeObjectURL(a.href);
-
-        showToast('HTML 파일 저장 완료');
-    }
-
-    function showToast(msg) {
-        toastEl.textContent = msg;
-        toastEl.classList.add('show');
-        setTimeout(() => toastEl.classList.remove('show'), 2200);
-    }
-</script>
-
-<script>
-  let p4Unlocked = false;
-  let p4EditMode = false;
-
-  window.addEventListener('message', e => {
-    if(e.origin!==window.location.origin)return;
-    if (e.data && e.data.type === 'mk_unlock') {
-      p4Unlocked = e.data.value;
-      const btn = document.getElementById('p4-edit-btn');
-      if (btn) btn.style.display = p4Unlocked ? 'flex' : 'none';
-      if (!p4Unlocked && p4EditMode) p4ToggleEdit();
-    }
-  });
-
-  function p4ToggleEdit() {
-    if (!p4Unlocked) return;
-    p4EditMode = !p4EditMode;
-    const btn = document.getElementById('p4-edit-btn');
-    document.querySelectorAll('[data-slot-click]').forEach(el => {
-      if (p4EditMode) {
-        const slot = el.getAttribute('data-slot-click');
-        el.onclick = () => openFilePicker(parseInt(slot));
-        el.classList.add('edit-active');
-      } else {
-        el.onclick = null;
-        el.classList.remove('edit-active');
-      }
-    });
-    document.querySelectorAll('[contenteditable]').forEach(el => {
-      el.contentEditable = p4EditMode ? 'true' : 'false';
-    });
-    if (btn) {
-      btn.textContent = p4EditMode ? '✓ 완료' : '✎ 편집';
-      btn.style.color = p4EditMode ? '#ffb4a2' : '#a08d88';
-      btn.style.borderColor = p4EditMode ? '#ffb4a2' : '#353535';
-    }
-  }
-
-  document.querySelectorAll('[contenteditable]').forEach(el => {
-    el.contentEditable = 'false';
-  });
-</script>
-
-<script>
-function sendHeight(){
-  var h=document.documentElement.scrollHeight||document.body.scrollHeight;
-  var isMobile=window.matchMedia('(max-width:767px)').matches;
-  var val=isMobile?Math.ceil(h*0.27):h-40;
-  window.parent.postMessage({type:'iframe_height',id:'p4Frame',value:val},location.origin);
-}
-if(window.ResizeObserver){new ResizeObserver(sendHeight).observe(document.body);}
-window.addEventListener('load',sendHeight);
-</script></body></html>
+<dialog id="archiveLightbox" aria-label="사진 확대 보기"><div class="archive-lightbox-bar"><span id="archiveCounter"></span><button type="button" id="archiveClose" aria-label="확대 보기 닫기">닫기 ×</button></div><img id="archiveLarge" alt=""/><div class="archive-lightbox-nav"><button id="archivePrev" type="button" aria-label="이전 사진">←</button><button id="archiveNext" type="button" aria-label="다음 사진">→</button></div></dialog>
+<input id="archiveFile" type="file" accept="image/*,.dng" hidden/>
+<script type="application/json" id="archiveConfig">{"page": 4, "frame": "p4Frame", "title": "Sabi", "storageKey": "mk_gallery_p4_text_v1", "textField": "texts"}</script>
+</body>
+</html>

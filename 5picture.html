@@ -1,422 +1,698 @@
 <!DOCTYPE html>
-
-<html class="light" lang="en"><head>
+<html lang="ko">
+<head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Low Theory Lab - Archive Grid</title>
-<script>(function(){document.addEventListener('contextmenu',function(e){e.preventDefault();},true);document.addEventListener('dragstart',function(e){e.preventDefault();},true);['copy','cut'].forEach(function(ev){document.addEventListener(ev,function(e){var t=e.target;if(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable)return;e.preventDefault();},true);});document.addEventListener('keydown',function(e){if(e.key==='F12')e.preventDefault();if(e.ctrlKey&&e.shiftKey&&/^[IJCijc]$/.test(e.key))e.preventDefault();if(e.ctrlKey&&/^[uUsSpP]$/.test(e.key))e.preventDefault();},true);})();</script>
-<style>*{-webkit-user-select:none;-moz-user-select:none;user-select:none;}input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:text;}img{-webkit-user-drag:none;user-drag:none;pointer-events:none;-webkit-touch-callout:none;}</style>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;900&amp;family=Space+Grotesk:wght@300;400;700&amp;family=Courier+Prime:wght@400;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "on-secondary-fixed-variant": "#5c5b5b",
-                        "error-dim": "#4f0116",
-                        "tertiary-fixed-dim": "#efc3d5",
-                        "primary-dim": "#a70b16",
-                        "outline-variant": "#b1b3a9",
-                        "on-primary": "#fff6f4",
-                        "on-error-container": "#782232",
-                        "secondary-fixed-dim": "#d6d4d3",
-                        "on-secondary-fixed": "#403f3f",
-                        "on-tertiary-container": "#654553",
-                        "surface": "#fbf9f4",
-                        "on-primary-container": "#a60a15",
-                        "surface-bright": "#fbf9f4",
-                        "inverse-surface": "#0e0e0c",
-                        "secondary-container": "#e5e2e1",
-                        "primary-fixed": "#ffdad6",
-                        "on-primary-fixed-variant": "#b4191e",
-                        "surface-container-low": "#f5f4ed",
-                        "surface-container-high": "#e8e9e0",
-                        "surface-dim": "#d9dbcf",
-                        "on-background": "#31332c",
-                        "primary": "#b91d20",
-                        "tertiary-dim": "#6b4a58",
-                        "on-secondary": "#fbf8f8",
-                        "tertiary-container": "#fed1e3",
-                        "error-container": "#ff8b9a",
-                        "on-secondary-container": "#525151",
-                        "secondary-fixed": "#e5e2e1",
-                        "on-tertiary-fixed-variant": "#704e5d",
-                        "secondary-dim": "#545353",
-                        "surface-container": "#efeee6",
-                        "tertiary-fixed": "#fed1e3",
-                        "surface-container-lowest": "#ffffff",
-                        "on-tertiary": "#fff7f8",
-                        "surface-variant": "#e2e3d9",
-                        "on-error": "#fff7f7",
-                        "secondary": "#605f5f",
-                        "primary-container": "#ffdad6",
-                        "on-tertiary-fixed": "#513341",
-                        "surface-container-highest": "#e2e3d9",
-                        "tertiary": "#785564",
-                        "inverse-primary": "#ff544c",
-                        "outline": "#797c73",
-                        "on-surface-variant": "#5e6058",
-                        "inverse-on-surface": "#9e9d99",
-                        "primary-fixed-dim": "#ffc7c1",
-                        "on-surface": "#31332c",
-                        "surface-tint": "#b91d20",
-                        "error": "#9e3f4e",
-                        "background": "#fbf9f4",
-                        "on-primary-fixed": "#85000c"
-                    },
-                    fontFamily: {
-                        "headline": ["Epilogue"],
-                        "body": ["Space Grotesk"],
-                        "label": ["Space Grotesk"],
-                        "mono": ["Courier Prime"]
-                    },
-                    borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px"},
-                },
-            },
-        }
-    </script>
-<style>
-        body {
-            background-color: transparent;
-            background-image: none;
-            opacity: 1;
-        }
-        .grain-overlay {
-            display: none;
-            pointer-events: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: transparent;
-            z-index: 9999;
-            opacity: 0.04;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 600 600' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-        }
-        .grid-cell {
-            aspect-ratio: 1 / 1;
-            border: 1px solid #31332c;
-            overflow: hidden;
-            position: relative;
-            cursor: pointer;
-        }
-        .polaroid-frame {
-            width: 85%;
-            height: 85%;
-            background: #ffffff;
-            padding: 8px 8px 24px 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        .technical-data {
-            font-family: 'Courier Prime', monospace;
-            font-size: 0.65rem;
-            line-height: 1.2;
-        }
-    </style>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Hook — MK.HUB</title>
+<link rel="stylesheet" href="gallery.css"/>
+<script src="pic-store.js" defer></script>
+<script src="gallery.js" defer></script>
 </head>
-<body class="font-body text-on-background m-0 p-0 overflow-x-hidden">
-<button id="p5-edit-btn"
-  style="display:none;position:sticky;top:12px;float:right;z-index:9999;
-    align-items:center;gap:6px;padding:7px 16px;margin:12px 12px 0 0;
-    border:1px solid #353535;border-radius:9999px;
-    background:rgba(14,14,14,.85);color:#a08d88;
-    font-size:11px;font-family:'Space Grotesk',sans-serif;font-weight:700;
-    letter-spacing:.08em;text-transform:uppercase;cursor:pointer;"
-  onclick="p5ToggleEdit()">✎ 편집</button>
-<div class="grain-overlay"></div>
-<!-- TopAppBar from JSON -->
-<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-[#fbf9f4] dark:bg-[#1a1b18] border-none" style="display:none;">
-<div class="text-2xl font-black text-[#31332c] dark:text-[#e8e9e0] tracking-tighter font-['Epilogue'] uppercase">
-            lowtheory
-        </div>
-<nav class="hidden md:flex gap-8">
-<a class="text-[#b91d20] dark:text-[#ef5350] font-bold font-['Epilogue'] uppercase tracking-tighter hover:bg-[#e8e9e0] dark:hover:bg-[#31332c] transition-transform duration-75 active:translate-y-px" href="#">ARCHIVE</a>
-<a class="text-[#31332c] dark:text-[#e8e9e0] opacity-60 font-['Epilogue'] uppercase tracking-tighter hover:bg-[#e8e9e0] dark:hover:bg-[#31332c] transition-transform duration-75 active:translate-y-px" href="#">INDEX</a>
-<a class="text-[#31332c] dark:text-[#e8e9e0] opacity-60 font-['Epilogue'] uppercase tracking-tighter hover:bg-[#e8e9e0] dark:hover:bg-[#31332c] transition-transform duration-75 active:translate-y-px" href="#">MANIFESTO</a>
-</nav>
-<div class="flex items-center gap-4 text-[#b91d20]">
-<span class="material-symbols-outlined hover:bg-[#e8e9e0] p-2 transition-transform duration-75">grid_view</span>
-<span class="material-symbols-outlined hover:bg-[#e8e9e0] p-2 transition-transform duration-75">info</span>
-</div>
-</header>
-<main class="pt-0">
-<!-- 9x9 Archive Grid -->
-<section class="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-9 w-full bg-on-background">
-<!-- Generate 81 cells manually to ensure unique data-alts and visual variety -->
-<!-- Row 1 -->
-<div class="grid-cell bg-surface-container-low flex items-center justify-center">
-<div class="technical-data p-2 text-on-surface opacity-70" contenteditable="false">LT-001<br/>REF: ARCHIVE<br/>STATUS: RAW</div>
-</div>
-<div class="grid-cell">
-<img class="w-full h-full object-cover grayscale brightness-90" data-alt="high contrast black and white grainy photograph of architectural concrete Brutalist stairs with sharp geometric shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQNykKEDVrv-n_XeNoNdoHxtpBmjg9lfO_JEs66s5YgGeOZhyd5B8bDJ8le_d8CrfQOylVK8yhmycN4CTUEen_NIcmldUGvw_U44976i737Xpdv6vYsqU7OnvjkPHRH3G_IPvxqtuI42ythWTn6YGsaMCLLg-v1yS2PagScb81wRQ5sZE0K3-OdDEINIZOMAsIkQEdf167B6IdjIHQrmessgT4Bgfbg7Dq2F2fwA9y40EgPlvJGkYoNyTlK2zJVR8GdMzv6ZQklvw"/>
-</div>
-<div class="grid-cell bg-primary flex items-end p-2">
-<span class="text-on-primary font-headline font-black text-xl leading-none" contenteditable="false">01</span>
-</div>
-<div class="grid-cell flex items-center justify-center bg-surface-container-high">
-<div class="polaroid-frame rotate-[-2deg]">
-<img class="w-full h-full object-cover grayscale" data-alt="macro close-up of vintage film stock showing sprocket holes and grainy emulsion texture in warm sepia tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-2cL54uk0k-JzzdLJXUPQNinlhAKI1MsXXuV1oXPSzTmyWzQsbHU3sFsqKXJfM51F68PIO6Ysa-9Dc9GquOuUpAv-ynAFGQBTOK7pIbxOSampY8MshwRDlGy0uI42gVeTgdNM2WvGt-S_7nj2MLkFdx_n8DpkQ-0qGLypBCkZwn9v9o6Pev2qOOIUtKiwpxI-wiOJ1_rgnXsKSvDB6DP0sDVvc6OFY5rRCkpGONk2iZ0e0DrCCStxNteNHd-Cpx7tBWSh9fjua2w"/>
-</div>
-</div>
-<div class="grid-cell bg-surface-container-highest"></div>
-<div class="grid-cell">
-<img class="w-full h-full object-cover contrast-125" data-alt="minimalist architectural interior with raw concrete walls and a single thin ray of sunlight cutting across the darkness" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6WoT8mt5LYYWTEi0R27auugvA7Q1j2Sar67E86574EhFMqgEFjgy2jwBv-PElXAw4HIHy73cneP9O9XQN4G5u0Oajzmbherh9Ime_2A5i15XjmMrgeya04dfbtwboJPEUIGjTWDj7gQb-l0jqyvuMrrhVuINxWj9iEP7PqjRmxXZyeACuekIQT2eimG8QknO8muL6dZ6n40hUpQtN0DFKWXwFb7WnAKt5R_ij6BYkXjLAYXeHydktigHZcQcH7nNncvARaD1ZS9g"/>
-</div>
-<div class="grid-cell bg-secondary">
-<div class="technical-data p-2 text-surface text-[8px] uppercase tracking-tighter" contenteditable="false">DATA STREAM 092<br/>X: 45.22<br/>Y: 12.89</div>
-</div>
-<div class="grid-cell bg-surface-container-lowest"></div>
-<div class="grid-cell bg-primary"></div>
-<!-- Row 2 -->
-<div class="grid-cell">
-<img class="w-full h-full object-cover" data-alt="abstract dark texture of cracked asphalt with yellow road paint weathered and peeling under harsh direct light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtYtwtBLu5_CbfcRixFMOVJPZs-sk-DZDcq1aN4KjXXCkfCUjo5j2JCV6D4jKCZLoMMZyHq-iCktduEw2WKy02D50QfSMxBnVqTb4JTT0vquHHoOn5Qmj6-H8bvBZ8VyTR1MAjCG5h9jVdB3D4rBNSXln78y3NfXndBZAYw1DtKmFugINJUHXQO686ns_5G-hbSY1ZWL2LqbhPv5U5emXJ52-2a2a0zjozOda9Ebv-_HjwFcV8Qyk9i2iUNwgjvCYsVLSU77BttJU"/>
-</div>
-<div class="grid-cell bg-surface-container-low"></div>
-<div class="grid-cell flex items-center justify-center bg-surface-container">
-<div class="polaroid-frame rotate-[3deg]">
-<div class="w-full h-full bg-primary flex items-center justify-center text-on-primary font-mono text-[10px]" contenteditable="false">REDACTED</div>
-</div>
-</div>
-<div class="grid-cell bg-outline-variant opacity-20"></div>
-<div class="grid-cell">
-<img class="w-full h-full object-cover grayscale" data-alt="close up of an old typewriter with metal keys showing heavy patina and mechanical complexity against a dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEonO7hlnG2M9tInp-6mYCROPEcEJemmx78IT0CekhSxICOn8q_7tAq6iRmSc5BxHjFR5oa9g78JwPgbOdLJF_2kkkfrDRvz4IfNhAgIZYmjjtlSt4Mww9J02MR5OShPH8vS7BzDS1Bn1ymapJLA_pyo8eI_Aajp-nOnohI3TbMhBVi30CSwNxhGejeluDlQ-GEjoXdcRXJqFxDMNK6rV1JhiVwyKIAY_xx13RC7RilnHDruKMEcnpErUdhb22QsZSGuTRiB8nizk"/>
-</div>
-<div class="grid-cell bg-primary flex items-center justify-center">
-<span class="material-symbols-outlined text-surface text-4xl" data-weight="fill">token</span>
-</div>
-<div class="grid-cell bg-surface-container-high"></div>
-<div class="grid-cell">
-<img class="w-full h-full object-cover" data-alt="extreme close up of white paper grain texture with subtle shadows and fibers visible under directional light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoFZViAyXb3wAQ19Ki51gHrI7ogk8Efs5_RYryBV3BAPP-XVxI4AN970eDQT3BlRS2eHfSBV7cys8Q4Kz-gxzL_GwwYKEieLBbQ3NnO8EV90ASIF7Q4ll2H7AyyjobKBIcb_ZXjoXh1EockSXIXBOaKBfhKhUJvemjn2ssBSrJdAM0V07Q2vn7fup4zJ4YqGBkBL57YSmO9FlyQc2TjIKRP1nzqox-tbKtN5ZgGcl9B704CE7n-Zh8ypjqmdDm5VDckFwTWFmEvWY"/>
-</div>
-<div class="grid-cell bg-on-background"></div>
-<!-- Row 3 -->
-<div class="grid-cell bg-surface-container-low">
-<div class="technical-data p-2 text-primary" contenteditable="false">SCAN_ERROR_04<br/>RETRYING...</div>
-</div>
-<div class="grid-cell">
-<img class="w-full h-full object-cover grayscale" data-alt="dramatic mountain peaks silhouette against a grainy hazy sky with deep black shadows and stark white highlights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0vNM8n2BjaS5qnoEbwRWPCmgrShhzhb7dcKt6aodSEYjppEvaoZshH0PjKOUHds2VMpITMeOahD3PV-a1Y5iL2cz1uxk3BFgzRKo_hxgRrgct8X2viqRfuWtLPkpxeJtLJHEJNZrjHE7SwlTZxCaKlYNOiQ_2waw5Pkfgxd3M9Bd0CN1BAPo7WcCFbN3l0kqi8syWM0lbs-eqrnE-QpFyyhQjviQFV9OkIJ7X969SwWU2_mMGZqv48MNRJQcaCt2-Zte3Kz_VCrY"/>
-</div>
-<div class="grid-cell bg-surface-container-lowest"></div>
-<div class="grid-cell bg-surface-container-high"></div>
-<div class="grid-cell bg-primary"></div>
-<div class="grid-cell">
-<img class="w-full h-full object-cover brightness-50 contrast-150 grayscale" data-alt="misty morning over a still dark lake with silhouettes of pine trees reflecting in the mirror-like water surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbmfW2axKG9csk2yKeECI4P5LgrcziKkb2CJqMOpsF3rbBEdbGKjZrpmj5EY2vOjTN5Qewg21JJT16Axh_mU-iJIjzjn_ky1MIbUeraSUPuSNv62iiEiUrGjlNy3N4xsM4os25boM4y8Skd2a_eAnWkWB3TJ1vAdI1gpqZP-LuhTFAhDvu9pfUK_57q2ZWck-HEM83lq-_nuv7ymzBPL8mdC7kYJVoZYFltYy1PTQQJjDl30PAmSIsC-ZWSRkEZwexNR5f4mIxXb8"/>
-</div>
-<div class="grid-cell bg-surface-container-low flex items-center justify-center">
-<div class="polaroid-frame rotate-[-1deg]">
-<img class="w-full h-full object-cover grayscale" data-alt="abstract architectural detail of metal pipes and structural steel with a weathered industrial aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_jd2l29xx5W-9r9x7xIRB6e9inZNNyp7KiY23EOzUM96ifRur9cwMq2DV150OzHdZyYONMO3NkNU6xWIG-SIS-OusZ73XkYUH7WQDYnlpzWpbUSXhG-xCsfgGRr4naAqN4KAPq4tFxl4cPmKcoGXCa_OvBWKUrG91ngPCkGJbX9ZPTgi4fGOA3N-9usMoPCv5mP5fUQRTkAudPiUKDw3jtCLNA3_pjOn6lH-Ynd8-SYH4tjahbKPmqoCtd8U2njkATulm6bWxG3Y"/>
-</div>
-</div>
-<div class="grid-cell bg-surface-variant"></div>
-<div class="grid-cell bg-surface-container-highest"></div>
-<!-- Row 4-6 Mixed (Continuing pattern) -->
-<div class="grid-cell bg-primary"></div>
-<div class="grid-cell bg-surface-container-lowest"></div>
-<div class="grid-cell">
-<img class="w-full h-full object-cover grayscale contrast-200" data-alt="textured abstract close-up of oil paint on canvas with deep reds and blacks in a chaotic visceral composition" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQrLpeuexISqqiZQx5kZYpyWtQyIMh4y9t-j5Svyp-s_gBpA3T5Wk2MwpA8scEY6Xe8zwz5S3qNmqvoqQUPV-OlkaMOHHK4zxKUdwpKzA1dQHmnC9iNYPW9G8biBjJ7Alq3IglH2euSGRNf-MZ95X3S3W7WWa2c4yWA-EXejIjK_PHqjq8trW1-sqwk2REcvQtgXzaEdisfPRsSFqqq5lTNybTsFiWKbZaHEj04vTf22IgVeRk943NYVI4v6S_jrgCTWrEYv-Yal8"/>
-</div>
-<div class="grid-cell bg-surface-container-low"></div>
-<div class="grid-cell">
-<img class="w-full h-full object-cover grayscale" data-alt="high angle shot of a vintage university library desk with scattered papers and a classic lamp cast in shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwQd6d0gRT31xjiiSZAMOMJV0rIy6U2NJzSgYy7wPzREAb2arJGi4oanGHYNK2LVMhMKMwIWr34HDNfMD8DOJdrBeVBAi2YnvZxzSvcSsIxnTuThsn8bD0PFZ0NIANVBTqdUcNXOu9J2CBC6-YeAyA2cLe8eExl4yne-BHrkKg7uW-aUJTjZDgpLFaqMilmHkoCvImsA1fp08HbtcvtoqN-Hz-5bgxJZEJk0JpV7Yicd-R7V01xyJrJDzP9RypH2R0pKwRGZXnfuE"/>
-</div>
-<div class="grid-cell bg-primary"></div>
-<div class="grid-cell bg-surface-container-high flex items-center justify-center">
-<div class="technical-data p-4 text-[12px] font-bold" contenteditable="false">L O W<br/>T H E O R Y<br/>L A B</div>
-</div>
-<div class="grid-cell bg-on-background"></div>
-<div class="grid-cell bg-surface-container-lowest"></div>
-<!-- Filling out remaining to reach 81 visually similar but diverse cells -->
-<!-- Row 5 -->
-<div class="grid-cell bg-surface-container"></div>
-<div class="grid-cell bg-primary"></div>
-<div class="grid-cell bg-surface-container-low"></div>
-<div class="grid-cell">
-<img class="w-full h-full object-cover contrast-150" data-alt="blurred night city lights through a rainy window with deep black negative space and glowing red highlights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFeR-3BwDoiJZbVnftDqtaHiQ98fDPMEfnW9sv1AgH4fGjF5XNki9g_I_dFvh0in_Gu0QgW-Y2EwR5vcTSctk1wMd1RmuumVljFVZwFl2STjDttdFwELUY689jkZvsppXKZHwxu3WpKGZBBsm_gLO-xfR3f55T5Bnii_QHtbxRB_jLRj7jVrM8jjhs77YSEFpdY8T-njs40oy4XcErs65CLTNBVteo75a1XK2L3QwBSdHPLT_zpu7alhPXExTLlBbbFJR1-S7fcyg"/>
-</div>
-<div class="grid-cell bg-surface-container-lowest"></div>
-<div class="grid-cell">
-<img class="w-full h-full object-cover grayscale" data-alt="architectural curve of a spiral staircase seen from below in a brutalist concrete building with harsh lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGMcZkUv7Y4OqaR6nxzVzovTxTKXFWxTZH31nIfrI6n0UUVFIPtpmwl4K7XfQKMERQAaKUYMyNwcFxh53ImDTat_L46DWOI6mTUyeFRuw36dgEAPcCvCIortW5960k8MpqFFr_515d2xiDlZTUyahHzptmDDV541-N5jzI_4y0mc42J4b82ErQfw9O4Z310qxcN0yNGNMdFPVSeSgek3i--l-y2iFIhLBQ21vsPib-fe8K9ARvlJP_Q1OdlpEP8WxE8A9_FfcTIzk"/>
-</div>
-<div class="grid-cell bg-surface-container-high"></div>
-<div class="grid-cell bg-primary"></div>
-<div class="grid-cell bg-surface-container-low"></div>
-<!-- Row 6 -->
-<div class="grid-cell">
-<img class="w-full h-full object-cover grayscale" data-alt="vintage leather briefcase detail with brass hardware and aged texture sitting on a wooden floor in dim light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnaU-U53yUrGHMKCQVADogtXbAPPG060Cmy_oeIRMA9EEs-YrhMETLKz4uO6YQrnh7HA0RhQP6GOFM7WqED9itGS9UOxkzxmkq3mMAkFS8zSb4sAXk_FX4Henw18jmy46HQFUJUbZ1kXpEvVveLsxdNKjfiUmiKqxa9PFvVniw0FSoW9njKUOhL4-eDXiWZoC-IgDYqrO1YDu9mc7iggey_u0x1_rYeJPrGAC67ee_9QUz5tAiQRXZXlgA0cOr1mAGwJ1avmtSgPA"/>
-</div>
-<div class="grid-cell bg-surface-container-highest"></div>
-<div class="grid-cell bg-on-background"></div>
-<div class="grid-cell bg-surface-container-low"></div>
-<div class="grid-cell bg-primary"></div>
-<div class="grid-cell bg-surface-container-lowest"></div>
-<div class="grid-cell">
-<img class="w-full h-full object-cover contrast-200 brightness-75" data-alt="abstract neon light trail in a dark tunnel with a glitch effect and strong red and cyan color separation" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-jzvdhJm8THukIO4YL7qZ13zuEcNrJjrf19davBulK77EZIStiePt8OZ8zLW46BoMWlzKAGcqZ-ARFtd5GgKOLMsXeQfCYQIu1UfgKWA2BHD79_NI0FPomV5XjiyqvaUrj_W0-5m0217SK30cyZil7ORvJz-gZc8CtsIzWN5mOOV-hWAdfRkmW9dr6jcK1wH3hefYB66bzRAdUCxjevP6_gYcjts8jPoKXjnGzoIQ9FjeaI6k0sBu-5-K1OTCLEmVRUOTvIgj4So"/>
-</div>
-<div class="grid-cell bg-surface-container-high"></div>
-<div class="grid-cell bg-surface-container-low"></div>
-<!-- Row 7 -->
-<div class="grid-cell bg-surface-container-lowest"></div>
-<div class="grid-cell bg-surface-container-high flex items-center justify-center">
-<div class="polaroid-frame rotate-[4deg]">
-<div class="technical-data text-center mt-2" contenteditable="false">PLATE-77<br/>1982.04.12</div>
-</div>
-</div>
-<div class="grid-cell bg-primary"></div>
-<div class="grid-cell bg-surface-container-low"></div>
-<div class="grid-cell bg-on-background"></div>
-<div class="grid-cell">
-<img class="w-full h-full object-cover grayscale" data-alt="extreme macro of a camera lens element reflecting a distorted room with intense bokeh and light flares" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjeTUPKtNZLMs6WKwjcke79BTqkszLubmVwRuKMXKFaTrK2Sdat_E-C4ZQXLAbUXAnRnanNEydTCR4jnOPxWHXKTglL_MjQU2zIvONxYYcJc94H8IuSCKOqrbP-O7EPgrSD-riz8DGVfZUZiReIlyEItao97bAjordv_-4lrmBMNZbwvHdV7mDchEEaCqKUtaFvdA9W4E9GcS3pHvJbhBv301rLg9naQgw-vsyVVt5FS_bPS-MXtkjK1gOGFA9-U49HNrk0SQepjs"/>
-</div>
-<div class="grid-cell bg-surface-container-lowest"></div>
-<div class="grid-cell bg-surface-container-high"></div>
-<div class="grid-cell bg-primary"></div>
-<!-- Row 8 -->
-<div class="grid-cell bg-on-background"></div>
-<div class="grid-cell bg-surface-container-low"></div>
-<div class="grid-cell bg-surface-container-highest"></div>
-<div class="grid-cell">
-<img class="w-full h-full object-cover grayscale brightness-50" data-alt="deep forest with sunlight beams cutting through thick fog and tall pine trees creating a mystical mood" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuN7-VIGtetpPt2mOrOKBc9Fc8qmXWs-LyAe1pqbvXsL7YwHESOUGYfKovouHtENO2JNBSiKBxQ17pp7nA8JcNarTQsQ-YM1eKfOv7mcIvLWcW-w5nacwBMdzTuQhvT7shO6h2xLS6RvMJ8E3AoKmUkMGKrCbvi-clf6zwX260-EM7MdNbjO5lzfIFK5L4lhPzYfnkN0MQV7CIT2WnEcqNij5LgtkIYSK-8Ru2T9v-x9b40L43N6EtUB-sgSwhBXnDKhBoFkVIujI"/>
-</div>
-<div class="grid-cell bg-primary flex items-center justify-center">
-<span class="text-on-primary font-headline font-black text-2xl" contenteditable="false">LT</span>
-</div>
-<div class="grid-cell bg-surface-container-low"></div>
-<div class="grid-cell bg-surface-container-lowest"></div>
-<div class="grid-cell">
-<img class="w-full h-full object-cover contrast-125" data-alt="dark starry night sky with milky way galaxy detail and high digital noise levels for a raw aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9CUwgpVzW5mY4hsboFEMHVz2f1FnZmQBcpLhxXAMyF3l0HhKKG20IA8GeVtMHuuo_GECqY6ZPyBOEtziDtgTfhm8krCoJS5FDq4rWeYmj41zDaUUh1xaN33vuEUPrwZTvTxJ18b0R-akfsOG4ah37L9cINjOBY0KCHl6Ag3Gvb-rdiVCqZT0KAuYkyUz4mDjgglKEoiRbFhtn00Q_7tNVHij5h4RfS_UaxTPXJgHupmnV-fxnUaPwsuNtHfuOaLU__2sVYs026tM"/>
-</div>
-<div class="grid-cell bg-on-background"></div>
-<!-- Row 9 -->
-<div class="grid-cell bg-surface-container-high"></div>
-<div class="grid-cell bg-primary"></div>
-<div class="grid-cell bg-surface-container-lowest"></div>
-<div class="grid-cell bg-surface-container-low"></div>
-<div class="grid-cell bg-surface-container-highest"></div>
-<div class="grid-cell">
-<img class="w-full h-full object-cover grayscale contrast-150" data-alt="macro texture of oxidized copper with turquoise and brown hues weathered by salt and time" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFT0YzPfQBQucd3EvtgvaIh-_7y3Kczvsh3SRBXN3GWm7dWNV18DWAY_75j7Tw5ieVkj3X_MsP7u6RBfe4bVaJfV4l6pe_-IQgw7e6iJ63YzNLl4ZMJAIayWMJLH4dGVYAMeynkKci9LYZHQuXknBWpV5b5fk5_CVPwEYCrYR3I0pes2ZTiuSx9IBG5hI1nhTuykldjQrungjniCRIt_bdaI0NJg1knWNRVkGGFJAoq8wOoGUgz8Egn-oarx3sufLs8x1cw6_s7M4"/>
-</div>
-<div class="grid-cell bg-primary"></div>
-<div class="grid-cell flex items-center justify-center bg-surface-container-low">
-<div class="technical-data text-[7px] text-on-surface" contenteditable="false">END_OF_TRANS<br/>BUFFER_CLEAR<br/>--0--</div>
-</div>
-<div class="grid-cell bg-on-background"></div>
-<!-- Repeated / Filler cells to ensure exactly 81 blocks (9x9) across all views -->
-<!-- Mobile will stack them in 3 cols, desktop in 9 -->
-<div class="grid-cell bg-surface-container sm:hidden lg:hidden"></div>
-<div class="grid-cell bg-primary sm:hidden lg:hidden"></div>
-<!-- ... adding just enough to keep the structural feel consistent on various screen sizes ... -->
-</section>
+<body class="archive-page archive-p5">
+<main id="archiveRoot">
+  <header class="archive-header">
+    <div class="archive-meta"><span>MK.HUB / VISUAL ARCHIVE</span><span>05 — 05</span></div>
+    <div class="archive-title-row"><h1>Hook<span class="archive-title-dot">.</span></h1><button id="archiveEdit" type="button" hidden>편집 ↗</button></div>
+    <div class="archive-subline"><p>A little bit of everything.</p><span>SCROLL TO EXPLORE ↓</span></div>
+  </header>
+  <div class="archive-grid"><figure class="archive-card" data-pic-key="p5:cell-0" >
+  <button class="archive-photo" type="button" aria-label="사진 1 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 01</span></span>
+    <img   alt="Hook 사진 1" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>01 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p5:cell-1" >
+  <button class="archive-photo" type="button" aria-label="사진 2 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 02</span></span>
+    <img  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQNykKEDVrv-n_XeNoNdoHxtpBmjg9lfO_JEs66s5YgGeOZhyd5B8bDJ8le_d8CrfQOylVK8yhmycN4CTUEen_NIcmldUGvw_U44976i737Xpdv6vYsqU7OnvjkPHRH3G_IPvxqtuI42ythWTn6YGsaMCLLg-v1yS2PagScb81wRQ5sZE0K3-OdDEINIZOMAsIkQEdf167B6IdjIHQrmessgT4Bgfbg7Dq2F2fwA9y40EgPlvJGkYoNyTlK2zJVR8GdMzv6ZQklvw" alt="Hook 사진 2" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>02 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-2" >
+  <button class="archive-photo" type="button" aria-label="사진 3 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 03</span></span>
+    <img   alt="Hook 사진 3" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>03 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p5:cell-3" >
+  <button class="archive-photo" type="button" aria-label="사진 4 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 04</span></span>
+    <img  src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-2cL54uk0k-JzzdLJXUPQNinlhAKI1MsXXuV1oXPSzTmyWzQsbHU3sFsqKXJfM51F68PIO6Ysa-9Dc9GquOuUpAv-ynAFGQBTOK7pIbxOSampY8MshwRDlGy0uI42gVeTgdNM2WvGt-S_7nj2MLkFdx_n8DpkQ-0qGLypBCkZwn9v9o6Pev2qOOIUtKiwpxI-wiOJ1_rgnXsKSvDB6DP0sDVvc6OFY5rRCkpGONk2iZ0e0DrCCStxNteNHd-Cpx7tBWSh9fjua2w" alt="Hook 사진 4" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>04 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-4" >
+  <button class="archive-photo" type="button" aria-label="사진 5 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 05</span></span>
+    <img   alt="Hook 사진 5" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>05 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p5:cell-5" >
+  <button class="archive-photo" type="button" aria-label="사진 6 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 06</span></span>
+    <img  src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6WoT8mt5LYYWTEi0R27auugvA7Q1j2Sar67E86574EhFMqgEFjgy2jwBv-PElXAw4HIHy73cneP9O9XQN4G5u0Oajzmbherh9Ime_2A5i15XjmMrgeya04dfbtwboJPEUIGjTWDj7gQb-l0jqyvuMrrhVuINxWj9iEP7PqjRmxXZyeACuekIQT2eimG8QknO8muL6dZ6n40hUpQtN0DFKWXwFb7WnAKt5R_ij6BYkXjLAYXeHydktigHZcQcH7nNncvARaD1ZS9g" alt="Hook 사진 6" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>06 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-6" >
+  <button class="archive-photo" type="button" aria-label="사진 7 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 07</span></span>
+    <img   alt="Hook 사진 7" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>07 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-7" >
+  <button class="archive-photo" type="button" aria-label="사진 8 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 08</span></span>
+    <img   alt="Hook 사진 8" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>08 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-8" >
+  <button class="archive-photo" type="button" aria-label="사진 9 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 09</span></span>
+    <img   alt="Hook 사진 9" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>09 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p5:cell-9" >
+  <button class="archive-photo" type="button" aria-label="사진 10 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 10</span></span>
+    <img  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtYtwtBLu5_CbfcRixFMOVJPZs-sk-DZDcq1aN4KjXXCkfCUjo5j2JCV6D4jKCZLoMMZyHq-iCktduEw2WKy02D50QfSMxBnVqTb4JTT0vquHHoOn5Qmj6-H8bvBZ8VyTR1MAjCG5h9jVdB3D4rBNSXln78y3NfXndBZAYw1DtKmFugINJUHXQO686ns_5G-hbSY1ZWL2LqbhPv5U5emXJ52-2a2a0zjozOda9Ebv-_HjwFcV8Qyk9i2iUNwgjvCYsVLSU77BttJU" alt="Hook 사진 10" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>10 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-10" >
+  <button class="archive-photo" type="button" aria-label="사진 11 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 11</span></span>
+    <img   alt="Hook 사진 11" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>11 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-11" >
+  <button class="archive-photo" type="button" aria-label="사진 12 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 12</span></span>
+    <img   alt="Hook 사진 12" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>12 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-12" >
+  <button class="archive-photo" type="button" aria-label="사진 13 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 13</span></span>
+    <img   alt="Hook 사진 13" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>13 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p5:cell-13" >
+  <button class="archive-photo" type="button" aria-label="사진 14 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 14</span></span>
+    <img  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEonO7hlnG2M9tInp-6mYCROPEcEJemmx78IT0CekhSxICOn8q_7tAq6iRmSc5BxHjFR5oa9g78JwPgbOdLJF_2kkkfrDRvz4IfNhAgIZYmjjtlSt4Mww9J02MR5OShPH8vS7BzDS1Bn1ymapJLA_pyo8eI_Aajp-nOnohI3TbMhBVi30CSwNxhGejeluDlQ-GEjoXdcRXJqFxDMNK6rV1JhiVwyKIAY_xx13RC7RilnHDruKMEcnpErUdhb22QsZSGuTRiB8nizk" alt="Hook 사진 14" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>14 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-14" >
+  <button class="archive-photo" type="button" aria-label="사진 15 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 15</span></span>
+    <img   alt="Hook 사진 15" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>15 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-15" >
+  <button class="archive-photo" type="button" aria-label="사진 16 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 16</span></span>
+    <img   alt="Hook 사진 16" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>16 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p5:cell-16" >
+  <button class="archive-photo" type="button" aria-label="사진 17 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 17</span></span>
+    <img  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoFZViAyXb3wAQ19Ki51gHrI7ogk8Efs5_RYryBV3BAPP-XVxI4AN970eDQT3BlRS2eHfSBV7cys8Q4Kz-gxzL_GwwYKEieLBbQ3NnO8EV90ASIF7Q4ll2H7AyyjobKBIcb_ZXjoXh1EockSXIXBOaKBfhKhUJvemjn2ssBSrJdAM0V07Q2vn7fup4zJ4YqGBkBL57YSmO9FlyQc2TjIKRP1nzqox-tbKtN5ZgGcl9B704CE7n-Zh8ypjqmdDm5VDckFwTWFmEvWY" alt="Hook 사진 17" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>17 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-17" >
+  <button class="archive-photo" type="button" aria-label="사진 18 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 18</span></span>
+    <img   alt="Hook 사진 18" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>18 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-18" >
+  <button class="archive-photo" type="button" aria-label="사진 19 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 19</span></span>
+    <img   alt="Hook 사진 19" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>19 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p5:cell-19" >
+  <button class="archive-photo" type="button" aria-label="사진 20 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 20</span></span>
+    <img  src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0vNM8n2BjaS5qnoEbwRWPCmgrShhzhb7dcKt6aodSEYjppEvaoZshH0PjKOUHds2VMpITMeOahD3PV-a1Y5iL2cz1uxk3BFgzRKo_hxgRrgct8X2viqRfuWtLPkpxeJtLJHEJNZrjHE7SwlTZxCaKlYNOiQ_2waw5Pkfgxd3M9Bd0CN1BAPo7WcCFbN3l0kqi8syWM0lbs-eqrnE-QpFyyhQjviQFV9OkIJ7X969SwWU2_mMGZqv48MNRJQcaCt2-Zte3Kz_VCrY" alt="Hook 사진 20" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>20 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-20" >
+  <button class="archive-photo" type="button" aria-label="사진 21 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 21</span></span>
+    <img   alt="Hook 사진 21" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>21 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-21" >
+  <button class="archive-photo" type="button" aria-label="사진 22 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 22</span></span>
+    <img   alt="Hook 사진 22" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>22 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-22" >
+  <button class="archive-photo" type="button" aria-label="사진 23 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 23</span></span>
+    <img   alt="Hook 사진 23" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>23 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p5:cell-23" >
+  <button class="archive-photo" type="button" aria-label="사진 24 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 24</span></span>
+    <img  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbmfW2axKG9csk2yKeECI4P5LgrcziKkb2CJqMOpsF3rbBEdbGKjZrpmj5EY2vOjTN5Qewg21JJT16Axh_mU-iJIjzjn_ky1MIbUeraSUPuSNv62iiEiUrGjlNy3N4xsM4os25boM4y8Skd2a_eAnWkWB3TJ1vAdI1gpqZP-LuhTFAhDvu9pfUK_57q2ZWck-HEM83lq-_nuv7ymzBPL8mdC7kYJVoZYFltYy1PTQQJjDl30PAmSIsC-ZWSRkEZwexNR5f4mIxXb8" alt="Hook 사진 24" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>24 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p5:cell-24" >
+  <button class="archive-photo" type="button" aria-label="사진 25 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 25</span></span>
+    <img  src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_jd2l29xx5W-9r9x7xIRB6e9inZNNyp7KiY23EOzUM96ifRur9cwMq2DV150OzHdZyYONMO3NkNU6xWIG-SIS-OusZ73XkYUH7WQDYnlpzWpbUSXhG-xCsfgGRr4naAqN4KAPq4tFxl4cPmKcoGXCa_OvBWKUrG91ngPCkGJbX9ZPTgi4fGOA3N-9usMoPCv5mP5fUQRTkAudPiUKDw3jtCLNA3_pjOn6lH-Ynd8-SYH4tjahbKPmqoCtd8U2njkATulm6bWxG3Y" alt="Hook 사진 25" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>25 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-25" >
+  <button class="archive-photo" type="button" aria-label="사진 26 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 26</span></span>
+    <img   alt="Hook 사진 26" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>26 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-26" >
+  <button class="archive-photo" type="button" aria-label="사진 27 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 27</span></span>
+    <img   alt="Hook 사진 27" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>27 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-27" >
+  <button class="archive-photo" type="button" aria-label="사진 28 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 28</span></span>
+    <img   alt="Hook 사진 28" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>28 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-28" >
+  <button class="archive-photo" type="button" aria-label="사진 29 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 29</span></span>
+    <img   alt="Hook 사진 29" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>29 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p5:cell-29" >
+  <button class="archive-photo" type="button" aria-label="사진 30 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 30</span></span>
+    <img  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQrLpeuexISqqiZQx5kZYpyWtQyIMh4y9t-j5Svyp-s_gBpA3T5Wk2MwpA8scEY6Xe8zwz5S3qNmqvoqQUPV-OlkaMOHHK4zxKUdwpKzA1dQHmnC9iNYPW9G8biBjJ7Alq3IglH2euSGRNf-MZ95X3S3W7WWa2c4yWA-EXejIjK_PHqjq8trW1-sqwk2REcvQtgXzaEdisfPRsSFqqq5lTNybTsFiWKbZaHEj04vTf22IgVeRk943NYVI4v6S_jrgCTWrEYv-Yal8" alt="Hook 사진 30" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>30 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-30" >
+  <button class="archive-photo" type="button" aria-label="사진 31 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 31</span></span>
+    <img   alt="Hook 사진 31" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>31 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p5:cell-31" >
+  <button class="archive-photo" type="button" aria-label="사진 32 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 32</span></span>
+    <img  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwQd6d0gRT31xjiiSZAMOMJV0rIy6U2NJzSgYy7wPzREAb2arJGi4oanGHYNK2LVMhMKMwIWr34HDNfMD8DOJdrBeVBAi2YnvZxzSvcSsIxnTuThsn8bD0PFZ0NIANVBTqdUcNXOu9J2CBC6-YeAyA2cLe8eExl4yne-BHrkKg7uW-aUJTjZDgpLFaqMilmHkoCvImsA1fp08HbtcvtoqN-Hz-5bgxJZEJk0JpV7Yicd-R7V01xyJrJDzP9RypH2R0pKwRGZXnfuE" alt="Hook 사진 32" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>32 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-32" >
+  <button class="archive-photo" type="button" aria-label="사진 33 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 33</span></span>
+    <img   alt="Hook 사진 33" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>33 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-33" >
+  <button class="archive-photo" type="button" aria-label="사진 34 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 34</span></span>
+    <img   alt="Hook 사진 34" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>34 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-34" >
+  <button class="archive-photo" type="button" aria-label="사진 35 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 35</span></span>
+    <img   alt="Hook 사진 35" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>35 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-35" >
+  <button class="archive-photo" type="button" aria-label="사진 36 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 36</span></span>
+    <img   alt="Hook 사진 36" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>36 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-36" >
+  <button class="archive-photo" type="button" aria-label="사진 37 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 37</span></span>
+    <img   alt="Hook 사진 37" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>37 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-37" >
+  <button class="archive-photo" type="button" aria-label="사진 38 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 38</span></span>
+    <img   alt="Hook 사진 38" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>38 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-38" >
+  <button class="archive-photo" type="button" aria-label="사진 39 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 39</span></span>
+    <img   alt="Hook 사진 39" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>39 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p5:cell-39" >
+  <button class="archive-photo" type="button" aria-label="사진 40 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 40</span></span>
+    <img  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFeR-3BwDoiJZbVnftDqtaHiQ98fDPMEfnW9sv1AgH4fGjF5XNki9g_I_dFvh0in_Gu0QgW-Y2EwR5vcTSctk1wMd1RmuumVljFVZwFl2STjDttdFwELUY689jkZvsppXKZHwxu3WpKGZBBsm_gLO-xfR3f55T5Bnii_QHtbxRB_jLRj7jVrM8jjhs77YSEFpdY8T-njs40oy4XcErs65CLTNBVteo75a1XK2L3QwBSdHPLT_zpu7alhPXExTLlBbbFJR1-S7fcyg" alt="Hook 사진 40" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>40 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-40" >
+  <button class="archive-photo" type="button" aria-label="사진 41 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 41</span></span>
+    <img   alt="Hook 사진 41" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>41 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p5:cell-41" >
+  <button class="archive-photo" type="button" aria-label="사진 42 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 42</span></span>
+    <img  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGMcZkUv7Y4OqaR6nxzVzovTxTKXFWxTZH31nIfrI6n0UUVFIPtpmwl4K7XfQKMERQAaKUYMyNwcFxh53ImDTat_L46DWOI6mTUyeFRuw36dgEAPcCvCIortW5960k8MpqFFr_515d2xiDlZTUyahHzptmDDV541-N5jzI_4y0mc42J4b82ErQfw9O4Z310qxcN0yNGNMdFPVSeSgek3i--l-y2iFIhLBQ21vsPib-fe8K9ARvlJP_Q1OdlpEP8WxE8A9_FfcTIzk" alt="Hook 사진 42" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>42 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-42" >
+  <button class="archive-photo" type="button" aria-label="사진 43 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 43</span></span>
+    <img   alt="Hook 사진 43" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>43 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-43" >
+  <button class="archive-photo" type="button" aria-label="사진 44 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 44</span></span>
+    <img   alt="Hook 사진 44" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>44 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-44" >
+  <button class="archive-photo" type="button" aria-label="사진 45 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 45</span></span>
+    <img   alt="Hook 사진 45" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>45 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p5:cell-45" >
+  <button class="archive-photo" type="button" aria-label="사진 46 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 46</span></span>
+    <img  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnaU-U53yUrGHMKCQVADogtXbAPPG060Cmy_oeIRMA9EEs-YrhMETLKz4uO6YQrnh7HA0RhQP6GOFM7WqED9itGS9UOxkzxmkq3mMAkFS8zSb4sAXk_FX4Henw18jmy46HQFUJUbZ1kXpEvVveLsxdNKjfiUmiKqxa9PFvVniw0FSoW9njKUOhL4-eDXiWZoC-IgDYqrO1YDu9mc7iggey_u0x1_rYeJPrGAC67ee_9QUz5tAiQRXZXlgA0cOr1mAGwJ1avmtSgPA" alt="Hook 사진 46" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>46 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-46" >
+  <button class="archive-photo" type="button" aria-label="사진 47 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 47</span></span>
+    <img   alt="Hook 사진 47" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>47 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-47" >
+  <button class="archive-photo" type="button" aria-label="사진 48 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 48</span></span>
+    <img   alt="Hook 사진 48" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>48 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-48" >
+  <button class="archive-photo" type="button" aria-label="사진 49 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 49</span></span>
+    <img   alt="Hook 사진 49" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>49 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-49" >
+  <button class="archive-photo" type="button" aria-label="사진 50 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 50</span></span>
+    <img   alt="Hook 사진 50" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>50 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-50" >
+  <button class="archive-photo" type="button" aria-label="사진 51 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 51</span></span>
+    <img   alt="Hook 사진 51" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>51 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p5:cell-51" >
+  <button class="archive-photo" type="button" aria-label="사진 52 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 52</span></span>
+    <img  src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-jzvdhJm8THukIO4YL7qZ13zuEcNrJjrf19davBulK77EZIStiePt8OZ8zLW46BoMWlzKAGcqZ-ARFtd5GgKOLMsXeQfCYQIu1UfgKWA2BHD79_NI0FPomV5XjiyqvaUrj_W0-5m0217SK30cyZil7ORvJz-gZc8CtsIzWN5mOOV-hWAdfRkmW9dr6jcK1wH3hefYB66bzRAdUCxjevP6_gYcjts8jPoKXjnGzoIQ9FjeaI6k0sBu-5-K1OTCLEmVRUOTvIgj4So" alt="Hook 사진 52" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>52 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-52" >
+  <button class="archive-photo" type="button" aria-label="사진 53 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 53</span></span>
+    <img   alt="Hook 사진 53" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>53 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-53" >
+  <button class="archive-photo" type="button" aria-label="사진 54 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 54</span></span>
+    <img   alt="Hook 사진 54" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>54 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-54" >
+  <button class="archive-photo" type="button" aria-label="사진 55 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 55</span></span>
+    <img   alt="Hook 사진 55" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>55 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-55" >
+  <button class="archive-photo" type="button" aria-label="사진 56 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 56</span></span>
+    <img   alt="Hook 사진 56" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>56 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-56" >
+  <button class="archive-photo" type="button" aria-label="사진 57 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 57</span></span>
+    <img   alt="Hook 사진 57" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>57 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-57" >
+  <button class="archive-photo" type="button" aria-label="사진 58 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 58</span></span>
+    <img   alt="Hook 사진 58" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>58 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-58" >
+  <button class="archive-photo" type="button" aria-label="사진 59 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 59</span></span>
+    <img   alt="Hook 사진 59" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>59 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p5:cell-59" >
+  <button class="archive-photo" type="button" aria-label="사진 60 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 60</span></span>
+    <img  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjeTUPKtNZLMs6WKwjcke79BTqkszLubmVwRuKMXKFaTrK2Sdat_E-C4ZQXLAbUXAnRnanNEydTCR4jnOPxWHXKTglL_MjQU2zIvONxYYcJc94H8IuSCKOqrbP-O7EPgrSD-riz8DGVfZUZiReIlyEItao97bAjordv_-4lrmBMNZbwvHdV7mDchEEaCqKUtaFvdA9W4E9GcS3pHvJbhBv301rLg9naQgw-vsyVVt5FS_bPS-MXtkjK1gOGFA9-U49HNrk0SQepjs" alt="Hook 사진 60" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>60 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-60" >
+  <button class="archive-photo" type="button" aria-label="사진 61 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 61</span></span>
+    <img   alt="Hook 사진 61" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>61 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-61" >
+  <button class="archive-photo" type="button" aria-label="사진 62 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 62</span></span>
+    <img   alt="Hook 사진 62" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>62 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-62" >
+  <button class="archive-photo" type="button" aria-label="사진 63 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 63</span></span>
+    <img   alt="Hook 사진 63" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>63 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-63" >
+  <button class="archive-photo" type="button" aria-label="사진 64 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 64</span></span>
+    <img   alt="Hook 사진 64" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>64 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-64" >
+  <button class="archive-photo" type="button" aria-label="사진 65 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 65</span></span>
+    <img   alt="Hook 사진 65" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>65 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-65" >
+  <button class="archive-photo" type="button" aria-label="사진 66 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 66</span></span>
+    <img   alt="Hook 사진 66" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>66 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p5:cell-66" >
+  <button class="archive-photo" type="button" aria-label="사진 67 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 67</span></span>
+    <img  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuN7-VIGtetpPt2mOrOKBc9Fc8qmXWs-LyAe1pqbvXsL7YwHESOUGYfKovouHtENO2JNBSiKBxQ17pp7nA8JcNarTQsQ-YM1eKfOv7mcIvLWcW-w5nacwBMdzTuQhvT7shO6h2xLS6RvMJ8E3AoKmUkMGKrCbvi-clf6zwX260-EM7MdNbjO5lzfIFK5L4lhPzYfnkN0MQV7CIT2WnEcqNij5LgtkIYSK-8Ru2T9v-x9b40L43N6EtUB-sgSwhBXnDKhBoFkVIujI" alt="Hook 사진 67" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>67 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-67" >
+  <button class="archive-photo" type="button" aria-label="사진 68 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 68</span></span>
+    <img   alt="Hook 사진 68" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>68 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-68" >
+  <button class="archive-photo" type="button" aria-label="사진 69 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 69</span></span>
+    <img   alt="Hook 사진 69" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>69 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-69" >
+  <button class="archive-photo" type="button" aria-label="사진 70 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 70</span></span>
+    <img   alt="Hook 사진 70" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>70 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p5:cell-70" >
+  <button class="archive-photo" type="button" aria-label="사진 71 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 71</span></span>
+    <img  src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9CUwgpVzW5mY4hsboFEMHVz2f1FnZmQBcpLhxXAMyF3l0HhKKG20IA8GeVtMHuuo_GECqY6ZPyBOEtziDtgTfhm8krCoJS5FDq4rWeYmj41zDaUUh1xaN33vuEUPrwZTvTxJ18b0R-akfsOG4ah37L9cINjOBY0KCHl6Ag3Gvb-rdiVCqZT0KAuYkyUz4mDjgglKEoiRbFhtn00Q_7tNVHij5h4RfS_UaxTPXJgHupmnV-fxnUaPwsuNtHfuOaLU__2sVYs026tM" alt="Hook 사진 71" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>71 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-71" >
+  <button class="archive-photo" type="button" aria-label="사진 72 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 72</span></span>
+    <img   alt="Hook 사진 72" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>72 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-72" >
+  <button class="archive-photo" type="button" aria-label="사진 73 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 73</span></span>
+    <img   alt="Hook 사진 73" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>73 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-73" >
+  <button class="archive-photo" type="button" aria-label="사진 74 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 74</span></span>
+    <img   alt="Hook 사진 74" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>74 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-74" >
+  <button class="archive-photo" type="button" aria-label="사진 75 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 75</span></span>
+    <img   alt="Hook 사진 75" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>75 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-75" >
+  <button class="archive-photo" type="button" aria-label="사진 76 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 76</span></span>
+    <img   alt="Hook 사진 76" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>76 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-76" >
+  <button class="archive-photo" type="button" aria-label="사진 77 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 77</span></span>
+    <img   alt="Hook 사진 77" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>77 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card has-image" data-pic-key="p5:cell-77" >
+  <button class="archive-photo" type="button" aria-label="사진 78 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 78</span></span>
+    <img  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFT0YzPfQBQucd3EvtgvaIh-_7y3Kczvsh3SRBXN3GWm7dWNV18DWAY_75j7Tw5ieVkj3X_MsP7u6RBfe4bVaJfV4l6pe_-IQgw7e6iJ63YzNLl4ZMJAIayWMJLH4dGVYAMeynkKci9LYZHQuXknBWpV5b5fk5_CVPwEYCrYR3I0pes2ZTiuSx9IBG5hI1nhTuykldjQrungjniCRIt_bdaI0NJg1knWNRVkGGFJAoq8wOoGUgz8Egn-oarx3sufLs8x1cw6_s7M4" alt="Hook 사진 78" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>78 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-78" >
+  <button class="archive-photo" type="button" aria-label="사진 79 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 79</span></span>
+    <img   alt="Hook 사진 79" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>79 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-79" >
+  <button class="archive-photo" type="button" aria-label="사진 80 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 80</span></span>
+    <img   alt="Hook 사진 80" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>80 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-80" >
+  <button class="archive-photo" type="button" aria-label="사진 81 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 81</span></span>
+    <img   alt="Hook 사진 81" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>81 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-81" >
+  <button class="archive-photo" type="button" aria-label="사진 82 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 82</span></span>
+    <img   alt="Hook 사진 82" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>82 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p5:cell-82" >
+  <button class="archive-photo" type="button" aria-label="사진 83 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 83</span></span>
+    <img   alt="Hook 사진 83" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>83 / 83</span><span>HOOK</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure></div>
+  <details class="archive-notes"><summary>Field notes <span>09 문구 <span aria-hidden="true">＋</span></span></summary><div class="archive-notes-grid"><div class="archive-copy" data-text-key="t0" contenteditable="false" spellcheck="false" aria-label="문구 t0">LT-001<br/>REF: ARCHIVE<br/>STATUS: RAW</div>
+<div class="archive-copy" data-text-key="t1" contenteditable="false" spellcheck="false" aria-label="문구 t1">01</div>
+<div class="archive-copy" data-text-key="t2" contenteditable="false" spellcheck="false" aria-label="문구 t2">DATA STREAM 092<br/>X: 45.22<br/>Y: 12.89</div>
+<div class="archive-copy" data-text-key="t3" contenteditable="false" spellcheck="false" aria-label="문구 t3">REDACTED</div>
+<div class="archive-copy" data-text-key="t4" contenteditable="false" spellcheck="false" aria-label="문구 t4">SCAN_ERROR_04<br/>RETRYING...</div>
+<div class="archive-copy" data-text-key="t5" contenteditable="false" spellcheck="false" aria-label="문구 t5">L O W<br/>T H E O R Y<br/>L A B</div>
+<div class="archive-copy" data-text-key="t6" contenteditable="false" spellcheck="false" aria-label="문구 t6">PLATE-77<br/>1982.04.12</div>
+<div class="archive-copy" data-text-key="t7" contenteditable="false" spellcheck="false" aria-label="문구 t7">LT</div>
+<div class="archive-copy" data-text-key="t8" contenteditable="false" spellcheck="false" aria-label="문구 t8">END_OF_TRANS<br/>BUFFER_CLEAR<br/>--0--</div></div></details>
+  <footer class="archive-footer"><span>PERSONAL FRAGMENTS / HOOK</span><span id="archiveStatus" role="status" aria-live="polite"></span><span>민권.com ↗</span></footer>
 </main>
-<div style="height:80px;"></div>
-<!-- Footer from JSON -->
-<footer class="w-full py-8 px-6 flex flex-col md:flex-row justify-between items-center gap-4 bg-[#fbf9f4] dark:bg-[#1a1b18] border-t border-[#b1b3a9]/15" style="display:none;">
-<div class="text-[#31332c] dark:text-[#e8e9e0] font-headline font-black uppercase tracking-widest text-sm">
-            LOWTHEORY
-        </div>
-<div class="flex gap-6">
-<a class="text-[#31332c] dark:text-[#e8e9e0] opacity-50 font-['Space_Grotesk'] text-[10px] uppercase tracking-widest hover:text-[#b91d20] transition-colors duration-150" href="#">INDEX</a>
-<a class="text-[#b91d20] underline underline-offset-4 font-['Space_Grotesk'] text-[10px] uppercase tracking-widest" href="#">ARCHIVE</a>
-<a class="text-[#31332c] dark:text-[#e8e9e0] opacity-50 font-['Space_Grotesk'] text-[10px] uppercase tracking-widest hover:text-[#b91d20] transition-colors duration-150" href="#">MANIFESTO</a>
-<a class="text-[#31332c] dark:text-[#e8e9e0] opacity-50 font-['Space_Grotesk'] text-[10px] uppercase tracking-widest hover:text-[#b91d20] transition-colors duration-150" href="#">CONTACT</a>
-</div>
-<div class="text-[#31332c] dark:text-[#e8e9e0] opacity-50 font-['Space_Grotesk'] text-[10px] uppercase tracking-widest">
-            © LOWTHEORY LAB. ALL RIGHTS RESERVED.
-        </div>
-</footer>
-
-<script src="pic-store.js"></script>
-<script>
-  let p5Unlocked = false;
-  let p5EditMode = false;
-
-  /* 셀 인덱스 → IndexedDB 키, 저장된 사진 복원 */
-  function p5CellKey(cell) {
-    var cells = Array.prototype.slice.call(document.querySelectorAll('.grid-cell'));
-    return 'p5:cell-' + cells.indexOf(cell);
-  }
-  function p5ApplyImage(cell, src) {
-    var img = cell.querySelector('img');
-    if (!img) {
-      img = document.createElement('img');
-      img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
-      cell.innerHTML = '';
-      cell.appendChild(img);
-    }
-    img.src = src;
-  }
-  (function() {
-    var cells = Array.prototype.slice.call(document.querySelectorAll('.grid-cell'));
-    MKPics.getMany(cells.map(function(_, i) { return 'p5:cell-' + i; })).then(function(vals) {
-      cells.forEach(function(cell, i) { if (vals[i]) p5ApplyImage(cell, vals[i]); });
-    });
-  })();
-
-  window.addEventListener('message', e => {
-    if(e.origin!==window.location.origin)return;
-    if (e.data && e.data.type === 'mk_unlock') {
-      p5Unlocked = e.data.value;
-      const btn = document.getElementById('p5-edit-btn');
-      if (btn) btn.style.display = p5Unlocked ? 'flex' : 'none';
-      if (!p5Unlocked && p5EditMode) p5ToggleEdit();
-    }
-  });
-
-  function p5ToggleEdit() {
-    if (!p5Unlocked) return;
-    p5EditMode = !p5EditMode;
-    const btn = document.getElementById('p5-edit-btn');
-    document.querySelectorAll('[contenteditable]').forEach(el => {
-      el.contentEditable = p5EditMode ? 'true' : 'false';
-      el.style.outline = p5EditMode ? '1px dashed rgba(255,180,162,.3)' : '';
-    });
-    // 셀 클릭으로 이미지 교체
-    document.querySelectorAll('.grid-cell').forEach(cell => {
-      if (p5EditMode) {
-        cell.style.cursor = 'pointer';
-        cell.style.outline = '2px dashed rgba(185,29,32,.6)';
-        cell.style.outlineOffset = '-2px';
-        cell.onclick = () => {
-          var inp = document.createElement('input');
-          inp.type = 'file'; inp.accept = 'image/*,.dng';
-          inp.onchange = function(e) {
-            var file = e.target.files[0];
-            if (!file) return;
-            MKPics.fileToDataURL(file).then(function(durl) {
-              // 기존 img 있으면 교체, 없으면 새로 추가
-              p5ApplyImage(cell, durl);
-              MKPics.set(p5CellKey(cell), durl);
-            });
-          };
-          document.body.appendChild(inp);
-          inp.click();
-          setTimeout(()=>{ if(inp.parentNode) inp.parentNode.removeChild(inp); }, 1000);
-        };
-      } else {
-        cell.style.cursor = '';
-        cell.style.outline = '';
-        cell.onclick = null;
-      }
-    });
-    if (btn) {
-      btn.textContent = p5EditMode ? '✓ 완료' : '✎ 편집';
-      btn.style.color = p5EditMode ? '#ffb4a2' : '#a08d88';
-      btn.style.borderColor = p5EditMode ? '#ffb4a2' : '#353535';
-    }
-  }
-
-  document.querySelectorAll('[contenteditable]').forEach(el => {
-    el.contentEditable = 'false';
-  });
-</script>
-
-<script>
-function sendHeight(){
-  var h=document.documentElement.scrollHeight||document.body.scrollHeight;
-  window.parent.postMessage({type:'iframe_height',id:'p5Frame',value:h-80},location.origin);
-}
-if(window.ResizeObserver){new ResizeObserver(sendHeight).observe(document.body);}
-window.addEventListener('load',sendHeight);
-setTimeout(sendHeight,500);
-setTimeout(sendHeight,1500);
-</script></body></html>
+<dialog id="archiveLightbox" aria-label="사진 확대 보기"><div class="archive-lightbox-bar"><span id="archiveCounter"></span><button type="button" id="archiveClose" aria-label="확대 보기 닫기">닫기 ×</button></div><img id="archiveLarge" alt=""/><div class="archive-lightbox-nav"><button id="archivePrev" type="button" aria-label="이전 사진">←</button><button id="archiveNext" type="button" aria-label="다음 사진">→</button></div></dialog>
+<input id="archiveFile" type="file" accept="image/*,.dng" hidden/>
+<script type="application/json" id="archiveConfig">{"page": 5, "frame": "p5Frame", "title": "Hook", "storageKey": "mk_gallery_p5_text_v1", "textField": "texts"}</script>
+</body>
+</html>

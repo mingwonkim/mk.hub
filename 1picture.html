@@ -1,563 +1,72 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LowTheory Editorial Layout</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<script>(function(){document.addEventListener('contextmenu',function(e){e.preventDefault();},true);document.addEventListener('dragstart',function(e){e.preventDefault();},true);['copy','cut'].forEach(function(ev){document.addEventListener(ev,function(e){var t=e.target;if(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable)return;e.preventDefault();},true);});document.addEventListener('keydown',function(e){if(e.key==='F12')e.preventDefault();if(e.ctrlKey&&e.shiftKey&&/^[IJCijc]$/.test(e.key))e.preventDefault();if(e.ctrlKey&&/^[uUsSpP]$/.test(e.key))e.preventDefault();},true);})();</script>
-<style>
-  *{-webkit-user-select:none;-moz-user-select:none;user-select:none;}
-  input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:text;}
-  img{-webkit-user-drag:none;user-drag:none;pointer-events:none;-webkit-touch-callout:none;}
-  body.ed-unlocked img{pointer-events:auto;}
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-  :root {
-    --bg: #4A0E0E;
-    --accent: #E83A30;
-    --white: #f0ece6;
-    --divider: rgba(255,255,255,0.08);
-  }
-
-  body {
-    background: var(--bg);
-    color: var(--white);
-    font-family: 'Instrument Sans', sans-serif;
-    overflow: hidden;
-    margin: 0;
-    padding: 0;
-    height: fit-content;
-  }
-
-  /* ── 숨겨진 파일 인풋 ── */
-  .file-input { display: none; }
-
-  /* ── 메인 레이아웃 ── */
-  .editorial {
-    display: flex;
-    width: 100%;
-    overflow: hidden;
-  }
-
-  .col {
-    display: flex;
-    flex-direction: column;
-    padding: 48px;
-  }
-
-  .col-left {
-    flex: 1;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-  }
-
-  .col-center {
-    flex: 1.25;
-    justify-content: space-between;
-    border-left: 1px solid var(--divider);
-    border-right: 1px solid var(--divider);
-  }
-
-  .col-right {
-    flex: 1;
-    align-items: center;
-    justify-content: center;
-    gap: 40px;
-  }
-
-  /* ── 이미지 슬롯 공통 ── */
-  .img-slot {
-    position: relative;
-    cursor: pointer;
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  .img-slot:hover {
-    transform: scale(1.015);
-  }
-
-  .img-slot::after {
-    content: '📷 클릭하여 사진 교체';
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0,0,0,0.55);
-    color: #fff;
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    opacity: 0;
-    transition: opacity 0.25s ease;
-    pointer-events: none;
-    backdrop-filter: blur(2px);
-  }
-  body.ed-unlocked .img-slot:hover::after {
-    opacity: 1;
-  }
-
-  .img-slot img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  /* ── 이미지 1: 좌측 메인 ── */
-  .slot-1-wrap {
-    position: relative;
-  }
-
-  .slot-1 {
-    width: 320px;
-    height: 340px;
-    box-shadow: 8px 8px 30px rgba(0,0,0,0.5);
-  }
-
-  .slot-1-placeholder {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #1a1a1a 0%, #2d1515 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 48px;
-  }
-
-  .label-raw {
-    position: absolute;
-    right: -55px;
-    top: 45%;
-    transform: translateY(-50%) rotate(12deg);
-    font-family: 'Playfair Display', serif;
-    font-weight: 900;
-    font-style: italic;
-    font-size: 28px;
-    color: var(--accent);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-  }
-
-  .label-nostalgic {
-    position: absolute;
-    bottom: -36px;
-    right: -30px;
-    font-family: 'Playfair Display', serif;
-    font-weight: 900;
-    font-style: italic;
-    font-size: 32px;
-    color: var(--accent);
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    transform: rotate(-3deg);
-  }
-
-  /* 좌측 원형 장식 */
-  .dot-deco {
-    position: absolute;
-    left: -24px;
-    top: -16px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.3);
-    background: rgba(255,255,255,0.08);
-  }
-
-  /* ── 이미지 2: 중앙 메인 ── */
-  .slot-2 {
-    width: 100%;
-    max-width: 480px;
-    aspect-ratio: 1;
-    margin: 0 auto;
-    box-shadow: 8px 8px 30px rgba(0,0,0,0.5);
-  }
-
-  .slot-2-placeholder {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #0a1a0a 0%, #1a2a1a 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 48px;
-  }
-
-  .slot-2-wrap {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    overflow: visible;
-  }
-
-  .label-vhs { z-index: 10; position: absolute;
-    position: absolute;
-    top: -32px;
-    right: 0;
-    font-family: 'Playfair Display', serif;
-    font-weight: 900;
-    font-style: italic;
-    font-size: 42px;
-    color: var(--accent);
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    transform: rotate(-8deg);
-  }
-
-  /* ── 텍스트 영역 ── */
-  .text-intro {
-    font-size: 17px;
-    line-height: 1.55;
-    letter-spacing: -0.3px;
-    opacity: 0.88;
-    max-width: 420px;
-  }
-
-  .text-bottom {
-    text-align: right;
-    max-width: 420px;
-    align-self: flex-end;
-  }
-
-  .text-bottom .sub {
-    font-size: 15px;
-    line-height: 1.6;
-    opacity: 0.75;
-    margin-bottom: 16px;
-  }
-
-  .text-bottom .quote {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 18px;
-    line-height: 1.5;
-  }
-
-  /* ── 이미지 3,4: 우측 상단 스택 ── */
-  .right-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .slot-3, .slot-4 {
-    width: 280px;
-    height: 200px;
-  }
-
-  .slot-3-placeholder, .slot-4-placeholder {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #2a1a10 0%, #3a2a1a 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 36px;
-  }
-
-  /* ── 이미지 5: 폴라로이드 ── */
-  .polaroid-wrap {
-    position: relative;
-  }
-
-  .polaroid {
-    background: #fff;
-    padding: 14px 14px 52px 14px;
-    box-shadow: 4px 6px 20px rgba(0,0,0,0.35);
-    transform: rotate(2deg);
-  }
-
-  .slot-5 {
-    width: 260px;
-    height: 260px;
-  }
-
-  .slot-5-placeholder {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #f5f0ea 0%, #e8e0d6 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 36px;
-  }
-
-  .label-polaroid {
-    position: absolute;
-    bottom: -42px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: 'Playfair Display', serif;
-    font-weight: 900;
-    font-style: italic;
-    font-size: 24px;
-    color: var(--accent);
-    letter-spacing: 3px;
-    white-space: nowrap;
-  }
-
-  /* ── 에디터블 텍스트 ── */
-  [contenteditable] {
-    outline: none;
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.2s;
-  }
-
-  [contenteditable]:hover {
-    border-bottom-color: rgba(255,255,255,0.15);
-  }
-
-  [contenteditable]:focus {
-    border-bottom-color: var(--accent);
-  }
-
-
-
-
-
-  /* ── 레이블도 편집 가능하게 ── */
-  .label-editable {
-    cursor: text;
-  }
-
-  .label-editable:hover {
-    text-decoration: underline;
-    text-decoration-color: rgba(232,58,48,0.4);
-    text-underline-offset: 4px;
-  }
-
-  /* ── 반응형 ── */
-  @media (max-width: 1100px) {
-    .editorial {
-      flex-direction: column;
-    }
-    .col {
-      padding: 32px 24px;
-      border-left: none !important;
-      border-right: none !important;
-      border-bottom: 1px solid var(--divider);
-    }
-    .col-left, .col-right {
-      align-items: center;
-    }
-    .slot-2 { max-width: 400px; }
-  }
-</style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Intro — MK.HUB</title>
+<link rel="stylesheet" href="gallery.css"/>
+<script src="pic-store.js" defer></script>
+<script src="gallery.js" defer></script>
 </head>
-<body>
-
-<button id="ed-edit-btn"
-  style="display:none;position:sticky;top:12px;float:right;z-index:9999;
-    align-items:center;gap:6px;padding:7px 16px;margin:12px 12px 0 0;
-    border:1px solid #353535;border-radius:9999px;
-    background:rgba(14,14,14,.85);backdrop-filter:blur(8px);color:#a08d88;
-    font-size:11px;font-family:'Instrument Sans',sans-serif;font-weight:700;
-    letter-spacing:.08em;text-transform:uppercase;cursor:pointer;"
-  onclick="toggleEdit()">✎ 편집</button>
-
-<!-- 숨겨진 파일 인풋들 -->
-<input type="file" accept="image/*,.dng" class="file-input" id="input-1">
-<input type="file" accept="image/*,.dng" class="file-input" id="input-2">
-<input type="file" accept="image/*,.dng" class="file-input" id="input-3">
-<input type="file" accept="image/*,.dng" class="file-input" id="input-4">
-<input type="file" accept="image/*,.dng" class="file-input" id="input-5">
-
-<!-- 메인 레이아웃 -->
-<div class="editorial" id="editorialLayout">
-
-  <!-- 좌측 컬럼 -->
-  <div class="col col-left">
-    <div class="slot-1-wrap">
-      <div class="dot-deco"></div>
-      <div class="img-slot slot-1" data-slot="1" onclick="document.getElementById('input-1').click()">
-        <div class="slot-1-placeholder" id="placeholder-1">🎤</div>
-      </div>
-      <span class="label-raw label-editable" contenteditable="true">RAW</span>
-      <span class="label-nostalgic label-editable" contenteditable="true">NOSTALGIC</span>
-    </div>
-  </div>
-
-  <!-- 중앙 컬럼 -->
-  <div class="col col-center">
-    <p class="text-intro" contenteditable="true">At LowTheory, we thrive at the intersection of art, fashion and cultural tension. This means our creative direction will feel native to your identity and push it into bold territories Western audiences respond to.</p>
-
-    <div class="slot-2-wrap">
-      <span class="label-vhs label-editable" contenteditable="true">VHS</span>
-      <div class="img-slot slot-2" data-slot="2" onclick="document.getElementById('input-2').click()">
-        <div class="slot-2-placeholder" id="placeholder-2">🌿</div>
-      </div>
-    </div>
-
-    <div class="text-bottom">
-      <p class="sub" contenteditable="true">We also have direct access to the top studios in europe for a more simplified campaign look or a detailed composition.</p>
-      <p class="quote" contenteditable="true"><em>Everything we create passes through touch and tape.</em></p>
-    </div>
-  </div>
-
-  <!-- 우측 컬럼 -->
-  <div class="col col-right">
-    <div class="right-stack">
-      <div class="img-slot slot-3" data-slot="3" onclick="document.getElementById('input-3').click()">
-        <div class="slot-3-placeholder" id="placeholder-3">👠</div>
-      </div>
-      <div class="img-slot slot-4" data-slot="4" onclick="document.getElementById('input-4').click()">
-        <div class="slot-4-placeholder" id="placeholder-4">👗</div>
-      </div>
-    </div>
-
-    <div class="polaroid-wrap">
-      <div class="polaroid">
-        <div class="img-slot slot-5" data-slot="5" onclick="document.getElementById('input-5').click()">
-          <div class="slot-5-placeholder" id="placeholder-5">🎈</div>
-        </div>
-      </div>
-      <span class="label-polaroid label-editable" contenteditable="true">Polaroid / Spectra</span>
-    </div>
-  </div>
-
-</div>
-
-
-
-<script src="pic-store.js"></script>
-<script>
-  // ── index.html postMessage로 인증 상태 수신 ──
-  let edUnlocked = false;
-
-  window.addEventListener('message', e => {
-    if(e.origin!==window.location.origin)return;
-    if (e.data && e.data.type === 'mk_unlock') {
-      edUnlocked = e.data.value;
-      const btn = document.getElementById('ed-edit-btn');
-      if (btn) btn.style.display = edUnlocked ? 'flex' : 'none';
-      if (!edUnlocked) disableEditing();
-    }
-  });
-
-  function enableEditing() {
-    document.body.classList.add('ed-unlocked');
-    document.querySelectorAll('[contenteditable]').forEach(el => {
-      el.contentEditable = 'true';
-      el.style.cursor = 'text';
-    });
-    document.querySelectorAll('.img-slot').forEach(slot => {
-      slot.onclick = () => document.getElementById('input-' + slot.dataset.slot).click();
-    });
-    const btn = document.getElementById('ed-edit-btn');
-    if (btn) { btn.textContent = '✓ 완료'; btn.style.background = 'rgba(255,180,162,.15)'; btn.style.borderColor = '#ffb4a2'; btn.style.color = '#ffb4a2'; }
-  }
-
-  function disableEditing() {
-    document.body.classList.remove('ed-unlocked');
-    document.querySelectorAll('[contenteditable]').forEach(el => {
-      el.contentEditable = 'false';
-      el.style.cursor = 'default';
-    });
-    document.querySelectorAll('.img-slot').forEach(slot => {
-      slot.onclick = null;
-    });
-    const btn = document.getElementById('ed-edit-btn');
-    if (btn) { btn.textContent = '✎ 편집'; btn.style.background = 'rgba(14,14,14,.85)'; btn.style.borderColor = '#353535'; btn.style.color = '#a08d88'; }
-  }
-
-  let editMode = false;
-  function toggleEdit() {
-    if (!edUnlocked) return;
-    editMode = !editMode;
-    if (editMode) enableEditing();
-    else disableEditing();
-  }
-
-  // ── 파일 선택 시 이미지 교체 ──
-  document.querySelectorAll('.file-input').forEach(input => {
-    input.addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const slotNum = this.id.replace('input-', '');
-      const slot = document.querySelector('.img-slot[data-slot="' + slotNum + '"]');
-      const placeholder = document.getElementById('placeholder-' + slotNum);
-      MKPics.fileToDataURL(file).then(durl => {
-        if (placeholder) placeholder.remove();
-        let img = slot.querySelector('img');
-        if (!img) { img = document.createElement('img'); slot.prepend(img); }
-        img.src = durl;
-        MKPics.set('p1:s' + slotNum, durl);
-        saveState();
-      });
-      this.value = '';
-    });
-  });
-
-  // ── 상태 저장/복원 (텍스트: localStorage / 사진: IndexedDB) ──
-  const STORAGE_KEY = 'editorial_layout_state_v1';
-  function saveState() {
-    const state = { texts: {} };
-    document.querySelectorAll('[contenteditable]').forEach((el, i) => {
-      state.texts['t' + i] = el.innerHTML;
-    });
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
-  }
-  function applyImage(slotNum, src) {
-    const slot = document.querySelector('.img-slot[data-slot="' + slotNum + '"]');
-    if (!slot || !src) return;
-    const placeholder = document.getElementById('placeholder-' + slotNum);
-    if (placeholder) placeholder.remove();
-    let img = slot.querySelector('img');
-    if (!img) { img = document.createElement('img'); slot.prepend(img); }
-    img.src = src;
-  }
-  function loadState() {
-    let legacyImages = null;
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const state = JSON.parse(raw);
-        document.querySelectorAll('[contenteditable]').forEach((el, i) => {
-          if (state.texts && state.texts['t' + i]) el.innerHTML = state.texts['t' + i];
-        });
-        if (state.images) legacyImages = state.images;
-      }
-    } catch(e) {}
-    const slots = ['1','2','3','4','5'];
-    MKPics.getMany(slots.map(n => 'p1:s' + n)).then(vals => {
-      slots.forEach((n, i) => {
-        let src = vals[i];
-        if (!src && legacyImages && legacyImages['s' + n]) {
-          src = legacyImages['s' + n];
-          MKPics.set('p1:s' + n, src);
-        }
-        if (src) applyImage(n, src);
-      });
-      if (legacyImages) saveState(); /* 구버전 LS에서 images 제거 → 용량 확보 */
-    });
-  }
-  document.querySelectorAll('[contenteditable]').forEach(el => {
-    el.addEventListener('input', saveState);
-    el.addEventListener('blur', saveState);
-  });
-
-  // 초기 상태 로드 + 편집 비활성화
-  loadState();
-  disableEditing();
-</script>
-
-
-<script>
-(function(){
-  function sendH(){
-    var el = document.getElementById("editorialLayout") || document.body;
-    var h = el.getBoundingClientRect().height || el.offsetHeight;
-    window.parent.postMessage({type:'iframe_height',id:'edLayoutFrame',value:h},location.origin);
-  }
-  if(window.ResizeObserver){new ResizeObserver(sendH).observe(document.body);}
-  window.addEventListener('load', sendH);
-  setTimeout(sendH, 500);
-  setTimeout(sendH, 1500);
-})();
-</script>
+<body class="archive-page archive-p1">
+<main id="archiveRoot">
+  <header class="archive-header">
+    <div class="archive-meta"><span>MK.HUB / VISUAL ARCHIVE</span><span>01 — 05</span></div>
+    <div class="archive-title-row"><h1>Intro<span class="archive-title-dot">.</span></h1><button id="archiveEdit" type="button" hidden>편집 ↗</button></div>
+    <div class="archive-subline"><p>The things that stay.</p><span>SCROLL TO EXPLORE ↓</span></div>
+  </header>
+  <div class="archive-grid"><figure class="archive-card" data-pic-key="p1:s1" data-slot="1">
+  <button class="archive-photo" type="button" aria-label="사진 1 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 01</span></span>
+    <img   alt="Intro 사진 1" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>01 / 05</span><span>INTRO</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p1:s2" data-slot="2">
+  <button class="archive-photo" type="button" aria-label="사진 2 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 02</span></span>
+    <img   alt="Intro 사진 2" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>02 / 05</span><span>INTRO</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p1:s3" data-slot="3">
+  <button class="archive-photo" type="button" aria-label="사진 3 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 03</span></span>
+    <img   alt="Intro 사진 3" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>03 / 05</span><span>INTRO</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p1:s4" data-slot="4">
+  <button class="archive-photo" type="button" aria-label="사진 4 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 04</span></span>
+    <img   alt="Intro 사진 4" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>04 / 05</span><span>INTRO</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p1:s5" data-slot="5">
+  <button class="archive-photo" type="button" aria-label="사진 5 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 05</span></span>
+    <img   alt="Intro 사진 5" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>05 / 05</span><span>INTRO</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure></div>
+  <details class="archive-notes"><summary>Field notes <span>07 문구 <span aria-hidden="true">＋</span></span></summary><div class="archive-notes-grid"><div class="archive-copy" data-text-key="t0" contenteditable="false" spellcheck="false" aria-label="문구 t0">RAW</div>
+<div class="archive-copy" data-text-key="t1" contenteditable="false" spellcheck="false" aria-label="문구 t1">NOSTALGIC</div>
+<div class="archive-copy" data-text-key="t2" contenteditable="false" spellcheck="false" aria-label="문구 t2">At LowTheory, we thrive at the intersection of art, fashion and cultural tension. This means our creative direction will feel native to your identity and push it into bold territories Western audiences respond to.</div>
+<div class="archive-copy" data-text-key="t3" contenteditable="false" spellcheck="false" aria-label="문구 t3">VHS</div>
+<div class="archive-copy" data-text-key="t4" contenteditable="false" spellcheck="false" aria-label="문구 t4">We also have direct access to the top studios in europe for a more simplified campaign look or a detailed composition.</div>
+<div class="archive-copy" data-text-key="t5" contenteditable="false" spellcheck="false" aria-label="문구 t5"><em>Everything we create passes through touch and tape.</em></div>
+<div class="archive-copy" data-text-key="t6" contenteditable="false" spellcheck="false" aria-label="문구 t6">Polaroid / Spectra</div></div></details>
+  <footer class="archive-footer"><span>PERSONAL FRAGMENTS / INTRO</span><span id="archiveStatus" role="status" aria-live="polite"></span><span>민권.com ↗</span></footer>
+</main>
+<dialog id="archiveLightbox" aria-label="사진 확대 보기"><div class="archive-lightbox-bar"><span id="archiveCounter"></span><button type="button" id="archiveClose" aria-label="확대 보기 닫기">닫기 ×</button></div><img id="archiveLarge" alt=""/><div class="archive-lightbox-nav"><button id="archivePrev" type="button" aria-label="이전 사진">←</button><button id="archiveNext" type="button" aria-label="다음 사진">→</button></div></dialog>
+<input id="archiveFile" type="file" accept="image/*,.dng" hidden/>
+<script type="application/json" id="archiveConfig">{"page": 1, "frame": "edLayoutFrame", "title": "Intro", "storageKey": "editorial_layout_state_v1", "textField": "texts"}</script>
 </body>
 </html>

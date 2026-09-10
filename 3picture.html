@@ -1,809 +1,107 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Moodboard Template</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&family=Inter:wght@300;400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet"/>
-  <script>(function(){document.addEventListener('contextmenu',function(e){e.preventDefault();},true);document.addEventListener('dragstart',function(e){e.preventDefault();},true);['copy','cut'].forEach(function(ev){document.addEventListener(ev,function(e){var t=e.target;if(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable)return;e.preventDefault();},true);});document.addEventListener('keydown',function(e){if(e.key==='F12')e.preventDefault();if(e.ctrlKey&&e.shiftKey&&/^[IJCijc]$/.test(e.key))e.preventDefault();if(e.ctrlKey&&/^[uUsSpP]$/.test(e.key))e.preventDefault();},true);})();</script>
-  <style>
-    *{-webkit-user-select:none;-moz-user-select:none;user-select:none;}
-    input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:text;}
-    img{-webkit-user-drag:none;user-drag:none;pointer-events:none;-webkit-touch-callout:none;}
-    :root {
-      --bg: #120c0c;
-      --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
-      --line: rgba(255,255,255,0.18);
-      --paper: #ffffff;
-      --paper-text: #111111;
-      --tape: rgba(241, 232, 209, 0.95);
-      --muted: rgba(255,255,255,0.65);
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: 'Inter', Arial, sans-serif;
-      background:
-        radial-gradient(circle at 50% 40%, rgba(70, 18, 18, 0.18), transparent 38%),
-        radial-gradient(circle at 20% 25%, rgba(70, 18, 18, 0.08), transparent 26%),
-        radial-gradient(circle at 80% 30%, rgba(70, 18, 18, 0.08), transparent 26%),
-        #0f0909;
-      color: #fff;
-    }
-
-    .page {
-      width: min(1220px, calc(100vw - 32px));
-      margin: 24px auto 16px;
-    }
-
-    .toolbar {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      margin-bottom: 18px;
-      padding: 14px 16px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.03);
-      backdrop-filter: blur(8px);
-      border-radius: 16px;
-      box-shadow: var(--card-shadow);
-    }
-
-    .toolbar h1 {
-      margin: 0;
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    .toolbar p {
-      margin: 6px 0 0;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .toolbar-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    button {
-      border: 0;
-      border-radius: 999px;
-      padding: 10px 14px;
-      font-size: 14px;
-      cursor: pointer;
-      background: #f3f2ed;
-      color: #111;
-      transition: transform 0.15s ease, opacity 0.15s ease;
-    }
-
-    button:hover { transform: translateY(-1px); }
-    button.secondary {
-      background: rgba(255,255,255,0.08);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.14);
-    }
-
-    .board {
-      display: grid;
-      grid-template-columns: 1.1fr 1fr 1fr 1fr 1fr;
-      gap: 18px;
-      grid-template-areas:
-        ". floral abstract black ."
-        ". woman parchment duo ."
-        "taupe red1 red2 burgundy mahogany";
-      align-items: start;
-    }
-
-    .item {
-      position: relative;
-    }
-
-    .swatch {
-      aspect-ratio: 1 / 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      text-align: left;
-      box-shadow: 0 8px 28px rgba(0,0,0,0.42);
-      padding: 20px 22px;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
-    .swatch:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 16px 40px rgba(0,0,0,0.52);
-    }
-
-    .swatch .name {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(20px, 1.8vw, 30px);
-      font-weight: 500;
-      line-height: 1.12;
-      margin-bottom: 10px;
-      letter-spacing: -0.01em;
-      outline: none;
-    }
-
-    .swatch .meta {
-      font-family: 'Inter', sans-serif;
-      font-size: clamp(11px, 0.9vw, 14px);
-      line-height: 1.5;
-      white-space: pre-line;
-      opacity: 0.6;
-      outline: none;
-    }
-
-    .swatch[contenteditable="true"],
-    .editable[contenteditable="true"] {
-      cursor: text;
-    }
-
-    .polaroid {
-      background: #faf8f4;
-      padding: 11px 11px 50px;
-      border-radius: 2px;
-      position: relative;
-      overflow: visible;
-      box-shadow: 0 10px 28px rgba(0,0,0,0.38), 0 2px 6px rgba(0,0,0,0.14);
-      transition: transform 0.35s cubic-bezier(.22,.68,0,1.2), box-shadow 0.3s ease;
-    }
-
-    .item-abstract  .polaroid:hover,
-    .item-woman     .polaroid:hover,
-    .item-red1      .polaroid:hover,
-    .item-red2      .polaroid:hover {
-      box-shadow: 0 18px 48px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.28);
-    }
-
-
-    /* 카드별 자연스러운 기울기 */
-    .item-abstract  .polaroid { transform: rotate(-2.2deg); }
-    .item-woman     .polaroid { transform: rotate(1.6deg); }
-    .item-red1      .polaroid { transform: rotate(-1.3deg); }
-    .item-red2      .polaroid { transform: rotate(2.4deg); }
-
-    .item-abstract  .polaroid:hover { transform: rotate(-1deg) translateY(-6px); }
-    .item-woman     .polaroid:hover { transform: rotate(0.8deg) translateY(-6px); }
-    .item-red1      .polaroid:hover { transform: rotate(-0.5deg) translateY(-6px); }
-    .item-red2      .polaroid:hover { transform: rotate(1.2deg) translateY(-6px); }
-
-    .polaroid:hover {
-      box-shadow:
-        0 18px 48px rgba(0,0,0,0.58),
-        0 4px 12px rgba(0,0,0,0.28);
-    }
-
-    .polaroid.tall { min-height: auto; }
-    .polaroid.square { min-height: auto; }
-
-    .polaroid .photo {
-      width: 100%;
-      overflow: hidden;
-      position: relative;
-    }
-
-    /* Figma 기준 비율 적용 */
-    .polaroid.square .photo { aspect-ratio: 218 / 158; }
-    .polaroid.tall .photo   { aspect-ratio: 218 / 226; }
-
-    .polaroid img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .photo-placeholder {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 16px;
-      color: #b0a898;
-      font-size: 12px;
-      letter-spacing: 0.05em;
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(145deg, #edeae2, #e4e0d6);
-    }
-
-    /* ── 테이프 ── */
-    .tape {
-      position: absolute;
-      top: -12px;
-      left: 50%;
-      transform: translateX(-50%) rotate(-3.5deg);
-      width: 86px;
-      height: 22px;
-      /* 줄무늬 질감 */
-      background:
-        repeating-linear-gradient(
-          90deg,
-          transparent, transparent 4px,
-          rgba(255,255,255,0.13) 4px, rgba(255,255,255,0.13) 5px
-        ),
-        rgba(238, 228, 200, 0.86);
-    }
-    /* 찢어진 왼쪽 끝 */
-    .tape::before {
-      content: '';
-      position: absolute;
-      top: 0; bottom: 0;
-      left: -5px;
-      width: 9px;
-      background: rgba(238, 228, 200, 0.86);
-      clip-path: polygon(
-        100% 0%, 100% 100%,
-        65% 92%, 80% 75%, 55% 60%,
-        78% 45%, 50% 30%, 72% 14%, 100% 0%
-      );
-    }
-    /* 찢어진 오른쪽 끝 */
-    .tape::after {
-      content: '';
-      position: absolute;
-      top: 0; bottom: 0;
-      right: -5px;
-      width: 9px;
-      background: rgba(238, 228, 200, 0.86);
-      clip-path: polygon(
-        0% 0%, 0% 100%,
-        35% 92%, 20% 75%, 45% 60%,
-        22% 45%, 50% 30%, 28% 14%, 0% 0%
-      );
-    }
-
-    /* ── 폴라로이드 자연스러운 표면 질감 ── */
-    .polaroid::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(148deg,
-        rgba(255,255,255,0.14) 0%,
-        transparent 38%,
-        rgba(0,0,0,0.04) 70%,
-        rgba(0,0,0,0.07) 100%
-      );
-      border-radius: 2px;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    /* ── 사진 영역 비네트 (필름 느낌) ── */
-    .polaroid .photo::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at 50% 44%,
-        transparent 38%,
-        rgba(0,0,0,0.30) 100%
-      );
-      pointer-events: none;
-      z-index: 1;
-      mix-blend-mode: multiply;
-    }
-
-    /* ── 핸드라이팅 캡션 ── */
-    .caption {
-      position: absolute;
-      bottom: 9px;
-      left: 11px; right: 11px;
-      font-family: 'Caveat', cursive;
-      font-size: 14px;
-      font-weight: 500;
-      color: rgba(40,28,24,0.58);
-      text-align: center;
-      line-height: 1.25;
-      z-index: 3;
-      outline: none;
-    }
-    .caption:empty::before {
-      content: attr(data-ph);
-      color: rgba(0,0,0,0.15);
-      pointer-events: none;
-    }
-
-    /* ── 폴라로이드 카드별 톤 변화 ── */
-    .item-abstract .polaroid { background: #f6f2e8; }
-    .item-woman    .polaroid { background: #faf8f4; }
-    .item-red1     .polaroid { background: #f8f7f3; }
-    .item-red2     .polaroid { background: #f9f5ec; }
-
-    /* ── 카드별 그림자 깊이 변화 ── */
-    .item-abstract .polaroid {
-      box-shadow: 0 14px 36px rgba(0,0,0,0.45), 0 4px 10px rgba(0,0,0,0.20);
-    }
-    .item-red2 .polaroid {
-      box-shadow: 0 8px 20px rgba(0,0,0,0.30), 0 2px 5px rgba(0,0,0,0.12);
-    }
-
-    /* ── 테이프 개별 변화 ── */
-    .item-woman .tape   { opacity: 0.82; width: 78px; }
-    .item-red2  .tape   { width: 94px; opacity: 0.92; }
-
-    /* ── 사진 placeholder 개선 (크로스해치 패턴) ── */
-    .photo-placeholder {
-      background:
-        repeating-linear-gradient(
-          -48deg,
-          transparent 0px, transparent 18px,
-          rgba(160,148,136,0.10) 18px, rgba(160,148,136,0.10) 19px
-        ),
-        linear-gradient(145deg, #edeae2, #e4e0d6) !important;
-    }
-
-    /* ── 테이프 z-index (grain 위에 표시) ── */
-    .tape { z-index: 5; }
-
-    .clip-note {
-      position: absolute;
-      right: -4px;
-      bottom: -20px;
-      width: 100px;
-      height: 50px;
-      background: #f3ede2;
-      border-radius: 4px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.22);
-      transform: rotate(-4deg);
-    }
-
-    .clip-note::after {
-      content: "";
-      position: absolute;
-      right: 14px;
-      top: -13px;
-      width: 9px;
-      height: 22px;
-      border: 1.5px solid rgba(90,90,90,0.8);
-      border-bottom: 0;
-      border-radius: 6px 6px 0 0;
-      transform: rotate(-6deg);
-    }
-
-    .upload-bar {
-      position: absolute;
-      left: 10px;
-      right: 10px;
-      bottom: 10px;
-      display: flex;
-      justify-content: center;
-    }
-
-    .upload-btn {
-      background: rgba(17,17,17,0.92);
-      color: #fff;
-      border: 0;
-      border-radius: 999px;
-      padding: 8px 12px;
-      font-size: 12px;
-      display: none;
-    }
-
-    .upload-btn:hover { opacity: 0.9; }
-
-    .hidden-input { display: none; }
-
-    .item-floral { grid-area: floral; }
-    .item-abstract { grid-area: abstract; }
-    .item-black { grid-area: black; }
-    .item-woman { grid-area: woman; }
-    .item-parchment { grid-area: parchment; }
-    .item-duo { grid-area: duo; }
-    .item-taupe { grid-area: taupe; align-self: center; }
-    .item-red1 { grid-area: red1; }
-    .item-red2 { grid-area: red2; }
-    .item-burgundy { grid-area: burgundy; }
-    .item-mahogany { grid-area: mahogany; align-self: center; }
-
-    .swatch.light {
-      color: #151515;
-      background: #fffcf1;
-    }
-
-    .swatch.parchment {
-      color: #151515;
-      background: #f3f2ed;
-    }
-
-    .swatch.dark {
-      color: #f1f1f1;
-      background: #130e0e;
-    }
-
-    .swatch.taupe {
-      color: #f1eee9;
-      background: #5c5252;
-    }
-
-    .swatch.burgundy {
-      color: #f7eee9;
-      background: linear-gradient(180deg, #4f0909, #6a0606);
-    }
-
-    .swatch.mahogany {
-      color: #f6ece9;
-      background: linear-gradient(180deg, #6d0606, #7f0a0a);
-    }
-
-    /* 하단 행 스와치: Figma 기준 246×158 가로형 */
-    .item-taupe    .swatch,
-    .item-burgundy .swatch,
-    .item-mahogany .swatch { aspect-ratio: 246 / 158; }
-
-    @media (max-width: 980px) {
-      .board {
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-areas:
-          "floral abstract"
-          "black woman"
-          "parchment duo"
-          "taupe red1"
-          "red2 burgundy"
-          "mahogany mahogany";
-      }
-
-      .swatch,
-      .polaroid.tall,
-      .polaroid.square { min-height: auto; }
-    }
-
-    @media (max-width: 640px) {
-      .page { width: min(100vw - 20px, 560px); }
-      .board {
-        grid-template-columns: 1fr;
-        grid-template-areas:
-          "floral"
-          "abstract"
-          "black"
-          "woman"
-          "parchment"
-          "duo"
-          "taupe"
-          "red1"
-          "red2"
-          "burgundy"
-          "mahogany";
-      }
-    }
-
-    @media (max-width: 767px) {
-      html {
-        width: 1220px !important;
-        zoom: 0.31 !important;
-        overflow: hidden !important;
-      }
-      body {
-        overflow: hidden !important;
-      }
-    }
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Prechorus — MK.HUB</title>
+<link rel="stylesheet" href="gallery.css"/>
+<script src="pic-store.js" defer></script>
+<script src="gallery.js" defer></script>
 </head>
-<body style="background:transparent;overflow-x:hidden;">
-
-
-  <div class="page">
-    <button id="mb-edit-btn"
-  style="display:none;position:sticky;top:12px;float:right;z-index:9999;
-    align-items:center;gap:6px;padding:7px 16px;margin:12px 12px 0 0;
-    border:1px solid #353535;border-radius:9999px;
-    background:rgba(14,14,14,.85);backdrop-filter:blur(8px);color:#a08d88;
-    font-size:11px;font-family:'Space Grotesk',sans-serif;font-weight:700;
-    letter-spacing:.08em;text-transform:uppercase;cursor:pointer;"
-  onclick="mbToggleEdit()">✎ 편집</button>
-<div class="toolbar" style="display:none;">
-      <div>
-        <h1>무드보드 HTML 템플릿</h1>
-        <p>사진 카드의 “사진 넣기” 버튼을 눌러 이미지를 바꿀 수 있고, 색상 카드 텍스트는 바로 수정할 수 있습니다.</p>
-      </div>
-      <div class="toolbar-actions">
-        <button class="secondary" onclick="resetPhotos()">사진 초기화</button>
-        <button onclick="window.print()">인쇄 / PDF 저장</button>
-      </div>
-    </div>
-
-    <section class="board">
-      <div class="item item-floral">
-        <div class="swatch light">
-          <div>
-            <div class="name editable" contenteditable="true">Floral White</div>
-            <div class="meta editable" contenteditable="true">#FFFCF1
+<body class="archive-page archive-p3">
+<main id="archiveRoot">
+  <header class="archive-header">
+    <div class="archive-meta"><span>MK.HUB / VISUAL ARCHIVE</span><span>03 — 05</span></div>
+    <div class="archive-title-row"><h1>Prechorus<span class="archive-title-dot">.</span></h1><button id="archiveEdit" type="button" hidden>편집 ↗</button></div>
+    <div class="archive-subline"><p>Collected, not forgotten.</p><span>SCROLL TO EXPLORE ↓</span></div>
+  </header>
+  <div class="archive-grid"><figure class="archive-card has-image" data-pic-key="p3:img-1" data-slot="1">
+  <button class="archive-photo" type="button" aria-label="사진 1 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 01</span></span>
+    <img id="img-1" src="data:image/svg+xml;utf8,&lt;?xml version=&#x27;1.0&#x27; encoding=&#x27;UTF-8&#x27;?&gt;
+            &lt;svg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; viewBox=&#x27;0 0 600 600&#x27;&gt;
+              &lt;defs&gt;
+                &lt;linearGradient id=&#x27;g&#x27; x1=&#x27;0&#x27; y1=&#x27;0&#x27; x2=&#x27;1&#x27; y2=&#x27;1&#x27;&gt;
+                  &lt;stop stop-color=&#x27;%23060606&#x27; offset=&#x27;0&#x27;/&gt;
+                  &lt;stop stop-color=&#x27;%23262626&#x27; offset=&#x27;0.5&#x27;/&gt;
+                  &lt;stop stop-color=&#x27;%230a0a0a&#x27; offset=&#x27;1&#x27;/&gt;
+                &lt;/linearGradient&gt;
+                &lt;filter id=&#x27;b&#x27;&gt;&lt;feGaussianBlur stdDeviation=&#x27;16&#x27;/&gt;&lt;/filter&gt;
+              &lt;/defs&gt;
+              &lt;rect width=&#x27;600&#x27; height=&#x27;600&#x27; fill=&#x27;url(%23g)&#x27;/&gt;
+              &lt;path d=&#x27;M70 120C180 40 240 60 320 170S450 270 560 180&#x27; stroke=&#x27;%23f1f1f1&#x27; stroke-opacity=&#x27;0.75&#x27; stroke-width=&#x27;34&#x27; fill=&#x27;none&#x27; filter=&#x27;url(%23b)&#x27;/&gt;
+              &lt;path d=&#x27;M60 500C180 340 320 380 520 120&#x27; stroke=&#x27;%23dadada&#x27; stroke-opacity=&#x27;0.7&#x27; stroke-width=&#x27;28&#x27; fill=&#x27;none&#x27; filter=&#x27;url(%23b)&#x27;/&gt;
+            &lt;/svg&gt;" alt="Prechorus 사진 1" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>01 / 05</span><span>PRECHORUS</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p3:img-2" data-slot="2">
+  <button class="archive-photo" type="button" aria-label="사진 2 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 02</span></span>
+    <img id="img-2"  alt="Prechorus 사진 2" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>02 / 05</span><span>PRECHORUS</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p3:img-3" data-slot="3">
+  <button class="archive-photo" type="button" aria-label="사진 3 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 03</span></span>
+    <img id="img-3"  alt="Prechorus 사진 3" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>03 / 05</span><span>PRECHORUS</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p3:img-4" data-slot="4">
+  <button class="archive-photo" type="button" aria-label="사진 4 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 04</span></span>
+    <img id="img-4"  alt="Prechorus 사진 4" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>04 / 05</span><span>PRECHORUS</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure><figure class="archive-card" data-pic-key="p3:img-5" data-slot="5">
+  <button class="archive-photo" type="button" aria-label="사진 5 확대">
+    <span class="archive-placeholder"><span class="archive-cross">＋</span><span>FRAME 05</span></span>
+    <img id="img-5"  alt="Prechorus 사진 5" loading="lazy" decoding="async" draggable="false"/>
+    <span class="archive-open" aria-hidden="true">↗</span>
+  </button>
+  <figcaption><span>05 / 05</span><span>PRECHORUS</span></figcaption>
+  <div class="archive-edit-actions"><button type="button" data-action="replace">사진 넣기·교체</button><button type="button" data-action="remove">삭제</button></div>
+</figure></div>
+  <details class="archive-notes"><summary>Field notes <span>17 문구 <span aria-hidden="true">＋</span></span></summary><div class="archive-notes-grid"><div class="archive-copy" data-text-key="t0" contenteditable="false" spellcheck="false" aria-label="문구 t0">Floral White</div>
+<div class="archive-copy" data-text-key="t1" contenteditable="false" spellcheck="false" aria-label="문구 t1">#FFFCF1
 RGB: 255 252 241
 CMYK: 0 1 5 0</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="item item-abstract">
-        <div class="tape" style="transform:translateX(-50%) rotate(-4deg);"></div>
-        <div class="polaroid tall">
-          <div class="photo">
-            <img id="img-1" alt="업로드 이미지 1" src="data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?>
-            <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 600'>
-              <defs>
-                <linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
-                  <stop stop-color='%23060606' offset='0'/>
-                  <stop stop-color='%23262626' offset='0.5'/>
-                  <stop stop-color='%230a0a0a' offset='1'/>
-                </linearGradient>
-                <filter id='b'><feGaussianBlur stdDeviation='16'/></filter>
-              </defs>
-              <rect width='600' height='600' fill='url(%23g)'/>
-              <path d='M70 120C180 40 240 60 320 170S450 270 560 180' stroke='%23f1f1f1' stroke-opacity='0.75' stroke-width='34' fill='none' filter='url(%23b)'/>
-              <path d='M60 500C180 340 320 380 520 120' stroke='%23dadada' stroke-opacity='0.7' stroke-width='28' fill='none' filter='url(%23b)'/>
-            </svg>" />
-            <div class="photo-placeholder" data-placeholder-for="img-1" hidden>사진 넣기</div>
-          </div>
-          <div class="upload-bar">
-            <button class="upload-btn" onclick="mbPickImage('img-1')">사진 넣기</button>
-          </div>
-          <div class="caption" contenteditable="true" data-ph="— caption —"></div>
-        </div>
-      </div>
-
-      <div class="item item-black">
-        <div class="swatch dark">
-          <div>
-            <div class="name editable" contenteditable="true">Pitch Black</div>
-            <div class="meta editable" contenteditable="true">#130E0E
+<div class="archive-copy" data-text-key="t2" contenteditable="false" spellcheck="false" aria-label="문구 t2"></div>
+<div class="archive-copy" data-text-key="t3" contenteditable="false" spellcheck="false" aria-label="문구 t3">Pitch Black</div>
+<div class="archive-copy" data-text-key="t4" contenteditable="false" spellcheck="false" aria-label="문구 t4">#130E0E
 RGB: 19 14 14
 CMYK: 0 26 26 99</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="item item-woman">
-        <div class="tape" style="transform:translateX(-50%) rotate(3.2deg);"></div>
-        <div class="polaroid tall">
-          <div class="photo">
-            <img id="img-2" alt="업로드 이미지 2" src="" />
-            <div class="photo-placeholder" data-placeholder-for="img-2">사진 넣기</div>
-          </div>
-          <div class="upload-bar">
-            <button class="upload-btn" onclick="mbPickImage('img-2')">사진 넣기</button>
-          </div>
-          <div class="caption" contenteditable="true" data-ph="— caption —"></div>
-        </div>
-      </div>
-
-      <div class="item item-parchment">
-        <div class="swatch parchment">
-          <div>
-            <div class="name editable" contenteditable="true">Parchment</div>
-            <div class="meta editable" contenteditable="true">#F3F2ED
+<div class="archive-copy" data-text-key="t5" contenteditable="false" spellcheck="false" aria-label="문구 t5"></div>
+<div class="archive-copy" data-text-key="t6" contenteditable="false" spellcheck="false" aria-label="문구 t6">Parchment</div>
+<div class="archive-copy" data-text-key="t7" contenteditable="false" spellcheck="false" aria-label="문구 t7">#F3F2ED
 RGB: 243 242 237
 CMYK: 0 0 2 5</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="item item-duo">
-        <div class="polaroid tall">
-          <div class="tape"></div>
-          <div class="photo">
-            <img id="img-3" alt="업로드 이미지 3" src="" />
-            <div class="photo-placeholder" data-placeholder-for="img-3">사진 넣기</div>
-          </div>
-          <div class="upload-bar">
-            <button class="upload-btn" onclick="mbPickImage('img-3')">사진 넣기</button>
-          </div>
-          <div class="caption" contenteditable="true" data-ph="— caption —"></div>
-        </div>
-      </div>
-
-      <div class="item item-taupe">
-        <div class="swatch taupe">
-          <div>
-            <div class="name editable" contenteditable="true">Taupe Grey</div>
-            <div class="meta editable" contenteditable="true">#5C5252
+<div class="archive-copy" data-text-key="t8" contenteditable="false" spellcheck="false" aria-label="문구 t8"></div>
+<div class="archive-copy" data-text-key="t9" contenteditable="false" spellcheck="false" aria-label="문구 t9">Taupe Grey</div>
+<div class="archive-copy" data-text-key="t10" contenteditable="false" spellcheck="false" aria-label="문구 t10">#5C5252
 RGB: 83 82 82
 CMYK: 0 11 11 84</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="item item-red1">
-        <div class="polaroid square">
-          <div class="tape"></div>
-          <div class="photo">
-            <img id="img-4" alt="업로드 이미지 4" src="" />
-            <div class="photo-placeholder" data-placeholder-for="img-4">사진 넣기</div>
-          </div>
-          <div class="upload-bar">
-            <button class="upload-btn" onclick="mbPickImage('img-4')">사진 넣기</button>
-          </div>
-          <div class="caption" contenteditable="true" data-ph="— caption —"></div>
-        </div>
-      </div>
-
-      <div class="item item-red2">
-        <div class="polaroid square">
-          <div class="tape" style="transform:translateX(-50%) rotate(4deg);"></div>
-          <div class="photo">
-            <img id="img-5" alt="업로드 이미지 5" src="" />
-            <div class="photo-placeholder" data-placeholder-for="img-5">사진 넣기</div>
-          </div>
-          <div class="upload-bar">
-            <button class="upload-btn" onclick="mbPickImage('img-5')">사진 넣기</button>
-          </div>
-          <div class="caption" contenteditable="true" data-ph="— caption —"></div>
-        </div>
-      </div>
-
-      <div class="item item-burgundy">
-        <div class="swatch burgundy">
-          <div>
-            <div class="name editable" contenteditable="true">Ornissary</div>
-            <div class="meta editable" contenteditable="true">#470C0D
+<div class="archive-copy" data-text-key="t11" contenteditable="false" spellcheck="false" aria-label="문구 t11"></div>
+<div class="archive-copy" data-text-key="t12" contenteditable="false" spellcheck="false" aria-label="문구 t12"></div>
+<div class="archive-copy" data-text-key="t13" contenteditable="false" spellcheck="false" aria-label="문구 t13">Ornissary</div>
+<div class="archive-copy" data-text-key="t14" contenteditable="false" spellcheck="false" aria-label="문구 t14">#470C0D
 RGB: 71 12 13
 CMYK: 0 8 62 72</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="item item-mahogany">
-        <div class="swatch mahogany">
-          <div>
-            <div class="name editable" contenteditable="true">Rich Mahogany</div>
-            <div class="meta editable" contenteditable="true">#470C0D
+<div class="archive-copy" data-text-key="t15" contenteditable="false" spellcheck="false" aria-label="문구 t15">Rich Mahogany</div>
+<div class="archive-copy" data-text-key="t16" contenteditable="false" spellcheck="false" aria-label="문구 t16">#470C0D
 RGB: 71 12 13
-CMYK: 0 83 62 72</div>
-          </div>
-          <div class="clip-note"></div>
-        </div>
-      </div>
-    </section>
-  </div>
-
-  <script src="pic-store.js"></script>
-  <script>
-    function loadImage(event, imageId) {
-      const file = event.target.files && event.target.files[0];
-      if (!file) return;
-
-      MKPics.fileToDataURL(file).then(function(durl) {
-        const img = document.getElementById(imageId);
-        img.src = durl;
-        const placeholder = document.querySelector(`[data-placeholder-for="${imageId}"]`);
-        if (placeholder) placeholder.hidden = true;
-        MKPics.set('p3:'+imageId, durl);
-      });
-    }
-
-    // 저장된 이미지 복원 (IndexedDB, 구버전 localStorage는 마이그레이션)
-    (function() {
-      const ids = ['img-1','img-2','img-3','img-4','img-5'];
-      MKPics.getMany(ids.map(function(id){ return 'p3:'+id; })).then(function(vals) {
-        ids.forEach(function(id, i) {
-          let saved = vals[i];
-          if (!saved) {
-            try {
-              saved = localStorage.getItem('mb_img_'+id);
-              if (saved) { MKPics.set('p3:'+id, saved); localStorage.removeItem('mb_img_'+id); }
-            } catch(err) {}
-          }
-          if (saved) {
-            const img = document.getElementById(id);
-            if (img) { img.src = saved; }
-            const ph = document.querySelector('[data-placeholder-for="'+id+'"]');
-            if (ph) ph.hidden = true;
-          }
-        });
-      });
-    })();
-
-    function resetPhotos() {
-      ['img-2', 'img-3', 'img-4', 'img-5'].forEach(id => {
-        const img = document.getElementById(id);
-        img.src = '';
-        const placeholder = document.querySelector(`[data-placeholder-for="${id}"]`);
-        if (placeholder) placeholder.hidden = false;
-      });
-
-      document.querySelectorAll('input[type="file"]').forEach(input => {
-        input.value = '';
-      });
-    }
-  // postMessage 인증 연동
-  let mbUnlocked = false;
-  let mbEditMode = false;
-
-  window.addEventListener('message', e => {
-    if(e.origin!==window.location.origin)return;
-    if (e.data && e.data.type === 'mk_unlock') {
-      mbUnlocked = e.data.value;
-      const btn = document.getElementById('mb-edit-btn');
-      if (btn) btn.style.display = mbUnlocked ? 'flex' : 'none';
-      if (!mbUnlocked && mbEditMode) mbToggleEdit();
-    }
-  });
-
-  function mbToggleEdit() {
-    if (!mbUnlocked) return;
-    mbEditMode = !mbEditMode;
-    const btn = document.getElementById('mb-edit-btn');
-    // 파일 업로드 버튼
-    document.querySelectorAll('.upload-btn').forEach(b => {
-      b.style.display = mbEditMode ? 'block' : 'none';
-    });
-    // contenteditable
-    document.querySelectorAll('[contenteditable]').forEach(el => {
-      el.contentEditable = mbEditMode ? 'true' : 'false';
-      el.style.outline = mbEditMode ? '1px dashed rgba(255,180,162,.3)' : '';
-    });
-    if (btn) {
-      btn.textContent = mbEditMode ? '✓ 완료' : '✎ 편집';
-      btn.style.color = mbEditMode ? '#ffb4a2' : '#a08d88';
-      btn.style.borderColor = mbEditMode ? '#ffb4a2' : '#353535';
-    }
-  }
-
-  // 초기 상태: 편집 비활성
-  document.querySelectorAll('[contenteditable]').forEach(el => {
-    el.contentEditable = 'false';
-  });
-  document.querySelectorAll('.upload-btn').forEach(b => {
-    b.style.display = 'none';
-  });
-
-  </script>
-
-<script>
-(function(){
-  function sendH(){
-    var h = document.documentElement.scrollHeight;
-    var isMobile = window.matchMedia('(max-width:767px)').matches;
-    var val = isMobile ? Math.ceil(h * 0.31) : h - 30;
-    window.parent.postMessage({type:'iframe_height',id:'mbFrame',value:val},location.origin);
-  }
-  if(window.ResizeObserver){new ResizeObserver(sendH).observe(document.body);}
-  window.addEventListener('load', sendH);
-  setTimeout(sendH, 500);
-  setTimeout(sendH, 1500);
-})();
-</script>
-
-<input type="file" id="mb-global-file" accept="image/*,.dng" style="display:none;">
-<script>
-var _mbCurrentImgId = null;
-document.getElementById('mb-global-file').addEventListener('change', function(e) {
-  var file = e.target.files && e.target.files[0];
-  if (!file || !_mbCurrentImgId) return;
-  var imgId = _mbCurrentImgId;
-  // 즉시 표시 (createObjectURL)
-  var img = document.getElementById(imgId);
-  if (img) img.src = URL.createObjectURL(file);
-  var ph = document.querySelector('[data-placeholder-for="'+imgId+'"]');
-  if (ph) ph.hidden = true;
-  // IndexedDB 저장 (백그라운드, 원본 화질)
-  MKPics.fileToDataURL(file).then(function(durl) {
-    MKPics.set('p3:'+imgId, durl);
-  });
-  // input 초기화는 표시 후 처리
-  var inp = this;
-  setTimeout(function(){ inp.value = ''; }, 100);
-});
-function mbPickImage(imgId) {
-  _mbCurrentImgId = imgId;
-  document.getElementById('mb-global-file').click();
-}
-// placeholder 클릭 시 파일 선택 (편집 모드일 때)
-document.querySelectorAll('.photo-placeholder').forEach(function(ph) {
-  ph.style.cursor = 'pointer';
-  ph.addEventListener('click', function() {
-    if (!mbEditMode) return;
-    var imgId = this.getAttribute('data-placeholder-for');
-    if (imgId) mbPickImage(imgId);
-  });
-});
-</script>
+CMYK: 0 83 62 72</div></div></details>
+  <footer class="archive-footer"><span>PERSONAL FRAGMENTS / PRECHORUS</span><span id="archiveStatus" role="status" aria-live="polite"></span><span>민권.com ↗</span></footer>
+</main>
+<dialog id="archiveLightbox" aria-label="사진 확대 보기"><div class="archive-lightbox-bar"><span id="archiveCounter"></span><button type="button" id="archiveClose" aria-label="확대 보기 닫기">닫기 ×</button></div><img id="archiveLarge" alt=""/><div class="archive-lightbox-nav"><button id="archivePrev" type="button" aria-label="이전 사진">←</button><button id="archiveNext" type="button" aria-label="다음 사진">→</button></div></dialog>
+<input id="archiveFile" type="file" accept="image/*,.dng" hidden/>
+<script type="application/json" id="archiveConfig">{"page": 3, "frame": "mbFrame", "title": "Prechorus", "storageKey": "mk_gallery_p3_text_v1", "textField": "texts"}</script>
 </body>
 </html>

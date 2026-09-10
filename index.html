@@ -1294,6 +1294,153 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
   nav.fixed.top-0{transition:none;}
   #hubCardGrid>section::after,.folder-card::after,#musicModuleGrid>[data-module]::after{transition:none;}
 }
+/* 2026 archive edition — black / orange, shared with gallery.css */
+:root{--mk-accent:#FF3B00;--mk-warm-line:#393028;--mk-warm-muted:#b1a79b}
+#page-hub .todo-hub{position:relative;overflow:hidden;cursor:default;padding:36px!important;border:1px solid var(--mk-warm-line)!important;border-radius:24px!important;background:#171512!important;color:#f2eded}
+.week-topline{display:flex;justify-content:space-between;align-items:center;gap:20px;color:var(--mk-accent);font:10px 'Space Grotesk',sans-serif;letter-spacing:.18em;margin-bottom:24px}
+.week-heading{display:flex;justify-content:space-between;align-items:center;gap:24px;margin-bottom:28px}
+.week-heading h3{font:500 clamp(32px,4.8vw,64px)/1 'Space Grotesk',sans-serif;letter-spacing:-.07em;margin:0}
+.week-heading h3 em{font-family:Georgia,serif;font-weight:400;color:var(--mk-accent)}
+.week-heading p{font-size:12px;color:var(--mk-warm-muted);margin:12px 0 0}
+.week-orbit{width:96px;height:96px;flex-shrink:0;position:relative;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--mk-accent) calc(var(--done,0)*1%),#393028 0)}
+.week-orbit:before{content:'';position:absolute;inset:3px;border-radius:50%;background:#171512}
+.week-orbit span{position:relative;font:24px 'Space Grotesk',sans-serif;letter-spacing:-.05em;color:var(--mk-accent)}
+#todoHubWeek{gap:8px!important}
+#todoHubWeek .week-day{border:1px solid #38312a;border-radius:16px;background:#211e19;color:#b9afa3;min-width:0;padding:18px 5px;position:relative;transition:transform .4s cubic-bezier(.2,1.5,.4,1),background .25s,border-color .25s;cursor:pointer;text-align:center}
+.week-day>span{display:block;font-size:11px;line-height:1.5}
+.week-day b{display:block;font:32px 'Space Grotesk',sans-serif;margin:10px 0;letter-spacing:-.05em}
+.week-day i{width:4px;height:4px;background:var(--mk-accent);display:inline-block;border-radius:50%;margin:0 2px}
+.week-day.today:after{content:'';position:absolute;top:10px;right:10px;width:4px;height:4px;border-radius:50%;background:var(--mk-accent)}
+#todoHubWeek .week-day[aria-pressed=true]{background:var(--mk-accent);border-color:var(--mk-accent);color:#17100b;transform:translateY(-5px)}
+.week-day[aria-pressed=true] i,.week-day[aria-pressed=true].today:after{background:#17100b}
+.week-day:hover{transform:translateY(-5px);border-color:var(--mk-accent)!important}
+.week-workspace{display:grid;grid-template-columns:1fr 1.5fr;gap:32px;margin-top:30px;padding-top:26px;border-top:1px solid #38312a}
+.week-selected-label{font:18px 'Space Grotesk','Pretendard',sans-serif;margin-bottom:9px}
+.week-selected-meta{font-size:12px;color:var(--mk-warm-muted);line-height:1.6}
+.week-input-wrap{display:flex;align-items:center;border-bottom:1px solid #796345;margin-top:22px;gap:10px}
+#weekNewText{min-width:0;width:100%;background:transparent;border:0;outline:none;padding:12px 0;color:#f2eded;font-size:13px;box-shadow:none}
+#weekNewText::placeholder{color:#b7a58b}
+#weekAdd{width:40px;height:40px;flex-shrink:0;border-radius:50%;background:var(--mk-accent);border:none;color:#17100b;font-size:24px;cursor:pointer}
+.week-task{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid #ffffff0c;width:100%;text-align:left;background:none;color:#eee5e9;border-top:0;border-left:0;border-right:0;cursor:pointer;font-size:13px;line-height:1.6}
+.week-task-mark{width:24px;height:24px;border:1px solid #9c866a;border-radius:50%;display:grid;place-items:center;color:transparent;flex-shrink:0;transition:background .25s,transform .35s}
+.week-task:hover .week-task-mark{transform:scale(1.15);border-color:var(--mk-accent)}
+.week-task[aria-pressed=true] .week-task-mark{background:var(--mk-accent);border-color:var(--mk-accent);color:#17100b}
+.week-task[aria-pressed=true] .week-task-text{text-decoration:line-through;color:#b7a58b}
+.week-task-text{overflow-wrap:anywhere}
+.week-empty{padding:20px 0;color:var(--mk-warm-muted);font-size:13px;line-height:1.8}
+.week-bottom{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-top:24px;font:10px 'Space Grotesk',sans-serif;letter-spacing:.1em;color:var(--mk-warm-muted)}
+.week-bottom button{color:var(--mk-accent);background:none;border:0;cursor:pointer;font:inherit;padding:10px 0}
+.week-particle{position:fixed;z-index:12000;pointer-events:none;width:6px;height:6px;border-radius:2px;background:var(--mk-accent)}
+#page-todo .todo-side,#page-todo .todo-cal-wrap{border-color:var(--mk-warm-line);border-radius:22px}
+#page-todo .todo-check{border-radius:50%;transition:transform .35s,background .2s}
+#page-todo .todo-row:hover .todo-check{transform:scale(1.15);border-color:var(--mk-accent)}
+#page-todo .todo-row.done .todo-check,#page-todo #todoProgressBar{background:var(--mk-accent)}
+#page-todo .todo-cal-cell.sel{border-color:var(--mk-accent);background:#ffb4a215}
+#page-todo .todo-row{transition:background .25s,transform .35s;border-radius:12px}
+#page-todo .todo-row:hover{background:#ffb4a208;transform:translateX(4px)}
+#hubCardGrid>section[data-card=memo]{background:#191613!important;border-color:var(--mk-warm-line)!important}
+#hubCardGrid>section[data-card=memo] h2{color:#f2eded;margin-bottom:22px!important}
+#hubCardGrid>section[data-card=memo]>button{color:var(--mk-accent)!important;border-color:#806449!important;background:transparent}
+#briefMailBadge{background:var(--mk-accent)!important;color:#23121b!important}
+.brief-delivery{position:relative;pointer-events:none;margin:4px -16px 12px;height:160px}
+.brief-delivery svg{width:100%;height:100%;overflow:visible}
+.brief-delivery-label{font:9px 'Space Grotesk',sans-serif;color:var(--mk-warm-muted);letter-spacing:.18em;display:flex;justify-content:space-between;gap:12px;margin-bottom:14px}
+.brief-dove,.brief-paper{opacity:0}
+#page-hub .gallery-section{background:linear-gradient(#14120fe8,#13120fad 20%,#17140fbd 80%,#131313),url('assets/archive-walnut.png') center top/780px auto!important;max-width:none;margin-top:80px;padding:0 0 60px;border-top:1px solid var(--mk-warm-line);isolation:isolate}
+#page-hub .gallery-section>.gal-sep{display:none!important}
+#page-hub .gallery-section>iframe{display:block!important;width:100%!important;max-width:1440px!important;transform:none!important;pointer-events:auto!important;margin:20px auto 50px!important;border:0;background:transparent;scroll-margin-top:120px}
+#page-hub #mobInstaFeed{display:none!important}
+#page-hub .gallery-marquee-wrap{background:#15130f!important;border-color:var(--mk-warm-line)!important;margin:0;padding:28px 0!important}
+#page-hub .gallery-marquee-item{color:#f2eded!important;font-weight:500;font-style:normal;letter-spacing:-.06em}
+#page-hub .gallery-marquee-item>span{color:var(--mk-accent)!important;-webkit-text-stroke:0!important}
+.archive-nav{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;position:sticky;top:12px;z-index:10;width:max-content;max-width:calc(100% - 24px);margin:24px auto 32px;padding:7px;border:1px solid #746344;background:#211e17ed;backdrop-filter:blur(14px);border-radius:99px}
+.archive-nav a{font:11px 'Space Grotesk',sans-serif;color:#c4b99f;padding:10px 15px;border-radius:99px;transition:background .25s,color .25s;text-decoration:none}
+.archive-nav a[aria-current=true],.archive-nav a:hover{background:var(--mk-accent);color:#17100b}
+#hubArchiveLightbox{position:fixed;inset:0;width:100vw;height:100dvh;max-width:100vw;max-height:100dvh;margin:0;border:0;background:#100f0cf7;color:#f2eded;padding:24px;z-index:12000}
+#hubArchiveLightbox::backdrop{background:#100f0cee}
+#hubArchiveLightbox[open]{display:flex;flex-direction:column;align-items:center}
+.hub-archive-bar{display:flex;justify-content:space-between;align-items:center;width:100%;font:12px 'Space Grotesk',sans-serif;color:var(--mk-accent)}
+#hubArchiveLightbox button{border:1px solid #6e5b3e;color:var(--mk-accent);background:#211d15;padding:12px 20px;border-radius:99px;cursor:pointer}
+#hubArchiveLarge{width:100%;flex:1;min-height:0;object-fit:contain;padding:22px;touch-action:pan-y pinch-zoom}
+.hub-archive-controls{display:flex;gap:12px}
+@media(max-width:767px){
+  #page-hub .todo-hub{padding:24px 16px!important;border-radius:20px!important}
+  .week-topline{font-size:8px;letter-spacing:.1em}
+  .week-heading{gap:16px}.week-heading h3{font-size:36px}.week-heading p{font-size:11px}
+  .week-orbit{width:70px;height:70px}.week-orbit span{font-size:19px}
+  #todoHubWeek{gap:4px!important}#todoHubWeek .week-day{border-radius:10px;padding:12px 2px}.week-day b{font-size:23px}.week-day>span{font-size:9px}
+  .week-workspace{grid-template-columns:1fr;gap:14px;margin-top:24px}.week-input-wrap{margin-top:12px}.week-task{padding:12px 0}
+  .week-bottom{padding-top:12px;font-size:8px}.week-day.today:after{top:6px;right:6px}
+  .brief-delivery{height:130px;margin:0 -12px 10px}.brief-delivery-label{font-size:8px}
+  #page-hub #hubCardGrid>section[data-card=memo]{height:auto!important;min-height:430px!important}
+  #page-hub .gallery-section{margin-top:56px!important}
+  .archive-nav{gap:0;top:8px;padding:5px}.archive-nav a{padding:10px 9px;font-size:9px}
+  #page-hub .gallery-section>iframe{margin-bottom:24px!important}
+  #hubArchiveLightbox{padding:16px}#hubArchiveLarge{padding:16px 0}
+}
+@media(prefers-reduced-motion:reduce){
+  .brief-delivery *,#todoHubWeek .week-day,#page-todo .todo-row,.archive-nav a{animation:none!important;transition:none!important;transform:none!important}
+  .brief-delivery .brief-dove,.brief-delivery .brief-paper{display:none}
+  .brief-delivery .brief-mail-flag{transform:rotate(0)!important}
+}
+
+/* Arrival: the delivery is the entrance, before the hub is visible. */
+html.mk-arrival-hold{overflow:hidden!important;background:#050505}
+html.mk-arrival-hold body>:not(#briefArrival){visibility:hidden!important}
+#briefArrival{position:fixed;inset:0;margin:0;padding:0;width:100vw;height:100dvh;max-width:100vw;max-height:100dvh;border:0;background:transparent;color:#eee7da;overflow:hidden;z-index:30000}
+#briefArrival::backdrop{background:transparent}
+#briefArrival .arrival-black{position:absolute;inset:0;background:#050505}
+#briefArrival .arrival-stage{position:absolute;width:min(1100px,96vw);aspect-ratio:2.1;left:50%;top:50%;translate:-50% -50%;transform-origin:0 0}
+#briefArrival .arrival-stage svg{width:100%;height:100%;overflow:visible}
+#briefArrival .arrival-skip{position:absolute;right:clamp(20px,4vw,60px);top:30px;z-index:3;font:10px 'Space Grotesk',sans-serif;letter-spacing:.14em;color:#c7c2b7;background:transparent;border:1px solid #ffffff30;border-radius:99px;padding:12px 18px;cursor:pointer}
+#briefArrival .arrival-label{position:absolute;bottom:12%;left:0;right:0;text-align:center;font:10px 'Space Grotesk',sans-serif;letter-spacing:.3em;color:#aaa18e;opacity:1}
+#briefArrival .arrival-stage .brief-dove{opacity:0;animation:arrivalFlight 6.1s cubic-bezier(.4,0,.2,1) both;filter:drop-shadow(0 10px 14px #fff1)}
+#briefArrival .arrival-stage .brief-wing{animation:arrivalWing .52s ease-in-out 12 alternate;transform-origin:62px 65px}
+#briefArrival .arrival-stage .brief-paper{opacity:0;animation:arrivalPaper 6.1s cubic-bezier(.4,0,.2,1) both}
+#briefArrival .arrival-stage .brief-mail-body{opacity:0;animation:arrivalMailbox 6.1s ease both}
+#briefArrival .arrival-stage .brief-mail-flag{animation:arrivalFlag 6.1s ease both;transform-origin:338px 119px}
+#briefArrival .arrival-stage>svg>ellipse,#briefArrival .arrival-stage>svg>path,#briefArrival .brief-mail-glow{opacity:0;animation:arrivalGround 6.1s both}
+#briefArrival.settling .arrival-label,#briefArrival.settling .arrival-skip{opacity:0;transition:opacity .2s}
+.brief-delivery.delivered .brief-mail-flag{transform:rotate(0)}
+.brief-delivery.delivered .brief-mail-glow{opacity:.16}
+@keyframes arrivalFlight{0%{opacity:1;transform:translate(35px,3px) scale(1.8) rotate(-3deg)}14%{opacity:1}32%{opacity:1;transform:translate(42px,3px) scale(1.8) rotate(2deg)}48%{opacity:1;transform:translate(120px,2px) scale(1.4) rotate(0)}62%,73%{opacity:1;transform:translate(198px,10px) scale(1) rotate(4deg)}83%{opacity:1;transform:translate(245px,-25px) rotate(-16deg)}100%{opacity:0;transform:translate(480px,-150px) rotate(-22deg)}}
+@keyframes arrivalWing{from{transform:rotate(-25deg) scaleY(.6)}to{transform:rotate(24deg) scaleY(1)}}
+@keyframes arrivalPaper{0%{opacity:1;transform:translate(35px,3px) scale(1.8) rotate(-3deg)}14%{opacity:1}32%{opacity:1;transform:translate(42px,3px) scale(1.8) rotate(2deg)}48%{opacity:1;transform:translate(120px,2px) scale(1.4) rotate(0)}62%,73%{opacity:1;transform:translate(198px,10px) rotate(4deg)}81%{opacity:1;transform:translate(198px,33px) rotate(0) scale(.95)}88%,100%{opacity:0;transform:translate(208px,57px) scale(.82)}}
+@keyframes arrivalMailbox{0%,38%{opacity:0;transform:translateY(15px)}56%,77%{opacity:1;transform:translateY(0) rotate(0)}82%{opacity:1;transform:rotate(3deg)}87%{opacity:1;transform:rotate(-2deg)}93%,100%{opacity:1;transform:none}}
+@keyframes arrivalFlag{0%,78%{transform:rotate(85deg)}90%,100%{transform:rotate(0)}}
+@keyframes arrivalGround{0%,42%{opacity:0}65%,100%{opacity:.14}}
+@keyframes arrivalLabel{0%,30%{opacity:0}44%,77%{opacity:1}100%{opacity:0}}
+@media(max-width:767px){#briefArrival .arrival-stage{width:130vw;max-width:none;left:43%;top:45%}#briefArrival .arrival-label{bottom:22%;font-size:8px;letter-spacing:.2em}}
+@media(prefers-reduced-motion:reduce){#briefArrival{display:none!important}html.mk-arrival-hold body>:not(#briefArrival){visibility:visible!important}}
+
+#briefArrival .arrival-stage *{animation-play-state:paused!important}
+#briefArrival .arrival-scroll-line{position:absolute;left:calc(50% - 70px);bottom:9%;width:140px;height:1px;background:#ffffff25}
+#briefArrival .arrival-scroll-line:after{content:'';display:block;height:100%;background:#FF3B00;transform-origin:left;transform:scaleX(var(--arrival-progress,0))}
+#briefArrival{touch-action:none}
+#briefArrival .arrival-title{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;opacity:var(--title-opacity,0);pointer-events:none;color:#f1ecdf}
+#briefArrival .arrival-title>span{font:9px 'Space Grotesk',sans-serif;letter-spacing:.35em;color:#968c79}
+#briefArrival .arrival-title>strong{font:700 clamp(64px,16vw,230px)/1 'Space Grotesk',sans-serif;letter-spacing:calc(.06em - var(--title-travel,0)*.14em);translate:0 calc((1 - var(--title-travel,0))*25px);filter:blur(calc((1 - var(--title-travel,0))*3px));white-space:nowrap}
+#briefArrival .arrival-title>i{height:2px;width:80px;background:#FF3B00;transform:scaleX(var(--title-travel,0))}
+@media(max-width:767px){#briefArrival .arrival-title>span{font-size:7px;letter-spacing:.18em}#briefArrival .arrival-title{gap:20px}}
+/* Main choreography: transforms are visual only; all existing data controls stay native. */
+#hubCardGrid>section{rotate:var(--scroll-lean,0deg);translate:0 var(--scroll-lift,0px);transform-origin:50% 80%;transition:rotate .65s var(--mk-ease),translate .65s var(--mk-ease)}
+#todoHubWeek .week-day{translate:0 var(--day-lift,0px);transition:translate .65s var(--mk-ease),transform .4s var(--mk-ease),background .25s}
+#bgGrid .bg-cell img{transition:transform .7s ease-out}
+#hubCardGrid>section>button,.week-bottom button,.archive-nav a{transition:translate .35s var(--mk-ease),background .25s,color .25s}
+#page-hub .gallery-marquee-item{font-style:normal!important}
+#page-hub .gallery-marquee{letter-spacing:calc(var(--scroll-energy,0)*2px)}
+#page-hub .gallery-section .archive-nav{border-radius:4px;background:#1c1913ee;border-color:#806b46}
+#page-hub .archive-nav a{border-radius:2px}
+@media(prefers-reduced-motion:reduce){#hubCardGrid>section,#todoHubWeek .week-day{rotate:none!important;translate:none!important}#bgGrid .bg-cell img{transform:none!important}}
+/* Sunlight through leaves, briefly crossing the hub. */
+.hub-leaf-shadow{position:fixed;inset:0;z-index:90;pointer-events:none;overflow:hidden;opacity:0;filter:blur(5px);mix-blend-mode:screen}
+.hub-leaf-shadow svg{position:absolute;width:min(1000px,100vw);height:110vh;right:-15vw;top:-30vh;color:#427c34;transform-origin:90% 0}
+.hub-leaf-shadow.is-passing{animation:leafLightPass 12s ease-in-out both}
+.hub-leaf-shadow.is-passing svg{animation:leafBranchSway 12s ease-in-out both}
+@keyframes leafLightPass{0%,100%{opacity:0}25%,65%{opacity:.105}45%{opacity:.14}}
+@keyframes leafBranchSway{0%{transform:translate(9%,-5%) rotate(-13deg) scale(1.05)}50%{transform:translate(-4%,8%) rotate(-3deg) scale(1.1)}100%{transform:translate(-13%,15%) rotate(5deg) scale(1.05)}}
+@media(max-width:767px){.hub-leaf-shadow{filter:blur(3px)}.hub-leaf-shadow svg{width:135vw;right:-35vw}}
+@media(prefers-reduced-motion:reduce){.hub-leaf-shadow{display:none!important}}
 </style>
 </head>
 <body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-on-primary-container">
@@ -1304,19 +1451,22 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
 <!-- Black fade overlay -->
 <div id="blackFadeOverlay"></div>
 
-<!-- MK Motion: 인트로 시퀀스 (세션당 1회) -->
-<div id="mkIntro" aria-hidden="true">
-  <div class="mk-intro-word">MK.HUB</div>
-  <div class="mk-intro-rule"></div>
-  <div class="mk-intro-sub">Personal Archive — 2026</div>
-</div>
+<!-- Mail delivery entrance — native top layer, before the hub. -->
+<dialog id="briefArrival" aria-label="비둘기가 아침 우편을 배달합니다">
+  <div class="arrival-black"></div><div class="arrival-stage" aria-hidden="true"></div><div class="arrival-title" aria-hidden="true"><span>A PERSONAL ARCHIVE BY KIM MINGWON</span><strong>MK.HUB</strong><i></i></div>
+  <div class="arrival-scroll-line" aria-hidden="true"></div><div class="arrival-label" aria-hidden="true">SCROLL TO BRING THE MORNING HOME</div>
+  <button class="arrival-skip" type="button" onclick="mkFinishArrival()">메인으로 건너뛰기 ↗</button>
+</dialog>
 <script>
 (function(){
-  var el=document.getElementById('mkIntro');
-  var skip=false;
-  try{skip=sessionStorage.getItem('mk_intro')==='1';}catch(e){}
-  if(skip||matchMedia('(prefers-reduced-motion: reduce)').matches){el.parentNode.removeChild(el);return;}
-  document.documentElement.classList.add('mk-intro-hold');
+  var entrance=document.getElementById('briefArrival'),root=document.documentElement,finished=false;
+  var overflow=root.style.overflow;
+  window.mkFinishArrival=function(){
+    if(finished)return;finished=true;root.classList.remove('mk-arrival-hold');root.style.overflow=overflow;
+    if(entrance.open)entrance.close();document.dispatchEvent(new CustomEvent('mk:introend'));
+  };
+  entrance.addEventListener('cancel',function(e){e.preventDefault();window.mkFinishArrival();});
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches){root.classList.add('mk-arrival-hold');entrance.showModal();}
 })();
 </script>
 
@@ -1451,6 +1601,16 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
             <span class="font-label text-[10px] uppercase tracking-[0.25em] text-outline/50">01</span>
           </div>
           <h2 class="font-headline text-3xl md:text-4xl font-bold uppercase mb-12 tracking-tighter" data-elabel="card_briefing">Briefing</h2>
+          <div class="brief-delivery" id="briefDelivery" aria-hidden="true">
+<svg viewBox="0 0 420 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="317" cy="181" rx="58" ry="8" fill="#ffb4a2" opacity=".08"/>
+  <circle class="brief-mail-glow" cx="316" cy="125" r="61" fill="#ffb4a2" opacity=".06"/>
+  <path d="M18 176H397" stroke="#4c3c2a" stroke-dasharray="2 7"/>
+  <path d="M318 148V178" stroke="#d8b984" stroke-width="8"/>
+  <g class="brief-mail-body"><path d="M280 119C280 100 295 89 310 89H331C349 89 360 102 360 119V153H280V119Z" fill="#bca07a"/><path d="M280 119C280 102 291 91 303 91C315 91 326 102 326 119V153H280V119Z" fill="#dac5a2"/><path d="M289 122H315" stroke="#352b20" stroke-width="5" stroke-linecap="round"/><path d="M286 150H320" stroke="#9f7443" stroke-width="2"/><g class="brief-mail-flag"><path d="M338 119V82H355V95H338" fill="#fff2da"/><path d="M338 119V82" stroke="#fff2da" stroke-width="3"/></g></g>
+  <g class="brief-dove"><path d="M49 76L12 65L22 86L47 89Z" fill="#e1dde5"/><path d="M41 61C50 49 66 50 77 57C84 57 87 39 101 42C111 44 116 53 112 61C108 69 97 67 94 76C85 95 58 99 45 85C39 79 36 68 41 61Z" fill="#fff"/><path class="brief-wing" d="M65 78C44 75 28 48 29 20C41 21 43 37 49 42C44 25 44 12 49 7C62 18 63 36 69 41C70 28 76 23 80 25C87 42 87 69 65 78Z" fill="#faf9fd" stroke="#e0dbd0" stroke-width="1.3"/><path d="M110 54L124 60L110 64Z" fill="#c89552"/><circle cx="104" cy="52" r="2" fill="#211a13"/><path d="M65 90L69 97M74 89L80 95" stroke="#bca07a" stroke-width="2" stroke-linecap="round"/></g>
+  <g class="brief-paper"><path d="M104 65L133 70L128 102L99 97Z" fill="#fffbef" stroke="#d8ccaf"/><path d="M107 72L128 76M105 85L114 87M104 90L113 92M119 87L125 88M118 92L124 93" stroke="#624e32" stroke-width="1.5"/><path d="M106 77L127 81" stroke="#624e32" stroke-width="3"/></g>
+</svg></div><div class="brief-delivery-label"><span>MORNING POST</span><span>DELIVERED WITH CARE</span></div>
           <div id="briefCardTeaser" class="space-y-3"></div>
         </div>
         <button class="w-full border border-[#353535] text-[#ffb4a2] py-4 font-label uppercase tracking-[.15em] font-bold text-xs rounded-lg group-hover:bg-[#ffb4a2] group-hover:text-[#360e05] group-hover:border-[#ffb4a2] transition-all">Open Archive →</button>
@@ -1502,12 +1662,17 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
     </div><!-- /hubCardGrid -->
 
     <!-- Weekly To-Do -->
-    <section class="todo-hub bg-[#1c1b1b]/80 backdrop-blur-xl rounded-2xl border border-[#252525] p-6 md:p-8 cursor-pointer hover:border-[#ffb4a2]/15 transition-all" onclick="openApp('todo')">
-      <div class="flex justify-between items-center mb-5">
-        <div class="flex items-center gap-3"><span class="material-symbols-outlined text-[#FF3B00] text-xl" style="font-variation-settings:'FILL' 1;">checklist</span><h3 class="font-headline text-lg md:text-xl font-bold uppercase tracking-tight">Weekly To-Do</h3></div>
-        <span class="font-label text-[10px] tracking-[.15em] uppercase text-outline/40" id="todoWeekLabel"></span>
+    <section id="weeklyPlanner" class="todo-hub" aria-label="이번 주 할 일">
+      <div class="week-topline"><span>YOUR WEEK, IN MOTION</span><span id="todoWeekLabel"></span></div>
+      <div class="week-heading"><div><h3>Make room<br>for <em>your week.</em></h3><p>하나씩 비워내는, 나의 일주일.</p></div><div id="weekOrbit" class="week-orbit" aria-label="이번 주 완료율"><span id="weekPercent">0%</span></div></div>
+      <div id="todoHubWeek" style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));"></div>
+      <div class="week-workspace">
+        <div><div id="weekSelectedLabel" class="week-selected-label"></div><div id="weekSelectedMeta" class="week-selected-meta"></div>
+          <form class="week-input-wrap" onsubmit="event.preventDefault();addTodo('week')"><input id="weekNewText" type="text" placeholder="이 날의 작은 계획" aria-label="선택한 날짜의 할 일" maxlength="1000" autocomplete="off"/><button id="weekAdd" type="submit" aria-label="할 일 추가">＋</button></form>
+        </div>
+        <div id="weekTasks" aria-live="polite"></div>
       </div>
-      <div id="todoHubWeek" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;"></div>
+      <div class="week-bottom"><span id="weekSummary">WEEKLY TO-DO</span><button type="button" onclick="openApp('todo')">전체 플래너 열기 ↗</button></div>
     </section>
 
     <!-- ===== Photo Gallery ===== -->
@@ -1526,6 +1691,7 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
         </div>
       </div>
 
+<nav class="archive-nav" aria-label="갤러리 챕터"><a href="#edLayoutFrame">Intro</a><a href="#ltScaleFrame">Verse</a><a href="#mbFrame">Prechorus</a><a href="#p4Frame">Sabi</a><a href="#p5Frame">Hook</a></nav>
       <!-- ── 01 EDITORIAL ── -->
       <div class="gal-sep" style="margin-top:20px;">
         <span class="gal-sep-num" data-elabel="gal_num1">01</span>
@@ -1534,7 +1700,7 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
           <div class="gal-sep-rule"></div>
         </div>
       </div>
-      <iframe id="edLayoutFrame" src="1picture.html" onload="notifyEdFrame(isUnlocked)" loading="lazy" style="width:100%;height:100px;border:none;display:block;margin-top:40px;"></iframe>
+      <iframe title="Intro 사진 갤러리" id="edLayoutFrame" src="1picture.html" onload="notifyEdFrame(isUnlocked)" loading="lazy" style="width:100%;height:100px;border:none;display:block;margin-top:40px;"></iframe>
 
       <!-- ── 02 LOWTHEORY ── -->
       <div class="gal-sep" style="margin-top:100px;">
@@ -1544,7 +1710,7 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
           <div class="gal-sep-rule"></div>
         </div>
       </div>
-      <iframe id="ltScaleFrame" src="2picture.html" onload="notifyLtFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:40px;overflow:hidden;" loading="lazy"></iframe>
+      <iframe title="Verse 사진 갤러리" id="ltScaleFrame" src="2picture.html" onload="notifyLtFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:40px;overflow:hidden;" loading="lazy"></iframe>
 
       <!-- ── 03 MOODBOARD ── -->
       <div class="gal-sep" style="margin-top:60px;">
@@ -1554,7 +1720,7 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
           <div class="gal-sep-rule"></div>
         </div>
       </div>
-      <iframe id="mbFrame" src="3picture.html" onload="notifyMbFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:40px;" loading="lazy"></iframe>
+      <iframe title="Prechorus 사진 갤러리" id="mbFrame" src="3picture.html" onload="notifyMbFrame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:40px;" loading="lazy"></iframe>
 
       <!-- ── 04 ARCHIVE ── -->
       <div class="gal-sep" style="margin-top:120px;">
@@ -1564,7 +1730,7 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
           <div class="gal-sep-rule"></div>
         </div>
       </div>
-      <iframe id="p4Frame" src="4picture.html" onload="notifyP4Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:40px;" loading="lazy"></iframe>
+      <iframe title="Sabi 사진 갤러리" id="p4Frame" src="4picture.html" onload="notifyP4Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:40px;" loading="lazy"></iframe>
 
       <!-- ── 05 GRID ── -->
       <div class="gal-sep" style="margin-top:180px;">
@@ -1574,93 +1740,7 @@ html:not(.light).mk-tone-deep #mkAurora i:nth-child(2){background:radial-gradien
           <div class="gal-sep-rule"></div>
         </div>
       </div>
-      <iframe id="p5Frame" src="5picture.html" onload="notifyP5Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:40px;" loading="lazy"></iframe>
-
-    <!-- Mobile Instagram Feed (CSS로 mobile에서만 표시) -->
-      <div id="mobInstaFeed" style="display:none;">
-        <!-- 피드 헤더 -->
-        <div class="mob-feed-hdr">
-          <div>
-            <div class="mob-feed-hdr-label">Visual Archive</div>
-            <div class="mob-feed-hdr-title">My Fragments</div>
-          </div>
-          <div class="mob-feed-hdr-right">
-            <div class="mob-feed-hdr-coll">05 Collections</div>
-            <div class="mob-feed-hdr-year">2025</div>
-          </div>
-        </div>
-        <div class="mob-feed-divider"></div>
-        <!-- Post 01 -->
-        <article class="mob-post" onclick="openPicExpand('1picture.html')">
-          <div class="mob-post-header">
-            <div class="mob-post-avatar">01</div>
-            <div class="mob-post-meta"><div class="mob-post-user">mk.hub</div><div class="mob-post-tag">Intro</div></div>
-            <div class="mob-post-more">···</div>
-          </div>
-          <div class="mob-post-img"><iframe src="1picture.html" loading="lazy" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe></div>
-          <div class="mob-post-actions"><button class="mob-act mob-act-like" data-like-key="1picture.html" onclick="event.stopPropagation();toggleFeedLike(this,'1picture.html')"><span class="material-symbols-outlined">favorite</span></button><button class="mob-act" onclick="event.stopPropagation();shareFeedPost('Intro')"><span class="material-symbols-outlined">ios_share</span></button><span class="mob-act-spacer"></span><button class="mob-act" onclick="event.stopPropagation();openPicExpand('1picture.html')"><span class="material-symbols-outlined">open_in_full</span></button></div>
-          <div class="mob-post-footer">
-            <div class="mob-post-caption"><span class="mob-post-caption-bold">mk.hub</span> Editorial — Curated layouts and visual compositions.</div>
-            <div class="mob-post-cta">View Collection →</div>
-          </div>
-        </article>
-        <!-- Post 02 -->
-        <article class="mob-post" onclick="openPicExpand('2picture.html')">
-          <div class="mob-post-header">
-            <div class="mob-post-avatar">02</div>
-            <div class="mob-post-meta"><div class="mob-post-user">mk.hub</div><div class="mob-post-tag">Verse</div></div>
-            <div class="mob-post-more">···</div>
-          </div>
-          <div class="mob-post-img"><iframe src="2picture.html" loading="lazy" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe></div>
-          <div class="mob-post-actions"><button class="mob-act mob-act-like" data-like-key="2picture.html" onclick="event.stopPropagation();toggleFeedLike(this,'2picture.html')"><span class="material-symbols-outlined">favorite</span></button><button class="mob-act" onclick="event.stopPropagation();shareFeedPost('Verse')"><span class="material-symbols-outlined">ios_share</span></button><span class="mob-act-spacer"></span><button class="mob-act" onclick="event.stopPropagation();openPicExpand('2picture.html')"><span class="material-symbols-outlined">open_in_full</span></button></div>
-          <div class="mob-post-footer">
-            <div class="mob-post-caption"><span class="mob-post-caption-bold">mk.hub</span> Lowtheory — A quiet theory of aesthetics.</div>
-            <div class="mob-post-cta">View Collection →</div>
-          </div>
-        </article>
-        <!-- Post 03 -->
-        <article class="mob-post" onclick="openPicExpand('3picture.html')">
-          <div class="mob-post-header">
-            <div class="mob-post-avatar">03</div>
-            <div class="mob-post-meta"><div class="mob-post-user">mk.hub</div><div class="mob-post-tag">Prechorus</div></div>
-            <div class="mob-post-more">···</div>
-          </div>
-          <div class="mob-post-img"><iframe src="3picture.html" loading="lazy" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe></div>
-          <div class="mob-post-actions"><button class="mob-act mob-act-like" data-like-key="3picture.html" onclick="event.stopPropagation();toggleFeedLike(this,'3picture.html')"><span class="material-symbols-outlined">favorite</span></button><button class="mob-act" onclick="event.stopPropagation();shareFeedPost('Prechorus')"><span class="material-symbols-outlined">ios_share</span></button><span class="mob-act-spacer"></span><button class="mob-act" onclick="event.stopPropagation();openPicExpand('3picture.html')"><span class="material-symbols-outlined">open_in_full</span></button></div>
-          <div class="mob-post-footer">
-            <div class="mob-post-caption"><span class="mob-post-caption-bold">mk.hub</span> Moodboard — Fragments of color and form.</div>
-            <div class="mob-post-cta">View Collection →</div>
-          </div>
-        </article>
-        <!-- Post 04 -->
-        <article class="mob-post" onclick="openPicExpand('4picture.html')">
-          <div class="mob-post-header">
-            <div class="mob-post-avatar">04</div>
-            <div class="mob-post-meta"><div class="mob-post-user">mk.hub</div><div class="mob-post-tag">Sabi</div></div>
-            <div class="mob-post-more">···</div>
-          </div>
-          <div class="mob-post-img"><iframe src="4picture.html" loading="lazy" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe></div>
-          <div class="mob-post-actions"><button class="mob-act mob-act-like" data-like-key="4picture.html" onclick="event.stopPropagation();toggleFeedLike(this,'4picture.html')"><span class="material-symbols-outlined">favorite</span></button><button class="mob-act" onclick="event.stopPropagation();shareFeedPost('Sabi')"><span class="material-symbols-outlined">ios_share</span></button><span class="mob-act-spacer"></span><button class="mob-act" onclick="event.stopPropagation();openPicExpand('4picture.html')"><span class="material-symbols-outlined">open_in_full</span></button></div>
-          <div class="mob-post-footer">
-            <div class="mob-post-caption"><span class="mob-post-caption-bold">mk.hub</span> Archive — Moments preserved in still frames.</div>
-            <div class="mob-post-cta">View Collection →</div>
-          </div>
-        </article>
-        <!-- Post 05 -->
-        <article class="mob-post" onclick="openPicExpand('5picture.html')">
-          <div class="mob-post-header">
-            <div class="mob-post-avatar">05</div>
-            <div class="mob-post-meta"><div class="mob-post-user">mk.hub</div><div class="mob-post-tag">Hook</div></div>
-            <div class="mob-post-more">···</div>
-          </div>
-          <div class="mob-post-img"><iframe src="5picture.html" loading="lazy" sandbox="allow-scripts allow-same-origin" scrolling="no"></iframe></div>
-          <div class="mob-post-actions"><button class="mob-act mob-act-like" data-like-key="5picture.html" onclick="event.stopPropagation();toggleFeedLike(this,'5picture.html')"><span class="material-symbols-outlined">favorite</span></button><button class="mob-act" onclick="event.stopPropagation();shareFeedPost('Hook')"><span class="material-symbols-outlined">ios_share</span></button><span class="mob-act-spacer"></span><button class="mob-act" onclick="event.stopPropagation();openPicExpand('5picture.html')"><span class="material-symbols-outlined">open_in_full</span></button></div>
-          <div class="mob-post-footer">
-            <div class="mob-post-caption"><span class="mob-post-caption-bold">mk.hub</span> Grid — A systematic vision in patterns and shapes.</div>
-            <div class="mob-post-cta">View Collection →</div>
-          </div>
-        </article>
-      </div>
+      <iframe title="Hook 사진 갤러리" id="p5Frame" src="5picture.html" onload="notifyP5Frame(isUnlocked)" scrolling="no" style="width:100%;height:100px;border:none;display:block;margin-top:40px;" loading="lazy"></iframe>
 
     <!-- Lightbox -->
       <img class="gallery-lb-img" id="galleryLbImg" src="" alt="">
@@ -4257,73 +4337,72 @@ window.addEventListener('message',e=>{
   if(!isTrustedOrigin(e.origin))return;
   if(e.data&&e.data.type==='lt_height'){
     const f=document.getElementById('ltScaleFrame');
-    if(f)f.style.height=(e.data.value+40)+'px';
+    if(f&&f.tagName==='IFRAME'&&f.contentWindow===e.source&&Number.isFinite(e.data.value))f.style.height=(e.data.value+40)+'px';
   }
   if(e.data&&e.data.type==='iframe_height'&&e.data.id){
     const f=document.getElementById(e.data.id);
-    if(f)f.style.height=(e.data.value+40)+'px';
+    if(f&&f.tagName==='IFRAME'&&f.contentWindow===e.source&&Number.isFinite(e.data.value))f.style.height=(e.data.value+40)+'px';
   }
 });
 
 /* ===== To-Do ===== */
 var _todos=[];var _todoMonth=new Date();
 async function loadTodos(){try{const s=await getDocs(todosCol);_todos=[];s.forEach(d=>_todos.push({id:d.id,...d.data()}));}catch(e){_todos=[];}}
-async function addTodo(){if(!isUnlocked){showTextPin(()=>addTodo());return;}var t=document.getElementById('todoNewText').value.trim();if(!t)return;var d=window._todoSelectedDate||new Date().toISOString().slice(0,10);await addDoc(todosCol,{text:t,date:d,done:false,c:Date.now()});document.getElementById('todoNewText').value='';await loadTodos();renderTodoCal();renderTodoDay();renderTodoHub();}
-async function toggleTodo(id){var t=_todos.find(x=>x.id===id);if(!t)return;await updateDoc(doc(db,'mk_app','data','todos',id),{done:!t.done});t.done=!t.done;renderTodoCal();renderTodoDay();renderTodoHub();}
+async function addTodo(source){
+  if(!isUnlocked){showTextPin(()=>addTodo(source));return;}
+  var input=document.getElementById(source==='week'?'weekNewText':'todoNewText');
+  var t=input.value.trim();if(!t||input.disabled)return;
+  var d=source==='week'?_weekSelectedDate:window._todoSelectedDate;
+  input.disabled=true;
+  try{await addDoc(todosCol,{text:t,date:d,done:false,c:Date.now()});input.value='';await loadTodos();renderTodoCal();renderTodoDay();renderTodoHub();}
+  catch(e){toast('할 일을 저장하지 못했습니다');}
+  finally{input.disabled=false;}
+}
+var _todoPending=new Set();
+async function toggleTodo(id){
+  if(!isUnlocked){showTextPin(()=>toggleTodo(id));return;}
+  var t=_todos.find(x=>x.id===id);if(!t||_todoPending.has(id))return;
+  _todoPending.add(id);
+  try{await updateDoc(doc(db,'mk_app','data','todos',id),{done:!t.done});t.done=!t.done;renderTodoCal();renderTodoDay();renderTodoHub();window.dispatchEvent(new CustomEvent('mk:todo-toggled',{detail:{id:id,done:t.done}}));}
+  catch(e){toast('완료 상태를 저장하지 못했습니다');}
+  finally{_todoPending.delete(id);}
+}
 async function delTodo(id){if(!confirm('삭제하시겠습니까?'))return;await deleteDoc(doc(db,'mk_app','data','todos',id));_todos=_todos.filter(x=>x.id!==id);renderTodoCal();renderTodoDay();renderTodoHub();}
 window.addTodo=addTodo;window.toggleTodo=toggleTodo;window.delTodo=delTodo;
 function toggleTodoExpand(ds,e){e.stopPropagation();var btn=document.getElementById('tmb-'+ds);var hidden=document.getElementById('thi-'+ds);if(!btn||!hidden)return;var expanded=btn.classList.contains('expanded');btn.classList.toggle('expanded',!expanded);hidden.classList.toggle('show',!expanded);btn.querySelector('.lbl').textContent=expanded?'+'+(btn.dataset.cnt):'접기';}
 window.toggleTodoExpand=toggleTodoExpand;
+function localTodoDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+var _weekSelectedDate=localTodoDate(new Date());
+function selectWeekDate(ds){_weekSelectedDate=ds;renderTodoHub();}
 function renderTodoHub(){
-  var now=new Date();var dow=now.getDay();
-  var mon=new Date(now);mon.setDate(now.getDate()-(dow===0?6:dow-1));
+  var now=new Date(),mon=new Date(now);mon.setDate(now.getDate()-((now.getDay()+6)%7));
   var sun=new Date(mon);sun.setDate(mon.getDate()+6);
-  var el=document.getElementById('todoWeekLabel');
-  if(el)el.textContent=mon.toLocaleDateString('ko-KR',{month:'short',day:'numeric'})+' ~ '+sun.toLocaleDateString('ko-KR',{month:'short',day:'numeric'});
+  var label=document.getElementById('todoWeekLabel');
+  if(label)label.textContent=mon.toLocaleDateString('ko-KR',{month:'short',day:'numeric'})+' — '+sun.toLocaleDateString('ko-KR',{month:'short',day:'numeric'});
   var grid=document.getElementById('todoHubWeek');if(!grid)return;
-  var days=['월','화','수','목','금','토','일'];
-  var html='';
+  var days=['월','화','수','목','금','토','일'],weekDates=[],html='';
   for(var i=0;i<7;i++){
-    var d=new Date(mon);d.setDate(mon.getDate()+i);
-    var ds=d.toISOString().slice(0,10);
-    var isToday=ds===now.toISOString().slice(0,10);
-    var dt=_todos.filter(function(t){return t.date===ds;}).sort(function(a,b){return a.done-b.done;});
-    html+='<div class="todo-day'+(isToday?' today':'')+'">';
-    html+='<div class="todo-day-head">'+days[i]+'</div>';
-    html+='<div class="todo-day-num"><span class="n">'+d.getDate()+'</span></div>';
-    /* 처음 3개 — Todo 페이지와 동일한 칩 스타일 */
-    for(var j=0;j<Math.min(dt.length,3);j++){
-      html+='<div class="todo-chip'+(dt[j].done?' done':'')+'">'+escHtml(dt[j].text)+'</div>';
-    }
-    /* 3개 초과분 */
-    if(dt.length>3){
-      var cnt=dt.length-3;
-      /* 숨겨진 항목 */
-      html+='<div class="todo-hidden-items" id="thi-'+ds+'">';
-      for(var j=3;j<dt.length;j++){
-        html+='<div class="todo-chip'+(dt[j].done?' done':'')+'">'+escHtml(dt[j].text)+'</div>';
-      }
-      html+='</div>';
-      /* 더보기 버튼 */
-      html+='<button class="todo-more-btn" id="tmb-'+ds+'" data-cnt="'+cnt+'" onclick="toggleTodoExpand(\''+ds+'\',event)">';
-      html+='<span class="arrow">▾</span><span class="lbl">+'+cnt+'</span>';
-      html+='</button>';
-    }
-    /* 모바일: 점 표시 */
-    if(dt.length){
-      html+='<div class="todo-dots">';
-      dt.slice(0,4).forEach(function(t){html+='<span class="todo-dot'+(t.done?' done':'')+'"></span>';});
-      if(dt.length>4)html+='<span class="todo-dot-more">+'+(dt.length-4)+'</span>';
-      html+='</div>';
-    }
-    html+='</div>';
+    var d=new Date(mon);d.setDate(mon.getDate()+i);var ds=localTodoDate(d);weekDates.push(ds);
+    var items=_todos.filter(function(t){return t.date===ds;});
+    html+='<button type="button" class="week-day'+(ds===localTodoDate(now)?' today':'')+'" aria-pressed="'+(ds===_weekSelectedDate)+'" aria-label="'+(d.getMonth()+1)+'월 '+d.getDate()+'일 '+items.length+'개 할 일" onclick="selectWeekDate(\''+ds+'\')"><span>'+days[i]+'</span><b>'+d.getDate()+'</b><span aria-hidden="true">'+(items.length?items.slice(0,3).map(function(){return '<i></i>';}).join(''):'—')+'</span></button>';
   }
   grid.innerHTML=html;
+  var week=_todos.filter(function(t){return weekDates.includes(t.date);});
+  var done=week.filter(function(t){return t.done;}).length,percent=week.length?Math.round(done/week.length*100):0;
+  document.getElementById('weekOrbit').style.setProperty('--done',percent);
+  document.getElementById('weekOrbit').setAttribute('aria-label','이번 주 '+percent+'% 완료');
+  document.getElementById('weekPercent').textContent=percent+'%';
+  document.getElementById('weekSummary').textContent=done+' / '+week.length+' COMPLETED';
+  var selected=_todos.filter(function(t){return t.date===_weekSelectedDate;}).sort(function(a,b){return(a.done-b.done)||((a.c||0)-(b.c||0));});
+  document.getElementById('weekSelectedLabel').textContent=new Date(_weekSelectedDate+'T12:00:00').toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'long'});
+  document.getElementById('weekSelectedMeta').textContent=selected.length?selected.filter(function(t){return t.done;}).length+' / '+selected.length+' 완료':'가볍게 시작해도 괜찮아요.';
+  document.getElementById('weekTasks').innerHTML=selected.length?selected.map(function(t){return '<button type="button" class="week-task" data-week-toggle="'+escHtml(t.id)+'" aria-pressed="'+!!t.done+'"><span class="week-task-mark" aria-hidden="true">✓</span><span class="week-task-text">'+escHtml(t.text)+'</span></button>';}).join(''):'<div class="week-empty">아직 비어 있는 하루.<br>작은 계획 하나를 남겨보세요.</div>';
 }
+window.selectWeekDate=selectWeekDate;
 /* 한국 공휴일 */
 var _krHolidays={'1-1':1,'3-1':1,'5-5':1,'6-6':1,'8-15':1,'10-3':1,'10-9':1,'12-25':1,'2025-1-27':1,'2025-1-28':1,'2025-1-29':1,'2025-5-6':1,'2025-10-5':1,'2025-10-6':1,'2025-10-7':1,'2026-2-16':1,'2026-2-17':1,'2026-2-18':1,'2026-5-25':1,'2026-9-24':1,'2026-9-25':1,'2026-9-26':1};
 function isKrHol(y,m,d){return _krHolidays[(m+1)+'-'+d]||_krHolidays[y+'-'+(m+1)+'-'+d]||false;}
-window._todoSelectedDate=new Date().toISOString().slice(0,10);
+window._todoSelectedDate=localTodoDate(new Date());
 function todoNavMonth(dir){_todoMonth.setMonth(_todoMonth.getMonth()+dir);renderTodoCal();}
 window.todoNavMonth=todoNavMonth;
 /* 달력 셀 클릭 → 날짜 선택, 패널에 표시 */
@@ -4339,9 +4418,9 @@ function renderTodoDay(){
   var dateEl=document.getElementById('todoSideDate');if(!dateEl)return;
   var d=new Date(ds+'T00:00:00');
   dateEl.textContent=d.toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'long'});
-  var today=new Date();var todayStr=today.toISOString().slice(0,10);
+  var today=new Date();var todayStr=localTodoDate(today);
   var tmr=new Date(today);tmr.setDate(today.getDate()+1);
-  var rel=ds===todayStr?'오늘':(ds===tmr.toISOString().slice(0,10)?'내일':'');
+  var rel=ds===todayStr?'오늘':(ds===localTodoDate(tmr)?'내일':'');
   var dt=_todos.filter(function(t){return t.date===ds;}).sort(function(a,b){return (a.done-b.done)||((a.c||0)-(b.c||0));});
   var doneN=dt.filter(function(t){return t.done;}).length;
   document.getElementById('todoSideSub').textContent=(rel?rel+' · ':'')+(dt.length?doneN+' / '+dt.length+' 완료':'아직 계획이 없습니다');
@@ -4361,7 +4440,7 @@ function renderTodoDay(){
 }
 window.renderTodoDay=renderTodoDay;
 function renderTodoCal(){
-  var now=new Date();var todayStr=now.toISOString().slice(0,10);
+  var now=new Date();var todayStr=localTodoDate(now);
   var y=_todoMonth.getFullYear(),m=_todoMonth.getMonth();
   document.getElementById('todoMonthLabel').textContent=y+'년 '+(m+1)+'월';
   var first=new Date(y,m,1);var sd=first.getDay();sd=sd===0?6:sd-1;
@@ -4866,6 +4945,7 @@ async function loadGallery(){
 async function renderGallery(){
   await loadGallery();
   const wall=document.getElementById('galleryGrid');
+  if(!wall)return; // The archive now renders in the five persistent collection frames.
 
   const SAMPLES=[
     {url:'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=500&q=88',id:'',path:'',sample:true},
@@ -5005,7 +5085,8 @@ window.openLightbox=openLightbox;window.closeLightbox=closeLightbox;window.lbNav
 
 // Keyboard nav for lightbox
 document.addEventListener('keydown',e=>{
-  if(!document.getElementById('galleryLightbox').classList.contains('open'))return;
+  var galleryBox=document.getElementById('galleryLightbox');
+  if(!galleryBox||!galleryBox.classList.contains('open'))return;
   if(e.key==='ArrowLeft')lbNav(-1);
   else if(e.key==='ArrowRight')lbNav(1);
   else if(e.key==='Escape')closeLightbox();
@@ -5156,29 +5237,8 @@ renderGallery();
     if(hub)new MutationObserver(function(){if(!hubActive())glow.classList.remove('mk-on');}).observe(hub,{attributes:true,attributeFilter:['class']});
   }
 
-  /* ── 인트로 컨트롤러 (게이트 스크립트가 mkIntro 존치 여부 결정) ── */
-  var intro=document.getElementById('mkIntro');
-  if(intro){
-    var ended=false;
-    var endIntro=function(){
-      if(ended)return;ended=true;
-      document.documentElement.classList.remove('mk-intro-hold');
-      try{sessionStorage.setItem('mk_intro','1');}catch(e){}
-      intro.classList.add('mk-intro-exit');
-      initReveal();
-      document.dispatchEvent(new CustomEvent('mk:introend'));
-      setTimeout(function(){if(intro.parentNode)intro.parentNode.removeChild(intro);},650);
-    };
-    setTimeout(endIntro,1250);
-    /* 하드 가드 — 어떤 경우에도 화면이 막히지 않게 */
-    setTimeout(function(){
-      endIntro();
-      document.documentElement.classList.remove('mk-intro-hold');
-      if(intro.parentNode)intro.parentNode.removeChild(intro);
-    },3500);
-  }else{
-    initReveal();
-  }
+  if(document.documentElement.classList.contains('mk-arrival-hold'))document.addEventListener('mk:introend',initReveal,{once:true});
+  else initReveal();
   initParallax();
   initTilt();
   initGlow();
@@ -5205,7 +5265,7 @@ renderGallery();
       if(last)last.addEventListener('animationend',function(){h1.classList.remove('mk-title-in');},{once:true});
       setTimeout(function(){h1.classList.remove('mk-title-in');},1600);
     };
-    if(document.getElementById('mkIntro'))document.addEventListener('mk:introend',startTitle,{once:true});
+    if(document.documentElement.classList.contains('mk-arrival-hold'))document.addEventListener('mk:introend',startTitle,{once:true});
     else startTitle();
   }
 
@@ -5267,12 +5327,12 @@ renderGallery();
   var lastY=window.scrollY,sTick=false,brLast='';
   /* 12차: 갤러리 컬러 저니 스탑 — 각 섹션(1~5picture) 대표색으로 hub 배경이 구간별 lerp */
   var brEls=[
-    {id:'galleryMarqueeWrap',c:[237,230,214],kd:.45,kl:.8},
-    {id:'edLayoutFrame',c:[74,14,14],kd:.85,kl:.25},
-    {id:'ltScaleFrame',c:[229,225,211],kd:.5,kl:.9},
-    {id:'mbFrame',c:[18,12,12],kd:1,kl:.2},
-    {id:'p4Frame',c:[251,249,244],kd:.5,kl:1},
-    {id:'p5Frame',c:null,kd:1,kl:1}
+    {id:'galleryMarqueeWrap',c:[21,19,15],kd:1,kl:1},
+    {id:'edLayoutFrame',c:[21,19,15],kd:1,kl:1},
+    {id:'ltScaleFrame',c:[21,19,15],kd:1,kl:1},
+    {id:'mbFrame',c:[21,19,15],kd:1,kl:1},
+    {id:'p4Frame',c:[21,19,15],kd:1,kl:1},
+    {id:'p5Frame',c:[21,19,15],kd:1,kl:1}
   ].map(function(o){o.el=document.getElementById(o.id);return o;});
   function brMix(a,b,t){t=Math.max(0,Math.min(1,t));return[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t];}
   function onScroll2(){
@@ -5775,5 +5835,7 @@ setTimeout(function(){
   }
 })();
 </script>
+<dialog id="hubArchiveLightbox" aria-label="사진 확대 보기"><div class="hub-archive-bar"><span id="hubArchiveCounter"></span><button type="button" id="hubArchiveClose">닫기 ×</button></div><img id="hubArchiveLarge" alt=""/><div class="hub-archive-controls"><button id="hubArchivePrev" type="button" aria-label="이전 사진">←</button><button id="hubArchiveNext" type="button" aria-label="다음 사진">→</button></div></dialog>
+<script src="hub-interactions.js"></script>
 </body>
 </html>
