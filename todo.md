@@ -420,3 +420,17 @@ Firebase 프로젝트 `mingwon-hub`, 경로 `mk_app/data/briefs/{YYYY-MM-DD}`.
 - [ ] SMTP 서버 비밀값 등록 후 실메일·운영 전환 검증 (사용자: 발송 자격증명 없음)
 
 - [x] 인증 연결 CSP·코드 편집기 템플릿·서버 의존성 검증 — Functions 출처 허용, script 파싱 오류 수정, uuid 패치 후 npm audit 0건
+
+## 2026-09-10 — 사용자 승인: 실제 운영 전환
+- [x] 배포 승인·전제조건 확인 — 사용자 운영 전환 지시, Brief 작성기는 Admin SDK 서비스 계정 사용
+- [x] OTP 비밀값 등록 — Secret Manager VAULT_OTP_PEPPER 버전 1 생성
+- [ ] SMTP 앱 비밀번호·서버 GitHub 토큰 등록
+- [ ] 서버 배포·실제 인증 메일·소유자 로그인 검증
+- [x] 운영 데이터 백업 — Firestore 141문서·파일 36개/793245896바이트, 로컬 비공개 폴더 저장·용량/SHA256 기록
+- [x] Storage CORS 설정 — 지정한 사이트와 로컬 검증 출처 GET/HEAD 허용
+- [ ] 소유자 규칙·파일 토큰 폐기
+- [ ] main 반영·운영 저장/다운로드/로그아웃·Brief 검증
+
+- [x] 서버 실행 API 준비 — Functions/Build/Artifact Registry/Run/Eventarc/PubSub/IAM Credentials 활성화 요청 완료
+- [x] 숨김 입력 등록 도구 — 바탕화면 .command, 네이버 SMTP 로그인·GitHub 비공개 레포 검증 후 Secret Manager에만 저장
+- [x] 전용 서버 실행 계정·권한 등록 — mkhub-vault, DB/Auth 역할, 해당 버킷 objectAdmin, 자기 계정 서명 권한; Functions 옵션 연결

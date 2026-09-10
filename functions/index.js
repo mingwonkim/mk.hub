@@ -11,7 +11,7 @@ const db=getFirestore(),auth=getAuth(),accessRef=db.doc('mk_security/access');
 const SMTP_PASSWORD=defineSecret('VAULT_SMTP_PASSWORD'),OTP_PEPPER=defineSecret('VAULT_OTP_PEPPER');
 const SMTP_HOST=defineString('VAULT_SMTP_HOST',{default:'smtp.naver.com'});
 const SMTP_USER=defineString('VAULT_SMTP_USER',{default:OWNER_EMAIL});
-const options={region:'asia-northeast3',maxInstances:3,memory:'256MiB',timeoutSeconds:60,cors:['https://xn--zf0bu7y.com','https://mingwonkim.github.io','https://mingwon-hub.web.app','https://mingwon-hub.firebaseapp.com','http://127.0.0.1:8766']};
+const options={serviceAccount:'mkhub-vault@mingwon-hub.iam.gserviceaccount.com',region:'asia-northeast3',maxInstances:3,memory:'256MiB',timeoutSeconds:60,cors:['https://xn--zf0bu7y.com','https://mingwonkim.github.io','https://mingwon-hub.web.app','https://mingwon-hub.firebaseapp.com','http://127.0.0.1:8766']};
 async function authenticate(req,access=false){
  const match=/^Bearer (.+)$/.exec(req.get('authorization')||'');if(!match)throw new VaultError(401,'인증이 필요합니다.');
  let claims;try{claims=await auth.verifyIdToken(match[1],true);}catch(e){throw new VaultError(401,'인증이 만료됐습니다.');}
@@ -155,7 +155,7 @@ module.exports._private.githubHandler=githubHandler;
 // Firebase upload tokens are bearer links; private uploads must not retain them.
 const {onObjectFinalized}=require('firebase-functions/v2/storage');
 const {getStorage}=require('firebase-admin/storage');
-exports.sealPrivateUpload=onObjectFinalized({region:'asia-northeast3',bucket:'mingwon-hub.firebasestorage.app',maxInstances:3},async event=>{
+exports.sealPrivateUpload=onObjectFinalized({serviceAccount:options.serviceAccount,region:'asia-northeast3',bucket:'mingwon-hub.firebasestorage.app',maxInstances:3},async event=>{
  const object=event.data;if(!/^(mk_files|mk_drawings)\//.test(object.name||''))return;
  const file=getStorage().bucket(object.bucket).file(object.name,{generation:object.generation});
  await file.setMetadata({metadata:{firebaseStorageDownloadTokens:null}});

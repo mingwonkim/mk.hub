@@ -86,3 +86,24 @@ NODE_PATH=./tests/node_modules node --test tests/memo-auth-regression.cjs tests/
 완료: 메모/파일/기존 암호 11개, 서버 헬퍼 5개, 서버 트랜잭션/백업 6개, 보안 규칙 5개, 브라우저 인증/커서/실제 CSP 8개. 총 35개 통과. 서버 테스트의 메일·Auth는 대역이며 실제 SMTP·운영 custom token 로그인은 외부 설정 후 확인해야 한다.
 
 서버 의존성 감사: `uuid` 간접 의존성을 CommonJS 지원 패치 버전 11.1.1로 고정. 호출부는 v4 사용 확인, Functions 재설치 후 npm audit 0건. [수정 근거](https://github.com/advisories/GHSA-w5hq-g745-h8pq)
+
+## 실제 전환 진행 상태
+
+사용자가 운영 전환 진행 승인. 배포 승인 재요청 불필요. 소유자 실제 메일 인증 확인 전 접근 규칙과 다운로드 토큰 폐기는 실행하지 않는다.
+
+- Secret Manager `VAULT_OTP_PEPPER` 버전 1 등록. SMTP/GitHub 비밀값은 아직 없음.
+- Functions, Build, Artifact Registry, Run, Eventarc, Pub/Sub, IAM Credentials API 활성화.
+- `mkhub-vault@mingwon-hub.iam.gserviceaccount.com` 전용 실행 계정 생성. 프로젝트 DB/Auth 권한, 해당 버킷 파일 관리 권한, 자기 계정 서명 권한 추가. 서비스 계정 키 파일 생성 없음.
+- Storage CORS 적용. 기존 접근 규칙과 다운로드 토큰 유지.
+- Firestore 141문서와 파일 36개(793245896바이트) 로컬 백업. 파일별 용량 확인과 SHA256 기록. 위치: `~/.local/share/mk-hub/backups/2026-09-10T08-42-42-689Z`. 디렉터리 0700, 파일 0600.
+- Brief 작성기는 Admin SDK 서비스 계정 사용으로 새 클라이언트 규칙과 구조상 호환. 전환 후 수신 확인은 남음.
+
+### 남은 비밀값 등록
+
+바탕화면 `MK.HUB 서버 비밀값 등록.command` 실행. 소스는 `security/register-secrets.py`. 숨김 입력으로 받아 SMTP 로그인 및 지정한 비공개 레포 접근을 확인하고 Secret Manager에 등록한다. 입력값은 파일이나 명령 인수로 저장하지 않는다. 등록된 항목은 건너뛴다.
+
+- 네이버: [SMTP 공식 안내](https://help.naver.com/service/30029/contents/21341?lang=ko&osType=PC). 2단계 인증과 앱 비밀번호 필요.
+- GitHub: [fine-grained 토큰 생성](https://github.com/settings/personal-access-tokens/new). `mingwonkim/obsidian-vault`만 선택, Repository permissions의 Contents를 Read and write로 지정.
+- 비밀값을 채팅에 보내지 않는다. 완료 상태만 알려주면 함수 배포, 실제 메일, 소유자 로그인, 규칙과 화면 전환을 계속한다.
+
+전환 준비 검증: Python 구문 검사, 서버 헬퍼 5개 통과, Cloud API로 서비스 계정과 활성 API, Secret 목록 확인. 사용자 비밀값 입력과 실메일 검증은 미완료.

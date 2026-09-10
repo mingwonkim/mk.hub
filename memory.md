@@ -128,3 +128,9 @@
 - 자세한 배포 순서/제약: docs/private-vault-rollout.md. 브랜치 design/woodland-interactive, main 시안 검토 대기.
 
 - 파일 다운로드 버튼도 getBlob 경유. 파일 삭제 문서 실패 시 원본 보존, 업로드 시작 시 대상 폴더 고정.
+
+## 운영 전환 승인 후 진행
+- 사용자 운영 전환 진행 승인. 다시 시안 승인 요청하지 않음.
+- OTP Pepper 버전 1, 필수 Cloud API, 전용 런타임 SA, Storage CORS 적용 완료.
+- DB 141문서와 파일 36개 전량 로컬 비공개 백업 완료. 위치와 권한은 전환 문서 참조.
+- SMTP/GitHub 서버 토큰 미등록. 바탕화면 숨김 입력 .command 준비, 사용자 입력 대기. 실제 로그인 전 rules/token 변경과 main 전환 보류.
