@@ -134,3 +134,10 @@
 - OTP Pepper 버전 1, 필수 Cloud API, 전용 런타임 SA, Storage CORS 적용 완료.
 - DB 141문서와 파일 36개 전량 로컬 비공개 백업 완료. 위치와 권한은 전환 문서 참조.
 - SMTP/GitHub 서버 토큰 미등록. 바탕화면 숨김 입력 .command 준비, 사용자 입력 대기. 실제 로그인 전 rules/token 변경과 main 전환 보류.
+
+## 사용자 최종 선택: 이메일 링크
+- 네이버 2단계 인증을 원치 않아 Firebase 발송 이메일 링크로 변경. SMTP/nodemailer 제거, 네이버 비밀값 불필요.
+- GitHub 토큰은 추가 백업 전용 선택 기능. 기본값 VAULT_GITHUB_ENABLED=false, 인증 서버 배포/사이트 저장에 토큰 요구하지 않음.
+- Firebase 이메일 링크 로그인과 실제 도메인 허용 완료. vault 서버 배포 완료, 운영 비인증 요청 401 확인.
+- 링크는 서버 Firebase API에서 일회용 소비 후 owner email 확인, 서버 암호 등록/검증과 세션 버전 보호 유지.
+- 기존 바탕화면 필수 비밀값 등록 도구 삭제. 사용자에게 다시 SMTP/GitHub 등록을 요구하지 않음.

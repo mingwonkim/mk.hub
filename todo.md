@@ -434,3 +434,12 @@ Firebase 프로젝트 `mingwon-hub`, 경로 `mk_app/data/briefs/{YYYY-MM-DD}`.
 - [x] 서버 실행 API 준비 — Functions/Build/Artifact Registry/Run/Eventarc/PubSub/IAM Credentials 활성화 요청 완료
 - [x] 숨김 입력 등록 도구 — 바탕화면 .command, 네이버 SMTP 로그인·GitHub 비공개 레포 검증 후 Secret Manager에만 저장
 - [x] 전용 서버 실행 계정·권한 등록 — mkhub-vault, DB/Auth 역할, 해당 버킷 objectAdmin, 자기 계정 서명 권한; Functions 옵션 연결
+
+## 이메일 인증 링크로 전환
+- [x] 사용자 선택 반영 — 네이버 SMTP/앱 비밀번호 요구 폐기, GitHub 백업은 선택 기능
+- [x] Firebase 이메일 링크 로그인 활성화 — 실제 민권.com 도메인 추가
+- [x] 서버 발송/검증 교체 — 고정 수신자, Firebase 일회용 링크 소비, 서버 암호 유지
+- [x] 클라이언트 변경 — 인증번호 입력 제거, 링크 확인/재발송/URL 비밀값 제거
+- [x] 검증 — 서버 10개, 브라우저 8개, 규칙 5개, Auth emulator 이메일 확인 상태 검증 통과
+- [ ] 인증 서버 배포·main 반영·실제 메일 발송
+- [ ] 사용자 링크 확인·서버 암호 등록 후 운영 규칙·다운로드 토큰 전환

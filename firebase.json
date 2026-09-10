@@ -1,6 +1,38 @@
 {
-  "functions": [{"source": "functions", "codebase": "vault", "ignore": ["node_modules", "*.test.cjs", ".env*", ".secret*"]}],
-  "firestore": {"rules": "security/firestore.rules"},
-  "storage": {"rules": "security/storage.rules"},
-  "emulators": {"auth": {"port": 9099}, "firestore": {"port": 8080}, "storage": {"port": 9199}, "ui": {"enabled": false}, "singleProjectMode": true}
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "vault",
+      "ignore": [
+        "node_modules",
+        "*.test.cjs",
+        ".env*",
+        ".secret*",
+        "*.backup",
+        "*.working",
+        "__pycache__"
+      ]
+    }
+  ],
+  "firestore": {
+    "rules": "security/firestore.rules"
+  },
+  "storage": {
+    "rules": "security/storage.rules"
+  },
+  "emulators": {
+    "auth": {
+      "port": 9099
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "storage": {
+      "port": 9199
+    },
+    "ui": {
+      "enabled": false
+    },
+    "singleProjectMode": true
+  }
 }

@@ -5,6 +5,12 @@
  let auth,mod,storage,storageMod,claims=null,dialog=null,expiryTimer=null,readyResolve;
  // Retire browser-held backup credentials; replacement credentials belong in Secret Manager.
  ['mk_gh_pat','mk_gh_repo','mk_gh_path'].forEach(key=>localStorage.removeItem(key));
+ let pendingLink=null;
+ const linkURL=new URL(location.href);
+ if(linkURL.searchParams.get('mode')==='signIn'&&linkURL.searchParams.has('oobCode')){
+  pendingLink={code:linkURL.searchParams.get('oobCode'),mode:linkURL.searchParams.get('vault')==='recover'?'recover':'open'};
+  ['mode','oobCode','apiKey','lang','vault','continueUrl'].forEach(key=>linkURL.searchParams.delete(key));history.replaceState(null,'',linkURL.pathname+linkURL.search+linkURL.hash);
+ }
  const ready=new Promise(resolve=>{readyResolve=resolve}),files=new Map();
  function active(){return !!(claims&&Number.isFinite(claims.vault_otp_at)&&claims.vault_otp_at<=Date.now()+5000&&claims.email===EMAIL&&claims.email_verified&&claims.vault_owner&&claims.vault_access&&Date.now()-claims.vault_otp_at<43200000);}
  async function api(action,data={},service='vault'){
@@ -30,7 +36,7 @@
   box.innerHTML='<div class="vault-access-sheet"><div class="vault-access-top"><span>MK.HUB / PRIVATE VAULT</span><button type="button" data-close aria-label="닫기">×</button></div><h2></h2><p class="vault-access-description"></p><form><div class="vault-access-fields"></div><p class="vault-access-error" role="alert"></p><button class="vault-access-submit" type="submit"></button></form><button type="button" class="vault-access-secondary" hidden></button></div>';
   document.body.appendChild(box);box.showModal();
   const title=box.querySelector('h2'),desc=box.querySelector('.vault-access-description'),form=box.querySelector('form'),fields=box.querySelector('.vault-access-fields'),err=box.querySelector('.vault-access-error'),submit=box.querySelector('[type=submit]'),secondary=box.querySelector('.vault-access-secondary');
-  let busy=false,mailing=false,composing=false,challengeId='',passwords=[],cooldown=null,sendAfter=0;
+  let busy=false,mailing=false,composing=false,passwords=[],cooldown=null,sendAfter=0;
   function close(){clearInterval(cooldown);passwords=[];box.close();box.remove();dialog=null;}
   box.querySelector('[data-close]').onclick=close;box.addEventListener('cancel',e=>{e.preventDefault();close();});
   form.addEventListener('compositionstart',()=>{composing=true;});form.addEventListener('compositionend',()=>{composing=false;});
@@ -60,24 +66,28 @@
    const state=await api('pin-state');
    if(mode==='recover'||!state.configured){setPin();return;}
    render('저장고 열기','설정한 '+state.stages+'단계 암호를 입력해주세요.','잠금 해제',secretFields(state.stages),async()=>{const result=await api('verify-pin',{passwords:values()});if(!box.isConnected)return;await signIn(result.token);if(mode==='change')setPin();else finish();});
-   secondary.hidden=false;secondary.textContent='비밀번호를 잊으셨나요?';secondary.onclick=()=>{mode='recover';requestCode();};
+   secondary.hidden=false;secondary.textContent='비밀번호를 잊으셨나요?';secondary.onclick=()=>{mode='recover';requestLink();};
   }
-  async function requestCode(){
+  async function requestLink(){
    if(mailing||Date.now()<sendAfter)return;
    mailing=true;secondary.disabled=true;submit.disabled=true;err.textContent='';
-   try{const result=await api('request-code');if(!box.isConnected)return;challengeId=result.challengeId;sendAfter=Date.now()+60000;codeForm();}
+   try{await api('request-link',{mode});if(!box.isConnected)return;sendAfter=Date.now()+60000;sentForm();}
    catch(error){if(box.isConnected)err.textContent=error.message;secondary.disabled=false;}
    finally{mailing=false;submit.disabled=false;}
   }
-  function codeForm(){
-   render('메일을 확인해주세요',EMAIL+'으로 보낸 인증번호 6자리를 입력해주세요. 5분 동안 유효합니다.','인증번호 확인','<label class="vault-secret-label">인증번호<input aria-label="인증번호" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required></label>',async()=>{const result=await api('verify-code',{challengeId,code:fields.querySelector('input').value.trim()});if(!box.isConnected)return;await signIn(result.token);if(box.isConnected)await pin();});
-   secondary.hidden=false;secondary.onclick=requestCode;
-   const update=()=>{const remaining=Math.max(0,Math.ceil((sendAfter-Date.now())/1000));secondary.disabled=remaining>0;secondary.textContent=remaining?'다시 보내기 · '+remaining+'초':'인증번호 다시 보내기';};update();cooldown=setInterval(update,1000);
+  function sentForm(){
+   render('메일을 확인해주세요',EMAIL+'으로 인증 링크를 보냈습니다. 메일 안의 링크를 눌러 저장고로 돌아오세요.','인증 링크 다시 받기','',requestLink);
+   const update=()=>{const remaining=Math.max(0,Math.ceil((sendAfter-Date.now())/1000));submit.disabled=remaining>0;submit.textContent=remaining?'다시 보내기 · '+remaining+'초':'인증 링크 다시 받기';};update();cooldown=setInterval(update,1000);
   }
-  render('나만의 저장고',EMAIL+'으로 인증번호를 보냅니다.','인증번호 받기','',requestCode);
+  render('나만의 저장고',EMAIL+'으로 인증 링크를 보냅니다.','인증 링크 받기','',requestLink);
   ready.then(async()=>{
    if(!box.isConnected)return;
-   if(mode==='recover'){requestCode();return;}
+   if(pendingLink){
+    mode=pendingLink.mode;
+    render('이메일 링크 확인',EMAIL+' 인증 후 저장고로 이동합니다.','저장고로 계속','',async()=>{const result=await api('complete-link',{code:pendingLink.code});if(!box.isConnected)return;pendingLink=null;await signIn(result.token);if(box.isConnected)await pin();});
+    secondary.hidden=false;secondary.textContent='새 인증 링크 받기';secondary.onclick=()=>{pendingLink=null;requestLink();};return;
+   }
+   if(mode==='recover'){requestLink();return;}
    if(claims&&claims.vault_owner&&Date.now()-claims.vault_otp_at<43200000){try{await pin();}catch(error){err.textContent=error.message;}}
   });
  }
@@ -110,7 +120,7 @@
  }
  document.addEventListener('click',download,true);document.addEventListener('auxclick',download,true);
  window.MKVault={
-  async init(a,m,s,sm){auth=a;mod=m;storage=s;storageMod=sm;await mod.setPersistence(auth,mod.browserSessionPersistence);readyResolve();},
+  async init(a,m,s,sm){auth=a;mod=m;storage=s;storageMod=sm;await mod.setPersistence(auth,mod.browserSessionPersistence);readyResolve();if(pendingLink){if(window.mkFinishArrival)window.mkFinishArrival();openFlow('link');}},
   acceptUser,hasAccess:active,api,resolveURL,
   requireAccess(callback){if(active())callback();else openFlow('open',callback);},
   unlock(callback){openFlow('open',callback);},recover(){openFlow('recover');},changePin(){openFlow('change');},logout,
