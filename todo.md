@@ -426,5 +426,5 @@ Firebase 프로젝트 `mingwon-hub`, 경로 `mk_app/data/briefs/{YYYY-MM-DD}`.
 - [x] 소유자 규칙에서 briefs 경로 분리 — read bool만 변경, 생성·본문 변경 차단; 삭제 유지
 - [x] 운영 규칙·IAM 읽기 전용 확인 및 배포 전제조건 기록 — 익명 허용 지속, SMTP·인증 함수 미등록
 - [x] 검증 — Brief 4건·기존 Firestore/Storage 5건 통과
-- [ ] 커밋·브랜치 푸시
+- [x] 커밋·브랜치 푸시 — cea0801, origin/fix/brief-write-permissions 반영
 - [ ] 운영 반영 — SMTP 등록·실제 소유자 로그인 검증 후 기존 보안 전환과 함께 배포
