@@ -11,7 +11,16 @@ service cloud.firestore {
         && request.time.toMillis() - request.auth.token.vault_otp_at < 43200000
         && request.auth.token.vault_version == get(/databases/$(database)/documents/mk_security/access).data.version;
     }
-    match /mk_app/{document=**} { allow read, write: if owner(); }
+    match /mk_app/{root} { allow read, write: if owner(); }
+    match /mk_app/{root}/{collection}/{document=**} {
+      allow read, write: if owner() && (root != 'data' || collection != 'briefs');
+    }
+    match /mk_app/data/briefs/{briefId} {
+      allow read, delete: if owner();
+      allow update: if owner()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read'])
+        && request.resource.data.read is bool;
+    }
     match /{document=**} { allow read, write: if false; }
   }
 }
