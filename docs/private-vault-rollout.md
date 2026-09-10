@@ -15,7 +15,9 @@
 - `security/register-secrets.py`는 나중에 추가 백업을 선택한 관리자의 GitHub 토큰 등록용. SMTP 입력 없음.
 - 서버 테스트 10개, 브라우저 테스트 8개, 규칙 테스트 5개 통과. Auth emulator에서 실제 EMAIL_SIGNIN 발행/소비와 email_verified 확인.
 
-다음 순서: main 화면 반영 → 실제 메일 발송 → 사용자가 링크 확인/저장고 암호 최초 등록 → 소유자 접근 확인 → 운영 규칙/파일 토큰 전환. 사용자 배포 승인은 이미 받았으며 재요청하지 않는다.
+main 4dbde05 Pages 배포 완료. 운영 화면에서 링크 확인 UI·URL 코드 제거 확인. 고정 수신자 발송 API 200 `{sent:true}` 확인(실제 수신/클릭은 사용자 확인 대기). HTTPS 강제 활성화, 함수 이미지 7일 보관 적용. 병합 후 회귀 36개와 DNG 추출 통과.
+
+다음 순서: 사용자가 링크 확인/저장고 암호 최초 등록 → 소유자 접근 확인 → 운영 규칙/파일 토큰 전환. 사용자 배포 승인은 이미 받았으며 재요청하지 않는다.
 
 Firebase 발송 방식 근거: [공식 이메일 링크 인증 안내](https://firebase.google.com/docs/auth/web/email-link-auth).
 
