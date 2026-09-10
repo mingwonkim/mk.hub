@@ -18,7 +18,10 @@ Firebase가 고정 수신자에게 이메일 인증 링크를 보낸다. 네이�
 - 운영 Firestore 소유자 전용 규칙 배포 확인: 2026-09-10 14:39:25 UTC. 이전 익명 인증 허용 규칙은 교체됨.
 - 브리핑 iframe은 `sandbox="allow-popups allow-popups-to-escape-sandbox"`로 스크립트 차단.
 - Brief 추가 규칙: 소유자 읽기·삭제·boolean `read` 변경만 허용. 클라이언트 생성·본문·URL 변경 차단. Admin SDK 작성기는 Rules 적용 대상 아님.
-- 파일 메타데이터 읽기 전용 확인: `mk_files/`, `mk_drawings/` 파일 33개에 다운로드 토큰 잔존. 기존 링크 폐기는 별도 전환 작업으로 남아 있음.
+- Storage 소유자 전용 규칙 적용. 운영 비인증·익명 계정의 DB/파일 요청 4건 모두 403 확인.
+- 기존 개인 파일 33개의 공유 다운로드 토큰 폐기 완료. generation/MD5/size 무변경, 옛 URL 33개 모두 차단 확인.
+- `sealPrivateUpload` 운영 ACTIVE. 별도 임시 업로드의 토큰 자동 제거·내용 유지 확인 후 테스트 파일 삭제.
+- 이벤트 계정은 전용 mkhub-vault. 버킷 metadata 조회·Eventarc 수신·해당 Cloud Run 서비스 호출 권한만 추가. [Eventarc 권한 안내](https://docs.cloud.google.com/eventarc/standard/docs/run/create-trigger-storage-gcloud?hl=en)
 
 ## 브리핑 규칙 검증·배포
 
@@ -34,8 +37,7 @@ npx firebase-tools@15.30.0 deploy --only firestore:rules --project mingwon-hub
 
 ## 남은 별도 점검
 
-- Storage 기존 다운로드 토큰: 현재 공유 링크를 무효화하는 작업. 도구 `security/seal-existing-files.cjs` 기본 실행은 dry-run, `--apply`가 실제 폐기. 파일 내용·경로는 유지.
-- 토큰 폐기 전 소유자 인증 다운로드 검증, 이후 옛 URL 차단 및 앱 다운로드 재검증 필요.
+- 소유자 브라우저의 기존 그림/파일 열기는 사용자 확인 응답 대기. 서버 암호 등록 완료는 사용자 응답과 access.version=1로 확인.
 - IAM의 브리핑 작성 계정 식별 필요. GitHub Secret은 원문 조회 불가하므로 기존 발급 파일의 `client_email`만 확인하고 공유 계정 역할을 무작정 제거하지 않는다.
 - GitHub 추가 백업은 선택 기능이며 `VAULT_GITHUB_ENABLED=false`가 기본. 켤 때만 `mingwonkim/obsidian-vault`의 Contents 읽기/쓰기 토큰을 서버에 등록한다.
 - Discord 알림은 morning-brief 저장소의 `DISCORD_WEBHOOK_URL` 등록 시 활성화.
