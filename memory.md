@@ -128,3 +128,11 @@
 - 자세한 배포 순서/제약: docs/private-vault-rollout.md. 브랜치 design/woodland-interactive, main 시안 검토 대기.
 
 - 파일 다운로드 버튼도 getBlob 경유. 파일 삭제 문서 실패 시 원본 보존, 업로드 시작 시 대상 폴더 고정.
+
+## 2026-09-10 — Brief 작성 권한 제한
+- 포괄 allow와 좁은 match가 겹치면 하나라도 true인 규칙이 허용하므로, mk_app 포괄 규칙에서 data/briefs를 제외한 뒤 전용 match로 분리.
+- 클라이언트는 소유자의 읽기·삭제·boolean read 변경만 허용; 문서 생성·html/urls/다른 필드 변경·중첩 문서 쓰기 차단. Admin SDK 작성기는 Rules 적용 대상 아님.
+- 에뮬레이터: 수정 전 본문 변경·문서 생성 테스트 2건 실패, 수정 후 Brief 4건+기존 규칙 5건 통과.
+- 운영 Rules API 재조회: 2026-04-05 배포 규칙으로 request.auth != null 허용 지속. OTP Secret만 있고 asia-northeast3 v2 함수 없음; SMTP 등록·소유자 로그인 전 규칙 단독 배포는 기존 사용자 접근을 차단.
+- IAM은 읽기 전용 점검: 기본 compute/appspot Editor, Firebase Admin SDK 계정 Auth Admin/Storage Admin/Token Creator 등 존재. GitHub Secret의 실제 client_email은 확인 불가; 공유 계정 권한 축소 전 작성기 사용 계정 확인 필요.
+- 원래 design/woodland-interactive 작업 디렉터리의 미커밋 todo.md 보존; fix/brief-write-permissions 별도 worktree에서 작업.

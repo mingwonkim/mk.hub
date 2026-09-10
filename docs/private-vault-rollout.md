@@ -86,3 +86,17 @@ NODE_PATH=./tests/node_modules node --test tests/memo-auth-regression.cjs tests/
 완료: 메모/파일/기존 암호 11개, 서버 헬퍼 5개, 서버 트랜잭션/백업 6개, 보안 규칙 5개, 브라우저 인증/커서/실제 CSP 8개. 총 35개 통과. 서버 테스트의 메일·Auth는 대역이며 실제 SMTP·운영 custom token 로그인은 외부 설정 후 확인해야 한다.
 
 서버 의존성 감사: `uuid` 간접 의존성을 CommonJS 지원 패치 버전 11.1.1로 고정. 호출부는 v4 사용 확인, Functions 재설치 후 npm audit 0건. [수정 근거](https://github.com/advisories/GHSA-w5hq-g745-h8pq)
+
+## Brief 권한 추가 점검 — 2026-09-10
+
+운영 API 읽기 전용 재확인: Firestore는 여전히 `request.auth != null`이면 mk_app 읽기·쓰기 허용(배포 갱신 2026-04-05). Secret Manager에는 VAULT_OTP_PEPPER만 있고, asia-northeast3 v2 인증 함수는 아직 없다. 이번 변경은 운영에 배포하지 않았다.
+
+추가 규칙은 소유자의 브리핑 읽기·삭제와 boolean `read` 변경만 허용한다. 생성·본문·URL 변경은 클라이언트에서 차단하고, Admin SDK 브리핑 작성기는 기존대로 동작한다. 포괄 규칙에서 briefs를 제외해야 전용 제한이 유효하다. [중첩 규칙 허용 방식](https://firebase.google.com/docs/firestore/security/rules-structure), [필드 변경 제한](https://firebase.google.com/docs/firestore/security/rules-fields).
+
+IAM의 기본 계정 Editor와 Firebase Admin SDK 계정의 Auth/Storage/Token Creator 권한은 확인했지만, GitHub `FIREBASE_SERVICE_ACCOUNT` Secret의 실제 계정은 조회 불가다. Secret 원문을 공개하지 말고 기존 발급 파일의 `client_email`만 확인해 사용 계정을 식별한다. 공유 계정 권한을 바로 제거하지 말고, 브리핑 전용 계정의 Firestore 필요 권한을 검토한 뒤 인증 전환과 실행 검증을 진행한다.
+
+검증 명령:
+```sh
+JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home npx firebase-tools@15.30.0 emulators:exec --only firestore,storage --project demo-mkhub 'node --test tests/brief-rules.cjs && node --test tests/security-rules.cjs'
+```
+결과: 수정 전 신규 테스트 2건 실패 → 수정 후 신규 4건·기존 5건 통과. 운영 배포는 위 전환 순서의 SMTP·소유자 로그인 검증 이후 진행한다.
