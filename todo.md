@@ -416,3 +416,7 @@ mk.hub:
       gallery-motion.js 신규, pitch-trainer 다크 전환, quotes 에디토리얼 그리드
 - [o] 14:05 허브 전체 블랙아웃 회귀 수정 — Manus가 넣은 .page.active{...both} 삭제.
       헤드리스 크롬 이분탐색 6회로 `animation-fill-mode:both` 단독 원인 특정
+
+## 2026-09-25
+- [o] 00:59 잠금 해제 1단계화 + 비밀번호 Firestore 동기화 — 3단계 비번만 입력하면 통과,
+      mk_app/recovery.pw 로 기기·브라우저 간 공유(메일은 분실 시에만)

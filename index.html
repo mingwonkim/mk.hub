@@ -2271,6 +2271,9 @@ window.openApp=openApp;window.goHub=goHub;window.goBack=goBack;
         localStorage.setItem(RECOVERY_EMAIL_KEY,snap.data().email);
         updateRecoveryEmailDisplay();
       }
+      const remotePw=snap&&snap.exists()&&snap.data().pw;
+      if(remotePw&&remotePw.s1)localStorage.setItem('mk_pw4',JSON.stringify(remotePw));
+      else if(localStorage.getItem('mk_pw4'))setPwLocal(getPw());
     }).catch(()=>{});
   });
   // 이메일 링크 귀환 감지 — 비밀번호 재설정
@@ -2440,7 +2443,11 @@ function getPw(){
   try{localStorage.setItem('mk_pw4',JSON.stringify(defaultPw));}catch(e){}
   return defaultPw;
 }
-function setPwLocal(pw){localStorage.setItem('mk_pw4',JSON.stringify(pw));}
+function setPwLocal(pw){
+  localStorage.setItem('mk_pw4',JSON.stringify(pw));
+  // 메일 링크를 연 브라우저에서 재설정해도 다른 기기·브라우저에 반영되도록 동기화
+  if(db&&doc&&setDoc)setDoc(doc(db,'mk_app','recovery'),{pw},{merge:true}).catch(()=>{});
+}
 async function checkPwHash(hash,val){
   if(!hash)return true;
   const secure=typeof crypto!=='undefined'&&!!crypto.subtle;
@@ -2978,11 +2985,10 @@ function showTextPin(cb){
     </div>`;
   document.body.appendChild(overlay);
 
-  const phases=[
-    {sub:'1단계: 영문·숫자·특수기호 (최대 13자)',key:'s1',korean:false},
-    {sub:'2단계: 생년월일 6자리',key:'s2',korean:false},
-    {sub:'3단계: 궁극적으로 만들고 싶은 것',key:'s3',korean:true},
-  ];
+  // 잠금 해제는 한 단계만 — 3단계 비밀번호(미설정 시 1단계)
+  const phases=getPw().s3
+    ?[{sub:'궁극적으로 만들고 싶은 것',key:'s3',korean:true}]
+    :[{sub:'영문·숫자·특수기호 (최대 13자)',key:'s1',korean:false}];
   let phase=0;
   let eyeVisible=false;
   let isKoreanPhase=false;
@@ -3019,10 +3025,9 @@ function showTextPin(cb){
 
   function updatePhase(){
     const pw=getPw();
-    while(phase<3&&(pw[phases[phase].key]===null||pw[phases[phase].key]===undefined||pw[phases[phase].key]=='')){phase++;}
-    if(phase>=3){document.body.removeChild(overlay);isUnlocked=true;sessionStorage.setItem('mk_unlocked','1');cb();
-      notifyAllFrames(true);return;
-      notifyAllFrames(true);}
+    while(phase<phases.length&&(pw[phases[phase].key]===null||pw[phases[phase].key]===undefined||pw[phases[phase].key]=='')){phase++;}
+    if(phase>=phases.length){document.body.removeChild(overlay);isUnlocked=true;sessionStorage.setItem('mk_unlocked','1');cb();
+      notifyAllFrames(true);return;}
     const cfg=phases[phase];
     isKoreanPhase=cfg.korean||false;
     document.getElementById('tpSub').textContent=cfg.sub;
@@ -3033,10 +3038,8 @@ function showTextPin(cb){
     inp.style.borderColor='#2a2a35';
     inp.style.boxShadow='none';
     document.getElementById('tpErr').textContent='';
-    document.getElementById('tpNext').textContent=phase===2?'확인 ✓':'다음 →';
-    for(let i=0;i<3;i++){
-      document.getElementById('tpd'+i).style.background=i<phase?'#FF3B00':i===phase?'#ffb4a2':'#1e1e24';
-    }
+    document.getElementById('tpNext').textContent='확인 ✓';
+    document.getElementById('tpd1').style.display=document.getElementById('tpd2').style.display='none';
     if(isKoreanPhase){
       inp.type='text';inp.readOnly=true;inp.style.caretColor='transparent';
       inp.style.pointerEvents='none';inp.tabIndex=-1;inp.style.outline='none';
@@ -3064,7 +3067,7 @@ function showTextPin(cb){
       return;
     }
     phase++;
-    if(phase>=3){document.body.removeChild(overlay);isUnlocked=true;sessionStorage.setItem('mk_unlocked','1');notifyAllFrames(true);cb();}
+    if(phase>=phases.length){document.body.removeChild(overlay);isUnlocked=true;sessionStorage.setItem('mk_unlocked','1');notifyAllFrames(true);cb();}
     else{updatePhase();}
   }
 
