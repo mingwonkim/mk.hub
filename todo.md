@@ -502,5 +502,5 @@ mk.hub:
 - [x] 서버 — pin-state/verify-pin 비인증 허용, 3x3 패턴 형식 검증, 실패 잠금 15분→2배씩(최대 24h), 기존 텍스트 암호는 미설정 취급
 - [x] 클라이언트 — 9개 정사각형 점 패턴 UI, 중간 점 자동 연결, 설정 시 2회 확인, "비밀번호를 잊으셨나요?"만 이메일
 - [x] 검증 — 서버 7, 클라이언트 9, 보안 4, 메모 회귀 13 통과
-- [ ] `npx firebase-tools@15.30.0 deploy --only functions:vault:vault --project mingwon-hub` (사용자 실행) 후 pattern-lock 브랜치 main 병합
+- [x] 서버 배포·main 병합 — 운영 pin-state 비인증 응답 {configured:false} 확인
 - [ ] 최초 1회: 비밀번호 찾기 → 메일 링크 → 새 패턴 등록
