@@ -47,3 +47,10 @@
 - Model: nano_banana_pro 요청 / resolution=1k / aspect_ratio=16:9 / count=1. 반환 표시 모델: nano_banana_2.
 - 상태: completed. 원본 1376×768 `assets/v2/city-03-low-original.png`; 미리보기 `assets/v2/city-03-low.webp` 281132 bytes.
 - 비용: 2 credits exact. 결과는 수평 시선·둥근 고층·청색/핑크/펄 화이트 색감·광고·비행선을 반영. 사용자 확인 대기. 11 credits 고화질은 승인 전 금지.
+
+## City 04 — 내부와 전광판 강화
+- 사용자 요구: City 03에 첫 결과물처럼 더 다채로운 색, City 02처럼 건물 내부가 보이는 구조와 많은 전광판. 완전 수평은 아니며 약한 하향 시선 유지.
+- Job ID: 85bafbc1-6e2b-4697-917b-553d59881cd9
+- Model: nano_banana_pro 요청 / resolution=1k / aspect_ratio=16:9 / count=1. 반환 표시 모델: nano_banana_2.
+- 상태: completed. 원본 1376×768 `assets/v2/city-04-low-original.png`; 미리보기 `assets/v2/city-04-low.webp` 287072 bytes.
+- 비용: 2 credits exact. 다색 조명·개방형 층/실내·전광판 다수·약한 하향 시선 확인. 사용자 확인 대기. 11 credits 고화질은 승인 전 금지.
