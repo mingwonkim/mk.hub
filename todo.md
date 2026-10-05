@@ -523,3 +523,5 @@ mk.hub:
 - [ ] City 06 사용자 승인 후 11 credits 고화질 — 승인 전 생성 금지.
 - [x] City 07 저비용 밝은 색/안개 보정 — City 05 기준, 2 credits.
 - [ ] City 07 사용자 승인 후 11 credits 고화질 — 승인 전 생성 금지.
+- [x] City 08 저비용 대비/좌측 건물 정리 — City 05 기반, 2 credits.
+- [ ] City 08 사용자 승인 후 11 credits 고화질 — 승인 전 생성 금지.

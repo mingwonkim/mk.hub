@@ -78,3 +78,11 @@
 - Model: nano_banana_pro 요청 / resolution=1k / aspect_ratio=16:9 / count=1; 반환 표시 모델 nano_banana_2.
 - 상태: completed. 원본 `assets/v2/city-07-low-original.png`; 미리보기 `assets/v2/city-07-low.webp` 290678 bytes.
 - 비용: 2 credits exact. 밝은 표면·핑크/화이트/라벤더 안개와 기존 딥 네이비 대비 반영. 사용자 확인 대기. 고화질 생성 금지.
+
+## City 08 — FAMOUS 대비/좌측 건물 정리
+- 사용자 요구: City 07은 전체가 너무 밝고 대비 부족. 왼쪽 철근·나뭇잎이 옛 건물처럼 보임. City 05 기반으로 딥 네이비/차콜 외벽, 선택적 밝은 피사체, 얇은 핑크 대기층으로 재조정.
+- Job ID: 437fbf33-825a-4a42-84d3-3a5d835ee7a4
+- Reference: City 05 job 8e4247b2-6a48-469d-90e5-ad285ec486d4
+- Model: nano_banana_pro 요청 / resolution=1k / aspect_ratio=16:9 / count=1; 반환 표시 모델 nano_banana_2.
+- 상태: completed. 원본 `assets/v2/city-08-low-original.png`; 미리보기 `assets/v2/city-08-low.webp` 282120 bytes.
+- 비용: 2 credits exact. 사용자 확인 대기. 고화질 생성 금지.
