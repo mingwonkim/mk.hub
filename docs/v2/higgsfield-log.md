@@ -20,3 +20,30 @@
 - 원본: assets/v2/city-01-original.png, 2752×1536.
 - 웹 미리보기: assets/v2/city-01.webp, 279898 bytes. cwebp 압축, 새 이미지 생성 아님.
 - 원본과 미리보기 보존. 실제 화면으로 어두운 전경/밝은 중앙도시/비행선/전광판/핑크 구름 확인.
+
+## City 02 — 사용자 수정 요청
+- 수정: 수 km 초고층·더 높은 카메라·세밀한 좌우 외벽·실제 광고 콘텐츠·도시 밀도.
+- 참조: 두 번째 릴스 공개 화면 재확인; 깊은 도시 협곡·미세 불빛·복잡한 전경 구조. 전체 영상 재생 확인은 안 됨.
+- Model: gpt_image_2 / resolution=4k / quality=high / aspect_ratio=16:9 / count=1.
+- 기존 Nano Banana Pro 요청/반환명 불일치와 1차 디테일 부족 때문에 Higgsfield 내 high 품질 모델로 변경. 저해상도 업스케일 아닌 신규 4K 요청.
+- 생성 전 잔액: 261.5. get_cost 견적: 11 credits exact, 사용자 통보 완료.
+- Job ID: 89d8873b-0c69-41c4-9399-ea82f1e5b826
+- 현재 상태: 제출 완료. 수정 시안 1장만 제출, 완료 후 사용자 확인.
+- Prompt: Create ONE extremely detailed, photorealistic cinematic aerial establishing image of an overwhelmingly immense inhabited futuristic megacity, landscape 16:9, maximum 4K high quality.
+
+  The correction is SCALE, ALTITUDE and ARCHITECTURAL MICRODETAIL. Camera hovering 2.5 kilometers above the ground near the upper floors of kilometre-high towers, looking diagonally DOWN 30 degrees across an endless urban abyss. This civilization builds 2 to 5 kilometer tall megastructures, with THOUSANDS of clearly articulated tiny occupied floors. Ordinary 2026 skyscrapers look like tiny subordinate structures far below. Multiple cloud and white mist strata intersect the lower and middle levels of the enormous towers. The street level is lost far beneath; the viewer must viscerally feel vertigo and astronomical vertical scale. City occupies 90 percent of the frame; only a narrow pale rose dusk sky at the upper edge. Three to four overlapping distance layers, legible silhouettes and a clear flight corridor descending toward the mid-distance.
+
+  Foreground left AND right must have exquisite, varied, physically plausible detail, NOT smooth black slabs: millions of small lit and unlit window cells, curtain-wall mullions, layered terraces, inhabited modules, exposed structural outriggers, recessed service galleries, catwalks, elevator shafts, ventilation ribs, pipes and micro-antennae, maintenance gantries, sky gardens and docking platforms. Restrained complex hard-surface architecture with credible engineering. Oblique asymmetrical composition: left a cropped narrow complex tower shoulder, right a taller richly detailed megastructure occupying no more than 20 percent of frame. Do not make two huge blank walls framing one modest tower. Across the middle and distance: a DENSE forest of varied impossibly tall inhabited spires rising from an immense carpet of tiny city lights, stacked transit levels and luminous aerial traffic lanes, with skybridges connecting clusters at different altitudes. Details should stay coherent and sharply resolved when zoomed in, no mush or painterly noise.
+
+  Real illuminated DIGITAL ADVERTISING integrated into buildings: several huge but slender wraparound LED media facades, vertical screens and small ticker bands, visible panel seams and mounting structure, emitted light reflecting on nearby metal. Show convincingly designed fictional advertisements: an editorial portrait of a fictional adult fashion model in a bright coral coat with large clean short words 'FORM / 2096'; another original chrome music synthesizer product ad 'SOUND'; a cyan technical product ad with coherent graphic layout. Mix portrait, product photography, typography and animation-like luminous visual content, NOT generic abstract fabric paintings, not empty white rectangles, not all identical billboards. All people are fictional adults, no real logos or real brands. Ads remain secondary to the enormous city scale.
+
+  One sophisticated enormous airship crossing the middle distance, dwarfed by the megastructures, and many much tinier flying vehicles help establish scale. Dark graphite, deep blue steel and violet-blue atmospheric depth; countless warm amber and coral window lights and brilliant pearl-white/soft cyan signage; occasional luminous pink cloud wisps and white mist create bright relief within the darker city. Beautiful balanced exposure: richly readable shadow detail in foreground, brighter illuminated subjects, selective bloom only around lights, no crushed black facade. Airy white haze only in far distance, not washing out the detailed foreground.
+
+  Premium science-fiction film visual-effects still with physically based materials and intricate lived-in urban detail, refined cinematic lighting, deep focus, immense scale. No cartoon, no illustration, no architectural concept sketch, no plastic toy city, no low-detail game rendering, no generic contemporary skyline, no single smooth central landmark, no enormous empty sky, no interface, no watermark. Original fictional design.
+
+## City 03 — 저비용 방향 확인
+- 사용자 요구: 첫 결과물 색감, 더 수평인 시선, 성처럼 뾰족한 실루엣 제거. 먼저 2 credits 저화질 draft 후 승인 시 11 credits 고화질.
+- Job ID: 1d7a16c8-ec7a-41ec-9579-2b6482f27356
+- Model: nano_banana_pro 요청 / resolution=1k / aspect_ratio=16:9 / count=1. 반환 표시 모델: nano_banana_2.
+- 상태: completed. 원본 1376×768 `assets/v2/city-03-low-original.png`; 미리보기 `assets/v2/city-03-low.webp` 281132 bytes.
+- 비용: 2 credits exact. 결과는 수평 시선·둥근 고층·청색/핑크/펄 화이트 색감·광고·비행선을 반영. 사용자 확인 대기. 11 credits 고화질은 승인 전 금지.
