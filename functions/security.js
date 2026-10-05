@@ -10,11 +10,10 @@ function requireOwner(claims,access=false,now=Date.now()){
  return claims;
 }
 function otpHash(id,code,pepper){return createHmac('sha256',pepper).update(id+':'+code).digest('hex');}
+// Pattern = 4-9 distinct dots (0-8, row-major) in drawing order.
 function normalizePasswords(values){
- if(!Array.isArray(values)||values.length<1||values.length>3||values.some(v=>typeof v!=='string'))throw new VaultError(400,'암호를 확인해주세요.');
- const passwords=values.map(v=>v.trim().normalize('NFC'));
- if(passwords.some(v=>!v||v.length>1024)||passwords[0].length>13||(passwords.length>1&&!/^\d{6}$/.test(passwords[1])))throw new VaultError(400,'1차 최대 13자, 2차 숫자 6자리 형식을 확인해주세요.');
- return passwords;
+ if(!Array.isArray(values)||values.length!==1||typeof values[0]!=='string'||!/^[0-8]{4,9}$/.test(values[0])||new Set(values[0]).size!==values[0].length)throw new VaultError(400,'점 4개 이상을 이어 그려주세요.');
+ return values;
 }
 async function hashPasswords(values){return Promise.all(normalizePasswords(values).map(async password=>{const salt=randomBytes(16).toString('hex');return{salt,hash:(await scrypt(password,salt,64)).toString('hex')};}));}
 async function verifyPasswords(values,stored){

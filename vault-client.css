@@ -5,11 +5,11 @@
 .vault-access-top button{background:none;border:0;font-size:25px;color:#b7a58e;cursor:pointer}
 .vault-access h2{font:600 32px/1.15 'Space Grotesk','Noto Sans KR',sans-serif;letter-spacing:-.055em;margin:0 0 18px}
 .vault-access-description{font-size:12px;line-height:1.9;color:#b4a38f;margin:0 0 28px;overflow-wrap:anywhere}
-.vault-secret-label{display:block;font-size:11px;color:#c4b5a1;margin:0 0 18px}
-.vault-secret-label>span{position:relative;display:block}
-.vault-secret-label input{box-sizing:border-box;display:block;width:100%;margin-top:8px;padding:14px 55px 14px 14px;border:1px solid #51402f;border-radius:9px;background:#11110e;color:#f1e5cf;font:17px 'Noto Sans KR',sans-serif;outline:none}
-.vault-secret-label input:focus{border-color:#FF3B00;box-shadow:0 0 0 3px #ff3b0012}
-.vault-secret-label [data-eye]{position:absolute;right:12px;top:50%;translate:0 -50%;border:0;background:none;color:#bda17e;cursor:pointer;font-size:10px}
+.vault-pattern{position:relative;display:grid;grid-template-columns:repeat(3,1fr);place-items:center;width:min(270px,100%);aspect-ratio:1;margin:0 auto 10px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:crosshair}
+.vault-pattern svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.vault-pattern polyline{fill:none;stroke:#FF3B00;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;opacity:.75}
+.vault-pattern span{width:16px;height:16px;border-radius:2px;background:#51402f;transition:background .15s,scale .15s}
+.vault-pattern span.on{background:#FF3B00;scale:1.4}
 .vault-access-error{color:#f09d72;font-size:12px;min-height:20px;line-height:1.6}
 .vault-access-submit{width:100%;padding:15px;border:0;border-radius:9px;background:#FF3B00;color:#fff2de;font-weight:600;cursor:pointer}
 .vault-access-secondary{display:block;margin:22px auto 0;background:none;border:0;color:#c4ad8e;font-size:11px;cursor:pointer}

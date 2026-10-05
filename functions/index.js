@@ -50,24 +50,27 @@ async function vaultHandler(req){
   if(verified.email!==OWNER_EMAIL||verified.email_verified!==true)throw new VaultError(403,'소유자 이메일 인증이 필요합니다.');
   return{token:await mint({uid:verified.uid,vault_otp_at:Date.now()},false,0)};
  }
- const claims=await authenticate(req);
+ // Pattern alone opens the vault; email link is only for first setup / recovery.
  if(action==='pin-state'){
-  const state=await accessRef.get();return{configured:state.exists,stages:state.exists?state.data().passwords.length:1};
+  const state=await accessRef.get();return{configured:state.exists&&state.data().kind==='pattern'};
  }
+ if(action==='verify-pin'){
+  // Reserve an attempt before expensive hashing; concurrent requests cannot bypass the limit.
+  // Each lockout doubles (15min -> 24h cap); email recovery (set-pin) clears it.
+  const state=await db.runTransaction(async tx=>{const snap=await tx.get(accessRef);if(!snap.exists||snap.data().kind!=='pattern')throw new VaultError(409,'저장고 패턴을 먼저 등록해주세요.');const state=snap.data(),now=Date.now();if(state.lockedUntil>now)throw new VaultError(429,'인증 시도가 많습니다. 잠시 후 다시 시도하거나 비밀번호 찾기를 이용해주세요.');const attempts=state.lockedUntil?0:(state.attempts||0),locks=state.locks||0,lock=attempts+1>=5;tx.update(accessRef,{attempts:attempts+1,lockedUntil:lock?now+Math.min(900000*2**locks,86400000):0,locks:lock?locks+1:locks});return state;});
+  if(!await verifyPasswords(body.passwords,state.passwords))throw new VaultError(403,'패턴이 일치하지 않습니다.');
+  await db.runTransaction(async tx=>{const latest=await tx.get(accessRef);if(latest.data()?.version!==state.version)throw new VaultError(401,'패턴이 변경됐습니다. 다시 시도해주세요.');tx.update(accessRef,{attempts:0,lockedUntil:0,locks:0});});
+  const owner=await auth.getUserByEmail(OWNER_EMAIL);
+  return{token:await mint({uid:owner.uid,vault_otp_at:Date.now()},true,state.version)};
+ }
+ const claims=await authenticate(req);
  if(action==='set-pin'){
   const freshRecovery=claims.vault_recovery===true&&Date.now()-claims.vault_otp_at<REAUTH_MS;
   const freshPin=claims.vault_access===true&&Date.now()-claims.vault_pin_at<REAUTH_MS;
   if(!freshRecovery&&!freshPin)throw new VaultError(401,'암호 변경 전 다시 인증해주세요.');
   const passwords=await hashPasswords(body.passwords);
-  const version=await db.runTransaction(async tx=>{const old=await tx.get(accessRef);if(!freshRecovery&&old.data()?.version!==claims.vault_version)throw new VaultError(401,'다시 인증해주세요.');const version=(old.data()?.version||0)+1;tx.set(accessRef,{passwords,version,attempts:0,lockedUntil:0});return version;});
+  const version=await db.runTransaction(async tx=>{const old=await tx.get(accessRef);if(!freshRecovery&&old.data()?.version!==claims.vault_version)throw new VaultError(401,'다시 인증해주세요.');const version=(old.data()?.version||0)+1;tx.set(accessRef,{kind:'pattern',passwords,version,attempts:0,lockedUntil:0,locks:0});return version;});
   return{token:await mint(claims,true,version)};
- }
- if(action==='verify-pin'){
-  // Reserve an attempt before expensive hashing; concurrent requests cannot bypass the limit.
-  const state=await db.runTransaction(async tx=>{const snap=await tx.get(accessRef);if(!snap.exists)throw new VaultError(409,'저장고 암호를 먼저 등록해주세요.');const state=snap.data(),now=Date.now();if(state.lockedUntil>now)throw new VaultError(429,'인증 시도가 많습니다. 15분 후 다시 시도해주세요.');const attempts=state.lockedUntil?0:(state.attempts||0);tx.update(accessRef,{attempts:attempts+1,lockedUntil:attempts+1>=5?now+900000:0});return state;});
-  if(!await verifyPasswords(body.passwords,state.passwords))throw new VaultError(403,'암호가 일치하지 않습니다.');
-  await db.runTransaction(async tx=>{const latest=await tx.get(accessRef);if(latest.data()?.version!==state.version)throw new VaultError(401,'암호가 변경됐습니다. 다시 인증해주세요.');tx.update(accessRef,{attempts:0,lockedUntil:0});});
-  return{token:await mint(claims,true,state.version)};
  }
  if(action==='logout-all'){
   await authenticate(req,true);await accessRef.update({version:FieldValue.increment(1)});await auth.revokeRefreshTokens(claims.uid);return{ok:true};

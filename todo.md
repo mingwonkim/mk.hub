@@ -497,3 +497,10 @@ mk.hub:
 - [x] 운영 Firestore 규칙 배포·배포 원문 확인 — 배포 API 원문과 테스트 규칙 일치
 - [x] SMTP 안내 정정 — Firebase 이메일 링크 기준으로 전환 문서 재작성
 - [x] 최종 변경 커밋·푸시 — 2703b4f, origin/main 반영
+
+## 패턴 잠금 전환 (이메일은 비밀번호 찾기 전용)
+- [x] 서버 — pin-state/verify-pin 비인증 허용, 3x3 패턴 형식 검증, 실패 잠금 15분→2배씩(최대 24h), 기존 텍스트 암호는 미설정 취급
+- [x] 클라이언트 — 9개 정사각형 점 패턴 UI, 중간 점 자동 연결, 설정 시 2회 확인, "비밀번호를 잊으셨나요?"만 이메일
+- [x] 검증 — 서버 7, 클라이언트 9, 보안 4, 메모 회귀 13 통과
+- [ ] `npx firebase-tools@15.30.0 deploy --only functions:vault:vault --project mingwon-hub` (사용자 실행) 후 pattern-lock 브랜치 main 병합
+- [ ] 최초 1회: 비밀번호 찾기 → 메일 링크 → 새 패턴 등록
