@@ -55,7 +55,7 @@
    function draw(tip){line.setAttribute('points',path.map(xy).concat(tip?[tip]:[]).join(' '));dots.forEach((d,i)=>d.classList.toggle('on',path.includes(i)));}
    function point(e){const r=pad.getBoundingClientRect();return[(e.clientX-r.left)/r.width*300,(e.clientY-r.top)/r.height*300];}
    function visit([x,y]){
-    const c=Math.floor(x/100),r=Math.floor(y/100);if(c<0||c>2||r<0||r>2||Math.hypot(x-c*100-50,y-r*100-50)>38)return;
+    const c=Math.floor(x/100),r=Math.floor(y/100);if(c<0||c>2||r<0||r>2||Math.hypot(x-c*100-50,y-r*100-50)>22)return;
     const i=r*3+c,last=path.at(-1);if(path.includes(i))return;
     if(last!=null){const lc=last%3,lr=Math.floor(last/3);if((lc+c)%2===0&&(lr+r)%2===0){const mid=(lr+r)/2*3+(lc+c)/2;if(!path.includes(mid))path.push(mid);}}
     path.push(i);if(navigator.vibrate)navigator.vibrate(8);
