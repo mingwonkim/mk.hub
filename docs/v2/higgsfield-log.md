@@ -62,3 +62,11 @@
 - Model: nano_banana_pro 요청 / resolution=1k / aspect_ratio=16:9 / count=1; 반환 표시 모델 nano_banana_2.
 - 상태: completed. 원본 `assets/v2/city-05-low-original.png`; 미리보기 `assets/v2/city-05-low.webp` 280208 bytes.
 - 비용: 2 credits exact. 사용자 확인 대기. 11 credits 고화질은 승인 전 금지.
+
+## City 06 — 시선 상승
+- 사용자 요구: City 05에서 시선을 위로 약 10도, 핑크 하늘을 더 넓게, 상승한 카메라를 따라 프레임 상단 밖으로 이어지는 초고층 건물 몇 개 추가.
+- Job ID: 21ed5754-8dbc-41f2-aa1b-a86861c46159
+- Reference: City 05 job 8e4247b2-6a48-469d-90e5-ad285ec486d4
+- Model: nano_banana_pro 요청 / resolution=1k / aspect_ratio=16:9 / count=1; 반환 표시 모델 nano_banana_2.
+- 상태: completed. 원본 `assets/v2/city-06-low-original.png`; 미리보기 `assets/v2/city-06-low.webp` 290944 bytes.
+- 비용: 2 credits exact. 핑크/라벤더 하늘 확대와 상단을 뚫는 근접 초고층 반영. 사용자 확인 대기. 고화질 생성 금지.
