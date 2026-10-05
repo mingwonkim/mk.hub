@@ -95,6 +95,14 @@
 - 상태: completed. 원본 `assets/v2/city-10-low-original.png`; 미리보기 `assets/v2/city-10-low.webp` 288938 bytes.
 - 비용: 2 credits exact. City 02 구도 유지, 둥근 실루엣·핑크 구름·선택적 네온 상승 반영. 사용자 확인 대기. 고화질 생성 금지.
 
+## City 11 — 첨부 City 02 세 가지 변경만
+- 사용자 요구: City 02에서 일부 뾰족한 건물만 둥글게, 구름 밝은 몽환 핑크 그라데이션, 전광판만 조금 더 밝게. 나머지 유지.
+- Job ID: 4156cdf1-47af-4adc-aa9c-f34b6bb26864
+- Reference media: confirmed upload `07cd60cb-acc4-4dce-adb1-80dc2eb8b16c`.
+- Model: nano_banana_pro 요청 / resolution=1k / aspect_ratio=16:9 / count=1; 반환 표시 모델 nano_banana_2.
+- 상태: completed. 원본 `assets/v2/city-11-low-original.png`; 미리보기 `assets/v2/city-11-low.webp` 284982 bytes.
+- 비용: 2 credits exact. 사용자 확인 대기. 고화질 생성 금지.
+
 ## City 09 — City 02 구름/실루엣/네온 수정
 - 사용자 요구: City 02에서 뾰족한 건물 일부를 뭉툭하게, 구름은 연한 핑크로 몽환적 처리, 네온 전광판 등 밝힐 영역만 상승.
 - City 02 job reference가 만료되어 404 반환, 비용 차감 없음. 동일 구도·요소를 텍스트로 고정해 재생성.
