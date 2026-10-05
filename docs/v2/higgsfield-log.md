@@ -86,3 +86,19 @@
 - Model: nano_banana_pro 요청 / resolution=1k / aspect_ratio=16:9 / count=1; 반환 표시 모델 nano_banana_2.
 - 상태: completed. 원본 `assets/v2/city-08-low-original.png`; 미리보기 `assets/v2/city-08-low.webp` 282120 bytes.
 - 비용: 2 credits exact. 사용자 확인 대기. 고화질 생성 금지.
+
+## City 10 — 첨부 City 02 직접 편집
+- 사용자 요청: 다운로드한 City 02 파일을 직접 첨부해 기존 요청 재반영.
+- 원본 업로드: `assets/v2/city-02-rejected.png` → media_id `07cd60cb-acc4-4dce-adb1-80dc2eb8b16c` (Higgsfield confirmed image).
+- Job ID: 6dfa6118-b8e7-4480-ad37-f2ba085d46af
+- Model: nano_banana_pro 요청 / resolution=1k / aspect_ratio=16:9 / count=1; 반환 표시 모델 nano_banana_2.
+- 상태: completed. 원본 `assets/v2/city-10-low-original.png`; 미리보기 `assets/v2/city-10-low.webp` 288938 bytes.
+- 비용: 2 credits exact. City 02 구도 유지, 둥근 실루엣·핑크 구름·선택적 네온 상승 반영. 사용자 확인 대기. 고화질 생성 금지.
+
+## City 09 — City 02 구름/실루엣/네온 수정
+- 사용자 요구: City 02에서 뾰족한 건물 일부를 뭉툭하게, 구름은 연한 핑크로 몽환적 처리, 네온 전광판 등 밝힐 영역만 상승.
+- City 02 job reference가 만료되어 404 반환, 비용 차감 없음. 동일 구도·요소를 텍스트로 고정해 재생성.
+- Job ID: e91b5ec0-7021-40ff-b725-0d91dba98937
+- Model: nano_banana_pro 요청 / resolution=1k / aspect_ratio=16:9 / count=1; 반환 표시 모델 nano_banana_2.
+- 상태: completed. 원본 `assets/v2/city-09-low-original.png`; 미리보기 `assets/v2/city-09-low.webp` 290986 bytes.
+- 비용: 2 credits exact. 사용자 확인 대기. 고화질 생성 금지.

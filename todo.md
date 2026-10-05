@@ -525,3 +525,7 @@ mk.hub:
 - [ ] City 07 사용자 승인 후 11 credits 고화질 — 승인 전 생성 금지.
 - [x] City 08 저비용 대비/좌측 건물 정리 — City 05 기반, 2 credits.
 - [ ] City 08 사용자 승인 후 11 credits 고화질 — 승인 전 생성 금지.
+- [x] City 09 저비용 City 02 구름·실루엣·네온 수정 — 2 credits.
+- [ ] City 09 사용자 승인 후 11 credits 고화질 — 승인 전 생성 금지.
+- [x] City 10 첨부 City 02 직접 편집 — 2 credits, 원본 구도 유지·핑크 구름·둥근 실루엣·선택적 네온.
+- [ ] City 10 사용자 승인 후 11 credits 고화질 — 승인 전 생성 금지.
