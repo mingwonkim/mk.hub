@@ -533,3 +533,5 @@ mk.hub:
 - [ ] City 11 사용자 승인 후 11 credits 고화질 — 승인 전 생성 금지.
 - [x] City 12 미세 줌아웃 — City 11 기준 약 5%, 2 credits.
 - [ ] City 12 사용자 승인 후 11 credits 고화질 — 승인 전 생성 금지.
+- [x] City 13 전광판 콘텐츠 교체 4K — 오른쪽 패션 화보·Meta Quest, 왼쪽 흰색 신디사이저, 11 credits.
+- [ ] City 13 사용자 확인 후 다음 작업 — 단일 결과물 확인 게이트.

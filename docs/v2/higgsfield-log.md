@@ -118,3 +118,11 @@
 - Model: nano_banana_pro 요청 / resolution=1k / aspect_ratio=16:9 / count=1; 반환 표시 모델 nano_banana_2.
 - 상태: completed. 원본 `assets/v2/city-09-low-original.png`; 미리보기 `assets/v2/city-09-low.webp` 290986 bytes.
 - 비용: 2 credits exact. 사용자 확인 대기. 고화질 생성 금지.
+
+## City 13 — 전광판 콘텐츠 교체 4K
+- 사용자 요구: City 12 기준 오른쪽 전광판을 패션 화보와 Meta Quest VR 글래스 광고로 교체, 왼쪽 전광판을 흰색 신디사이저 건반 광고로 교체. 나머지 구도·색감·건물·구름 유지. 4K, 11 credits.
+- Reference upload: City 12 `assets/v2/city-12-low-original.png` → media_id `165dab41-412b-4e32-be8d-552d365bcb21`.
+- Job ID: `66035053-1fd4-4b56-8659-85d376050252`.
+- Model: `gpt_image_2` / resolution=4k / quality=high / aspect_ratio=16:9.
+- 상태: completed. 원본 `assets/v2/city-13-4k-original.png` (3840×2160); 미리보기 `assets/v2/city-13-4k.webp`.
+- 비용: 11 credits exact. 오른쪽 패션 화보·Meta Quest, 왼쪽 흰색 신디사이저 광고 반영. 사용자 확인 대기.
