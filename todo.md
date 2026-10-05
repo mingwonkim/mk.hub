@@ -531,3 +531,5 @@ mk.hub:
 - [ ] City 10 사용자 승인 후 11 credits 고화질 — 승인 전 생성 금지.
 - [x] City 11 첨부 City 02 세 가지 변경 — 2 credits, 둥근 일부 건물·핑크 구름·전광판 밝기.
 - [ ] City 11 사용자 승인 후 11 credits 고화질 — 승인 전 생성 금지.
+- [x] City 12 미세 줌아웃 — City 11 기준 약 5%, 2 credits.
+- [ ] City 12 사용자 승인 후 11 credits 고화질 — 승인 전 생성 금지.

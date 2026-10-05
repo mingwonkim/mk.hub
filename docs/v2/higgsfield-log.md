@@ -87,6 +87,14 @@
 - 상태: completed. 원본 `assets/v2/city-08-low-original.png`; 미리보기 `assets/v2/city-08-low.webp` 282120 bytes.
 - 비용: 2 credits exact. 사용자 확인 대기. 고화질 생성 금지.
 
+## City 12 — City 11 미세 줌아웃
+- 사용자 요구: 현재 상태에서 조금만 줌아웃.
+- Reference upload: City 11 `assets/v2/city-11-low-original.png` → media_id `d58ad77e-7e12-4881-b130-1917de131e03`.
+- Job ID: d20142ba-a142-4bb6-9782-010bff9c6919
+- Model: nano_banana_pro 요청 / resolution=1k / aspect_ratio=16:9 / count=1; 반환 표시 모델 nano_banana_2.
+- 상태: completed. 원본 `assets/v2/city-12-low-original.png`; 미리보기 `assets/v2/city-12-low.webp` 292080 bytes.
+- 비용: 2 credits exact. 약 5% 줌아웃 외 변경 금지. 사용자 확인 대기.
+
 ## City 10 — 첨부 City 02 직접 편집
 - 사용자 요청: 다운로드한 City 02 파일을 직접 첨부해 기존 요청 재반영.
 - 원본 업로드: `assets/v2/city-02-rejected.png` → media_id `07cd60cb-acc4-4dce-adb1-80dc2eb8b16c` (Higgsfield confirmed image).
