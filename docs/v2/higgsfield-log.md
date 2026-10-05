@@ -54,3 +54,11 @@
 - Model: nano_banana_pro 요청 / resolution=1k / aspect_ratio=16:9 / count=1. 반환 표시 모델: nano_banana_2.
 - 상태: completed. 원본 1376×768 `assets/v2/city-04-low-original.png`; 미리보기 `assets/v2/city-04-low.webp` 287072 bytes.
 - 비용: 2 credits exact. 다색 조명·개방형 층/실내·전광판 다수·약한 하향 시선 확인. 사용자 확인 대기. 11 credits 고화질은 승인 전 금지.
+
+## City 05 — City 02 색감/실루엣 수정
+- 사용자 방향 재설정: City 02를 기준으로 색감만 더 다채롭게 하고 뾰족한 건물 수를 줄임. City 03/04의 수평 구도는 기준에서 제외.
+- Job ID: 8e4247b2-6a48-469d-90e5-ad285ec486d4
+- Reference: City 02 job 89d8873b-0c69-41c4-9399-ea82f1e5b826
+- Model: nano_banana_pro 요청 / resolution=1k / aspect_ratio=16:9 / count=1; 반환 표시 모델 nano_banana_2.
+- 상태: completed. 원본 `assets/v2/city-05-low-original.png`; 미리보기 `assets/v2/city-05-low.webp` 280208 bytes.
+- 비용: 2 credits exact. 사용자 확인 대기. 11 credits 고화질은 승인 전 금지.
