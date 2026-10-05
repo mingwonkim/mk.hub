@@ -521,3 +521,5 @@ mk.hub:
 - [ ] City 05 사용자 승인 후 11 credits 고화질 — 승인 전 생성 금지.
 - [x] City 06 저비용 시선 상승 — 2 credits, 핑크 하늘·상단 초고층 추가.
 - [ ] City 06 사용자 승인 후 11 credits 고화질 — 승인 전 생성 금지.
+- [x] City 07 저비용 밝은 색/안개 보정 — City 05 기준, 2 credits.
+- [ ] City 07 사용자 승인 후 11 credits 고화질 — 승인 전 생성 금지.

@@ -70,3 +70,11 @@
 - Model: nano_banana_pro 요청 / resolution=1k / aspect_ratio=16:9 / count=1; 반환 표시 모델 nano_banana_2.
 - 상태: completed. 원본 `assets/v2/city-06-low-original.png`; 미리보기 `assets/v2/city-06-low.webp` 290944 bytes.
 - 비용: 2 credits exact. 핑크/라벤더 하늘 확대와 상단을 뚫는 근접 초고층 반영. 사용자 확인 대기. 고화질 생성 금지.
+
+## City 07 — City 05 밝은 색/안개 수정
+- 사용자 요구: City 05 상태에서 건물 색상과 안개를 핑크·화이트 등 더 밝게. City 06의 위쪽 시선은 적용하지 않음.
+- Job ID: 970118ad-9c89-4af5-937f-54a3b74ae05e
+- Reference: City 05 job 8e4247b2-6a48-469d-90e5-ad285ec486d4
+- Model: nano_banana_pro 요청 / resolution=1k / aspect_ratio=16:9 / count=1; 반환 표시 모델 nano_banana_2.
+- 상태: completed. 원본 `assets/v2/city-07-low-original.png`; 미리보기 `assets/v2/city-07-low.webp` 290678 bytes.
+- 비용: 2 credits exact. 밝은 표면·핑크/화이트/라벤더 안개와 기존 딥 네이비 대비 반영. 사용자 확인 대기. 고화질 생성 금지.
