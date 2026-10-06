@@ -164,3 +164,10 @@
 - Reference: City 18 job `29fe56b0-...`. 구름바다를 얇은 핑크 안개로 → 아래 거대 도시(가로·광장·빛줄기) 노출. 광고: 향수·운동화·VR·꽃 정물(무브랜드).
 - Job ID: `eac12572-8e59-4dc8-9701-fef884cada07`. nano_banana_2 요청 / 1k (반환 nano_banana_flash). 1.5 credits, 잔액 182.
 - 파일: `assets/v2/city-20-low-original.png`, `.webp`. UI 프로토타입 배경으로 사용(`prototype/city-hub.html`).
+
+## Balloon 01 — 열기구 탑승 시점 시안 (빈 바구니, 저화질)
+- 레퍼런스 재확인: 릴스 DbtATbSs6Sw(malyshev_ai) 8초 영상 전체 프레임 확인(yt-dlp). 열기구 위·뒤에서 거의 수직 하향, 하단 빨간 엔벨로프·바구니(사람+개), 아래로 구름 속 거대 타워, 비 사선, 카메라 이동 거의 없음.
+- 사용자 결정: 사람·동물 없이 빈 바구니.
+- Reference: City 20 job `eac12572-...` (세계관·색감만).
+- Job ID: `7100325d-0c30-4ce7-9d03-c1dd1f49f47f`. nano_banana_2 / 1k (반환 nano_banana_flash). 1.5 credits, 잔액 180.5.
+- 결과: `assets/v2/balloon-01-low-original.png`, `.webp`. 문제: 위·아래에 엔벨로프가 두 개처럼 그려져 물리적으로 어색(바구니가 위 엔벨로프에 매달림).
