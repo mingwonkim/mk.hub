@@ -15,7 +15,13 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 /* 도시 무대: 16:9 이미지를 화면 꽉 채우고, 광고판 핫스팟은 이미지 기준 % 좌표 */
 .viewport{position:fixed;inset:0;overflow:hidden}
 .stage{position:absolute;left:50%;top:50%;width:max(100vw,177.78vh);aspect-ratio:16/9;translate:-50% -50%;
-  background:url(../assets/v2/city-20-low.webp) center/cover;transition:transform 1.4s var(--ease),filter 1.4s var(--ease);will-change:transform}
+  background:url(../assets/v2/city-20-low.webp) center/cover;will-change:transform,opacity}
+.pov{position:absolute;left:50%;top:50%;width:max(100vw,177.78vh);aspect-ratio:16/9;translate:-50% -50%;background:url(../assets/v2/balloon-04-low.webp) center/cover;opacity:0;pointer-events:none;will-change:transform,opacity}
+.steps{position:fixed;right:24px;top:50%;translate:0 -50%;display:grid;gap:14px;z-index:4;font-size:13px;color:var(--tx2)}
+.steps span{display:flex;align-items:center;gap:8px;justify-content:flex-end;opacity:.55;transition:opacity .2s}
+.steps span::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--tx2)}
+.steps span.on{opacity:1;color:var(--tx)}
+.steps span.on::after{background:var(--pink);box-shadow:0 0 12px var(--pink)}
 .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(9,13,22,.35),transparent 30%,transparent 60%,rgba(9,13,22,.7));pointer-events:none}
 
 /* 광고판 = 저장소 입구 */
@@ -36,7 +42,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .nav .sp{flex:1}
 .nav .chip{height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--line);color:var(--tx2)}
 
-.today{position:fixed;right:24px;top:96px;width:340px;padding:20px;z-index:4;transition:opacity .4s,transform .4s var(--ease)}
+.today{position:fixed;right:64px;top:96px;width:340px;padding:20px;z-index:4;transition:opacity .4s,transform .4s var(--ease)}
 .today h2{font-size:14px;color:var(--tx2);font-weight:600;letter-spacing:.04em;margin-bottom:8px}
 .today ul{list-style:none;padding:0;margin-bottom:16px}
 .today li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:15px}
@@ -48,8 +54,6 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .hint{position:fixed;left:50%;bottom:28px;translate:-50% 0;padding:10px 18px;font-size:14px;color:var(--tx2);z-index:4;transition:opacity .3s}
 .hint b{color:var(--tx)}
 
-/* 열기구 */
-.balloon{position:fixed;left:62%;top:100%;width:180px;z-index:3;pointer-events:none;filter:drop-shadow(0 20px 40px rgba(0,0,0,.45))}
 
 /* 목적지 선택 */
 .picker{position:fixed;left:50%;bottom:40px;translate:-50% 0;width:min(1080px,calc(100vw - 48px));padding:24px;z-index:6;opacity:0;transform:translateY(24px);pointer-events:none;transition:opacity .24s var(--ease),transform .24s var(--ease)}
@@ -64,8 +68,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 /* 이동 연출 */
 .flash{position:fixed;inset:0;background:radial-gradient(circle at var(--x,50%) var(--y,50%),#fff 0,#F2AACB 35%,#090D16 80%);opacity:0;pointer-events:none;z-index:7;transition:opacity .5s}
-body.travel .flash{opacity:1;transition-delay:.9s}
-body.travel .today,body.travel .hint,body.travel .picker{opacity:0;pointer-events:none}
+body.travel .today,body.travel .hint,body.travel .picker,body.travel .steps{opacity:0;pointer-events:none}
 
 /* 도착 화면 (불투명 작업 패널) */
 .room{position:fixed;inset:0;z-index:8;display:none;place-items:center;background:linear-gradient(180deg,#1a1424,#090D16)}
@@ -94,8 +97,10 @@ body.travel .today,body.travel .hint,body.travel .picker{opacity:0;pointer-event
     <button class="bb" style="left:38.4%;top:59%;width:7.4%;height:40%" data-dest="Music"><span class="tag"><b>Music</b>작곡 스튜디오</span></button>
     <button class="bb" style="left:9%;top:65%;width:6.3%;height:29%" data-dest="Gallery"><span class="tag"><b>Gallery</b>전시관</span></button>
   </div>
+  <div class="pov" id="pov"></div>
   <div class="shade"></div>
 </div>
+<nav class="steps" aria-hidden="true"><span class="on">도시</span><span>열기구 탑승</span><span>목적지</span></nav>
 
 <header class="nav glass">
   <span class="logo">MK.HUB</span>
@@ -120,16 +125,8 @@ body.travel .today,body.travel .hint,body.travel .picker{opacity:0;pointer-event
   </ul>
 </aside>
 
-<div class="hint glass" id="hint">광고판을 눌러 바로 이동 · <b>스크롤</b>하면 열기구가 와요</div>
+<div class="hint glass" id="hint">광고판을 눌러 바로 이동 · <b>스크롤</b>하면 열기구에 탑승해요</div>
 
-<svg class="balloon" id="balloon" viewBox="0 0 120 170" aria-hidden="true">
-  <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#F2AACB"/><stop offset=".5" stop-color="#FFF4F8"/><stop offset="1" stop-color="#C9A7E8"/></linearGradient></defs>
-  <path d="M60 4C28 4 8 28 8 56c0 30 26 52 40 72h24c14-20 40-42 40-72C112 28 92 4 60 4Z" fill="url(#g)"/>
-  <path d="M60 4c-14 0-22 24-22 52 0 30 10 52 14 72M60 4c14 0 22 24 22 52 0 30-10 52-14 72" stroke="#090D16" stroke-opacity=".18" fill="none"/>
-  <path d="M48 128l4 14M72 128l-4 14" stroke="#5a4a5a" stroke-width="1.5"/>
-  <rect x="48" y="142" width="24" height="18" rx="3" fill="#6b4a3a"/>
-  <circle cx="60" cy="139" r="3" fill="#FFC27A"/>
-</svg>
 
 <section class="picker glass" id="picker" aria-label="목적지 선택">
   <h2>어디로 떠날까요?</h2>
@@ -154,44 +151,61 @@ body.travel .today,body.travel .hint,body.travel .picker{opacity:0;pointer-event
 </section>
 
 <script>
-const stage = document.getElementById('stage'), balloon = document.getElementById('balloon'),
+const stage = document.getElementById('stage'), pov = document.getElementById('pov'),
       picker = document.getElementById('picker'), hint = document.getElementById('hint'),
-      flash = document.getElementById('flash'), room = document.getElementById('room');
+      flash = document.getElementById('flash'), room = document.getElementById('room'),
+      today = document.querySelector('.today'), steps = document.querySelectorAll('.steps span');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clamp = v => Math.min(Math.max(v, 0), 1);
 
-// 스크롤: 0~35% 도시 감상 → 35~75% 열기구 상승 → 75%~ 목적지 선택
-addEventListener('scroll', () => {
+// 스크롤: 0~25% 도시 → 25~60% 열기구 탑승(도시가 밀려나고 탑승 시점이 내려앉음) → 70%~ 목적지 선택
+function onScroll() {
   if (document.body.classList.contains('travel')) return;
   const p = scrollY / (document.body.scrollHeight - innerHeight);
-  const b = Math.min(Math.max((p - .3) / .45, 0), 1);
-  balloon.style.transform = `translateY(${-b * 62}vh) translateX(${-b * 8}vw) scale(${1 + b * .5})`;
-  stage.style.transform = `scale(${1 + p * .06}) translateY(${-p * 2}%)`;
-  hint.classList.toggle('off', p > .1);
-  picker.classList.toggle('on', p > .75);
-});
+  const b = clamp((p - .25) / .35);
+  stage.style.transform = `scale(${1 + p * .05 + b * .25})`;
+  stage.style.opacity = 1 - b;
+  stage.style.filter = `blur(${b * 8}px)`;
+  pov.style.opacity = b;
+  pov.style.transform = `scale(${1.18 - b * .18})`;
+  today.style.opacity = 1 - clamp(b * 2);
+  today.style.pointerEvents = stage.style.pointerEvents = b > .5 ? 'none' : '';
+  hint.classList.toggle('off', p > .08);
+  picker.classList.toggle('on', p > .7);
+  const k = p > .7 ? 2 : b > .5 ? 1 : 0;
+  steps.forEach((el, i) => el.classList.toggle('on', i === k));
+}
+addEventListener('scroll', onScroll);
 
-// 이동: 열기구가 광고판(또는 화면 중앙)으로 빨려들어가며 확대 → 도착
+// 이동: (광고판이면 먼저 탑승) → 열기구가 아래 타워로 하강하며 확대 → 도착
 function travel(dest, el) {
-  const r = el.getBoundingClientRect(), s = stage.getBoundingClientRect();
-  const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
   document.getElementById('roomTitle').textContent = dest;
   if (reduce) { room.classList.add('on'); return; }
   document.body.classList.add('travel');
-  flash.style.setProperty('--x', cx + 'px'); flash.style.setProperty('--y', cy + 'px');
-  balloon.style.transition = 'transform 1.2s cubic-bezier(.6,0,.3,1), left 1.2s cubic-bezier(.6,0,.3,1), top 1.2s cubic-bezier(.6,0,.3,1)';
-  balloon.style.left = (cx - 90) + 'px'; balloon.style.top = (cy - 120) + 'px';
-  balloon.style.transform = 'scale(.15)';
-  stage.style.transformOrigin = `${cx - s.left}px ${cy - s.top}px`;
-  stage.style.transform = 'scale(7)'; stage.style.filter = 'blur(6px) brightness(1.3)';
-  setTimeout(() => { room.classList.add('on'); document.getElementById('back').focus(); }, 1500);
+  today.style.opacity = 0;
+  const fromCity = el.classList.contains('bb');
+  const ease = 'cubic-bezier(.6,0,.3,1)';
+  if (fromCity) {
+    stage.style.transition = pov.style.transition = `opacity .8s ${ease}, transform .8s ${ease}, filter .8s ${ease}`;
+    stage.style.transform = 'scale(1.3)'; stage.style.opacity = 0; stage.style.filter = 'blur(8px)';
+    pov.style.opacity = 1; pov.style.transform = 'scale(1)';
+  }
+  setTimeout(() => {
+    pov.style.transition = `transform 1.4s ${ease}, filter 1.4s ${ease}`;
+    pov.style.transformOrigin = '42% 30%';   // balloon-04 의 아래 타워 광고판 쪽
+    pov.style.transform = 'scale(4.5)'; pov.style.filter = 'blur(5px) brightness(1.25)';
+    flash.style.setProperty('--x', '42%'); flash.style.setProperty('--y', '30%');
+    flash.style.transitionDelay = '.9s'; flash.style.opacity = 1;
+  }, fromCity ? 850 : 0);
+  setTimeout(() => { room.classList.add('on'); document.getElementById('back').focus(); }, fromCity ? 2400 : 1550);
 }
 document.querySelectorAll('[data-dest]').forEach(el => el.addEventListener('click', () => travel(el.dataset.dest, el)));
 
 document.getElementById('back').addEventListener('click', () => {
   room.classList.remove('on'); document.body.classList.remove('travel');
-  Object.assign(balloon.style, {transition: 'none', left: '', top: '', transform: ''});
-  Object.assign(stage.style, {transform: '', filter: '', transformOrigin: ''});
-  scrollTo(0, 0);
+  for (const el of [stage, pov]) Object.assign(el.style, {transition: 'none', transformOrigin: '', filter: ''});
+  flash.style.transitionDelay = '0s'; flash.style.opacity = 0;
+  scrollTo(0, 0); onScroll();
 });
 </script>
 </body>
