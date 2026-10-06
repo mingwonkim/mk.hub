@@ -171,3 +171,10 @@
 - Reference: City 20 job `eac12572-...` (세계관·색감만).
 - Job ID: `7100325d-0c30-4ce7-9d03-c1dd1f49f47f`. nano_banana_2 / 1k (반환 nano_banana_flash). 1.5 credits, 잔액 180.5.
 - 결과: `assets/v2/balloon-01-low-original.png`, `.webp`. 문제: 위·아래에 엔벨로프가 두 개처럼 그려져 물리적으로 어색(바구니가 위 엔벨로프에 매달림).
+
+## Balloon 02~04 — 엔벨로프 하나로 수정
+- 02 `a0f5870a-8d34-4b6f-b1a9-8ff3a26a6d81` (nano_banana_2 편집, 1.5): 원본과 거의 동일, 실패.
+- 03 `9cb00266-a0e7-4d5d-8fd3-9021058496c7` (nano_banana_2 신규, City 20 참조, 1.5): 여전히 엔벨로프 2개, 실패.
+- 04 `483e3fd8-e5c5-411a-8d45-0a2ff0a63cb9` (gpt_image_2_5 / 1k / medium, City 20 참조, 0.5): 엔벨로프 1개, 위에서 내려다본 돔 + 그 너머 빈 바구니, 아래 타워(VR·향수 광고)·구름·도시·비행선. 채택 후보.
+- 교훈: 구조 지시(개수·위치)는 nano_banana 계열이 무시 → gpt_image_2_5 저화질(0.5)이 더 싸고 정확.
+- 합계 3.5 credits, 잔액 177.
