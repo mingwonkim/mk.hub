@@ -15,7 +15,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 /* 도시 무대: 16:9 이미지를 화면 꽉 채우고, 광고판 핫스팟은 이미지 기준 % 좌표 */
 .viewport{position:fixed;inset:0;overflow:hidden}
 .stage{position:absolute;left:50%;top:50%;width:max(100vw,177.78vh);aspect-ratio:16/9;translate:-50% -50%;
-  background:url(../assets/v2/city-21-4k.webp) center/cover;will-change:transform,opacity}
+  background:url(../assets/v2/city-22-4k.webp) center/cover;will-change:transform,opacity}
 .pov{position:absolute;left:50%;top:50%;width:max(100vw,177.78vh);aspect-ratio:16/9;translate:-50% -50%;background:url(../assets/v2/balloon-04-low.webp) center/cover;opacity:0;pointer-events:none;will-change:transform,opacity}
 .steps{position:fixed;right:24px;top:50%;translate:0 -50%;display:grid;gap:14px;z-index:4;font-size:13px;color:var(--tx2)}
 .steps span{display:flex;align-items:center;gap:8px;justify-content:flex-end;opacity:.55;transition:opacity .2s}
@@ -28,7 +28,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .bb{position:absolute;border-radius:6px;transition:box-shadow .25s,background .25s}
 .bb:hover,.bb:focus-visible{background:rgba(242,170,203,.10);box-shadow:0 0 0 2px var(--pink),0 0 40px rgba(242,170,203,.55)}
 .bb .tag{position:absolute;left:calc(100% + 12px);top:12px;white-space:nowrap;padding:6px 12px;border-radius:999px;font-size:14px;
-  background:var(--glass);backdrop-filter:blur(14px);border:1px solid var(--line);opacity:.85;transition:opacity .2s,background .2s}
+  background:var(--glass);backdrop-filter:blur(14px);border:1px solid var(--line);opacity:calc(.18 + .82*var(--near,0));transition:opacity .2s,background .2s}
 .bb:hover .tag,.bb:focus-visible .tag{opacity:1;background:var(--surf)}
 .bb .tag b{color:var(--pink);font-weight:600;margin-right:6px}
 
@@ -43,6 +43,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .nav .chip{height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--line);color:var(--tx2)}
 
 .today{position:fixed;right:64px;top:96px;width:340px;padding:20px;z-index:4;transition:opacity .4s,transform .4s var(--ease)}
+.today>*{opacity:calc(.22 + .78*var(--near,0));transition:opacity .2s}
+.today:hover>*,.today:focus-within>*{opacity:1}
+@media (hover:none){.bb .tag,.today>*{--near:1}}
 .today h2{font-size:14px;color:var(--tx2);font-weight:600;letter-spacing:.04em;margin-bottom:8px}
 .today ul{list-style:none;padding:0;margin-bottom:16px}
 .today li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:15px}
@@ -91,11 +94,11 @@ body.travel .today,body.travel .hint,body.travel .picker,body.travel .steps{opac
 <body>
 <div class="viewport">
   <div class="stage" id="stage">
-    <!-- 핫스팟 좌표: city-21 (3840×2160, city-20과 동일 배치) 광고판 위치 기준 -->
-    <button class="bb" style="left:32%;top:11.5%;width:6.3%;height:32%" data-dest="Vault"><span class="tag"><b>Vault</b>프로젝트 저장소</span></button>
-    <button class="bb" style="left:32.8%;top:43.5%;width:5.7%;height:17%" data-dest="Brief"><span class="tag"><b>Brief</b>모닝 브리프</span></button>
-    <button class="bb" style="left:38.4%;top:59%;width:7.4%;height:40%" data-dest="Music"><span class="tag"><b>Music</b>작곡 스튜디오</span></button>
-    <button class="bb" style="left:9%;top:65%;width:6.3%;height:29%" data-dest="Gallery"><span class="tag"><b>Gallery</b>전시관</span></button>
+    <!-- 핫스팟 좌표: city-22 (3840×2160) 광고판 위치 기준 -->
+    <button class="bb" style="left:21.6%;top:0.5%;width:11.4%;height:33%" data-dest="Vault"><span class="tag"><b>Vault</b>프로젝트 저장소</span></button>
+    <button class="bb" style="left:20.1%;top:35.6%;width:13.8%;height:17%" data-dest="Brief"><span class="tag"><b>Brief</b>모닝 브리프</span></button>
+    <button class="bb" style="left:20.6%;top:56.7%;width:19.4%;height:36.5%" data-dest="Music"><span class="tag"><b>Music</b>작곡 스튜디오</span></button>
+    <button class="bb" style="left:2.8%;top:55.6%;width:10.6%;height:37.7%" data-dest="Gallery"><span class="tag"><b>Gallery</b>전시관</span></button>
   </div>
   <div class="pov" id="pov"></div>
   <div class="shade"></div>
@@ -176,6 +179,16 @@ function onScroll() {
   steps.forEach((el, i) => el.classList.toggle('on', i === k));
 }
 addEventListener('scroll', onScroll);
+
+// 커서가 가까이 오면 글자 선명, 멀면 투명 (120px 이내 100% → 360px 밖 최소)
+const nearEls = [...document.querySelectorAll('.bb'), today];
+addEventListener('pointermove', e => {
+  for (const el of nearEls) {
+    const r = el.getBoundingClientRect();
+    const dx = Math.max(r.left - e.clientX, 0, e.clientX - r.right), dy = Math.max(r.top - e.clientY, 0, e.clientY - r.bottom);
+    el.style.setProperty('--near', 1 - clamp((Math.hypot(dx, dy) - 120) / 240));
+  }
+});
 
 // 이동: (광고판이면 먼저 탑승) → 열기구가 아래 타워로 하강하며 확대 → 도착
 function travel(dest, el) {
