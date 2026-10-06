@@ -15,7 +15,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 /* 도시 무대: 16:9 이미지를 화면 꽉 채우고, 광고판 핫스팟은 이미지 기준 % 좌표 */
 .viewport{position:fixed;inset:0;overflow:hidden}
 .stage{position:absolute;left:50%;top:50%;width:max(100vw,177.78vh);aspect-ratio:16/9;translate:-50% -50%;
-  background:url(../assets/v2/city-22-4k.webp) center/cover;will-change:transform,opacity}
+  background:url(../assets/v2/city-23-4k.webp) center/cover;will-change:transform,opacity}
 .pov{position:absolute;left:50%;top:50%;width:max(100vw,177.78vh);aspect-ratio:16/9;translate:-50% -50%;background:url(../assets/v2/balloon-04-low.webp) center/cover;opacity:0;pointer-events:none;will-change:transform,opacity}
 .steps{position:fixed;right:24px;top:50%;translate:0 -50%;display:grid;gap:14px;z-index:4;font-size:13px;color:var(--tx2)}
 .steps span{display:flex;align-items:center;gap:8px;justify-content:flex-end;opacity:.55;transition:opacity .2s}
@@ -29,6 +29,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .bb:hover,.bb:focus-visible{background:rgba(242,170,203,.10);box-shadow:0 0 0 2px var(--pink),0 0 40px rgba(242,170,203,.55)}
 .bb .tag{position:absolute;left:calc(100% + 12px);top:12px;white-space:nowrap;padding:6px 12px;border-radius:999px;font-size:14px;
   background:var(--glass);backdrop-filter:blur(14px);border:1px solid var(--line);opacity:calc(.18 + .82*var(--near,0));transition:opacity .2s,background .2s}
+.bb[data-dest=Vault] .tag{top:auto;bottom:12px}
 .bb:hover .tag,.bb:focus-visible .tag{opacity:1;background:var(--surf)}
 .bb .tag b{color:var(--pink);font-weight:600;margin-right:6px}
 
@@ -42,7 +43,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .nav .sp{flex:1}
 .nav .chip{height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--line);color:var(--tx2)}
 
-.today{position:fixed;right:64px;top:96px;width:340px;padding:20px;z-index:4;transition:opacity .4s,transform .4s var(--ease)}
+.today{position:fixed;right:64px;bottom:96px;width:340px;padding:20px;z-index:4;transition:opacity .4s,transform .4s var(--ease)}
 .today>*{opacity:calc(.22 + .78*var(--near,0));transition:opacity .2s}
 .today:hover>*,.today:focus-within>*{opacity:1}
 @media (hover:none){.bb .tag,.today>*{--near:1}}
@@ -94,11 +95,11 @@ body.travel .today,body.travel .hint,body.travel .picker,body.travel .steps{opac
 <body>
 <div class="viewport">
   <div class="stage" id="stage">
-    <!-- 핫스팟 좌표: city-22 (3840×2160) 광고판 위치 기준 -->
-    <button class="bb" style="left:21.6%;top:0.5%;width:11.4%;height:33%" data-dest="Vault"><span class="tag"><b>Vault</b>프로젝트 저장소</span></button>
-    <button class="bb" style="left:20.1%;top:35.6%;width:13.8%;height:17%" data-dest="Brief"><span class="tag"><b>Brief</b>모닝 브리프</span></button>
-    <button class="bb" style="left:20.6%;top:56.7%;width:19.4%;height:36.5%" data-dest="Music"><span class="tag"><b>Music</b>작곡 스튜디오</span></button>
-    <button class="bb" style="left:2.8%;top:55.6%;width:10.6%;height:37.7%" data-dest="Gallery"><span class="tag"><b>Gallery</b>전시관</span></button>
+    <!-- 핫스팟 좌표: city-23 (3840×2160) 광고판 위치 기준 -->
+    <button class="bb" style="left:14.5%;top:4.4%;width:9.8%;height:20%" data-dest="Vault"><span class="tag"><b>Vault</b>프로젝트 저장소</span></button>
+    <button class="bb" style="left:15%;top:29.1%;width:8.3%;height:12.6%" data-dest="Brief"><span class="tag"><b>Brief</b>모닝 브리프</span></button>
+    <button class="bb" style="left:14.4%;top:48.9%;width:12.2%;height:23.3%" data-dest="Music"><span class="tag"><b>Music</b>작곡 스튜디오</span></button>
+    <button class="bb" style="left:6.9%;top:72.8%;width:5.6%;height:17.8%" data-dest="Gallery"><span class="tag"><b>Gallery</b>전시관</span></button>
   </div>
   <div class="pov" id="pov"></div>
   <div class="shade"></div>
