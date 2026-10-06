@@ -158,3 +158,9 @@
 - City 18 `29fe56b0-b6a2-4998-a816-97d741da2493`: 좌측 거대 원통 타워 근접 + 우측 분홍 구름바다 위 타워들·비행선들. 가장 몽환적·여백 많음.
 - City 19 `cab16478-c556-4f7e-a78f-c945b28f530c`: 구름 위 공중 원형 링 플라자 + 방사형 다리, 흰 비행선 도킹. 가장 밀도·정보량 많음.
 - 파일: `assets/v2/city-1{7,8,9}-low-original.png`, `.webp`. 사용자 선택 대기.
+
+## City 20 — City 18 구도 + 아래 도시 디테일 + 광고 교체 (저화질)
+- 사용자 요구: 광고 사진 아무 다른 사진으로, City 18 색감·구도 유지, 아래 건물이 릴스 DZKZdpOT40c(metronovon)처럼 디테일하게 보이게.
+- Reference: City 18 job `29fe56b0-...`. 구름바다를 얇은 핑크 안개로 → 아래 거대 도시(가로·광장·빛줄기) 노출. 광고: 향수·운동화·VR·꽃 정물(무브랜드).
+- Job ID: `eac12572-8e59-4dc8-9701-fef884cada07`. nano_banana_2 요청 / 1k (반환 nano_banana_flash). 1.5 credits, 잔액 182.
+- 파일: `assets/v2/city-20-low-original.png`, `.webp`. UI 프로토타입 배경으로 사용(`prototype/city-hub.html`).
