@@ -15,7 +15,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 /* 도시 무대: 16:9 이미지를 화면 꽉 채우고, 광고판 핫스팟은 이미지 기준 % 좌표 */
 .viewport{position:fixed;inset:0;overflow:hidden}
 .stage{position:absolute;left:50%;top:50%;width:max(100vw,177.78vh);aspect-ratio:16/9;translate:-50% -50%;
-  background:url(../assets/v2/city-20-low.webp) center/cover;will-change:transform,opacity}
+  background:url(../assets/v2/city-21-4k.webp) center/cover;will-change:transform,opacity}
 .pov{position:absolute;left:50%;top:50%;width:max(100vw,177.78vh);aspect-ratio:16/9;translate:-50% -50%;background:url(../assets/v2/balloon-04-low.webp) center/cover;opacity:0;pointer-events:none;will-change:transform,opacity}
 .steps{position:fixed;right:24px;top:50%;translate:0 -50%;display:grid;gap:14px;z-index:4;font-size:13px;color:var(--tx2)}
 .steps span{display:flex;align-items:center;gap:8px;justify-content:flex-end;opacity:.55;transition:opacity .2s}
@@ -91,7 +91,7 @@ body.travel .today,body.travel .hint,body.travel .picker,body.travel .steps{opac
 <body>
 <div class="viewport">
   <div class="stage" id="stage">
-    <!-- 핫스팟 좌표: city-20 (1376×768) 광고판 위치 기준 -->
+    <!-- 핫스팟 좌표: city-21 (3840×2160, city-20과 동일 배치) 광고판 위치 기준 -->
     <button class="bb" style="left:32%;top:11.5%;width:6.3%;height:32%" data-dest="Vault"><span class="tag"><b>Vault</b>프로젝트 저장소</span></button>
     <button class="bb" style="left:32.8%;top:43.5%;width:5.7%;height:17%" data-dest="Brief"><span class="tag"><b>Brief</b>모닝 브리프</span></button>
     <button class="bb" style="left:38.4%;top:59%;width:7.4%;height:40%" data-dest="Music"><span class="tag"><b>Music</b>작곡 스튜디오</span></button>
