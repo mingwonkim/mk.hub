@@ -135,3 +135,10 @@
 - 결과: 무브랜드 신스(짙은 차콜·남색 배경), 무브랜드 VR 헤드셋, 패션 화보 유지. 원본 `assets/v2/city-14-4k-original.png` (3840×2160); 미리보기 `assets/v2/city-14-4k.webp`.
 - 비용: 15 credits. 잔액 204.5. 사용자 확정("진짜 좋아").
 - 다음 단계(도시 이동 영상) 견적: kling3_0 pro 8s=14 / 4k 8s=48 → starter 플랜 거절(plus 필요). starter 후보 견적 8s: kling3_0 std 12(시안급), grok_video_v15 1080p 64, flux_3_video 1080p 72, veo3_1 preview high 80, seedance_2_5 1080p high 96.
+
+## City 15 — City 14 밝기 상향
+- 사용자 요구: City 14가 조금 어두움 → 다시 제작.
+- Reference: City 14 job `9ee5d05e-1ebc-43f5-a309-34db6a66ade0`. 노출 +15~20%, 전경 건물 그림자·중간톤 상향, 구름 발광 강화, 나머지 유지.
+- Job ID: `d36fa640-19e6-47cb-a83f-3cce835767df`. 모델 `gpt_image_2_5` / max / 4k / 16:9.
+- 결과: 원본 `assets/v2/city-15-4k-original.png` (3840×2160); 미리보기 `assets/v2/city-15-4k.webp`. 요청보다 밝기·청색이 더 올라감(전경 건물 푸른 회청색).
+- 비용: 15 credits. 잔액 189.5. 사용자 확인 대기.
