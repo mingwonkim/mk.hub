@@ -126,3 +126,12 @@
 - Model: `gpt_image_2` / resolution=4k / quality=high / aspect_ratio=16:9.
 - 상태: completed. 원본 `assets/v2/city-13-4k-original.png` (3840×2160); 미리보기 `assets/v2/city-13-4k.webp`.
 - 비용: 11 credits exact. 오른쪽 패션 화보·Meta Quest, 왼쪽 흰색 신디사이저 광고 반영. 사용자 확인 대기.
+
+## City 14 — 무브랜드 전광판·건반 배경 어둡게·네이티브 4K (확정)
+- 사용자 요구: 전광판 기기를 회사 없는 기계로(KORG·Meta Quest 제거), 건반 전광판 흰 배경이 너무 밝음 → 어둡게, 업스케일 느낌 없는 4K로 같은 느낌 재제작.
+- Reference: City 13 job `66035053-1fd4-4b56-8659-85d376050252`.
+- 모델: nano_banana_pro 4k 시도 → "Requires plus plan" 거절(비용 없음). `gpt_image_2_5` / quality=max / resolution=4k / 16:9 로 생성.
+- Job ID: `9ee5d05e-1ebc-43f5-a309-34db6a66ade0`.
+- 결과: 무브랜드 신스(짙은 차콜·남색 배경), 무브랜드 VR 헤드셋, 패션 화보 유지. 원본 `assets/v2/city-14-4k-original.png` (3840×2160); 미리보기 `assets/v2/city-14-4k.webp`.
+- 비용: 15 credits. 잔액 204.5. 사용자 확정("진짜 좋아").
+- 다음 단계(도시 이동 영상) 견적: kling3_0 pro 8s=14 / 4k 8s=48 → starter 플랜 거절(plus 필요). starter 후보 견적 8s: kling3_0 std 12(시안급), grok_video_v15 1080p 64, flux_3_video 1080p 72, veo3_1 preview high 80, seedance_2_5 1080p high 96.
