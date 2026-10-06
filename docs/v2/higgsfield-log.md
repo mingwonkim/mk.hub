@@ -142,3 +142,11 @@
 - Job ID: `d36fa640-19e6-47cb-a83f-3cce835767df`. 모델 `gpt_image_2_5` / max / 4k / 16:9.
 - 결과: 원본 `assets/v2/city-15-4k-original.png` (3840×2160); 미리보기 `assets/v2/city-15-4k.webp`. 요청보다 밝기·청색이 더 올라감(전경 건물 푸른 회청색).
 - 비용: 15 credits. 잔액 189.5. 사용자 확인 대기.
+
+## City 16 — 고층 상공 대로 1점 투시 시안 (저화질)
+- 사용자 요구: 릴스 Dd9PplPMwcJ(malyshev_ai) 같은 시야각 — 고층 상공에서 긴 대로를 소실점 방향으로 내려다봄, 양옆 전광판 벽, 지평선·비행선. City 14 느낌 유지. 4K 말고 저화질.
+- 레퍼런스 확인 수준: 두 릴스 모두 og 썸네일 1장만 확인(영상 전체 미확인). 이동수단 레퍼런스 DbtATbSs6Sw = 열기구 바구니 1인칭, 구름 위 거대 타워.
+- Reference: City 14 job `9ee5d05e-...` (스타일만).
+- Job ID: `6cd48ed6-b30c-4a1a-bfd3-ebc8c2a9b941`. 요청 nano_banana_2 / 1k / 16:9, 반환 표시 모델 nano_banana_flash.
+- 결과: 원본 `assets/v2/city-16-low-original.png` (1376×768); 미리보기 `assets/v2/city-16-low.webp`.
+- 비용: 1.5 credits. 잔액 188. 사용자 확인 대기.
