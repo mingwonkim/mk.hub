@@ -223,3 +223,11 @@
 - 저가 모델: kling3_0 std 5s = 7.5 credits (start+end image).
 - 영상 A job `17aff664-a710-4d58-b13a-dd0e511bcb5f`: City 14 → Balloon 07.
 - 프레임 B-end(장막) `419378f9-07a4-4947-bd87-4ad42f21ea86`, C-end(칠판) `89c3966e-588d-4701-a84e-f27db2c88e1a` — gpt_image_2_5 1k medium, 각 0.5.
+
+### 스크롤 영상 A·B·C (kling3_0 std, 5s, 1280×720, 각 7.5 credits)
+- A `17aff664-...` City 14 → Balloon 07: 열기구 상승 후 바구니 시점 도착. 문제: 상승하는 열기구 색이 주황·자주로 Balloon 07(펄핑크·라벤더)과 다름, 탑승 순간 전환이 급함.
+- B `d7d8dd33-1bcf-4b63-af49-84c09b3de49e` Balloon 07 → Veil 01: 비행선 지나며 전진, 장막 접근. 양호.
+- C `5b0054a0-675c-4a2c-9003-4ebdbaa22ee2` Veil 01 → Todo 01: 장막 통과 빛 번짐 → 칠판 테라스. 양호.
+- 프레임: `veil-01-low-original.png`(장막), `todo-01-low-original.png`(칠판 테라스).
+- 미리보기: `assets/v2/video/scroll-abc-preview.mp4` (A+B+C 15초, 3.5MB). 원본 mp4 3개(약 30MB)는 레포 미포함(로컬 assets/v2/video/).
+- 누적 잔액: 92.5 credits.
