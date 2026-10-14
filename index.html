@@ -5442,6 +5442,10 @@ setTimeout(function(){
 })();
 </script>
 <dialog id="hubArchiveLightbox" aria-label="사진 확대 보기"><div class="hub-archive-bar"><span id="hubArchiveCounter"></span><button type="button" id="hubArchiveClose">닫기 ×</button></div><img id="hubArchiveLarge" alt=""/><div class="hub-archive-controls"><button id="hubArchivePrev" type="button" aria-label="이전 사진">←</button><button id="hubArchiveNext" type="button" aria-label="다음 사진">→</button></div></dialog>
+<script>
+// 주소 #memo·#files·#todo·#briefing·#music·#settings 로 해당 칸 바로 열기(looinlabs.com 첫 장면·서재에서 연결). 잠금 확인은 openApp이 그대로 함
+document.addEventListener('DOMContentLoaded',()=>{const h=location.hash.slice(1);if(['memo','files','todo','briefing','music','settings'].includes(h))openApp(h);});
+</script>
 <script src="hub-interactions.js"></script>
 <script src="hub-cursor.js"></script>
 </body>
