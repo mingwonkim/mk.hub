@@ -1,19 +1,35 @@
-.vault-access{margin:auto;width:min(460px,calc(100vw - 32px));max-height:calc(100dvh - 40px);padding:0;border:1px solid #67503a;border-radius:22px;color:#eee5d1;background:#191713;box-shadow:0 30px 100px #0009}
-.vault-access::backdrop{background:#050504d9;backdrop-filter:blur(16px)}
-.vault-access-sheet{padding:30px}
-.vault-access-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:38px;font:8px 'Space Grotesk',sans-serif;letter-spacing:.2em;color:#bd976e}
-.vault-access-top button{background:none;border:0;font-size:25px;color:#b7a58e;cursor:pointer}
-.vault-access h2{font:600 32px/1.15 'Space Grotesk','Noto Sans KR',sans-serif;letter-spacing:-.055em;margin:0 0 18px}
-.vault-access-description{font-size:12px;line-height:1.9;color:#b4a38f;margin:0 0 28px;overflow-wrap:anywhere}
-.vault-pattern{position:relative;display:grid;grid-template-columns:repeat(3,1fr);place-items:center;width:min(270px,100%);aspect-ratio:1;margin:0 auto 10px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:crosshair}
-.vault-pattern svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.vault-pattern polyline{fill:none;stroke:#FF3B00;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;opacity:.75}
-.vault-pattern span{width:16px;height:16px;border-radius:2px;background:#51402f;transition:background .15s,scale .15s}
-.vault-pattern span.on{background:#FF3B00;scale:1.4}
-.vault-access-error{color:#f09d72;font-size:12px;min-height:20px;line-height:1.6}
-.vault-access-submit{width:100%;padding:15px;border:0;border-radius:9px;background:#FF3B00;color:#fff2de;font-weight:600;cursor:pointer}
-.vault-access-secondary{display:block;margin:22px auto 0;background:none;border:0;color:#c4ad8e;font-size:11px;cursor:pointer}
+/* 저장고 인증 창 — 첫 화면(구름 위 미래 도시)에 맞춘 HUD: 반투명 남색 유리, 모서리 브래킷, 시안 발광 */
+.vault-access{--c:#7fe3ff;margin:auto;width:min(440px,calc(100vw - 32px));max-height:calc(100dvh - 40px);padding:0;border:1px solid #7fe3ff33;border-radius:6px;color:#e6f4ff;
+  background:linear-gradient(var(--c),var(--c)) 0 0/18px 1.5px,linear-gradient(var(--c),var(--c)) 0 0/1.5px 18px,linear-gradient(var(--c),var(--c)) 100% 0/18px 1.5px,linear-gradient(var(--c),var(--c)) 100% 0/1.5px 18px,
+    linear-gradient(var(--c),var(--c)) 0 100%/18px 1.5px,linear-gradient(var(--c),var(--c)) 0 100%/1.5px 18px,linear-gradient(var(--c),var(--c)) 100% 100%/18px 1.5px,linear-gradient(var(--c),var(--c)) 100% 100%/1.5px 18px,
+    repeating-linear-gradient(0deg,#ffffff05 0 1px,transparent 1px 3px),linear-gradient(160deg,#0f1830e6,#0a0f1ef0 60%,#140d26f0);
+  background-repeat:no-repeat;backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);
+  box-shadow:0 0 0 1px #00000080,0 0 40px #4fc8ff26,0 30px 90px #000a;animation:vault-in .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes vault-in{from{opacity:0;transform:translateY(10px) scale(.98);filter:blur(4px)}}
+.vault-access::backdrop{background:radial-gradient(ellipse at 50% 45%,#0b1430a6,#03050dd9);backdrop-filter:blur(10px)}
+.vault-access-sheet{padding:28px 30px 30px}
+.vault-access-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px;font:10px ui-monospace,'SFMono-Regular',Consolas,monospace;letter-spacing:.22em;color:var(--c);text-shadow:0 0 8px #7fe3ff80}
+.vault-access-top span::before{content:'';display:inline-block;width:6px;height:6px;margin-right:10px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c);vertical-align:1px;animation:vault-blink 1.6s ease-in-out infinite}
+@keyframes vault-blink{50%{opacity:.25}}
+.vault-access-top button{background:none;border:1px solid #7fe3ff40;border-radius:4px;width:30px;height:30px;font-size:18px;line-height:1;color:#a9dcf0;cursor:pointer;transition:background .2s,border-color .2s}
+.vault-access-top button:hover{background:#7fe3ff1a;border-color:var(--c)}
+.vault-access h2{font:600 28px/1.2 'Space Grotesk','Pretendard Variable','Noto Sans KR',sans-serif;letter-spacing:-.03em;margin:0 0 12px;color:#f2f9ff}
+.vault-access-description{font-size:13px;line-height:1.8;color:#9fb6cc;margin:0 0 24px;overflow-wrap:anywhere}
+.vault-access input{box-sizing:border-box;width:100%;padding:13px 14px;border-radius:4px;border:1px solid #7fe3ff40;background:#06101fcc;color:#e6f4ff;font:inherit;outline:none;transition:border-color .2s,box-shadow .2s}
+.vault-access input:focus{border-color:var(--c);box-shadow:0 0 0 3px #7fe3ff22,0 0 18px #7fe3ff33}
+.vault-pattern{position:relative;display:grid;grid-template-columns:repeat(3,1fr);place-items:center;width:min(260px,100%);aspect-ratio:1;margin:4px auto 12px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:crosshair;
+  background:radial-gradient(circle,#7fe3ff14 1px,transparent 1.5px) 0 0/20px 20px}
+.vault-pattern svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.vault-pattern polyline{fill:none;stroke:var(--c);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 6px #7fe3ff)}
+.vault-pattern span{width:14px;height:14px;border-radius:50%;background:#0b1a2e;box-shadow:0 0 0 1.5px #7fe3ff70,0 0 0 9px #7fe3ff0d;transition:background .15s,scale .15s,box-shadow .15s}
+.vault-pattern span.on{background:var(--c);scale:1.3;box-shadow:0 0 0 1.5px var(--c),0 0 0 10px #7fe3ff26,0 0 18px var(--c)}
+.vault-access-error{color:#ff9b7a;font-size:12px;min-height:20px;line-height:1.6;font-family:ui-monospace,Consolas,monospace}
+.vault-access-submit{width:100%;padding:14px;border:1px solid var(--c);border-radius:4px;background:linear-gradient(90deg,#7fe3ff2e,#b18cff2e);color:#eaf8ff;font-weight:600;letter-spacing:.06em;cursor:pointer;text-shadow:0 0 8px #7fe3ff99;transition:background .2s,box-shadow .2s}
+.vault-access-submit:hover{background:linear-gradient(90deg,#7fe3ff44,#b18cff44);box-shadow:0 0 22px #7fe3ff40}
+.vault-access-secondary{display:block;margin:20px auto 0;background:none;border:0;color:#8fb3c9;font-size:11px;letter-spacing:.04em;cursor:pointer}
+.vault-access-secondary:hover{color:var(--c)}
 .vault-access button:disabled{opacity:.4;cursor:wait}
 .vault-access-secondary[hidden]{display:none}
-.vault-access button:focus-visible{outline:2px solid #ff9d62;outline-offset:4px}
-@media(max-width:480px){.vault-access-sheet{padding:26px 22px}.vault-access h2{font-size:28px}.vault-access-top{margin-bottom:26px}}
+.vault-access button:focus-visible{outline:2px solid var(--c);outline-offset:3px}
+@media(max-width:480px){.vault-access-sheet{padding:24px 22px}.vault-access h2{font-size:24px}.vault-access-top{margin-bottom:22px}}
+@media(prefers-reduced-motion:reduce){.vault-access,.vault-access-top span::before{animation:none}}
