@@ -1,0 +1,99 @@
+/* 민권.com 첫 화면: 다크 인트로(looin labs 로고) → 비행선 도시 장면 → (잠금 해제) 서재. 각 칸은 MK.HUB 기존 페이지를 그대로 엶 */
+html.mk-layer-open, html.mk-layer-open body { overflow: hidden; }
+.mk-layer *, .mk-intro * { max-width: none !important; } /* MK.HUB 모바일 전역 *{max-width:100%!important} 해제 — 무대는 화면보다 넓어야 함 */
+.mk-layer { position: fixed; inset: 0; z-index: 9000; overflow: hidden; background: #1a1220; display: none; }
+.mk-layer.on { display: block; }
+#mkStudy { background: #0d1020; }
+.mk-stage { position: absolute; }
+.mk-stage > * { position: absolute; }
+/* 도시: 21:9 무대가 화면을 덮게. 비행선(무대 48%,41%)과 오른쪽 현수막이 좁은 화면에서도 보이도록 무대 50.5%,41.4%를 화면 (50%,45%)에. 모든 요소는 무대 기준 % */
+#mkScene .mk-stage { left: 50%; top: 45%; width: max(102vw, 254vh); aspect-ratio: 8064 / 3456; transform: translate(-50.5%, -41.4%); }
+/* 서재: 책상 쪽이 좁은 화면에서도 보이도록 무대 57%,62%를 화면 (50%,55%)에 */
+#mkStudy .mk-stage { left: 50%; top: 55%; width: max(117vw, 277vh); aspect-ratio: 6048 / 2592; transform: translate(-57%, -62%); }
+.mk-bg { inset: 0; width: 100%; height: 100%; display: block; user-select: none; -webkit-user-drag: none; }
+
+.mk-dr { pointer-events: none; will-change: transform, opacity; }
+.mk-cruise { animation: mk-cruise var(--t) linear var(--d, 0s) infinite; opacity: 0; }
+.mk-hover { animation: mk-hover var(--t) ease-in-out var(--d, 0s) infinite; }
+@keyframes mk-cruise { 0% { transform: translateX(calc(var(--dx) * -1)); opacity: 0 } 15%, 85% { opacity: 1 } 100% { transform: translateX(var(--dx)); opacity: 0 } }
+@keyframes mk-hover { 0%, 100% { transform: translate(0, 0) } 25% { transform: translate(10%, -14%) } 50% { transform: translate(18%, 4%) } 75% { transform: translate(5%, 16%) } }
+
+/* 비행선 = 서재 입구(클릭 영역은 비행선 윤곽) */
+.mk-ship { left: 44.990%; top: 35.880%; width: 6.188%; height: 10.388%; padding: 0; border: 0; background: none; cursor: pointer;
+  clip-path: polygon(99.8% 20.6%, 97.8% 18.4%, 87.8% 20.1%, 84.8% 19.5%, 84.4% 17.8%, 71.9% 16.7%, 71.5% 0%, 70.7% 15.9%, 67.5% 18.4%, 63.1% 18.9%, 61.3% 17%, 61.3% 2.2%, 59.9% 1.7%, 60.5% 15%, 58.7% 19.5%, 46.9% 24.5%, 39.3% 23.7%, 36.7% 28.1%, 20.8% 32.9%, 17.6% 36.5%, 15.2% 34.5%, 14.4% 38.7%, 11.2% 39.8%, 9.8% 44%, 3% 49.9%, 0% 63.8%, 2.4% 69.1%, 4% 68.8%, 10.4% 75.5%, 9% 82.7%, 6.4% 82.7%, 6.2% 85%, 4% 86.1%, 7% 88.6%, 9.8% 87.7%, 12.4% 90.3%, 11.6% 93.6%, 15.2% 94.2%, 17.4% 96.9%, 22.4% 95.5%, 23.2% 99.7%, 39.9% 96.7%, 41.1% 94.4%, 47.3% 94.2%, 48.9% 91.4%, 57.3% 86.9%, 60.5% 83%, 65.1% 85.8%, 74.5% 78.6%, 78% 79.4%, 83% 76.6%, 87.6% 71.6%, 93.4% 55.4%, 91% 52.9%, 90.6% 50.1%, 92.4% 49.3%, 98% 39.8%, 98.2% 35.9%, 96.4% 34.3%, 96.2% 30.9%); }
+.mk-ship:hover, .mk-ship:focus-visible { background: rgba(140, 180, 255, .14); outline: none; }
+/* 꼬리 프로펠러: 안쪽 타원(중심 4170,1358 · 반지름 27×70) 위에서 날개가 돌고, 허브는 그 위 */
+.mk-fan { left: 51.376%; top: 37.269%; width: .670%; height: 4.051%; border-radius: 50%; overflow: hidden; pointer-events: none; }
+.mk-fan svg { width: 100%; height: 100%; display: block; }
+.mk-hub { left: 51.438%; top: 38.628%; width: .372%; pointer-events: none; }
+/* 현수막(캔버스 460×260 = 원본 px, 안테나 끝이 캔버스 (0,240)) */
+.mk-banner { left: 49.417%; top: 28.935%; width: 5.704%; height: 7.523%; display: block; }
+.mk-banner canvas { width: 100%; height: 100%; display: block; }
+
+/* 링크 물건: 평소엔 그림 그대로, 가리키면 은은한 빛과 이름표 */
+.mk-spot { border-radius: 8px; transition: background .25s, box-shadow .25s; }
+.mk-spot span { position: absolute; left: 50%; bottom: calc(100% + 6px); transform: translateX(-50%); white-space: nowrap; padding: 4px 10px; border-radius: 999px;
+  background: rgba(22, 16, 34, .78); color: #f4ecf8; border: 1px solid rgba(255, 255, 255, .2); font: 13px/1.4 "Pretendard Variable", Pretendard, sans-serif; opacity: 0; transition: opacity .25s; pointer-events: none; }
+.mk-spot:hover, .mk-spot:focus-visible { background: rgba(255, 200, 170, .08); box-shadow: 0 0 26px 4px rgba(255, 190, 150, .25); outline: none; }
+.mk-spot:hover span, .mk-spot:focus-visible span { opacity: 1; }
+@media (hover: none) { .mk-spot span { opacity: .85; } }
+/* 모닝 브리프 드론(= 우체통): 멀리서 날아와 편지를 화면 쪽으로 건네고, 그 자리에 계속 떠 있음. 인트로가 끝나야 출발(.go) */
+.mk-courier { left: 44%; top: 25.5%; width: 3.2%; aspect-ratio: 450 / 370; opacity: 0; }
+.mk-courier img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.go .mk-courier { animation: mk-arrive 4s cubic-bezier(.2, .7, .3, 1) both; }
+.go .mk-courier .body { animation: mk-bob 3.2s ease-in-out 4s infinite; }
+.go .mk-courier .letter { animation: mk-handoff 1.4s ease-in 4.4s both; }
+.mk-courier .letter { pointer-events: none; }
+@keyframes mk-arrive { from { transform: translate(180%, -620%) scale(.12); opacity: 0 } 15% { opacity: 1 } to { transform: none; opacity: 1 } }
+@keyframes mk-bob { 0%, 100% { transform: translateY(0) rotate(0) } 50% { transform: translateY(-9%) rotate(-1.5deg) } }
+@keyframes mk-handoff { 30% { transform: translateY(14%) scale(1.15); opacity: 1 } to { transform: translate(-30%, 160%) scale(7); opacity: 0 } }
+.mk-back { position: absolute; left: 16px; top: 16px; color: #e8dcc6; text-decoration: none; padding: 6px 12px; border-radius: 999px; background: rgba(12, 14, 30, .6); font: 14px/1.4 "Pretendard Variable", Pretendard, sans-serif; }
+
+/* 둘러보기: 그림에서 잘리는 물건(좁은 화면)·키보드용 텍스트 메뉴 */
+.mk-menu { position: absolute; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); font: 14px/1.4 "Pretendard Variable", Pretendard, sans-serif; color: #f4ecf8; }
+.mk-menu summary { list-style: none; cursor: pointer; padding: 8px 14px; border-radius: 999px; background: rgba(22, 16, 34, .7); border: 1px solid rgba(255, 255, 255, .18); backdrop-filter: blur(8px); }
+.mk-menu summary::-webkit-details-marker { display: none; }
+.mk-menu nav { position: absolute; right: 0; bottom: calc(100% + 8px); display: grid; min-width: 160px; padding: 6px; border-radius: 12px; background: rgba(22, 16, 34, .86); border: 1px solid rgba(255, 255, 255, .18); }
+.mk-menu nav a { color: inherit; text-decoration: none; padding: 10px 12px; border-radius: 8px; }
+.mk-menu nav a:hover, .mk-menu nav a:focus-visible { background: rgba(255, 255, 255, .1); outline: none; }
+
+/* 인트로: 다크 배경에 looin labs 로고 애니메이션(looinlabs.com 로더와 같음) → 로고가 비행선 현수막으로 날아가 박힘 */
+.mk-intro { position: fixed; inset: 0; z-index: 9500; background: #131313; transition: background .6s ease; display: none; }
+.mk-intro.on { display: block; }
+.mk-intro.leaving { background: transparent; }
+.mk-intro .ld-logo { position: absolute; left: 50%; top: 50%; width: min(420px, 34vw); color: #fff; translate: -50% -50%; }
+.mk-intro .mark { display: block; width: 100%; overflow: visible; transform-origin: 0 0; transition: transform .9s cubic-bezier(.7, 0, .2, 1), color .9s; }
+.mk-intro .labs { font-family: "Pretendard Variable", Pretendard, sans-serif; font-size: 30px; font-weight: 700; fill: currentColor; stroke: none; }
+.mk-intro .mark * { transform-box: fill-box; animation-duration: 3.4s; animation-iteration-count: 1; animation-fill-mode: both; }
+.mk-intro .drop { animation-name: lg-drop; }
+.mk-intro .squash { transform-origin: 50% 100%; animation-name: lg-squash; }
+.mk-intro .nudge { animation-name: lg-nudge; }
+.mk-intro .eye1 { animation-name: lg-eye1; }
+.mk-intro .eye2 { animation-name: lg-eye2; }
+.mk-intro .blink { transform-origin: 50% 50%; animation-name: lg-blink; }
+.mk-intro .ding { transform-origin: 50% 100%; animation-name: lg-ding; }
+.mk-intro .labs { animation-name: lg-labs; }
+@keyframes lg-labs { 0%, 36% { opacity: 0; transform: translateY(18px); } 46%, 100% { opacity: 1; transform: none; } }
+@keyframes lg-drop {
+  0% { transform: translateY(-190px); animation-timing-function: cubic-bezier(.55,0,1,.45); }
+  14% { transform: translateY(0); animation-timing-function: cubic-bezier(0,.55,.45,1); }
+  22% { transform: translateY(-34px); animation-timing-function: cubic-bezier(.55,0,1,.45); }
+  30%, 100% { transform: translateY(0); }
+}
+@keyframes lg-squash {
+  0%, 13% { transform: scale(.9, 1.14); } 15% { transform: scale(1.24, .74); } 19% { transform: scale(.95, 1.06); }
+  29% { transform: scale(1, 1); } 31% { transform: scale(1.1, .9); } 35% { transform: scale(.98, 1.02); } 39%, 100% { transform: scale(1, 1); }
+}
+@keyframes lg-nudge { 0%, 14% { transform: translateX(0); } 17% { transform: translateX(-7px) rotate(-6deg); } 24% { transform: translateX(1px) rotate(1deg); } 28%, 100% { transform: translateX(0); } }
+@keyframes lg-eye1 { 0%, 16% { transform: translate(0, 0); } 22%, 34% { transform: translate(-6px, -4px); } 40%, 54% { transform: translate(7px, 0); } 60%, 100% { transform: translate(4px, -5px); } }
+@keyframes lg-eye2 { 0%, 13% { transform: translate(0, 6px); } 20%, 34% { transform: translate(0, 0); } 40%, 54% { transform: translate(-9px, 0); } 60%, 100% { transform: translate(4px, -5px); } }
+@keyframes lg-blink { 0%, 72%, 76%, 100% { transform: scaleY(1); } 74% { transform: scaleY(.1); } }
+@keyframes lg-ding {
+  0%, 62% { transform: translateY(0) scale(1); } 64% { transform: translateY(0) scale(1.15, .85); } 68% { transform: translateY(-16px) scale(.92, 1.1); }
+  72% { transform: translateY(0) scale(1.12, .88); } 75%, 100% { transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mk-dr, .go .mk-courier, .go .mk-courier .body { animation: none; opacity: 1; }
+  .mk-courier { opacity: 1; } .mk-courier .letter { display: none; }
+}

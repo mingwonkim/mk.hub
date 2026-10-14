@@ -505,3 +505,7 @@ mk.hub:
 - [x] 서버 배포·main 병합 — 운영 pin-state 비인증 응답 {configured:false} 확인
 - [x] 점 판정 반경 축소 38→22 — 1→8 이동 시 5에 달라붙던 문제, 재현 테스트 추가
 - [ ] 최초 1회: 비밀번호 찾기 → 메일 링크 → 새 패턴 등록
+
+## 2026-10-15
+[o] 02:50 첫 화면 이사: looin labs 다크 인트로 → 로고가 비행선 현수막에 박힘 → 도시(드론·프로펠러·모닝 브리프 드론) → 비행선(잠금) → 서재, 물건 = 각 칸 — scene/, 로컬 확인, 브랜치 scene
+- [ ] (맨 마지막) 잠금을 폰 인증으로: 패스키(Face ID) + PC는 브라우저 기본 QR 교차 기기. WebAuthn → Cloud Functions 검증 → custom token, 등록은 기존 인증 통과 후만, 복구 코드·두 번째 패스키 (astra 설계안: looinlabs scratchpad astra_plan2_out)
