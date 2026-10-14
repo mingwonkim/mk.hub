@@ -21,8 +21,8 @@
     .replace('class="eye1"', 'transform="translate(4 -5)"').replace('class="eye2"', 'transform="translate(4 -5)"').replace('class="mark"', 'class="print"').replace(' role="img" aria-label="looin labs"', '');
 
   document.body.insertAdjacentHTML('afterbegin', `
-<div class="mk-intro" id="mkIntro" aria-hidden="true"><div class="ld-logo">${MARK}</div></div>
-<div class="mk-layer" id="mkScene" role="region" aria-label="구름 위 도시">
+<div class="mk-intro" id="lsIntro" aria-hidden="true"><div class="ld-logo">${MARK}</div></div>
+<div class="mk-layer" id="lsScene" tabindex="-1" role="region" aria-label="구름 위 도시">
   <div class="mk-stage">
     <img class="mk-bg" src="${S}bg-4032.webp" srcset="${S}bg-4032.webp 4032w, ${S}bg-8064.webp 8064w" sizes="max(102vw, 254vh)" alt="구름 위 미래 도시, 가운데에 비행선이 떠 있다">
     <img class="mk-dr mk-cruise" src="${S}d1.webp" alt="" style="left:48.834%;top:.868%;width:1.637%;--t:46s;--dx:260%">
@@ -55,7 +55,7 @@
     <a class="mk-ship" href="#study" aria-label="비행선 — 잠금을 풀고 서재로"></a>
   </div>
 </div>
-<div class="mk-layer" id="mkStudy" role="region" aria-label="서재">
+<div class="mk-layer" id="lsStudy" tabindex="-1" role="region" aria-label="서재">
   <div class="mk-stage">
     <img class="mk-bg" loading="lazy" src="${S}study-3024.webp" srcset="${S}study-3024.webp 3024w, ${S}study-6048.webp 6048w" sizes="max(117vw, 277vh)" alt="밤 도시가 보이는 큰 창의 서재">
     <a class="mk-spot" href="#todo" aria-label="할 일" style="left:46%;top:63%;width:14%;height:17%"></a>
@@ -69,40 +69,64 @@
 <a class="mk-home" href="#" aria-label="도시로 돌아가기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13c3-4 7-6 12-6 2 0 4 .5 6 1.5-1 2-3 3.5-6 4.5H3z"/><path d="M15 7c0-2 1-3 3-3"/></svg></a>
 <dialog class="mk-pin" aria-label="서재 암호">
   <div class="mk-pin-top"><span>AIRSHIP / ACCESS</span><button type="button" data-x aria-label="닫기">×</button></div>
-  <div class="mk-pin-slots" aria-live="polite"><i></i><i></i><i></i><i></i></div>
+  <div class="mk-pin-slots" aria-hidden="true"><i></i><i></i><i></i><i></i></div><p class="mk-sr" aria-live="polite"></p>
   <div class="mk-pin-pad">${[1,2,3,4,5,6,7,8,9].map(n => `<button type="button" data-k="${n}">${n}</button>`).join('')}<button type="button" data-k="del" aria-label="지우기">⌫</button><button type="button" data-k="0">0</button><button type="button" data-k="x" aria-label="닫기">✕</button></div>
 </dialog>`);
 
   document.documentElement.classList.remove('mk-boot'); // index.html 첫 가림 해제(이제 인트로·장면이 덮음)
-  const html = document.documentElement, intro = document.getElementById('mkIntro');
-  const scene = document.getElementById('mkScene'), study = document.getElementById('mkStudy');
+  const html = document.documentElement, intro = document.getElementById('lsIntro');
+  const scene = document.getElementById('lsScene'), study = document.getElementById('lsStudy');
   const APPS = ['music', 'memo', 'files', 'todo', 'briefing', 'settings'];
 
   /* ── 화면 전환 ── */
+  const OURS = new Set(['lsIntro', 'lsScene', 'lsStudy']);
   function show(which) { // 'scene' | 'study' | null(MK.HUB)
+    const was = scene.classList.contains('on') ? 'scene' : study.classList.contains('on') ? 'study' : null;
     scene.classList.toggle('on', which === 'scene'); study.classList.toggle('on', which === 'study');
     scene.inert = which !== 'scene'; study.inert = which !== 'study';
     html.classList.toggle('mk-layer-open', !!which);
+    for (const el of document.body.children) // 장면이 덮고 있는 동안 뒤의 SPA는 키보드·낭독기에서도 숨김
+      if (!OURS.has(el.id) && el.tagName !== 'DIALOG' && el.tagName !== 'SCRIPT') el.inert = !!which;
+    if (which && which !== was) {
+      const layer = which === 'scene' ? scene : study;
+      layer.focus({ preventScroll: true });
+      if (layer.scrollWidth > layer.clientWidth) // 세로 화면: 그림을 좌우로 밀어 볼 수 있음. 처음엔 비행선/책상이 가운데
+        layer.scrollLeft = layer.scrollWidth * (which === 'scene' ? .505 : .57) - layer.clientWidth / 2;
+    }
+    if (!which && pinDlg.open) { pinOk = null; pinDlg.close(); }
   }
   /* 서재 암호(임시 5940, 나중에 Face ID). 공개 사이트의 숨은 입구일 뿐 — 실제 데이터는 각 칸을 열 때 MKVault가 지킴 */
   const PIN_HASH = '8bc552c0c116fa615b7306a74f4a998c7ac4fef70074b742abcc82d53ee52611'; // sha256('mk-study:' + 암호)
-  const pinDlg = document.querySelector('.mk-pin'), slots = [...pinDlg.querySelectorAll('.mk-pin-slots i')];
-  let pin = '', pinOk = null;
+  const pinDlg = document.querySelector('.mk-pin'), slots = [...pinDlg.querySelectorAll('.mk-pin-slots i')], sr = pinDlg.querySelector('.mk-sr');
+  let pin = '', pinOk = null, checking = false;
   const sha = async t => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)))].map(b => b.toString(16).padStart(2, '0')).join('');
-  const paint = () => slots.forEach((el, i) => el.classList.toggle('on', i < pin.length));
+  const paint = () => { slots.forEach((el, i) => el.classList.toggle('on', i < pin.length)); sr.textContent = `4자리 중 ${pin.length}자리 입력`; };
   async function key(k) {
     if (k === 'x') return pinDlg.close();
+    if (checking) return;
     if (k === 'del') { pin = pin.slice(0, -1); return paint(); }
     if (pin.length >= 4) return;
     pin += k; paint();
     if (pin.length < 4) return;
+    checking = true; const want = pinOk;
     const ok = (await sha('mk-study:' + pin)) === PIN_HASH;
-    if (ok) { try { sessionStorage.setItem('mk_study', '1'); } catch {} pinDlg.classList.add('ok'); setTimeout(() => { pinDlg.close(); const cb = pinOk; pinOk = null; cb && cb(); }, 350); }
-    else { pinDlg.classList.remove('bad'); void pinDlg.offsetWidth; pinDlg.classList.add('bad'); setTimeout(() => { pin = ''; paint(); }, 450); }
+    if (want !== pinOk || !pinDlg.open) { checking = false; return; } // 확인 중에 창이 닫히거나 경로가 바뀜
+    if (ok) {
+      try { sessionStorage.setItem('mk_study', '1'); } catch {}
+      sr.textContent = '열렸습니다'; pinDlg.classList.add('ok');
+      setTimeout(() => { checking = false; const cb = pinOk; pinOk = null; pinDlg.close(); cb && cb(); }, 350);
+    } else {
+      sr.textContent = '암호가 일치하지 않습니다';
+      pinDlg.classList.remove('bad'); void pinDlg.offsetWidth; pinDlg.classList.add('bad');
+      setTimeout(() => { checking = false; pin = ''; paint(); }, 450);
+    }
   }
   pinDlg.addEventListener('click', e => { const b = e.target.closest('[data-k],[data-x]'); if (b) key(b.dataset.k || 'x'); });
   pinDlg.addEventListener('keydown', e => { if (/^[0-9]$/.test(e.key)) key(e.key); else if (e.key === 'Backspace') key('del'); });
-  pinDlg.addEventListener('close', () => { pin = ''; paint(); pinDlg.classList.remove('ok', 'bad'); if (pinOk) { pinOk = null; if (location.hash === '#study') history.back(); } });
+  pinDlg.addEventListener('close', () => { // 취소: 사이트 밖으로 나가지 않게 #study 를 도시로 바꿔 둠
+    pin = ''; paint(); pinDlg.classList.remove('ok', 'bad');
+    if (pinOk) { pinOk = null; if (location.hash === '#study') { history.replaceState(null, '', location.pathname + location.search); route(); } }
+  });
   function gate(cb) {
     let passed = false; try { passed = sessionStorage.getItem('mk_study') === '1'; } catch {}
     if (passed) return cb();
@@ -112,6 +136,7 @@
   function route() {
     if (location.href === last) return; // hashchange·popstate 중복 방지
     last = location.href;
+    if (pinDlg.open && location.hash !== '#study') { pinOk = null; pinDlg.close(); } // 뒤로가기 등으로 경로가 바뀌면 암호 창도 닫음
     const my = ++seq, [h, sub] = (() => { try { return decodeURIComponent(location.hash.slice(1)).split('/'); } catch { return ['']; } })();
     if (!h) return show('scene');
     if (h === 'study') { show('scene'); return gate(() => { if (my === seq) show('study'); }); } // 인증 중 다른 데로 가면 늦은 성공은 무시
