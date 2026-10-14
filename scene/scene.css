@@ -60,7 +60,7 @@ html.mk-layer-open, html.mk-layer-open body { overflow: hidden; }
 @keyframes mk-arrive { from { transform: translate(180%, -620%) scale(.12); opacity: 0 } 15% { opacity: 1 } to { transform: none; opacity: 1 } }
 @keyframes mk-bob { 0%, 100% { translate: 0 0 } 50% { translate: 0 -9% } }
 @keyframes mk-buzz { 0%, 78%, 100% { rotate: 0deg } 80% { rotate: -5deg } 82% { rotate: 5deg } 84% { rotate: -4deg } 86% { rotate: 4deg } 88% { rotate: -2deg } 90% { rotate: 1deg } }
-.mk-back { position: absolute; left: 16px; top: 16px; color: #e8dcc6; text-decoration: none; padding: 6px 12px; border-radius: 999px; background: rgba(12, 14, 30, .6); font: 14px/1.4 "Pretendard Variable", Pretendard, sans-serif; }
+.mk-back { position: fixed; left: 16px; top: 16px; color: #e8dcc6; text-decoration: none; padding: 6px 12px; border-radius: 999px; background: rgba(12, 14, 30, .6); font: 14px/1.4 "Pretendard Variable", Pretendard, sans-serif; }
 
 /* 화면 낭독기 전용 텍스트 */
 .mk-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; margin: 0; }
@@ -120,7 +120,7 @@ html.mk-layer-open .mk-home { display: none; }
 }
 
 /* 세로 화면(폰) — 위 무대 규칙을 덮어야 해서 맨 끝에: 그림을 화면 높이에 맞추고 좌우로 밀어 보기 — 양옆 전광판·책장까지 손이 닿게 */
-@media (max-aspect-ratio: 1/1) {
+@media (max-aspect-ratio: 4/3) { /* 4:3보다 좁으면 가로로 잘리는 물건이 생김 */
   .mk-layer { overflow-x: auto; overflow-y: hidden; overscroll-behavior: contain; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
   .mk-layer::-webkit-scrollbar { display: none; }
   #lsScene .mk-stage, #lsStudy .mk-stage { position: relative; left: 0; top: 0; transform: none; height: 100%; width: calc(100vh * 8064 / 3456); } /* 두 그림 모두 21:9(7/3) */
