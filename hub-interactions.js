@@ -91,7 +91,7 @@
     paint();
   }
 
-  var frames=['edLayoutFrame','ltScaleFrame','mbFrame','p4Frame','p5Frame'].map(function(id){return document.getElementById(id);});
+  var frames=['edLayoutFrame','ltScaleFrame','mbFrame','p4Frame','p5Frame'].map(function(id){return document.getElementById(id);}).filter(Boolean); // 갤러리 제거 후엔 비어 있음
   var nav=Array.from(document.querySelectorAll('.archive-nav a'));
   var scheduled=false;
   function trackChapters(){
@@ -159,7 +159,7 @@
     moduleCards.forEach(function(card,i){var r=card.getBoundingClientRect(),t=clamp((vh-r.top)/(vh*.65));card.style.setProperty('--scroll-lean',((i-1)*(1-t)*7)+'deg');card.style.setProperty('--scroll-lift',((1-t)*65)+'px');});
     var wr=week.getBoundingClientRect(),wp=clamp((vh-wr.top)/(vh*.6));
     week.querySelectorAll('.week-day').forEach(function(day,i){day.style.setProperty('--day-lift',((1-clamp(wp*1.7-i*.11))*30)+'px');});
-    var gallery=hub.querySelector('.gallery-section');gallery.style.setProperty('--scroll-energy',velocity.toFixed(3));
+    var gallery=hub.querySelector('.gallery-section');if(gallery)gallery.style.setProperty('--scroll-energy',velocity.toFixed(3));
   }
   function scheduleMainMotion(){if(!motionFrame)motionFrame=requestAnimationFrame(mainMotion);}
   window.addEventListener('scroll',scheduleMainMotion,{passive:true});window.addEventListener('resize',scheduleMainMotion);
