@@ -65,7 +65,7 @@
   </div>
   <a class="mk-back" href="#">← 도시로</a>
 </div>
-<a class="mk-home" href="#" aria-label="도시로 돌아가기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13c3-4 7-6 12-6 2 0 4 .5 6 1.5-1 2-3 3.5-6 4.5H3z"/><path d="M15 7c0-2 1-3 3-3"/></svg></a>
+<div class="mk-layer mk-room" id="lsRoom" tabindex="-1" role="region" aria-label="저장고"></div>
 <dialog class="mk-pin" aria-label="서재 암호">
   <div class="mk-pin-top"><span>AIRSHIP ACCESS</span><button type="button" data-x aria-label="닫기">닫기 ×</button></div>
   <div class="mk-pin-ring"><div class="mk-pin-slots" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div>
@@ -76,28 +76,29 @@
   document.documentElement.classList.remove('mk-boot'); // index.html 첫 가림 해제(이제 인트로·장면이 덮음)
   const html = document.documentElement, intro = document.getElementById('lsIntro');
   const scene = document.getElementById('lsScene'), study = document.getElementById('lsStudy');
-  const APPS = ['music', 'memo', 'files', 'todo', 'briefing', 'settings'];
-
+  
   /* ── 화면 전환 ── */
-  const OURS = new Set(['lsIntro', 'lsScene', 'lsStudy']);
-  function show(which) { // 'scene' | 'study' | null(MK.HUB)
-    const was = scene.classList.contains('on') ? 'scene' : study.classList.contains('on') ? 'study' : null;
-    scene.classList.toggle('on', which === 'scene'); study.classList.toggle('on', which === 'study');
-    scene.inert = which !== 'scene'; study.inert = which !== 'study';
+  const OURS = new Set(['lsIntro', 'lsScene', 'lsStudy', 'lsRoom']);
+  const room = document.getElementById('lsRoom');
+  const LAYERS = { scene, study, room };
+  function show(which) { // 'scene' | 'study' | 'room'(저장고 방, rooms.js) — 옛 MK.HUB 화면은 더 이상 보이지 않음
+    const was = Object.keys(LAYERS).find(k => LAYERS[k].classList.contains('on')) || null;
+    for (const [k, l] of Object.entries(LAYERS)) { l.classList.toggle('on', which === k); l.inert = which !== k; }
     html.classList.toggle('mk-layer-open', !!which);
     for (const el of document.body.children) // 장면이 덮고 있는 동안 뒤의 SPA는 키보드·낭독기에서도 숨김
       if (!OURS.has(el.id) && el.tagName !== 'DIALOG' && el.tagName !== 'SCRIPT') el.inert = !!which;
-    if (which && which !== was) {
-      const layer = which === 'scene' ? scene : study;
+    if (which && which !== was && which !== 'room') { // 방은 rooms.js가 제목에 초점을 줌
+      const layer = LAYERS[which];
       layer.focus({ preventScroll: true });
       if (layer.scrollWidth > layer.clientWidth) // 세로 화면: 그림을 좌우로 밀어 볼 수 있음. 처음엔 비행선/책상이 가운데
         layer.scrollLeft = layer.scrollWidth * (which === 'scene' ? .505 : .57) - layer.clientWidth / 2;
     }
     if (!which && pinDlg.open) { pinOk = null; pinDlg.close(); }
-    if (which) back = which === 'study' ? '#study' : '';
+    if (which === 'scene' || which === 'study') back = which === 'study' ? '#study' : '';
   }
-  /* 옛 MK.HUB 홈 화면은 버림: 홈으로 가려 하거나 저장고 인증을 그냥 닫으면 마지막에 있던 도시/서재로 */
+  /* 방을 닫거나 저장고 인증을 그냥 닫으면 마지막에 있던 도시/서재로 */
   let back = '';
+  const was = () => Object.values(LAYERS).some(l => l.classList.contains('on'));
   function toLayer(replace) { history[replace ? 'replaceState' : 'pushState'](null, '', location.pathname + location.search + back); route(); }
   /* 서재 암호(임시 5940, 나중에 Face ID). 공개 사이트의 숨은 입구일 뿐 — 실제 데이터는 각 칸을 열 때 MKVault가 지킴 */
   const PIN_HASH = '8bc552c0c116fa615b7306a74f4a998c7ac4fef70074b742abcc82d53ee52611'; // sha256('mk-study:' + 암호)
@@ -145,8 +146,12 @@
     if (!h) return show('scene');
     if (h === 'study') { show('scene'); return gate(() => { if (my === seq) show('study'); }); } // 인증 중 다른 데로 가면 늦은 성공은 무시
     if (h === 'hub') return toLayer(true); // 옛 MK.HUB 홈은 버림
-    if (h === 'vault' && sub) { show(null); openApp('memo'); return mkOpenFolder(sub); }
-    if (APPS.includes(h)) { show(null); return openApp(h); }
+    const key = h === 'vault' ? (sub || '').toLowerCase() : h;
+    if (window.mkRooms && mkRooms.has(key)) { // 저장고 인증 뒤 새 화면의 방으로. 인증 창 뒤엔 지금 장면이 그대로 보임
+      if (!was()) show(back === '#study' ? 'study' : 'scene');
+      const go = () => { if (my === seq) { show('room'); mkRooms.open(key, () => toLayer(false)); } };
+      return window.MKVault ? MKVault.requireAccess(go) : go(); // MKVault 없으면 방이 '불러오지 못했어요'를 보여 줌
+    }
     // 그 밖의 해시(페이지 안 앵커 등)는 건드리지 않음
   }
 
@@ -180,9 +185,9 @@
   // 첫 라우팅은 vault-client.js(defer)까지 실행된 뒤 — 그래야 openApp이 잠금을 거침
   document.addEventListener('DOMContentLoaded', () => {
     addEventListener('hashchange', route); addEventListener('popstate', route);
-    const setPage0 = window.setPage; window.setPage = p => p === 'hub' ? toLayer(false) : setPage0(p); // 앱 안의 홈·뒤로 버튼도 여기로
-    addEventListener('mk:vault-cancel', () => { if (document.querySelector('.page.active')?.id === 'page-hub') toLayer(true); });
-    if (FROM_EMAIL_LINK) return show(null); // 이메일 로그인 복귀는 MK.HUB가 처리
+    window.setPage = () => {}; // 옛 MK.HUB 페이지 전환은 버림(뒤의 SPA는 Firebase·저장고 인증 배관으로만 씀)
+    addEventListener('mk:vault-cancel', () => { if (!room.classList.contains('on')) toLayer(true); }); // 방 열기 전 인증을 닫음 → 원래 장면
+    if (FROM_EMAIL_LINK) return show('scene'); // 이메일 로그인 복귀: 인증 창은 vault-client가 띄움, 뒤엔 도시
     route();
     if (!intro.classList.contains('on')) land();
   });
