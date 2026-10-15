@@ -64,6 +64,7 @@
     <a class="mk-spot" href="#settings" aria-label="설정" style="left:74%;top:28%;width:25%;height:24%"></a>
   </div>
   <a class="mk-back" href="#">← 도시로</a>
+  <button type="button" class="mk-sound" aria-pressed="false" aria-label="서재 음악 (류이치 사카모토)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></button>
 </div>
 <div class="mk-layer mk-room" id="lsRoom" tabindex="-1" role="region" aria-label="저장고"></div>
 <dialog class="mk-pin" aria-label="서재 암호">
@@ -95,7 +96,13 @@
     }
     if (!which && pinDlg.open) { pinOk = null; pinDlg.close(); }
     if (which === 'scene' || which === 'study') back = which === 'study' ? '#study' : '';
+    if (which && window.mkBgm) { which === 'study' || (which === 'room' && back === '#study') ? mkBgm.play() : mkBgm.pause(); soundUi(); } // 음악은 서재(와 서재에서 연 방)에서만
   }
+  const sound = study.querySelector('.mk-sound');
+  const soundUi = () => { const on = !!window.mkBgm?.isOn(); sound.classList.toggle('on', on); sound.setAttribute('aria-pressed', String(on)); };
+  sound.addEventListener('pointerdown', e => e.stopPropagation()); // 문서의 '첫 터치에 소리 켜기'보다 이 버튼이 먼저(안 그러면 켜자마자 꺼짐)
+  sound.addEventListener('click', () => { window.mkBgm?.toggle(); soundUi(); });
+  document.addEventListener('pointerdown', () => setTimeout(soundUi, 50)); // 첫 터치로 소리가 켜지면 버튼도 켜짐 표시
   /* 방을 닫거나 저장고 인증을 그냥 닫으면 마지막에 있던 도시/서재로 */
   let back = '';
   const was = () => Object.values(LAYERS).some(l => l.classList.contains('on'));
@@ -169,7 +176,6 @@
   /* ── 인트로: 처음 들어올 때(탭 세션당 한 번) 다크 배경 로고 → 현수막으로 날아가 박힘 ── */
   function land() {
     scene.classList.add('go');
-    try { sessionStorage.setItem('mk_intro', '1'); } catch {}
   }
   function playIntro() {
     intro.classList.add('on');
@@ -190,8 +196,7 @@
     intro.addEventListener('click', fly); // 건너뛰기
   }
 
-  let seen = false; try { seen = !!sessionStorage.getItem('mk_intro'); } catch {}
-  if (!FROM_EMAIL_LINK && !location.hash && !seen && !reduce) playIntro(); // 그림이 뜨기 전에 로고부터
+  if (!FROM_EMAIL_LINK && !location.hash && !reduce) playIntro(); // 첫 화면으로 들어올 때마다(해시 링크·이메일 복귀는 건너뜀). 눌러서 건너뛰기
   if (!FROM_EMAIL_LINK && !location.hash) show('scene'); // DOMContentLoaded 전에도 MK.HUB 홈이 비치지 않게
   // 첫 라우팅은 vault-client.js(defer)까지 실행된 뒤 — 그래야 openApp이 잠금을 거침
   document.addEventListener('DOMContentLoaded', () => {

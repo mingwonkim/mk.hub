@@ -34,19 +34,11 @@
   },{passive:false});
 })();
 </script>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script>
-(function initTW(){
-  if(typeof tailwind!=='undefined'){
-    tailwind.config={darkMode:"class",theme:{extend:{colors:{"secondary":"#ffb4a4","surface-variant":"#353535","surface-bright":"#393939","on-primary-fixed":"#360e05","primary-fixed":"#ffdad2","outline-variant":"#524340","surface-container-lowest":"#0e0e0e","surface-dim":"#131313","surface-container":"#201f1f","secondary-container":"#7f2f1e","on-primary-container":"#7a4336","primary-fixed-dim":"#ffb4a2","inverse-surface":"#e5e2e1","on-secondary-container":"#ff9f8a","on-error-container":"#ffdad6","error-container":"#93000a","on-error":"#690005","on-primary":"#512317","background":"#131313","surface-tint":"#ffb4a2","on-background":"#e5e2e1","error":"#ffb4ab","surface-container-low":"#1c1b1b","primary-container":"#ffb4a2","on-surface-variant":"#d7c2bd","surface":"#131313","surface-container-high":"#2a2a2a","primary":"#ffdad2","surface-container-highest":"#353535","on-surface":"#e5e2e1","on-secondary":"#5e1708","outline":"#a08d88"},fontFamily:{"headline":["Space Grotesk"],"body":["Inter"],"label":["Space Grotesk"]},borderRadius:{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"}}}};
-  }else{setTimeout(initTW,50);}
-})();
-</script>
+<!-- Tailwind CDN 뺌: 옛 MK.HUB 화면 전용이었고(지금은 안 보임) 모바일에서 첫 화면을 늦췄음 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="preconnect" href="https://firestore.googleapis.com"/>
 <link rel="dns-prefetch" href="https://www.youtube-nocookie.com"/>
-<link rel="dns-prefetch" href="https://cdn.tailwindcss.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;800;900&family=Inter:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Nunito:wght@700;800&family=Fredoka:wght@500;600&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet"/>
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet"/>
@@ -1523,11 +1515,11 @@ html.mk-arrival-hold body>:not(#briefArrival){visibility:hidden!important}
 </style>
 <link rel="stylesheet" href="vault-client.css">
 <link rel="stylesheet" href="scene/scene.css">
-<script src="scene/scene.js" defer></script>
-<script src="scene/rooms.js" defer></script><!-- 첫 화면(도시·서재) + 해시 라우터. vault-client보다 먼저 -->
+<script src="scene/rooms.js" defer></script><!-- 저장고 방(새 UI) -->
 <script src="vault-client.js" defer></script>
 </head>
 <body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-on-primary-container">
+<script src="scene/scene.js"></script><!-- 첫 화면(인트로·도시·서재) + 해시 라우터: 본문 맨 앞에서 바로 실행(무거운 옛 스크립트보다 먼저), vault-client보다 먼저 -->
 
 <!-- MK Motion: 마우스 글로우 (blackFadeOverlay보다 먼저 → 동일 z-index에서 아래에 깔림) -->
 <div id="mkGlow" aria-hidden="true"></div>
@@ -5366,11 +5358,14 @@ setTimeout(function(){
     on=!on;localStorage.setItem('mk_bgm',on?'1':'0');muted=false;icon();
     if(on)start(false);else if(ready)player.pauseVideo();
   };
-  /* 자동재생: 명시적으로 끈 적 없으면 음소거로 자동재생 → 첫 제스처에 소리 켜기 */
-  if(localStorage.getItem('mk_bgm')!=='0'){
-    on=true;start(true);icon();
-    document.addEventListener('pointerdown',bgmUnmute,{once:true});
-  }
+  /* 서재에서만 재생(scene.js가 부름). 끈 적 없으면 음소거로 시작 → 서재에서 첫 터치에 소리 켜기(브라우저 자동재생 정책) */
+  window.mkBgm={
+    play:function(){if(localStorage.getItem('mk_bgm')==='0'||on)return;on=true;start(true);if(ready)player.playVideo();document.addEventListener('pointerdown',bgmUnmute,{once:true});icon();},
+    pause:function(){if(!on)return;on=false;if(ready)player.pauseVideo();icon();},
+    // 서재의 소리 버튼: 음소거 상태면 소리 켜기, 아니면 켜기/끄기(설정 기억)
+    toggle:function(){if(on&&muted){bgmUnmute();return true;}window.toggleBgm();return on;},
+    isOn:function(){return on&&!muted;}
+  };
 })();
 </script>
 <dialog id="hubArchiveLightbox" aria-label="사진 확대 보기"><div class="hub-archive-bar"><span id="hubArchiveCounter"></span><button type="button" id="hubArchiveClose">닫기 ×</button></div><img id="hubArchiveLarge" alt=""/><div class="hub-archive-controls"><button id="hubArchivePrev" type="button" aria-label="이전 사진">←</button><button id="hubArchiveNext" type="button" aria-label="다음 사진">→</button></div></dialog>

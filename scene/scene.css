@@ -60,6 +60,10 @@ html.mk-layer-open, html.mk-layer-open body { overflow: hidden; }
 @keyframes mk-arrive { from { transform: translate(180%, -620%) scale(.12); opacity: 0 } 15% { opacity: 1 } to { transform: none; opacity: 1 } }
 @keyframes mk-bob { 0%, 100% { translate: 0 0 } 50% { translate: 0 -9% } }
 @keyframes mk-buzz { 0%, 78%, 100% { rotate: 0deg } 80% { rotate: -5deg } 82% { rotate: 5deg } 84% { rotate: -4deg } 86% { rotate: 4deg } 88% { rotate: -2deg } 90% { rotate: 1deg } }
+.mk-sound { position: fixed; right: 16px; top: 16px; width: 38px; height: 38px; display: grid; place-items: center; padding: 0; border: 1px solid rgba(232, 220, 198, .35); border-radius: 50%; background: rgba(12, 14, 30, .6); cursor: pointer; }
+.mk-sound svg { width: 18px; height: 18px; fill: none; stroke: #8f8a80; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.mk-sound.on { border-color: #9fe9ff99; box-shadow: 0 0 14px #9fe9ff44; }
+.mk-sound.on svg { stroke: #e8dcc6; }
 .mk-back { position: fixed; left: 16px; top: 16px; color: #e8dcc6; text-decoration: none; padding: 6px 12px; border-radius: 999px; background: rgba(12, 14, 30, .6); font: 14px/1.4 "Pretendard Variable", Pretendard, sans-serif; }
 
 /* 화면 낭독기 전용 텍스트 */
