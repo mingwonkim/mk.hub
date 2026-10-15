@@ -7,7 +7,7 @@ const {getAuth}=require('firebase-admin/auth');
 const {OWNER_EMAIL,REAUTH_MS,VaultError,requireOwner,hashPasswords,verifyPasswords,consumeRate,otpHash}=require('./security');
 initializeApp();
 const db=getFirestore(),auth=getAuth(),accessRef=db.doc('mk_security/access');
-const pk=require('./passkey').passkeys(db);
+const pk=require('./passkey').passkeys(db),codes=require('./codes').codes(db);
 const OTP_PEPPER=defineSecret('VAULT_OTP_PEPPER');
 const AUTH_KEY=defineString('VAULT_FIREBASE_API_KEY',{default:'AIzaSyDWXJ1nIQIZXSMruwFhyoMSU3gf3omiyMc'});
 async function emailAuth(action,body){
@@ -74,7 +74,24 @@ async function vaultHandler(req){
   const owner=await auth.getUserByEmail(OWNER_EMAIL);
   return{token:await mint({uid:owner.uid,vault_otp_at:now},true,state.data().version)};
  }
+ // 복구 코드·기기 추가 코드로 열기. 추측 방지: IP별 시간당 10회(2초 간격)
+ if(action==='code-login'){
+  const now=Date.now(),pepper=OTP_PEPPER.value(),ipRef=db.doc('mk_security/rate/ips/code_'+otpHash('ip',req.ip||'unknown',pepper));
+  await db.runTransaction(async tx=>{const ip=await tx.get(ipRef);tx.set(ipRef,{...consumeRate(ip.data(),now,10,2000),expiresAt:Timestamp.fromMillis(now+3600000)});});
+  const state=await accessRef.get();if(!state.exists||state.data().kind!=='pattern')throw new VaultError(409,'저장고 패턴을 먼저 등록해주세요.');
+  // 토큰을 먼저 만들어 두고 코드를 소비 — 서버 오류로 코드만 날아가는 일 없게(소비 실패면 토큰은 버림)
+  const owner=await auth.getUserByEmail(OWNER_EMAIL),version=state.data().version;
+  const token=await mint({uid:owner.uid,vault_otp_at:now},true,version);
+  const used=await codes.use(body.code,pepper,version);
+  return{kind:used.kind,token};
+ }
  const claims=await authenticate(req);
+ if(action==='recovery-create'||action==='recovery-status'||action==='pair-create'){
+  await authenticate(req,true);
+  if(action==='recovery-create')return codes.recoveryCreate(claims,OTP_PEPPER.value());
+  if(action==='recovery-status')return codes.recoveryStatus(claims.vault_version);
+  return codes.pairCreate(claims,OTP_PEPPER.value());
+ }
  if(action.startsWith?.('passkey-')){
   await authenticate(req,true);
   if(action==='passkey-register-options')return pk.registerOptions(claims);

@@ -41,6 +41,7 @@
   else Object.assign(out.response,{authenticatorData:b64e(r.authenticatorData),signature:b64e(r.signature)},r.userHandle?{userHandle:b64e(r.userHandle)}:{});
   return out;
  }
+ const deviceLabel=()=>{const u=navigator.userAgent;return /iPhone/.test(u)?'iPhone':/iPad/.test(u)?'iPad':/Android/.test(u)?'Android':/Mac/.test(u)?'Mac':'PC';};
  const pkSupported=()=>!!(window.PublicKeyCredential&&navigator.credentials);
  let pkLogin=null; // {at, promise}
  function pkPrefetch(){ // 등록된 Face ID가 있을 때만 옵션이 옴(없으면 409)
@@ -73,15 +74,15 @@
  function openFlow(mode,callback){
   if(dialog){dialog.querySelector('input')?.focus();return;}
   const box=document.createElement('dialog');box.className='vault-access';box.setAttribute('aria-label','개인 저장고 인증');dialog=box;
-  box.innerHTML='<div class="vault-access-sheet"><div class="vault-access-top"><span>PRIVATE VAULT</span><button type="button" data-close aria-label="닫기">×</button></div><h2></h2><p class="vault-access-description"></p><form><div class="vault-access-fields"></div><p class="vault-access-error" role="alert"></p><button class="vault-access-submit" type="submit"></button></form><button type="button" class="vault-access-passkey" hidden>Face ID로 열기</button><button type="button" class="vault-access-secondary" hidden></button></div>';
+  box.innerHTML='<div class="vault-access-sheet"><div class="vault-access-top"><span>PRIVATE VAULT</span><button type="button" data-close aria-label="닫기">×</button></div><h2></h2><p class="vault-access-description"></p><form><div class="vault-access-fields"></div><p class="vault-access-error" role="alert"></p><button class="vault-access-submit" type="submit"></button></form><button type="button" class="vault-access-passkey" hidden>Face ID로 열기</button><button type="button" class="vault-access-code" hidden>복구 코드 · 기기 추가 코드로 열기</button><button type="button" class="vault-access-secondary" hidden></button></div>';
   document.body.appendChild(box);box.showModal();
-  const title=box.querySelector('h2'),desc=box.querySelector('.vault-access-description'),form=box.querySelector('form'),fields=box.querySelector('.vault-access-fields'),err=box.querySelector('.vault-access-error'),submit=box.querySelector('[type=submit]'),secondary=box.querySelector('.vault-access-secondary'),passkeyBtn=box.querySelector('.vault-access-passkey');
+  const title=box.querySelector('h2'),desc=box.querySelector('.vault-access-description'),form=box.querySelector('form'),fields=box.querySelector('.vault-access-fields'),err=box.querySelector('.vault-access-error'),submit=box.querySelector('[type=submit]'),secondary=box.querySelector('.vault-access-secondary'),passkeyBtn=box.querySelector('.vault-access-passkey'),codeBtn=box.querySelector('.vault-access-code');
   let busy=false,mailing=false,cooldown=null,sendAfter=0;
   function close(){clearInterval(cooldown);box.close();box.remove();dialog=null;}
   const quit=()=>{close();window.dispatchEvent(new CustomEvent('mk:vault-cancel'));}; // 첫 화면(scene.js)이 받아 장면으로 되돌림
   box.querySelector('[data-close]').onclick=quit;box.addEventListener('cancel',e=>{e.preventDefault();quit();});
   function render(heading,description,button,html,handler){
-   title.textContent=heading;desc.textContent=description;submit.textContent=button;submit.hidden=!button;fields.innerHTML=html;err.textContent='';secondary.hidden=true;passkeyBtn.hidden=true;clearInterval(cooldown);
+   title.textContent=heading;desc.textContent=description;submit.textContent=button;submit.hidden=!button;fields.innerHTML=html;err.textContent='';secondary.hidden=true;passkeyBtn.hidden=true;codeBtn.hidden=true;clearInterval(cooldown);
    form.onsubmit=async e=>{e.preventDefault();if(busy)return;busy=true;submit.disabled=true;fields.inert=true;err.textContent='';
     try{await handler();}catch(error){if(box.isConnected)err.textContent=error.message;}
     finally{busy=false;submit.disabled=false;fields.inert=false;}
@@ -115,6 +116,20 @@
     localStorage.removeItem('mk_pw4');finish();
    });
   }
+  // 복구 코드(5-5) 또는 다른 기기에서 만든 기기 추가 코드(4-4). 열리면 이 기기에 Face ID 등록을 권함
+  function codeForm(){
+   render('코드로 열기','복구 코드(XXXXX-XXXXX) 또는 이미 열린 기기의 설정 → "다른 기기 추가"에서 만든 코드(XXXX-XXXX)를 넣어 주세요.','열기',
+    '<label class="vault-code"><span>코드</span><input name="code" autocomplete="one-time-code" autocapitalize="characters" spellcheck="false" maxlength="16" required></label>',
+    async()=>{const r=await api('code-login',{code:fields.querySelector('input').value});if(!box.isConnected)return;await signIn(r.token);askFace(r.kind);});
+   secondary.hidden=false;secondary.textContent='← 패턴으로';secondary.onclick=()=>pin().catch(e=>{err.textContent=e.message;});
+  }
+  function askFace(kind){
+   const note=kind==='recovery'?'복구 코드 하나를 썼어요(설정에서 남은 개수 확인). ':'';
+   if(!pkSupported())return finish();
+   pkRegPrefetch().catch(()=>{}); // 누르자마자 Face ID 창이 떠야 해서 미리
+   render('이 기기에 Face ID 등록',note+'등록하면 다음부터 이 기기에서 Face ID로 바로 열려요.','Face ID 등록','',async()=>{await passkeyRegister(deviceLabel());finish();});
+   secondary.hidden=false;secondary.textContent='나중에';secondary.onclick=finish;
+  }
   function linkForm(){mode='recover';render('비밀번호 찾기',EMAIL+'으로 인증 링크를 보냅니다. 링크로 돌아오면 새 패턴을 설정합니다.','인증 링크 받기','',requestLink);}
   async function pin(){
    const state=await api('pin-state');
@@ -122,6 +137,7 @@
    patternForm('저장고 열기','패턴을 그려주세요.',async drawn=>{const result=await api('verify-pin',{passwords:[drawn]});if(!box.isConnected)return;await signIn(result.token);if(mode==='change')setPin();else finish();});
    secondary.hidden=false;secondary.textContent='비밀번호를 잊으셨나요?';secondary.onclick=linkForm;
    if(mode==='open')pkPrefetch().then(()=>{if(box.isConnected&&title.textContent==='저장고 열기')passkeyBtn.hidden=false;},()=>{}); // 등록된 Face ID가 있으면 버튼
+   if(mode==='open'){codeBtn.hidden=false;codeBtn.onclick=codeForm;}
    passkeyBtn.onclick=async()=>{if(busy)return;busy=true;passkeyBtn.disabled=true;err.textContent='';try{await passkeyLogin();close();if(callback)callback();}catch(error){if(box.isConnected)err.textContent=error.message;}finally{busy=false;passkeyBtn.disabled=false;}};
   }
   async function requestLink(){
@@ -180,7 +196,7 @@
   acceptUser,hasAccess:active,api,resolveURL,
   requireAccess(callback){if(active())callback();else openFlow('open',callback);},
   unlock(callback){openFlow('open',callback);},recover(){openFlow('recover');},changePin(){openFlow('change');},logout,
-  passkeySupported:pkSupported,passkeyPrefetch:pkPrefetch,passkeyLogin,passkeyRegister,passkeyRegisterPrefetch:pkRegPrefetch,
+  passkeySupported:pkSupported,deviceLabel,passkeyPrefetch:pkPrefetch,passkeyLogin,passkeyRegister,passkeyRegisterPrefetch:pkRegPrefetch,
   passkeyList:()=>api('passkey-list'),passkeyRemove:id=>api('passkey-delete',{id}).then(r=>{pkLogin=null;return r;}),
   async logoutAll(){await api('logout-all');await logout();}
  };
