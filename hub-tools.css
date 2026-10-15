@@ -1,62 +1,132 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
-/* Shared surfaces for the four standalone MK.HUB tools. Storage belongs to each app. */
-:root{color-scheme:dark;--bg:#131313;--sf:#1d1a15;--sf2:#252118;--bd:#393028;--tx:#eee5d1;--txd:#b1a79b;--txl:#9b8e7e;--acc:#FF3B00;--accd:#ff3b001a;--accg:#ff3b004d;--pink:#d69962;--pinkd:#d6996219;--blue:#c6b28c;--blued:#c6b28c15;--warm:#FF3B00;--warmd:#ff3b001a;--gold:#d9a85f;--goldd:#d9a85f1a;--warn:#e8a46b;--sky:#d5a378;--skyd:#d5a3781a;--ok:#92b38d;--okd:#92b38d1a;--okg:#92b38d4d;--ng:#ef8264;--ngd:#ef82641a;--shadow:0 10px 28px #0002;--shadow2:0 18px 48px #0004}
-body{background:radial-gradient(ellipse at 100% 0,#78532c16,transparent 55%),var(--bg);color:var(--tx);font-family:'Space Grotesk','Noto Sans KR',sans-serif}
-button,input,textarea,select{accent-color:var(--acc)}
-button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
-::selection{background:#ff3b0045;color:#fff2de}
-.app{max-width:1120px;padding:0 clamp(14px,3vw,40px)}
-.hd{position:relative;padding:23px 4px 18px;border-bottom:1px solid var(--bd);margin-bottom:14px;background:transparent}
-.hd:before{content:'';position:absolute;left:4px;top:0;width:45px;height:2px;background:var(--acc)}
-.logo{font-family:'Space Grotesk','Noto Sans KR',sans-serif;font-size:clamp(19px,3vw,30px);letter-spacing:-.05em;font-weight:700;line-height:1.2}
-.logo em{text-shadow:none;color:#edb791}
-.mk-tool-label{display:block;font:8px 'Space Grotesk',sans-serif;letter-spacing:.23em;color:var(--txd);margin-bottom:9px;text-transform:uppercase}
-.tabs{background:#181611;border:1px solid var(--bd);padding:5px;gap:5px;border-radius:12px;margin-bottom:20px}
-.tb{background:transparent;border:1px solid transparent;border-radius:8px;color:var(--txd);font-weight:500;padding:11px 6px}
-.tb.on{background:#37271a;border-color:#8e5d38;color:#f5ddc0;box-shadow:inset 0 2px var(--acc)}
-.sc{scrollbar-width:thin;scrollbar-color:#68503a transparent;min-height:0}
-:is(.level-node,.pc,.cc,.stat-box,.ach-card,.add-form,.today-box,.result-card){border:1px solid var(--bd);background:linear-gradient(140deg,#252017,#191713);border-radius:16px;box-shadow:var(--shadow)}
-:is(.level-node,.pc,.cc):hover{border-color:#92663e;box-shadow:var(--shadow2)}
-:is(.level-node.current,.pc.playing,.cc.playing){border-color:var(--acc);background:linear-gradient(140deg,#352418,#1b1915)}
-:is(.sh,.section-label){letter-spacing:.05em;font-weight:500}
-:is(.key-btn,.mode-btn,.fc,.si,.add-form input){border-radius:8px}
-.key-btn.on,.mode-btn.on,.fc.on{color:#f5d7b4;background:#3d2a1a;border-color:#a86a3e}
-.btn-primary{background:var(--acc);border-radius:10px;box-shadow:0 6px 20px #ff3b0022;font-weight:600;color:#fff5e8}
-.play-btn{background:radial-gradient(circle at 35% 25%,#ff743b,#d9330a);box-shadow:0 16px 35px #0005,0 0 0 8px #ff3b0010}
-:is(.levelup-box,.lv100-box){background:linear-gradient(150deg,#2e2519,#191713);border-color:#a47b42;color:var(--tx)}
-.tool-pitch .today-stat,.tool-pitch .tstep{background:#262219;border-color:#453929}
-.tool-pitch .tstep.done{background:#263025;border-color:#516548}
-.tool-pitch .today-box{border-top:2px solid var(--acc)}
-.tool-pitch .today-stat .v{font-family:'Space Grotesk',sans-serif;font-weight:600}
-.tool-pitch .xpf{background:linear-gradient(90deg,var(--acc),#d69962);box-shadow:none}
-.tool-pitch .today-prog .fill{background:var(--ok);box-shadow:none}
-.tool-pitch .journey-bar{border-color:var(--bd)}
-.tool-pitch .stat-box[style*="background"]{background:linear-gradient(145deg,#342619,#191713)!important;border-color:var(--bd)!important}
+/* 음악 연습 도구(절대음감·코드 사전 등) 공용 스킨 — 민권.com 새 UI(비행선 해치)와 같은 말투:
+   깊은 남색 유리, 가는 시안 선, 흰 알약 버튼, 눈금 다이얼. 기능·저장은 각 페이지 그대로, 모양만 여기서.
+   ?embed 로 열리면(저장고 음악 방 안) 배경을 비워 방의 흐린 도시가 비침. */
+:root{color-scheme:dark;
+  --bg:#060a16;--sf:#0d1528;--sf2:#ffffff0b;--bd:#9fe9ff21;--tx:#eef7ff;--txd:#8aa3b8;--txl:#5f7489;
+  --acc:#9fe9ff;--accd:#9fe9ff14;--accg:#9fe9ff55;
+  --ok:#9dffd0;--okd:#9dffd014;--okg:#9dffd055;--ng:#ff8a70;--ngd:#ff8a7016;
+  --gold:#ffd98f;--goldd:#ffd98f17;--warn:#ffc58f;--sky:#9fe9ff;--skyd:#9fe9ff14;
+  --warm:#b8a8ff;--warmd:#b8a8ff17;--red:#ff8a70;--redd:#ff8a7016;--pink:#b8a8ff;--pinkd:#b8a8ff14;--blue:#9fe9ff;--blued:#9fe9ff12;
+  --shadow:0 1px 0 #ffffff08 inset;--shadow2:0 0 0 1px #9fe9ff33,0 12px 40px #0008;--r:14px;
+  --glass:linear-gradient(160deg,#111b33cc,#0a1122d9);--mono:ui-monospace,'JetBrains Mono',Consolas,monospace}
+body{background:radial-gradient(circle at 50% -10%,#16264a,transparent 60%),radial-gradient(circle,#9fe9ff0a 1px,transparent 1.5px) 0 0/24px 24px,var(--bg);color:var(--tx);
+  font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;font-weight:400}
+html.embed body{background:transparent}
+html.embed .tool-chord .hd,html.embed .tool-pitch .logo{display:none} /* 방 제목과 겹치는 도구 자체 제목은 숨김(절대음감은 연속일·레벨 알약만 남김) */
+html.embed .tool-pitch .hd{justify-content:flex-end;padding-top:4px}
+button,input,textarea,select{accent-color:var(--acc);font-family:inherit}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:1px solid var(--acc);outline-offset:3px}
+::selection{background:#9fe9ff40;color:#fff}
+.sc,.app{scrollbar-width:thin;scrollbar-color:#9fe9ff33 transparent;min-height:0}
+.app{max-width:1040px;padding:0 clamp(14px,3vw,36px)}
+
+/* 머리: 가는 선 + 얇은 큰 제목 */
+.hd{position:relative;padding:22px 2px 16px;margin-bottom:12px;border-bottom:1px solid var(--bd);background:none}
+.hd:before{content:none}
+.logo{font:300 clamp(22px,3.4vw,34px)/1.15 'Space Grotesk','Pretendard Variable',sans-serif;letter-spacing:-.02em;color:#fff}
+.logo em{font-style:normal;color:var(--acc);text-shadow:none}
+.mk-tool-label{display:block;font:10px var(--mono);letter-spacing:.3em;color:var(--txd);margin-bottom:10px;text-transform:uppercase}
+.pill,.lv-badge{background:none;border:1px solid var(--bd);border-radius:999px;color:var(--tx);font:500 12px var(--mono)}
+.pill.gd,.lv-badge{color:var(--gold)}.pill.fire{color:var(--warn)}
+
+/* 탭: 글자 탭 + 시안 밑줄(카드형 탭 버림) */
+.tabs{background:none;border:0;border-bottom:1px solid var(--bd);border-radius:0;padding:0;gap:0;margin-bottom:20px}
+.tb{background:none;border:0;border-radius:0;color:var(--txd);font-weight:500;padding:13px 6px;box-shadow:none;position:relative}
+.tb:hover,.tb:not(.on):active{color:#fff;background:none}
+.tb.on{background:none;color:#fff;border:0;box-shadow:none}
+.tb.on:after{content:'';position:absolute;left:22%;right:22%;bottom:-1px;height:2px;border-radius:2px;background:var(--acc);box-shadow:0 0 10px var(--acc)}
+
+/* 유리 카드 */
+:is(.level-node,.pc,.cc,.stat-box,.ach-card,.add-form,.today-box,.result-card,.session-item,.tc,.cof-info,.journey-bar){
+  background:var(--glass);border:1px solid var(--bd);border-radius:14px;box-shadow:var(--shadow);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+:is(.level-node,.pc,.cc,.tstep,.session-item):hover{border-color:#9fe9ff55;box-shadow:var(--shadow2)}
+:is(.level-node.current,.pc.playing,.cc.playing){border-color:var(--acc);background:linear-gradient(160deg,#13284acc,#0a1122e6);box-shadow:0 0 0 1px #9fe9ff44,0 0 28px #9fe9ff1f}
+.level-node.current:before,.level-node.mastered:before{height:1px;background:linear-gradient(90deg,transparent,var(--acc),transparent);box-shadow:none;animation:none}
+.level-node.current:after{animation:none}
+.level-node.mastered{border-color:#ffd98f44;background:var(--glass)}
+.level-node.mastered:before{background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.level-node.locked{opacity:.32}
+.ln-icon{background:none!important;border:1px solid var(--bd);box-shadow:none!important;font-family:var(--mono)}
+.ln-icon.note{color:var(--acc);border-color:#9fe9ff55}.ln-icon.chord{color:var(--ok);border-color:#9dffd055}.ln-icon.mastered{color:var(--gold);border-color:#ffd98f55}
+:is(.ln-badge,.sh .badge,.ach-badge){border-radius:999px;font-family:var(--mono);letter-spacing:.06em}
+:is(.sh,.section-label,.section-title){font-weight:500;letter-spacing:.04em;color:var(--txd)}
+.section-label:after{background:var(--bd)}
+
+/* 오늘의 미션: 빛나는 숫자(얇은 굵기) */
+.tool-pitch .today-box{border-top:1px solid var(--acc)}
+.tool-pitch .today-box.all-done{border-color:#ffd98f66;box-shadow:0 0 28px #ffd98f14}
+.tool-pitch :is(.today-stat,.tstep){background:#ffffff06;border:1px solid var(--bd);border-radius:12px}
+.tool-pitch .tstep.done{background:#9dffd00a;border-color:#9dffd044}
+.tool-pitch :is(.today-stat .v,.stat-box .v,.result-score,.combo-num){font-family:'Space Grotesk',sans-serif;font-weight:300}
+.tool-pitch .today-stat .v.acc{color:var(--acc);text-shadow:0 0 14px #9fe9ff66}
+.tool-pitch .today-stat .v.gold{color:var(--gold);text-shadow:0 0 14px #ffd98f55}
+.tool-pitch .today-stat .v.ok{color:var(--ok);text-shadow:0 0 14px #9dffd055}
+.today-day{background:none;border:1px solid #ffd98f44;border-radius:999px}
+.tool-pitch .stat-box[style*="background"]{background:var(--glass)!important;border-color:var(--bd)!important}
+
+/* 진행 막대: 3px 실선 */
+:is(.xpb,.today-prog .bar,.rt-bar,.note-bar .bb,.jb-track){height:3px;background:#ffffff12;border-radius:3px}
+:is(.xpf,.today-prog .fill,.note-bar .bf,.jb-fill){background:linear-gradient(90deg,var(--acc),var(--warm));box-shadow:0 0 8px #9fe9ff66}
+.xpf:after{display:none}
+.q-progress .dot{height:3px;background:#ffffff14}
+.q-progress .dot.cur{background:var(--acc);box-shadow:0 0 6px var(--acc)}
+
+/* 재생 버튼: 어두운 원 + 도는 눈금 다이얼 */
+.play-btn{width:124px;height:124px;background:radial-gradient(circle at 50% 35%,#16284a,#0a1122);border:1px solid #9fe9ff55;box-shadow:0 0 40px #9fe9ff22,inset 0 0 30px #9fe9ff14}
+.play-btn::before{inset:-18px;border:0;border-radius:50%;background:repeating-conic-gradient(#9fe9ff66 0 .6deg,transparent .6deg 6deg);
+  -webkit-mask:radial-gradient(closest-side,transparent calc(100% - 9px),#000 calc(100% - 8px));mask:radial-gradient(closest-side,transparent calc(100% - 9px),#000 calc(100% - 8px));animation:hubTurn 40s linear infinite;opacity:1;transform:none}
+.play-btn.on{box-shadow:0 0 0 1px var(--acc),0 0 60px #9fe9ff55,inset 0 0 30px #9fe9ff2a}
+.play-btn.on::before{animation-duration:6s}
+.play-btn .note-icon{color:#fff;filter:drop-shadow(0 0 8px #9fe9ff)}
+@keyframes hubTurn{to{rotate:1turn}}
+.play-hint{margin-top:28px}
+
+/* 선택·답 버튼: 유리 → 고르면 흰 알약 */
+:is(.key-btn,.mode-btn,.fc,.si,.ans-btn,.chord-btn,.add-form input,.abtn){background:#ffffff08;border:1px solid var(--bd);border-radius:10px;color:var(--tx)}
+:is(.key-btn,.mode-btn,.fc,.ans-btn,.chord-btn,.abtn):hover{border-color:#9fe9ff66;background:#9fe9ff10}
+:is(.key-btn.on,.mode-btn.on,.fc.on){background:#eef7ff;border-color:#eef7ff;color:#0a1224;box-shadow:0 0 18px #9fe9ff33}
+.ans-btn.ok,.chord-btn.ok{background:#9dffd01a;border-color:var(--ok);color:var(--ok)}
+.ans-btn.ng,.chord-btn.ng{background:#ff8a701a;border-color:var(--ng);color:var(--ng)}
+.btn-primary{background:#eef7ff;color:#0a1224;border:0;border-radius:999px;box-shadow:none;font-weight:600}
+.btn-primary:hover{background:#fff;box-shadow:0 0 24px #9fe9ff44}
+.btn-secondary{background:none;border:1px solid #eef7ff44;border-radius:999px;color:var(--tx)}
+.btn-gold{border-radius:999px}
+
+/* 레벨업·업적 창 */
+:is(.levelup-box,.lv100-box,.ach-popup){background:linear-gradient(160deg,#13213fee,#080d1af2);border:1px solid #9fe9ff44;color:var(--tx);box-shadow:0 0 60px #9fe9ff22,0 30px 80px #000c;border-radius:18px}
+:is(.levelup-overlay,.lv100-overlay){background:#03060dcc;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+
+/* 코드 사전 */
+.tool-chord :is(.cc .cn,.pc .pn){font-family:'Space Grotesk',sans-serif;font-weight:500}
+.tool-chord .cc .dg{border-radius:999px;font-family:var(--mono)}
+.tool-chord .sec-label{border-radius:999px;background:#ffffff08;border:1px solid var(--bd)}
+
+/* 코드 에디터·명언(같은 스킨) */
 .tool-editor{height:100dvh;min-height:0}
-.tool-editor .hd{padding:17px 22px;margin-bottom:0;background:#191713;flex-wrap:wrap;gap:10px}
-.tool-editor .hd h1{font-size:18px;letter-spacing:-.04em;min-width:130px}
-.tool-editor .tabs{border:0;border-bottom:1px solid var(--bd);border-radius:0;padding:0;margin:0;background:#191713}
+.tool-editor .hd{padding:17px 22px;margin-bottom:0;background:#0a1122;flex-wrap:wrap;gap:10px}
+.tool-editor .hd h1{font-size:18px;letter-spacing:-.02em;min-width:130px}
+.tool-editor .tabs{margin:0;background:#0a1122}
 .tool-editor .tab{padding:14px 20px;font-size:11px}
-.tool-editor .code-area{background:#131313;color:#e6d9c2}
-.tool-editor .line-numbers{background:#191713;border-color:var(--bd)}
-.tool-editor .preview-hd,.tool-editor .status{background:#1d1a15;border-color:var(--bd)}
+.tool-editor .code-area{background:#060a16;color:#dfe9f3}
+.tool-editor .line-numbers{background:#0a1122;border-color:var(--bd)}
+.tool-editor .preview-hd,.tool-editor .status{background:#0d1528;border-color:var(--bd)}
 .tool-editor .editor-wrap,.tool-editor .split,.tool-editor .code-panel,.tool-editor .preview-panel{min-height:0}
-.tool-editor .hd-btn{border-radius:7px;font-size:10px;padding:8px 12px}
-.tool-editor .hd-btn.run{color:#fff3e5}
+.tool-editor .hd-btn{border-radius:999px;font-size:10px;padding:8px 12px}
 .tool-quotes{max-width:1440px;margin:0 auto;padding:clamp(30px,7vw,90px) clamp(20px,5vw,70px)}
-.tool-quotes h1{font:700 clamp(42px,7vw,92px)/1 'Space Grotesk','Noto Sans KR',sans-serif;letter-spacing:-.07em;color:var(--tx);margin:18px 0 20px}
+.tool-quotes h1{font:300 clamp(42px,7vw,92px)/1 'Space Grotesk','Pretendard Variable',sans-serif;letter-spacing:-.04em;color:var(--tx);margin:18px 0 20px}
 .tool-quotes .sub{color:var(--txd);border-bottom:1px solid var(--bd);padding-bottom:30px;margin-bottom:35px;letter-spacing:.05em}
 .tool-quotes .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
-.tool-quotes .card{background:linear-gradient(150deg,#242017,#171613);border:1px solid var(--bd);border-top:2px solid #7f5132;border-radius:18px;padding:48px 26px 28px;box-shadow:var(--shadow);transition:translate .35s,border-color .35s}
-.tool-quotes .card:hover{translate:0 -5px;border-color:#c77943}
-.tool-quotes .num{color:#bc9064;font:10px 'Space Grotesk',sans-serif;letter-spacing:.12em;right:24px;top:20px}
+.tool-quotes .card{background:var(--glass);border:1px solid var(--bd);border-radius:16px;padding:48px 26px 28px;transition:translate .35s,border-color .35s}
+.tool-quotes .card:hover{translate:0 -4px;border-color:#9fe9ff66}
+.tool-quotes .num{color:var(--acc);font:10px var(--mono);letter-spacing:.2em;right:24px;top:20px}
 .tool-quotes .text{font-size:15px;line-height:1.85;color:var(--tx)}
 .tool-quotes .author{color:var(--txd)}
+
 @media(min-width:900px){.tool-pitch .level-path{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.tool-pitch .section-label{grid-column:1/-1}}
 @media(max-width:767px){
- .hd{padding:16px 2px 12px;margin-bottom:10px}.mk-tool-label{font-size:7px;margin-bottom:6px}
- .tabs{margin-bottom:14px}.tb{font-size:11px;padding:10px 3px}.hd .hr{gap:5px}
+ .hd{padding:16px 2px 12px;margin-bottom:10px}.mk-tool-label{font-size:9px;margin-bottom:6px}
+ .tabs{margin-bottom:14px}.tb{font-size:11px;padding:11px 3px}.hd .hr{gap:5px}
  .tool-editor .hd{padding:12px;gap:8px}.tool-editor .hd h1{flex-basis:100%;font-size:16px}.tool-editor .hd-btn{padding:7px 9px}
  .tool-quotes .grid{grid-template-columns:1fr}.tool-quotes .card{padding:42px 24px 24px}
 }
-@media(prefers-reduced-motion:reduce){.tool-quotes .card{transition:none}}
+@media(prefers-reduced-motion:reduce){.play-btn::before{animation:none}.tool-quotes .card{transition:none}}
