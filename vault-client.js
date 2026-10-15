@@ -33,7 +33,7 @@
  function openFlow(mode,callback){
   if(dialog){dialog.querySelector('input')?.focus();return;}
   const box=document.createElement('dialog');box.className='vault-access';box.setAttribute('aria-label','개인 저장고 인증');dialog=box;
-  box.innerHTML='<div class="vault-access-sheet"><div class="vault-access-top"><span>MK.HUB / PRIVATE VAULT</span><button type="button" data-close aria-label="닫기">×</button></div><h2></h2><p class="vault-access-description"></p><form><div class="vault-access-fields"></div><p class="vault-access-error" role="alert"></p><button class="vault-access-submit" type="submit"></button></form><button type="button" class="vault-access-secondary" hidden></button></div>';
+  box.innerHTML='<div class="vault-access-sheet"><div class="vault-access-top"><span>PRIVATE VAULT</span><button type="button" data-close aria-label="닫기">×</button></div><h2></h2><p class="vault-access-description"></p><form><div class="vault-access-fields"></div><p class="vault-access-error" role="alert"></p><button class="vault-access-submit" type="submit"></button></form><button type="button" class="vault-access-secondary" hidden></button></div>';
   document.body.appendChild(box);box.showModal();
   const title=box.querySelector('h2'),desc=box.querySelector('.vault-access-description'),form=box.querySelector('form'),fields=box.querySelector('.vault-access-fields'),err=box.querySelector('.vault-access-error'),submit=box.querySelector('[type=submit]'),secondary=box.querySelector('.vault-access-secondary');
   let busy=false,mailing=false,cooldown=null,sendAfter=0;

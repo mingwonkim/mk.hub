@@ -71,24 +71,33 @@ html.mk-layer-open, html.mk-layer-open body { overflow: hidden; }
 .mk-home svg { width: 22px; height: 22px; fill: none; stroke: #7fe3ff; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 html.mk-layer-open .mk-home { display: none; }
 
-/* 서재 암호 키패드 — 저장고 인증 창과 같은 HUD 톤 */
-.mk-pin { --c: #7fe3ff; width: min(320px, calc(100vw - 32px)); padding: 22px 22px 24px; border: 1px solid #7fe3ff33; border-radius: 6px; color: #e6f4ff;
-  background: repeating-linear-gradient(0deg, #ffffff05 0 1px, transparent 1px 3px), linear-gradient(160deg, #0f1830ea, #0a0f1ef2 60%, #140d26f2);
-  box-shadow: 0 0 40px #4fc8ff26, 0 30px 90px #000a; font: 14px/1.4 ui-monospace, Consolas, monospace; }
-.mk-pin::backdrop { background: radial-gradient(ellipse at 50% 45%, #0b143066, #03050dcc); backdrop-filter: blur(6px); }
-.mk-pin-top { display: flex; justify-content: space-between; align-items: center; font-size: 10px; letter-spacing: .22em; color: var(--c); text-shadow: 0 0 8px #7fe3ff80; }
-.mk-pin-top button:focus-visible { outline: 1px solid var(--c); outline-offset: 2px; }
-.mk-pin-top button { background: none; border: 1px solid #7fe3ff40; border-radius: 4px; width: 28px; height: 28px; color: #a9dcf0; cursor: pointer; }
-.mk-pin-slots { display: flex; justify-content: center; gap: 16px; margin: 26px 0 24px; }
-.mk-pin-slots i { width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 0 0 1.5px #7fe3ff70, 0 0 0 8px #7fe3ff0d; transition: background .15s, box-shadow .15s, scale .15s; }
-.mk-pin-slots i.on { background: var(--c); box-shadow: 0 0 0 1.5px var(--c), 0 0 16px var(--c); scale: 1.15; }
-.mk-pin.bad .mk-pin-slots { animation: mk-shake .4s; } .mk-pin.bad .mk-pin-slots i.on { background: #ff6a5a; box-shadow: 0 0 0 1.5px #ff6a5a, 0 0 16px #ff6a5a; }
-.mk-pin.ok .mk-pin-slots i { background: #8dffc8; box-shadow: 0 0 0 1.5px #8dffc8, 0 0 18px #8dffc8; }
+/* 서재 암호 — 저장고 인증(vault-client.css)과 같은 비행선 해치: 화면 전체, 다이얼 링 안에 4칸, 아래 둥근 숫자 */
+.mk-pin { --c: #9fe9ff; --dim: #8aa3b8; position: fixed; inset: 0; width: 100vw; height: 100dvh; max-width: none !important; max-height: none; margin: 0; padding: calc(18px + env(safe-area-inset-top)) 20px calc(22px + env(safe-area-inset-bottom));
+  box-sizing: border-box; border: 0; background: none; color: #eef7ff; font: 14px/1.4 "Pretendard Variable", Pretendard, sans-serif; overflow: auto; animation: mk-pin-in .45s cubic-bezier(.2, .8, .2, 1); }
+.mk-pin[open] { display: flex; flex-direction: column; align-items: center; }
+@keyframes mk-pin-in { from { opacity: 0; filter: blur(6px) } }
+.mk-pin::backdrop { background: radial-gradient(circle at 50% 40%, #16264acc, #050812f2 70%); backdrop-filter: blur(16px) saturate(120%); -webkit-backdrop-filter: blur(16px) saturate(120%); }
+.mk-pin-top { align-self: stretch; display: flex; justify-content: space-between; align-items: center; font: 10px ui-monospace, Consolas, monospace; letter-spacing: .3em; color: var(--dim); }
+.mk-pin-top button { background: none; border: 0; padding: 8px 2px; color: var(--dim); font: inherit; letter-spacing: .1em; cursor: pointer; }
+.mk-pin-top button:hover { color: #fff; }
+.mk-pin-ring { position: relative; width: 150px; aspect-ratio: 1; margin: auto 0 0; display: grid; place-items: center; border-radius: 50%; border: 1px solid #9fe9ff2a; }
+.mk-pin-ring::before { content: ''; position: absolute; inset: -16px; border-radius: 50%; background: repeating-conic-gradient(#9fe9ff66 0 .6deg, transparent .6deg 6deg);
+  -webkit-mask: radial-gradient(closest-side, transparent calc(100% - 9px), #000 calc(100% - 8px)); mask: radial-gradient(closest-side, transparent calc(100% - 9px), #000 calc(100% - 8px)); animation: mk-turn 60s linear infinite; }
+@keyframes mk-turn { to { rotate: 1turn } }
+.mk-pin-slots { display: flex; gap: 14px; }
+.mk-pin-slots i { width: 10px; height: 10px; border-radius: 50%; background: #eef7ff40; transition: background .15s, scale .2s, box-shadow .2s; }
+.mk-pin-slots i.on { background: #fff; scale: 1.4; box-shadow: 0 0 12px var(--c); }
+.mk-pin.bad .mk-pin-slots { animation: mk-shake .4s; } .mk-pin.bad .mk-pin-slots i.on { background: #ff8a70; box-shadow: 0 0 12px #ff8a70; }
+.mk-pin.ok .mk-pin-slots i { background: #9dffd0; box-shadow: 0 0 14px #9dffd0; } .mk-pin.ok .mk-pin-ring { border-color: #9dffd088; }
 @keyframes mk-shake { 20% { translate: -8px } 40% { translate: 8px } 60% { translate: -5px } 80% { translate: 4px } }
-.mk-pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.mk-pin-pad button { height: 54px; border-radius: 6px; border: 1px solid #7fe3ff2e; background: #7fe3ff0a; color: #e6f4ff; font: 500 20px/1 ui-monospace, Consolas, monospace; cursor: pointer; transition: background .15s, border-color .15s, box-shadow .15s; }
-.mk-pin-pad button:hover, .mk-pin-pad button:focus-visible { background: #7fe3ff1f; border-color: var(--c); box-shadow: 0 0 14px #7fe3ff33; outline: none; }
-.mk-pin-pad button:active { background: #7fe3ff33; }
+.mk-pin-title { margin: 30px 0 26px; font: 300 22px/1.2 "Space Grotesk", "Pretendard Variable", sans-serif; letter-spacing: .01em; }
+.mk-pin-pad { display: grid; grid-template-columns: repeat(3, 68px); gap: 14px 26px; margin-bottom: auto; }
+.mk-pin-pad button { width: 68px; aspect-ratio: 1; border-radius: 50%; border: 0; background: #eef7ff12; color: #fff; font: 300 26px/1 "Space Grotesk", "Pretendard Variable", sans-serif; cursor: pointer; transition: background .15s, box-shadow .15s; }
+.mk-pin-pad button[data-k="del"] { background: none; font-size: 20px; color: var(--dim); }
+.mk-pin-pad button:hover { background: #eef7ff22; }
+.mk-pin-pad button:active { background: #eef7ff40; }
+.mk-pin button:focus-visible { outline: 1px solid var(--c); outline-offset: 3px; }
+@media (max-height: 640px) { .mk-pin-ring { width: 110px; } .mk-pin-title { margin: 20px 0 16px; } .mk-pin-pad { gap: 10px 22px; } }
 
 /* 인트로: 다크 배경에 looin labs 로고 애니메이션(looinlabs.com 로더와 같음) → 로고가 비행선 현수막으로 날아가 박힘 */
 .mk-intro { position: fixed; inset: 0; z-index: 9500; background: #131313; transition: background .6s ease; display: none; }
@@ -117,6 +126,7 @@ html.mk-layer-open .mk-home { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .mk-dr, .go .mk-courier, .go .mk-courier .body { animation: none; opacity: 1; }
   .mk-courier { opacity: 1; }
+  .mk-pin, .mk-pin-ring::before { animation: none; }
 }
 
 /* 세로 화면(폰) — 위 무대 규칙을 덮어야 해서 맨 끝에: 그림을 화면 높이에 맞추고 좌우로 밀어 보기 — 양옆 전광판·책장까지 손이 닿게 */

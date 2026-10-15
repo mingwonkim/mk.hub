@@ -67,9 +67,10 @@
 </div>
 <a class="mk-home" href="#" aria-label="도시로 돌아가기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13c3-4 7-6 12-6 2 0 4 .5 6 1.5-1 2-3 3.5-6 4.5H3z"/><path d="M15 7c0-2 1-3 3-3"/></svg></a>
 <dialog class="mk-pin" aria-label="서재 암호">
-  <div class="mk-pin-top"><span>AIRSHIP / ACCESS</span><button type="button" data-x aria-label="닫기">×</button></div>
-  <div class="mk-pin-slots" aria-hidden="true"><i></i><i></i><i></i><i></i></div><p class="mk-sr" aria-live="polite"></p>
-  <div class="mk-pin-pad">${[1,2,3,4,5,6,7,8,9].map(n => `<button type="button" data-k="${n}">${n}</button>`).join('')}<button type="button" data-k="del" aria-label="지우기">⌫</button><button type="button" data-k="0">0</button><button type="button" data-k="x" aria-label="닫기">✕</button></div>
+  <div class="mk-pin-top"><span>AIRSHIP ACCESS</span><button type="button" data-x aria-label="닫기">닫기 ×</button></div>
+  <div class="mk-pin-ring"><div class="mk-pin-slots" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div>
+  <h2 class="mk-pin-title">서재 열기</h2><p class="mk-sr" aria-live="polite"></p>
+  <div class="mk-pin-pad">${[1,2,3,4,5,6,7,8,9].map(n => `<button type="button" data-k="${n}">${n}</button>`).join('')}<span></span><button type="button" data-k="0">0</button><button type="button" data-k="del" aria-label="지우기">⌫</button></div>
 </dialog>`);
 
   document.documentElement.classList.remove('mk-boot'); // index.html 첫 가림 해제(이제 인트로·장면이 덮음)
