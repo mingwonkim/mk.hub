@@ -1,7 +1,7 @@
 /* 저장고 방들 — 옛 MK.HUB 페이지는 버리고, 같은 Firestore 데이터를 새 화면(비행선 해치 톤) 하나에 그림.
    db·getDocs·memosCol 등은 index.html의 전역 let — 같은 전역 스코프라 이름으로 바로 씀(저장고 인증 뒤에만 열림).
    scene.js 라우터가 mkRooms.open(키, 닫기함수)로 부름.
-   옛 화면에서 안 옮긴 것: 테마 전환·홈 카드 이름·모듈 순서·배경 사진(옛 홈 배치 전용), YouTube API 키(곡은 링크로 넣음). */
+   옛 화면에서 안 옮긴 것: 테마 전환·홈 카드 이름·모듈 순서·배경 사진(옛 홈 배치 전용). */
 (() => {
   const root = document.getElementById('lsRoom');
   const el = (tag, props = {}, ...kids) => {
@@ -36,6 +36,24 @@
   // GitHub 추가 백업(서버가 연결돼 있을 때만). 상태는 한 번만 물어봄
   let ghOn = null;
   const gh = () => ghOn || (ghOn = MKVault.api('status', {}, 'vaultGithub').then(r => !!r.connected).catch(() => false));
+  // YouTube: 키는 mk_app/settings.yt_api_key(옛 MK.HUB와 같은 자리). 검색 결과는 방 안 플레이어에서 바로 재생
+  let ytKeyCache = null;
+  const ytKey = async () => ytKeyCache ?? (ytKeyCache = (await getDoc(ytKeyDoc)).data()?.yt_api_key || '');
+  const unent = t => new DOMParser().parseFromString(t || '', 'text/html').documentElement.textContent; // API 제목의 &amp; 등 풀기(실행 없음)
+  async function ytSearch(q, n = 12) {
+    const key = await ytKey(); if (!key) throw new Error('YouTube API 키가 없어요. 설정에서 넣어 주세요.');
+    const r = await fetch('https://www.googleapis.com/youtube/v3/search?' + new URLSearchParams({ part: 'snippet', type: 'video', videoEmbeddable: 'true', maxResults: n, q, key }));
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error('YouTube 검색 실패: ' + (j.error?.message || r.status));
+    return (j.items || []).map(i => ({ id: i.id.videoId, title: unent(i.snippet.title), channel: unent(i.snippet.channelTitle), thumb: i.snippet.thumbnails?.medium?.url || i.snippet.thumbnails?.default?.url }));
+  }
+  const player = id => el('div', { class: 'rm-video' }, el('iframe', { src: `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&playsinline=1&rel=0`, title: 'YouTube 재생', allow: 'autoplay; encrypted-media; picture-in-picture', allowfullscreen: true }));
+  async function setYtKey() {
+    const key = ask('YouTube Data API 키 (AIza…로 시작)'); if (!key) return '';
+    if (!/^[\w-]{20,60}$/.test(key)) throw new Error('키 모양이 이상해요. 다시 확인해 주세요.');
+    await setDoc(ytKeyDoc, { yt_api_key: key }, { merge: true }); ytKeyCache = key; return 'YouTube API 키를 저장했어요.';
+  }
+  const device = () => /iPhone/.test(navigator.userAgent) ? 'iPhone' : /iPad/.test(navigator.userAgent) ? 'iPad' : /Android/.test(navigator.userAgent) ? 'Android' : /Mac/.test(navigator.userAgent) ? 'Mac' : 'PC';
   async function ghAll(kind) { let cursor = null, n = 0; do { const r = await MKVault.api(kind, { cursor }, 'vaultGithub'); cursor = r.cursor; n += r.count; } while (cursor); return n; }
 
   /* 그림판: 흰 종이(옛 그림과 같은 바탕), 펜 색·굵기·지우개·되돌리기. 바뀐 경우에만 저장 때 올림 */
@@ -222,17 +240,58 @@
           { id: 'lock', t: '저장고 잠그기', s: '이 기기에서 지금 바로 로그아웃해요.', run: () => MKVault.logout() },
           { id: 'all', t: '모든 기기에서 로그아웃', s: '다른 기기의 인증도 전부 풀어요.', run: () => MKVault.logoutAll() },
         ];
+        // Face ID(패스키): 등록은 방금 패턴/Face ID로 연 경우만(서버 규칙). 옵션은 미리 받아 둠 — 누르자마자 Face ID 창이 떠야 해서
+        if (MKVault.passkeySupported()) {
+          MKVault.passkeyRegisterPrefetch().catch(() => {});
+          list.push({ id: 'face', t: 'Face ID 등록 (이 기기)', s: '다음부터 저장고와 서재를 Face ID로 열어요. 패턴은 예비로 남아요.', reload: true, run: async () => {
+            try { await MKVault.passkeyRegister(device()); return 'Face ID를 등록했어요.'; }
+            catch (e) {
+              if (e.status !== 401) throw e;
+              MKVault.unlock(() => { MKVault.passkeyRegisterPrefetch().catch(() => {}); say('다시 인증했어요. "Face ID 등록"을 한 번 더 눌러 주세요.'); });
+              return '';
+            } } });
+        }
+        try {
+          for (const k of (await MKVault.passkeyList()).keys) list.push({ id: 'pk' + k.id, t: 'Face ID 지우기 · ' + (k.label || '기기'), s: `${day(k.created)} 등록${k.used ? ' · 마지막 사용 ' + day(k.used) : ''}`, reload: true,
+            run: async () => {
+              if (!confirm(`'${k.label || '이 기기'}' Face ID를 지울까요?`)) return '';
+              try { await MKVault.passkeyRemove(k.id); return 'Face ID를 지웠어요.'; }
+              catch (e) { if (e.status !== 401) throw e; MKVault.unlock(() => say('다시 인증했어요. 한 번 더 눌러 지워 주세요.')); return ''; } } });
+        } catch {}
+        list.push({ id: 'yt', t: 'YouTube API 키', s: (await ytKey().catch(() => '')) ? '저장돼 있어요. 바꾸려면 눌러요.' : '음악 방에서 검색·재생하려면 넣어 주세요.', reload: true, run: setYtKey });
         if (await gh()) list.push(
           { id: 'ghpush', t: 'GitHub 백업 보내기', s: '메모 전체를 연결된 GitHub 저장소로 보내요.', run: async () => (await ghAll('push-all')) + '개 기록을 보냈어요.' },
           { id: 'ghpull', t: 'GitHub 백업 가져오기', s: 'GitHub 저장소의 기록을 메모로 가져와요.', run: async () => (await ghAll('pull-all')) + '개 기록을 가져왔어요.' });
         return list;
       },
-      row: a => ({ title: a.t, sub: a.s, action: a.run }),
+      row: a => ({ title: a.t, sub: a.s, action: a.run, reload: a.reload }),
     },
 
     music: {
       tag: 'CITY · SYNTH', title: '음악',
       tabs: [
+        { label: 'YouTube', load: async st => { st.yt = await ytKey(); return []; }, row: () => ({}),
+          render(body, st) { // 검색 → 위쪽 플레이어에서 바로 재생(화면을 다시 그리지 않아 재생이 끊기지 않음)
+            if (!st.yt) return body.append(el('div', { class: 'rm-state' }, el('div', { class: 'rm-ring' }, el('span', {}, 'KEY')), el('p', {}, 'YouTube API 키를 넣으면 여기서 검색하고 바로 재생해요.'),
+              el('button', { type: 'button', class: 'rm-btn', onclick: () => act(setYtKey) }, 'API 키 넣기')));
+            const stage = el('div', { class: 'rm-stage' }), results = el('ul', { class: 'rm-list rm-yt' });
+            const play = (id, title) => { stage.replaceChildren(player(id), el('p', { class: 'rm-now' }, '재생 중 · ' + title)); stage.scrollIntoView?.({ block: 'nearest', behavior: 'smooth' }); };
+            const form = el('form', { class: 'rm-inline', role: 'search', onsubmit: async e => {
+              e.preventDefault(); const q = form.elements.q.value.trim(); if (!q) return;
+              const btn = form.querySelector('button'); btn.disabled = true; results.replaceChildren(el('li', { class: 'rm-group' }, '찾는 중…'));
+              try {
+                const list = await ytSearch(q);
+                results.replaceChildren(...(list.length ? list.map(v => el('li', {},
+                  el('button', { type: 'button', class: 'rm-row', onclick: () => play(v.id, v.title) },
+                    v.thumb && el('img', { class: 'rm-thumb', src: v.thumb, alt: '', loading: 'lazy' }), el('span', { class: 'rm-row-main' }, el('b', {}, v.title), el('small', {}, v.channel))),
+                  el('button', { type: 'button', class: 'rm-x keep', 'aria-label': v.title + ' 좋아하는 곡에 넣기', onclick: e2 => { const b = e2.currentTarget; b.disabled = true;
+                    addDoc(favSongsCol, { title: v.title, artist: v.channel, reason: '', videoId: v.id, c: Date.now() }).then(() => { b.textContent = '넣음'; say(`'${v.title}'을 좋아하는 곡에 넣었어요.`); }, err => { b.disabled = false; say('실패했어요: ' + err.message); }); } }, '♥ 담기')))
+                  : [el('li', { class: 'rm-group' }, '결과가 없어요.')]));
+              } catch (err) { results.replaceChildren(el('li', { class: 'rm-group' }, err.message)); }
+              finally { btn.disabled = false; }
+            } }, el('input', { name: 'q', type: 'search', placeholder: '곡, 가수, 영상 검색', 'aria-label': 'YouTube 검색', enterkeyhint: 'search' }), el('button', { class: 'rm-btn sm' }, '검색'));
+            body.append(stage, form, results);
+          } },
         { label: '노트', ...noteRoom('', '', () => musicNotesCol, '음악 노트가 없어요.') },
         { label: '좋아하는 곡', empty: '아직 없어요. 좋아하는 곡과 그 이유를 남겨 보세요.', load: () => all(favSongsCol, 'c'),
           row: s => ({ title: s.title || '', sub: [s.artist, s.reason].filter(Boolean).join(' · ') }),
@@ -242,7 +301,7 @@
           fields: [['title', '곡 제목'], ['artist', '가수'], ['link', 'YouTube 링크'], ['reason', '좋아하는 이유', 'textarea']],
           defaults: () => ({}),
           async save(v, s) {
-            const videoId = vid(v.link) || (s && !v.link ? s.videoId : null);
+            const videoId = vid(v.link) || (s && !v.link ? s.videoId : null) || (!v.link && await ytKey() ? (await ytSearch(`${v.title} ${v.artist}`, 1))[0]?.id : null); // 링크 없으면 키로 찾아 줌
             if (v.link && !videoId) throw new Error('YouTube 링크를 알아볼 수 없어요');
             const data = { title: v.title, artist: v.artist, reason: v.reason, videoId };
             return s ? updateDoc(doc(favSongsCol, s.id), data) : addDoc(favSongsCol, { ...data, c: Date.now() });
@@ -347,7 +406,8 @@
         el('div', { class: 'rm-tools' }, el('button', { class: 'rm-btn' }, '저장'), el('button', { type: 'button', class: 'rm-btn ghost', onclick: () => { st.view = st.item ? 'item' : 'list'; draw(); } }, '취소')));
       st.leave = () => { if (saving) left = true; else ex?.discard(); }; // 취소·목록·Esc·다른 방 모두 여기로
       body.append(form);
-    } else { // list
+    } else if (d.render) d.render(body, st); // 탭이 화면을 직접 그림(YouTube)
+    else { // list
       const tools = el('div', { class: 'rm-tools' });
       if (d.save) tools.append(el('button', { type: 'button', class: 'rm-btn', onclick: () => { st.item = null; st.note = ''; st.view = 'compose'; draw(); } }, '+ 새로 넣기'));
       if (d.upload) {
@@ -370,7 +430,7 @@
           const r = d.row(x), g = d.group?.(x);
           if (g && g !== last) { last = g; ul.append(el('li', { class: 'rm-group' }, g)); }
           const inner = [el('span', { class: 'rm-row-main' }, el('b', {}, r.title), r.sub && el('small', {}, r.sub)), r.meta && el('time', { class: r.meta === 'NEW' ? 'new' : null }, r.meta)];
-          const tgt = r.action || d.view ? el('button', { type: 'button', class: 'rm-row', onclick: r.action ? () => act(r.action, null) : () => { st.item = x; st.note = ''; st.view = 'item'; draw(); } }, inner)
+          const tgt = r.action || d.view ? el('button', { type: 'button', class: 'rm-row', onclick: r.action ? () => act(r.action, r.reload ? load : null) : () => { st.item = x; st.note = ''; st.view = 'item'; draw(); } }, inner)
             : el('div', { class: 'rm-row static' }, inner);
           ul.append(el('li', { class: r.done ? 'done' : null },
             d.toggle && el('button', { type: 'button', class: 'rm-check', 'aria-pressed': String(!!r.done), 'aria-label': (r.done ? '안 끝냄으로: ' : '끝냄으로: ') + r.title, onclick: () => act(() => d.toggle(x)) }), tgt));

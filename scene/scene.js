@@ -69,7 +69,7 @@
 <dialog class="mk-pin" aria-label="서재 암호">
   <div class="mk-pin-top"><span>AIRSHIP ACCESS</span><button type="button" data-x aria-label="닫기">닫기 ×</button></div>
   <div class="mk-pin-ring"><div class="mk-pin-slots" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div>
-  <h2 class="mk-pin-title">서재 열기</h2><p class="mk-sr" aria-live="polite"></p>
+  <h2 class="mk-pin-title">서재 열기</h2><p class="mk-sr" aria-live="polite"></p><button type="button" class="mk-pin-face" hidden>Face ID로 열기</button><p class="mk-pin-err" role="alert"></p>
   <div class="mk-pin-pad">${[1,2,3,4,5,6,7,8,9].map(n => `<button type="button" data-k="${n}">${n}</button>`).join('')}<span></span><button type="button" data-k="0">0</button><button type="button" data-k="del" aria-label="지우기">⌫</button></div>
 </dialog>`);
 
@@ -116,26 +116,37 @@
     checking = true; const want = pinOk;
     const ok = (await sha('mk-study:' + pin)) === PIN_HASH;
     if (want !== pinOk || !pinDlg.open) { checking = false; return; } // 확인 중에 창이 닫히거나 경로가 바뀜
-    if (ok) {
-      try { localStorage.setItem('mk_study', '1'); } catch {}
-      sr.textContent = '열렸습니다'; pinDlg.classList.add('ok');
-      setTimeout(() => { checking = false; const cb = pinOk; pinOk = null; pinDlg.close(); cb && cb(); }, 350);
-    } else {
+    if (ok) pass();
+    else {
       sr.textContent = '암호가 일치하지 않습니다';
       pinDlg.classList.remove('bad'); void pinDlg.offsetWidth; pinDlg.classList.add('bad');
       setTimeout(() => { checking = false; pin = ''; paint(); }, 450);
     }
   }
+  function pass() {
+    try { localStorage.setItem('mk_study', '1'); } catch {}
+    sr.textContent = '열렸습니다'; pinDlg.classList.add('ok');
+    setTimeout(() => { checking = false; const cb = pinOk; pinOk = null; pinDlg.close(); cb && cb(); }, 350);
+  }
+  // Face ID: 저장고 패스키 로그인(서버 검증)이 곧 서재 통과. 등록된 Face ID가 있을 때만 버튼이 보임(설정에서 등록)
+  const face = pinDlg.querySelector('.mk-pin-face'), faceErr = pinDlg.querySelector('.mk-pin-err');
+  face.addEventListener('click', async () => {
+    if (checking) return; checking = true; face.disabled = true; faceErr.textContent = '';
+    try { await MKVault.passkeyLogin(); if (pinDlg.open) pass(); else checking = false; }
+    catch (e) { checking = false; faceErr.textContent = e.message; }
+    finally { face.disabled = false; }
+  });
   pinDlg.addEventListener('click', e => { const b = e.target.closest('[data-k],[data-x]'); if (b) key(b.dataset.k || 'x'); });
   pinDlg.addEventListener('keydown', e => { if (/^[0-9]$/.test(e.key)) key(e.key); else if (e.key === 'Backspace') key('del'); });
   pinDlg.addEventListener('close', () => { // 취소: 사이트 밖으로 나가지 않게 #study 를 도시로 바꿔 둠
-    pin = ''; paint(); pinDlg.classList.remove('ok', 'bad');
+    pin = ''; paint(); pinDlg.classList.remove('ok', 'bad'); faceErr.textContent = '';
     if (pinOk) { pinOk = null; if (location.hash === '#study') { history.replaceState(null, '', location.pathname + location.search); route(); } }
   });
   function gate(cb) {
     let passed = false; try { passed = localStorage.getItem('mk_study') === '1'; } catch {}
     if (passed) return cb();
-    pinOk = cb; pin = ''; paint(); pinDlg.showModal();
+    pinOk = cb; pin = ''; paint(); face.hidden = true; pinDlg.showModal();
+    window.MKVault?.passkeyPrefetch?.().then(() => { if (pinDlg.open) face.hidden = false; }, () => {});
   }
   let seq = 0, last = null;
   function route() {

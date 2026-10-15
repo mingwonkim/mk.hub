@@ -7,6 +7,9 @@
 [o] 23:59 손가락 커서 — 옛 전용 커서 삭제
 [o] 23:59 빠진 기능 이사 — 메모 그림판·첨부·폴더, 파일 지우기, 곡·플레이리스트 편집, 설정 전부 새 방으로
 [o] 23:59 절대음감·코드 사전 새 디자인 — 공용 스킨 재작성, 음악 방 안에 embed로
+[o] 23:59 YouTube 탭·API 키 — 음악 방에서 검색하고 그 화면에서 바로 재생, 설정에서 키 저장
+[o] 23:59 Face ID 로그인 — 패스키 서버(functions/passkey.js) 배포, 설정에서 등록, 저장고·서재에서 Face ID로 열기
+- [ ] 아이폰에서 Face ID 등록·로그인 실제 확인 (사용자)
 
 ---
 
@@ -517,4 +520,4 @@ mk.hub:
 ## 2026-10-15
 [o] 02:50 첫 화면 이사: looin labs 다크 인트로 → 로고가 비행선 현수막에 박힘 → 도시(드론·프로펠러·모닝 브리프 드론) → 비행선(잠금) → 서재, 물건 = 각 칸 — scene/, 로컬 확인, 브랜치 scene
 [o] 03:30 캐노피 로고·새 드론·하늘 교통·서재 암호 5940 키패드·HUD 인증 창·모바일 스와이프 — astra MERGE: YES, main 병합·민권.com 반영 확인
-- [ ] (맨 마지막) 잠금을 폰 인증으로: 패스키(Face ID) + PC는 브라우저 기본 QR 교차 기기. WebAuthn → Cloud Functions 검증 → custom token, 등록은 기존 인증 통과 후만, 복구 코드·두 번째 패스키 (astra 설계안: looinlabs scratchpad astra_plan2_out)
+- [x] (2026-10-15 완료, 복구 코드·두 번째 패스키는 아직) 잠금을 폰 인증으로: 패스키(Face ID) + PC는 브라우저 기본 QR 교차 기기. WebAuthn → Cloud Functions 검증 → custom token, 등록은 기존 인증 통과 후만, 복구 코드·두 번째 패스키 (astra 설계안: looinlabs scratchpad astra_plan2_out)

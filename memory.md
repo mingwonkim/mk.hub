@@ -203,3 +203,12 @@
 - 절대음감·코드 사전: 기능은 그대로 두고 공용 스킨 hub-tools.css를 새로 씀(남색 유리·시안 밑줄 탭·흰 알약·재생 버튼에 도는 눈금 다이얼, Mobbin의 Once·Insight Timer·Opal 참고). 음악 방 '연습 도구' 탭에서 ?embed iframe으로 방 안에 띄움(배경 투명, 겹치는 제목 숨김).
 - Storage 정리 원칙(astra 리뷰 3회): 문서 먼저 지우고 원본은 뒤에, 정리 실패는 localStorage mk_orphans에 쌓아 다음 방 열 때 재시도, 저장 안 한 업로드는 떠날 때 지움(저장 중 떠나면 끝난 뒤 실패일 때만).
 - 함정: 셸에서 node -e로 '\b'를 넣다가 정규식에 실제 백스페이스(0x08) 문자가 들어가 ?embed 감지가 안 됐음 → 파일 수정은 python/heredoc 스크립트로.
+
+## 2026-10-15 Face ID(패스키) 로그인 + YouTube 다시
+- 사용자: "유튜브 탭 화면에서 그대로 재생", "유튜브 api키 다시 넣어줘", "face id 로그인 넣어줘"(전에 "맨 마지막에 넣을게"라 했던 것).
+- YouTube: 음악 방 첫 탭. 키는 옛 자리 mk_app/settings.yt_api_key(설정 방에서 넣음). 검색 결과를 누르면 같은 화면 위 플레이어에서 재생(다시 그리지 않아 끊기지 않음), ♥ 담기로 좋아하는 곡에. 곡을 링크 없이 넣으면 키로 첫 결과를 찾아 줌.
+- Face ID = WebAuthn 패스키. 서버 functions/passkey.js(SimpleWebAuthn 13), RP ID xn--zf0bu7y.com. 저장 mk_security/webauthn/{passkeys,challenges}(클라이언트 접근 불가). 로그인 성공 = 패턴 통과와 같은 저장고 토큰. 등록·삭제는 최근 5분 안에 패턴/Face ID로 연 경우만. 챌린지 일회용·5분, 옵션/검증 IP별 빈도 제한 따로.
+- 화면: 설정 방 "Face ID 등록 (이 기기)"·"Face ID 지우기", 저장고 패턴 화면과 서재 암호 화면에 "Face ID로 열기"(등록된 게 있을 때만). 패턴·5940·이메일 복구는 예비로 남김.
+- 사파리는 누른 직후에만 Face ID 창을 띄우므로 옵션을 미리 받아 둠(4분 캐시, 챌린지 5분).
+- astra 리뷰: counter 경합(트랜잭션 재확인), 삭제 재인증, 챌린지 롤백(판정은 트랜잭션 밖), 옵션/검증 제한 분리, 등록 후 로그인 옵션 캐시 초기화 → DEPLOY: YES(4차).
+- 배포: firebase deploy --only functions:vault:vault --project mingwon-hub. 비대화형이면 파라미터 값이 필요 → functions/.env.mingwon-hub(기본값, .gitignore 대상)로 해결. 서버 먼저, 사이트(Pages) 나중.

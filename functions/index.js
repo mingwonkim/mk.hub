@@ -7,6 +7,7 @@ const {getAuth}=require('firebase-admin/auth');
 const {OWNER_EMAIL,REAUTH_MS,VaultError,requireOwner,hashPasswords,verifyPasswords,consumeRate,otpHash}=require('./security');
 initializeApp();
 const db=getFirestore(),auth=getAuth(),accessRef=db.doc('mk_security/access');
+const pk=require('./passkey').passkeys(db);
 const OTP_PEPPER=defineSecret('VAULT_OTP_PEPPER');
 const AUTH_KEY=defineString('VAULT_FIREBASE_API_KEY',{default:'AIzaSyDWXJ1nIQIZXSMruwFhyoMSU3gf3omiyMc'});
 async function emailAuth(action,body){
@@ -63,7 +64,24 @@ async function vaultHandler(req){
   const owner=await auth.getUserByEmail(OWNER_EMAIL);
   return{token:await mint({uid:owner.uid,vault_otp_at:Date.now()},true,state.version)};
  }
+ // Face ID(패스키) 로그인: 패턴 통과와 같은 토큰. IP당 빈도 제한
+ if(action==='passkey-login-options'||action==='passkey-login-verify'){
+  const now=Date.now(),step=action==='passkey-login-options'?'o':'v',ipRef=db.doc('mk_security/rate/ips/pk'+step+'_'+otpHash('ip',req.ip||'unknown',OTP_PEPPER.value())); // 옵션·검증 따로 셈
+  await db.runTransaction(async tx=>{const snap=await tx.get(ipRef);tx.set(ipRef,{...consumeRate(snap.data(),now,40,300),expiresAt:Timestamp.fromMillis(now+3600000)});});
+  if(action==='passkey-login-options')return pk.loginOptions();
+  const state=await accessRef.get();if(!state.exists||state.data().kind!=='pattern')throw new VaultError(409,'저장고 패턴을 먼저 등록해주세요.');
+  await pk.loginVerify(body);
+  const owner=await auth.getUserByEmail(OWNER_EMAIL);
+  return{token:await mint({uid:owner.uid,vault_otp_at:now},true,state.data().version)};
+ }
  const claims=await authenticate(req);
+ if(action.startsWith?.('passkey-')){
+  await authenticate(req,true);
+  if(action==='passkey-register-options')return pk.registerOptions(claims);
+  if(action==='passkey-register-verify')return pk.registerVerify(claims,body);
+  if(action==='passkey-list')return pk.list();
+  if(action==='passkey-delete')return pk.remove(claims,body.id);
+ }
  if(action==='set-pin'){
   const freshRecovery=claims.vault_recovery===true&&Date.now()-claims.vault_otp_at<REAUTH_MS;
   const freshPin=claims.vault_access===true&&Date.now()-claims.vault_pin_at<REAUTH_MS;

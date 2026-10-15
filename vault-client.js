@@ -20,7 +20,7 @@
   let response;
   try{response=await fetch(BASE+service,{method:'POST',headers,body:JSON.stringify({action,...data}),signal:AbortSignal.timeout(45000)});}catch(e){throw new Error('서버에 연결하지 못했습니다. 잠시 후 다시 시도해주세요.');}
   let result;try{result=await response.json();}catch(e){throw new Error('인증 서버 연결을 준비 중입니다.');}
-  if(!response.ok)throw new Error(result.error||'요청을 완료하지 못했습니다.');return result;
+  if(!response.ok){const e=new Error(result.error||'요청을 완료하지 못했습니다.');e.status=response.status;throw e;}return result;
  }
  async function acceptUser(user){
   clearTimeout(expiryTimer);
@@ -30,18 +30,58 @@
   return active();
  }
  async function signIn(token){await mod.signInWithCustomToken(auth,token);await acceptUser(auth.currentUser);}
+ /* Face ID(패스키): 서버(functions/passkey.js)가 옵션·검증. 옵션은 미리 받아 둠 — 사파리는 누른 직후에만 Face ID 창을 띄워 줌 */
+ const b64d=s=>Uint8Array.from(atob(s.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0)).buffer;
+ const b64e=b=>btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+ const ids=list=>(list||[]).map(c=>({...c,id:b64d(c.id)}));
+ function credJSON(c){
+  if(typeof c.toJSON==='function')try{return c.toJSON();}catch(e){}
+  const r=c.response,out={id:c.id,rawId:b64e(c.rawId),type:c.type,authenticatorAttachment:c.authenticatorAttachment,clientExtensionResults:c.getClientExtensionResults(),response:{clientDataJSON:b64e(r.clientDataJSON)}};
+  if(r.attestationObject)Object.assign(out.response,{attestationObject:b64e(r.attestationObject),transports:r.getTransports?r.getTransports():[]});
+  else Object.assign(out.response,{authenticatorData:b64e(r.authenticatorData),signature:b64e(r.signature)},r.userHandle?{userHandle:b64e(r.userHandle)}:{});
+  return out;
+ }
+ const pkSupported=()=>!!(window.PublicKeyCredential&&navigator.credentials);
+ let pkLogin=null; // {at, promise}
+ function pkPrefetch(){ // 등록된 Face ID가 있을 때만 옵션이 옴(없으면 409)
+  if(!pkSupported())return Promise.reject(new Error('이 브라우저는 Face ID 로그인을 지원하지 않습니다.'));
+  if(!pkLogin||Date.now()-pkLogin.at>240000){pkLogin={at:Date.now(),promise:api('passkey-login-options')};pkLogin.promise.catch(()=>{pkLogin=null;});}
+  return pkLogin.promise;
+ }
+ async function passkeyLogin(){
+  const {options,challengeId}=await pkPrefetch();pkLogin=null; // 챌린지는 한 번만
+  let cred;try{cred=await navigator.credentials.get({publicKey:{...options,challenge:b64d(options.challenge),allowCredentials:ids(options.allowCredentials)}});}
+  catch(e){throw new Error(e.name==='NotAllowedError'?'Face ID를 취소했거나 시간이 지났습니다. 다시 눌러 주세요.':'Face ID를 쓸 수 없습니다: '+e.message);}
+  const result=await api('passkey-login-verify',{challengeId,response:credJSON(cred)});
+  await signIn(result.token);try{localStorage.setItem('mk_passkey','1');}catch(e){}
+  window.dispatchEvent(new CustomEvent('mk:vault-unlocked'));return true;
+ }
+ let pkReg=null;
+ function pkRegPrefetch(){ // 챌린지 수명(5분) 안에서만 재사용
+  if(!pkReg||Date.now()-pkReg.at>240000){const p=api('passkey-register-options');pkReg={at:Date.now(),promise:p};p.catch(()=>{if(pkReg?.promise===p)pkReg=null;});}
+  return pkReg.promise;
+ }
+ async function passkeyRegister(label){
+  if(!pkSupported())throw new Error('이 브라우저는 Face ID 등록을 지원하지 않습니다.');
+  const {options,challengeId}=await pkRegPrefetch();pkReg=null; // 한 번 쓰면 버림
+  let cred;try{cred=await navigator.credentials.create({publicKey:{...options,challenge:b64d(options.challenge),user:{...options.user,id:b64d(options.user.id)},excludeCredentials:ids(options.excludeCredentials)}});}
+  catch(e){throw new Error(e.name==='InvalidStateError'?'이 기기는 이미 등록돼 있습니다.':e.name==='NotAllowedError'?'등록을 취소했거나 시간이 지났습니다. 다시 눌러 주세요.':'등록하지 못했습니다: '+e.message);}
+  const result=await api('passkey-register-verify',{challengeId,response:credJSON(cred),label});
+  pkLogin=null; // 새 패스키가 허용 목록에 들어가게 로그인 옵션도 새로 받음
+  try{localStorage.setItem('mk_passkey','1');}catch(e){}return result;
+ }
  function openFlow(mode,callback){
   if(dialog){dialog.querySelector('input')?.focus();return;}
   const box=document.createElement('dialog');box.className='vault-access';box.setAttribute('aria-label','개인 저장고 인증');dialog=box;
-  box.innerHTML='<div class="vault-access-sheet"><div class="vault-access-top"><span>PRIVATE VAULT</span><button type="button" data-close aria-label="닫기">×</button></div><h2></h2><p class="vault-access-description"></p><form><div class="vault-access-fields"></div><p class="vault-access-error" role="alert"></p><button class="vault-access-submit" type="submit"></button></form><button type="button" class="vault-access-secondary" hidden></button></div>';
+  box.innerHTML='<div class="vault-access-sheet"><div class="vault-access-top"><span>PRIVATE VAULT</span><button type="button" data-close aria-label="닫기">×</button></div><h2></h2><p class="vault-access-description"></p><form><div class="vault-access-fields"></div><p class="vault-access-error" role="alert"></p><button class="vault-access-submit" type="submit"></button></form><button type="button" class="vault-access-passkey" hidden>Face ID로 열기</button><button type="button" class="vault-access-secondary" hidden></button></div>';
   document.body.appendChild(box);box.showModal();
-  const title=box.querySelector('h2'),desc=box.querySelector('.vault-access-description'),form=box.querySelector('form'),fields=box.querySelector('.vault-access-fields'),err=box.querySelector('.vault-access-error'),submit=box.querySelector('[type=submit]'),secondary=box.querySelector('.vault-access-secondary');
+  const title=box.querySelector('h2'),desc=box.querySelector('.vault-access-description'),form=box.querySelector('form'),fields=box.querySelector('.vault-access-fields'),err=box.querySelector('.vault-access-error'),submit=box.querySelector('[type=submit]'),secondary=box.querySelector('.vault-access-secondary'),passkeyBtn=box.querySelector('.vault-access-passkey');
   let busy=false,mailing=false,cooldown=null,sendAfter=0;
   function close(){clearInterval(cooldown);box.close();box.remove();dialog=null;}
   const quit=()=>{close();window.dispatchEvent(new CustomEvent('mk:vault-cancel'));}; // 첫 화면(scene.js)이 받아 장면으로 되돌림
   box.querySelector('[data-close]').onclick=quit;box.addEventListener('cancel',e=>{e.preventDefault();quit();});
   function render(heading,description,button,html,handler){
-   title.textContent=heading;desc.textContent=description;submit.textContent=button;submit.hidden=!button;fields.innerHTML=html;err.textContent='';secondary.hidden=true;clearInterval(cooldown);
+   title.textContent=heading;desc.textContent=description;submit.textContent=button;submit.hidden=!button;fields.innerHTML=html;err.textContent='';secondary.hidden=true;passkeyBtn.hidden=true;clearInterval(cooldown);
    form.onsubmit=async e=>{e.preventDefault();if(busy)return;busy=true;submit.disabled=true;fields.inert=true;err.textContent='';
     try{await handler();}catch(error){if(box.isConnected)err.textContent=error.message;}
     finally{busy=false;submit.disabled=false;fields.inert=false;}
@@ -81,6 +121,8 @@
    if(mode==='recover'||!state.configured){if(claims&&claims.vault_recovery&&Date.now()-claims.vault_otp_at<300000)setPin();else linkForm();return;}
    patternForm('저장고 열기','패턴을 그려주세요.',async drawn=>{const result=await api('verify-pin',{passwords:[drawn]});if(!box.isConnected)return;await signIn(result.token);if(mode==='change')setPin();else finish();});
    secondary.hidden=false;secondary.textContent='비밀번호를 잊으셨나요?';secondary.onclick=linkForm;
+   if(mode==='open')pkPrefetch().then(()=>{if(box.isConnected&&title.textContent==='저장고 열기')passkeyBtn.hidden=false;},()=>{}); // 등록된 Face ID가 있으면 버튼
+   passkeyBtn.onclick=async()=>{if(busy)return;busy=true;passkeyBtn.disabled=true;err.textContent='';try{await passkeyLogin();close();if(callback)callback();}catch(error){if(box.isConnected)err.textContent=error.message;}finally{busy=false;passkeyBtn.disabled=false;}};
   }
   async function requestLink(){
    if(mailing||Date.now()<sendAfter)return;
@@ -105,7 +147,7 @@
    try{await pin();}catch(error){err.textContent=error.message;}
   });
  }
- async function logout(){if(auth)await mod.signOut(auth);files.forEach(value=>{value.then(URL.revokeObjectURL).catch(()=>{});});files.clear();sessionStorage.removeItem('mk_unlocked');location.reload();}
+ async function logout(){pkReg=null;pkLogin=null;if(auth)await mod.signOut(auth);files.forEach(value=>{value.then(URL.revokeObjectURL).catch(()=>{});});files.clear();sessionStorage.removeItem('mk_unlocked');location.reload();}
  function privatePath(url){
   if(typeof url!=='string')return null;
   if(url.startsWith('mk-private:'))return url.slice('mk-private:'.length);
@@ -138,6 +180,8 @@
   acceptUser,hasAccess:active,api,resolveURL,
   requireAccess(callback){if(active())callback();else openFlow('open',callback);},
   unlock(callback){openFlow('open',callback);},recover(){openFlow('recover');},changePin(){openFlow('change');},logout,
+  passkeySupported:pkSupported,passkeyPrefetch:pkPrefetch,passkeyLogin,passkeyRegister,passkeyRegisterPrefetch:pkRegPrefetch,
+  passkeyList:()=>api('passkey-list'),passkeyRemove:id=>api('passkey-delete',{id}).then(r=>{pkLogin=null;return r;}),
   async logoutAll(){await api('logout-all');await logout();}
  };
  window.dispatchEvent(new CustomEvent('mk:vault-ready'));

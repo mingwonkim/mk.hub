@@ -152,6 +152,12 @@ html.mk-layer-open, html.mk-layer-open body { overflow: hidden; }
 .rm-inline { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0; }
 .rm-inline input { flex: 1 1 160px; padding: 10px 2px; border: 0; border-bottom: 1px solid #9fe9ff44; background: none; color: #fff; font: inherit; outline: none; }
 .rm-inline input:focus { border-color: var(--c); }
+.rm-stage:empty { display: none; }
+.rm-now { margin: -8px 0 18px; font: 11px ui-monospace, Consolas, monospace; letter-spacing: .1em; color: var(--c); }
+.rm-thumb { width: 96px; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 6px; flex-shrink: 0; background: #0a1224; }
+.rm-x.keep { color: var(--c); border-color: #9fe9ff55; }
+.rm-x:disabled { opacity: .6; }
+.rm-yt .rm-row-main b { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 #lsRoom button:focus-visible, #lsRoom a:focus-visible { outline: 1px solid var(--c); outline-offset: 3px; }
 
 /* 서재 암호 — 저장고 인증(vault-client.css)과 같은 비행선 해치: 화면 전체, 다이얼 링 안에 4칸, 아래 둥근 숫자 */
@@ -174,6 +180,12 @@ html.mk-layer-open, html.mk-layer-open body { overflow: hidden; }
 .mk-pin.ok .mk-pin-slots i { background: #9dffd0; box-shadow: 0 0 14px #9dffd0; } .mk-pin.ok .mk-pin-ring { border-color: #9dffd088; }
 @keyframes mk-shake { 20% { translate: -8px } 40% { translate: 8px } 60% { translate: -5px } 80% { translate: 4px } }
 .mk-pin-title { margin: 30px 0 26px; font: 300 22px/1.2 "Space Grotesk", "Pretendard Variable", sans-serif; letter-spacing: .01em; }
+.mk-pin-face { display: flex; align-items: center; gap: 10px; margin: -8px 0 18px; padding: 11px 22px; border: 1px solid #eef7ff55; border-radius: 999px; background: #eef7ff0d; color: #fff; font: 600 14px/1 "Pretendard Variable", Pretendard, sans-serif; cursor: pointer; }
+.mk-pin-face::before { content: ''; width: 18px; height: 18px; border: 1.5px solid var(--c); border-radius: 6px; box-shadow: 0 0 10px #9fe9ff66; }
+.mk-pin-face[hidden] { display: none; }
+.mk-pin-face:disabled { opacity: .5; cursor: wait; }
+.mk-pin-err { margin: -10px 0 14px; font-size: 12px; color: #ffab8f; text-align: center; max-width: 280px; }
+.mk-pin-err:empty { display: none; }
 .mk-pin-pad { display: grid; grid-template-columns: repeat(3, 68px); gap: 14px 26px; margin-bottom: auto; }
 .mk-pin-pad button { width: 68px; aspect-ratio: 1; border-radius: 50%; border: 0; background: #eef7ff12; color: #fff; font: 300 26px/1 "Space Grotesk", "Pretendard Variable", sans-serif; cursor: pointer; transition: background .15s, box-shadow .15s; }
 .mk-pin-pad button[data-k="del"] { background: none; font-size: 20px; color: var(--dim); }
