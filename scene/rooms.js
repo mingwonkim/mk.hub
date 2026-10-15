@@ -259,22 +259,6 @@
       remove: f => deleteDoc(doc(filesCol, f.id)).then(() => drop(f.path)),
     },
 
-    todo: {
-      tag: 'STUDY · STICKY NOTES', title: '할 일', empty: '할 일이 없어요.',
-      async load() {
-        const t = today(), rank = x => x.done ? 3 : x.date < t ? 0 : x.date === t ? 1 : 2;
-        return (await all(todosCol)).sort((a, b) => rank(a) - rank(b) || (rank(a) === 3 ? (b.date || '').localeCompare(a.date || '') : (a.date || '').localeCompare(b.date || '')) || (a.c || 0) - (b.c || 0));
-      },
-      group: x => { const t = today(); return x.done ? '끝낸 일' : x.date < t ? '밀린 일' : x.date === t ? '오늘' : '다가오는 일'; },
-      row: x => ({ title: x.text || '', meta: x.date ? x.date.slice(5).replace('-', '/') : '', done: !!x.done }),
-      toggle: x => updateDoc(doc(todosCol, x.id), { done: !x.done }),
-      view: x => [el('p', { class: 'rm-text' }, x.date ? `${x.date} · ${x.done ? '끝냄' : '남음'}` : '')],
-      fields: [['text', '할 일'], ['date', '날짜', 'date']],
-      defaults: () => ({ date: today() }),
-      save: (v, x) => x ? updateDoc(doc(todosCol, x.id), v) : addDoc(todosCol, { ...v, done: false, c: Date.now() }),
-      remove: x => deleteDoc(doc(todosCol, x.id)),
-    },
-
     briefing: {
       tag: 'COURIER · MORNING BRIEF', title: '모닝 브리프', empty: '아직 도착한 브리핑이 없어요. 월·목 아침에 와요.',
       load: () => all(briefsCol, 'date'),
@@ -507,6 +491,8 @@
 
   window.mkRooms = {
     has: k => k in ROOMS,
+    define: (k, d) => { ROOMS[k] = d; }, // desk.js(잡생각·할 일 달력)가 방을 더함
+    kit: { el, all, day, say, act, reload: () => load() },
     open(key, close) { root.removeAttribute('aria-busy'); st?.leave?.(); retryOrphans(); st = { room: ROOMS[key], tab: 0, filter: null, items: [], view: 'loading', close, note: '' }; load(); },
   };
 })();

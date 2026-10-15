@@ -58,12 +58,14 @@
 <div class="mk-layer" id="lsStudy" tabindex="-1" role="region" aria-label="서재">
   <div class="mk-stage">
     <img class="mk-bg" loading="lazy" src="${S}study-3024.webp" srcset="${S}study-3024.webp 3024w, ${S}study-6048.webp 6048w" sizes="max(117vw, 277vh)" alt="밤 도시가 보이는 큰 창의 서재">
-    <a class="mk-spot" href="#todo" aria-label="할 일" style="left:46%;top:63%;width:14%;height:17%"></a>
-    <a class="mk-spot" href="#memo" aria-label="메모" style="left:58.4%;top:74.5%;width:7%;height:11.5%"></a>
+    <a class="mk-spot" href="#thoughts" aria-label="잡생각 메모" style="left:46%;top:63%;width:14%;height:17%"></a>
+    <a class="mk-spot" href="#todo" aria-label="할 일 달력" style="left:58.4%;top:74.5%;width:7%;height:11.5%"></a>
+    <a class="mk-spot" href="#todo" aria-label="할 일 달력 (세로 판)" style="left:65.8%;top:65%;width:3.4%;height:18.5%"></a>
     <a class="mk-spot" href="#files" aria-label="파일" style="left:68.4%;top:84%;width:5.8%;height:15%"></a>
     <a class="mk-spot" href="#settings" aria-label="설정" style="left:74%;top:28%;width:25%;height:24%"></a>
   </div>
   <a class="mk-back" href="#">← 도시로</a>
+  <a class="mk-gear" href="#settings" aria-label="설정"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>설정</span></a>
   <button type="button" class="mk-sound" aria-pressed="false" aria-label="서재 음악 (류이치 사카모토)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></button>
 </div>
 <div class="mk-layer mk-room" id="lsRoom" tabindex="-1" role="region" aria-label="저장고"></div>
@@ -102,7 +104,6 @@
   const soundUi = () => { const on = !!window.mkBgm?.isOn(); sound.classList.toggle('on', on); sound.setAttribute('aria-pressed', String(on)); };
   sound.addEventListener('pointerdown', e => e.stopPropagation()); // 문서의 '첫 터치에 소리 켜기'보다 이 버튼이 먼저(안 그러면 켜자마자 꺼짐)
   sound.addEventListener('click', () => { window.mkBgm?.toggle(); soundUi(); });
-  document.addEventListener('pointerdown', () => setTimeout(soundUi, 50)); // 첫 터치로 소리가 켜지면 버튼도 켜짐 표시
   /* 방을 닫거나 저장고 인증을 그냥 닫으면 마지막에 있던 도시/서재로 */
   let back = '';
   const was = () => Object.values(LAYERS).some(l => l.classList.contains('on'));
@@ -162,7 +163,7 @@
     if (pinDlg.open && location.hash !== '#study') { pinOk = null; pinDlg.close(); } // 뒤로가기 등으로 경로가 바뀌면 암호 창도 닫음
     const my = ++seq, [h, sub] = (() => { try { return decodeURIComponent(location.hash.slice(1)).split('/'); } catch { return ['']; } })();
     if (!h) return show('scene');
-    if (h === 'study') { show('scene'); return gate(() => { if (my === seq) show('study'); }); } // 인증 중 다른 데로 가면 늦은 성공은 무시
+    if (h === 'study') { window.mkBgm?.warm(); show('scene'); return gate(() => { if (my === seq) show('study'); }); } // 인증 중 다른 데로 가면 늦은 성공은 무시
     if (h === 'hub') return toLayer(true); // 옛 MK.HUB 홈은 버림
     const key = h === 'vault' ? (sub || '').toLowerCase() : h;
     if (window.mkRooms && mkRooms.has(key)) { // 저장고 인증 뒤 새 화면의 방으로. 인증 창 뒤엔 지금 장면이 그대로 보임
@@ -201,6 +202,7 @@
   // 첫 라우팅은 vault-client.js(defer)까지 실행된 뒤 — 그래야 openApp이 잠금을 거침
   document.addEventListener('DOMContentLoaded', () => {
     addEventListener('hashchange', route); addEventListener('popstate', route);
+    window.mkBgm?.onChange(soundUi); // 재생·음소거 바뀌면 음표 버튼 표시
     window.setPage = () => {}; // 옛 MK.HUB 페이지 전환은 버림(뒤의 SPA는 Firebase·저장고 인증 배관으로만 씀)
     addEventListener('mk:vault-cancel', () => { if (!room.classList.contains('on')) toLayer(true); }); // 방 열기 전 인증을 닫음 → 원래 장면
     if (FROM_EMAIL_LINK) return show('scene'); // 이메일 로그인 복귀: 인증 창은 vault-client가 띄움, 뒤엔 도시

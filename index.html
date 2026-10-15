@@ -1516,6 +1516,7 @@ html.mk-arrival-hold body>:not(#briefArrival){visibility:hidden!important}
 <link rel="stylesheet" href="vault-client.css">
 <link rel="stylesheet" href="scene/scene.css">
 <script src="scene/rooms.js" defer></script><!-- 저장고 방(새 UI) -->
+<script src="scene/desk.js" defer></script><!-- 서재 책상: 잡생각·할 일 달력 -->
 <script src="vault-client.js" defer></script>
 </head>
 <body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-on-primary-container">
@@ -5311,61 +5312,47 @@ setTimeout(function(){
   </div>
 </div>
 
-<!-- ===== BGM — Ryuichi Sakamoto (YouTube 임베드, 공식 채널/레이블 영상) ===== -->
+<!-- ===== BGM — Ryuichi Sakamoto (YouTube 임베드, 공식 아티스트 플레이리스트) — 서재에서만(scene.js가 mkBgm.warm/play/pause) ===== -->
 <script>
 (function(){
-  /* 'Presenting Ryuichi Sakamoto' — YouTube 공식 아티스트 플레이리스트 */
   var BGM_LIST='RDCLAK5uy_kM9uhkCHubOWVDe567JNq1Fu6izd-oLys';
-  var player=null,ready=false,loading=false,on=false,muted=false,wantUnmute=false;
+  var player=null,ready=false,loading=false,on=false,muted=false;
   var vol=parseInt(localStorage.getItem('mk_bgm_vol'),10);if(isNaN(vol))vol=45;
-  function icon(){
-    var b=document.getElementById('bgmBtn');if(!b)return;
-    b.textContent=on?((muted||vol===0)?'volume_mute':'volume_up'):'volume_off';
-    b.classList.toggle('bgm-on',on);
-    var w=document.getElementById('bgmWrap');if(w)w.classList.toggle('bgm-playing',on);
-  }
-  window.setBgmVol=function(v){
-    vol=parseInt(v,10)||0;localStorage.setItem('mk_bgm_vol',vol);
-    if(ready)player.setVolume(vol);icon();
-  };
-  document.getElementById('bgmVol').value=vol;
-  function start(mutedStart){
-    if(mutedStart)muted=true;
-    if(ready){if(!muted)player.unMute();player.playVideo();return;}
+  var listeners=[];function changed(){listeners.forEach(function(fn){try{fn();}catch(e){}});}
+  function load(){ /* 플레이어만 미리 만들어 둠(비행선을 누를 때) → 서재에 들어가는 순간 바로 재생 */
     if(loading)return;loading=true;
     window.onYouTubeIframeAPIReady=function(){
-      player=new YT.Player('bgmHost',{width:2,height:2,playerVars:{playsinline:1,mute:muted?1:0},events:{
+      player=new YT.Player('bgmHost',{width:2,height:2,playerVars:{playsinline:1,autoplay:0},events:{
         onReady:function(){
-          ready=true;player.setVolume(vol);
-          if(muted)player.mute();
-          player.loadPlaylist({list:BGM_LIST,listType:'playlist'});
-          player.setShuffle(true);player.setLoop(true);
-          if(on)player.playVideo();else player.pauseVideo();
-          if(wantUnmute){wantUnmute=false;muted=false;player.unMute();player.setVolume(vol);player.playVideo();icon();}
+          ready=true;player.setVolume(vol);player.cuePlaylist({list:BGM_LIST,listType:'playlist'});
+          setTimeout(function(){try{player.setShuffle(true);player.setLoop(true);}catch(e){}},300);
+          if(on)go();
         },
+        onStateChange:function(e){if(e.data===1)changed();},
+        // 브라우저가 소리 있는 자동재생을 막으면: 음소거로 틀고 첫 터치에 소리 켜기
+        onAutoplayBlocked:function(){if(!on)return;muted=true;player.mute();player.playVideo();document.addEventListener('pointerdown',unmute,{once:true,capture:true});changed();},
         onError:function(){try{player.nextVideo();}catch(e){}} /* 임베드 불가/삭제 곡은 스킵 */
       }});
     };
     var s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s);
   }
-  function bgmUnmute(){ /* 첫 사용자 제스처 → 소리 켜기 (자동재생 정책상 음소거로만 자동재생 가능) */
-    if(!on)return;
-    muted=false;
-    if(ready){player.unMute();player.setVolume(vol);player.playVideo();}else wantUnmute=true;
-    icon();
-  }
-  window.toggleBgm=function(){
-    on=!on;localStorage.setItem('mk_bgm',on?'1':'0');muted=false;icon();
-    if(on)start(false);else if(ready)player.pauseVideo();
-  };
-  /* 서재에서만 재생(scene.js가 부름). 끈 적 없으면 음소거로 시작 → 서재에서 첫 터치에 소리 켜기(브라우저 자동재생 정책) */
+  function go(){if(!ready)return;if(muted)player.mute();else{player.unMute();player.setVolume(vol);}player.playVideo();changed();}
+  function unmute(){if(!on||!ready)return;muted=false;player.unMute();player.setVolume(vol);player.playVideo();changed();}
+  window.setBgmVol=function(v){vol=parseInt(v,10)||0;localStorage.setItem('mk_bgm_vol',vol);if(ready)player.setVolume(vol);};
   window.mkBgm={
-    play:function(){if(localStorage.getItem('mk_bgm')==='0'||on)return;on=true;start(true);if(ready)player.playVideo();document.addEventListener('pointerdown',bgmUnmute,{once:true});icon();},
-    pause:function(){if(!on)return;on=false;if(ready)player.pauseVideo();icon();},
-    // 서재의 소리 버튼: 음소거 상태면 소리 켜기, 아니면 켜기/끄기(설정 기억)
-    toggle:function(){if(on&&muted){bgmUnmute();return true;}window.toggleBgm();return on;},
-    isOn:function(){return on&&!muted;}
+    warm:function(){if(localStorage.getItem('mk_bgm')!=='0')load();},
+    // 서재에 들어옴: 비행선·암호 터치로 이미 사용자 동작이 있었으니 소리 켠 채로 시작(막히면 onAutoplayBlocked가 처리)
+    play:function(){if(localStorage.getItem('mk_bgm')==='0'||on)return;on=true;muted=!(navigator.userActivation?navigator.userActivation.hasBeenActive:true);load();go();},
+    pause:function(){if(!on)return;on=false;if(ready)player.pauseVideo();changed();},
+    toggle:function(){ /* 서재의 음표 버튼: 음소거 중이면 소리 켜기, 아니면 켜기/끄기(설정 기억) */
+      if(on&&muted){unmute();return;}
+      on=!on;localStorage.setItem('mk_bgm',on?'1':'0');muted=false;
+      if(on){load();go();}else if(ready)player.pauseVideo();changed();
+    },
+    isOn:function(){return on&&!muted;},
+    onChange:function(fn){listeners.push(fn);}
   };
+  window.toggleBgm=window.mkBgm.toggle;
 })();
 </script>
 <dialog id="hubArchiveLightbox" aria-label="사진 확대 보기"><div class="hub-archive-bar"><span id="hubArchiveCounter"></span><button type="button" id="hubArchiveClose">닫기 ×</button></div><img id="hubArchiveLarge" alt=""/><div class="hub-archive-controls"><button id="hubArchivePrev" type="button" aria-label="이전 사진">←</button><button id="hubArchiveNext" type="button" aria-label="다음 사진">→</button></div></dialog>
