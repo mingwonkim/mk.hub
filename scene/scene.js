@@ -62,7 +62,6 @@
     <a class="mk-spot" href="#memo" aria-label="메모" style="left:58.4%;top:74.5%;width:7%;height:11.5%"></a>
     <a class="mk-spot" href="#files" aria-label="파일" style="left:68.4%;top:84%;width:5.8%;height:15%"></a>
     <a class="mk-spot" href="#settings" aria-label="설정" style="left:74%;top:28%;width:25%;height:24%"></a>
-    <a class="mk-spot" href="#hub" aria-label="MK.HUB 홈" style="left:49%;top:80%;width:6.5%;height:20%"></a>
   </div>
   <a class="mk-back" href="#">← 도시로</a>
 </div>
@@ -94,7 +93,11 @@
         layer.scrollLeft = layer.scrollWidth * (which === 'scene' ? .505 : .57) - layer.clientWidth / 2;
     }
     if (!which && pinDlg.open) { pinOk = null; pinDlg.close(); }
+    if (which) back = which === 'study' ? '#study' : '';
   }
+  /* 옛 MK.HUB 홈 화면은 버림: 홈으로 가려 하거나 저장고 인증을 그냥 닫으면 마지막에 있던 도시/서재로 */
+  let back = '';
+  function toLayer(replace) { history[replace ? 'replaceState' : 'pushState'](null, '', location.pathname + location.search + back); route(); }
   /* 서재 암호(임시 5940, 나중에 Face ID). 공개 사이트의 숨은 입구일 뿐 — 실제 데이터는 각 칸을 열 때 MKVault가 지킴 */
   const PIN_HASH = '8bc552c0c116fa615b7306a74f4a998c7ac4fef70074b742abcc82d53ee52611'; // sha256('mk-study:' + 암호)
   const pinDlg = document.querySelector('.mk-pin'), slots = [...pinDlg.querySelectorAll('.mk-pin-slots i')], sr = pinDlg.querySelector('.mk-sr');
@@ -112,7 +115,7 @@
     const ok = (await sha('mk-study:' + pin)) === PIN_HASH;
     if (want !== pinOk || !pinDlg.open) { checking = false; return; } // 확인 중에 창이 닫히거나 경로가 바뀜
     if (ok) {
-      try { sessionStorage.setItem('mk_study', '1'); } catch {}
+      try { localStorage.setItem('mk_study', '1'); } catch {}
       sr.textContent = '열렸습니다'; pinDlg.classList.add('ok');
       setTimeout(() => { checking = false; const cb = pinOk; pinOk = null; pinDlg.close(); cb && cb(); }, 350);
     } else {
@@ -128,7 +131,7 @@
     if (pinOk) { pinOk = null; if (location.hash === '#study') { history.replaceState(null, '', location.pathname + location.search); route(); } }
   });
   function gate(cb) {
-    let passed = false; try { passed = sessionStorage.getItem('mk_study') === '1'; } catch {}
+    let passed = false; try { passed = localStorage.getItem('mk_study') === '1'; } catch {}
     if (passed) return cb();
     pinOk = cb; pin = ''; paint(); pinDlg.showModal();
   }
@@ -140,7 +143,7 @@
     const my = ++seq, [h, sub] = (() => { try { return decodeURIComponent(location.hash.slice(1)).split('/'); } catch { return ['']; } })();
     if (!h) return show('scene');
     if (h === 'study') { show('scene'); return gate(() => { if (my === seq) show('study'); }); } // 인증 중 다른 데로 가면 늦은 성공은 무시
-    if (h === 'hub') { show(null); return goHub(); }
+    if (h === 'hub') return toLayer(true); // 옛 MK.HUB 홈은 버림
     if (h === 'vault' && sub) { show(null); openApp('memo'); return mkOpenFolder(sub); }
     if (APPS.includes(h)) { show(null); return openApp(h); }
     // 그 밖의 해시(페이지 안 앵커 등)는 건드리지 않음
@@ -176,6 +179,8 @@
   // 첫 라우팅은 vault-client.js(defer)까지 실행된 뒤 — 그래야 openApp이 잠금을 거침
   document.addEventListener('DOMContentLoaded', () => {
     addEventListener('hashchange', route); addEventListener('popstate', route);
+    const setPage0 = window.setPage; window.setPage = p => p === 'hub' ? toLayer(false) : setPage0(p); // 앱 안의 홈·뒤로 버튼도 여기로
+    addEventListener('mk:vault-cancel', () => { if (document.querySelector('.page.active')?.id === 'page-hub') toLayer(true); });
     if (FROM_EMAIL_LINK) return show(null); // 이메일 로그인 복귀는 MK.HUB가 처리
     route();
     if (!intro.classList.contains('on')) land();

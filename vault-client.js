@@ -38,7 +38,8 @@
   const title=box.querySelector('h2'),desc=box.querySelector('.vault-access-description'),form=box.querySelector('form'),fields=box.querySelector('.vault-access-fields'),err=box.querySelector('.vault-access-error'),submit=box.querySelector('[type=submit]'),secondary=box.querySelector('.vault-access-secondary');
   let busy=false,mailing=false,cooldown=null,sendAfter=0;
   function close(){clearInterval(cooldown);box.close();box.remove();dialog=null;}
-  box.querySelector('[data-close]').onclick=close;box.addEventListener('cancel',e=>{e.preventDefault();close();});
+  const quit=()=>{close();window.dispatchEvent(new CustomEvent('mk:vault-cancel'));}; // 첫 화면(scene.js)이 받아 장면으로 되돌림
+  box.querySelector('[data-close]').onclick=quit;box.addEventListener('cancel',e=>{e.preventDefault();quit();});
   function render(heading,description,button,html,handler){
    title.textContent=heading;desc.textContent=description;submit.textContent=button;submit.hidden=!button;fields.innerHTML=html;err.textContent='';secondary.hidden=true;clearInterval(cooldown);
    form.onsubmit=async e=>{e.preventDefault();if(busy)return;busy=true;submit.disabled=true;fields.inert=true;err.textContent='';
