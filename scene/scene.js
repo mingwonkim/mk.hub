@@ -169,7 +169,7 @@
     if (window.mkRooms && mkRooms.has(key)) { // 저장고 인증 뒤 새 화면의 방으로. 인증 창 뒤엔 지금 장면이 그대로 보임
       if (!was()) show(back === '#study' ? 'study' : 'scene');
       const go = () => { if (my === seq) { show('room'); mkRooms.open(key, () => toLayer(false)); } };
-      return window.MKVault ? MKVault.requireAccess(go) : go(); // MKVault 없으면 방이 '불러오지 못했어요'를 보여 줌
+      return window.MKVault && !mkRooms.pub(key) ? MKVault.requireAccess(go) : go(); // 도시의 칸(드론·음악·예술·IT)은 암호 없이. MKVault 없으면 방이 '불러오지 못했어요'를 보여 줌
     }
     // 그 밖의 해시(페이지 안 앵커 등)는 건드리지 않음
   }

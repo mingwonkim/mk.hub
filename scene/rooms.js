@@ -204,8 +204,9 @@
   }
 
   const ROOMS = {
-    art: noteRoom('VAULT · ART', '예술 저장고', roomCol('art'), '아직 비어 있어요. 첫 작품이나 생각을 넣어 보세요.'),
-    it: noteRoom('VAULT · IT', 'IT 저장고', roomCol('it'), '아직 비어 있어요. 첫 기록을 넣어 보세요.'),
+    // pub: 메인 화면(도시)의 칸 — 누구나 보기만, 고치기는 잠금을 푼 뒤(규칙도 읽기만 공개)
+    art: { ...noteRoom('VAULT · ART', '예술 저장고', roomCol('art'), '아직 비어 있어요. 첫 작품이나 생각을 넣어 보세요.'), pub: true },
+    it: { ...noteRoom('VAULT · IT', 'IT 저장고', roomCol('it'), '아직 비어 있어요. 첫 기록을 넣어 보세요.'), pub: true },
 
     memo: {
       tag: 'STUDY · CORKBOARD', title: '메모',
@@ -260,11 +261,12 @@
     },
 
     briefing: {
+      pub: true,
       tag: 'COURIER · MORNING BRIEF', title: '모닝 브리프', empty: '아직 도착한 브리핑이 없어요. 월·목 아침에 와요.',
       load: () => all(briefsCol, 'date'),
       row: b => ({ title: b.dateDisplay || b.date, sub: [b.weekday, b.count && b.count + '건'].filter(Boolean).join(' · '), meta: b.read ? '' : 'NEW' }),
       view: b => {
-        if (!b.read) updateDoc(doc(briefsCol, b.id), { read: true }).then(() => { b.read = true; }).catch(() => {});
+        if (!b.read && !ro()) updateDoc(doc(briefsCol, b.id), { read: true }).then(() => { b.read = true; }).catch(() => {});
         if (b.html) { // 원본 메일 HTML — 스크립트 없는 격리 iframe
           const f = el('iframe', { class: 'rm-frame', sandbox: 'allow-popups allow-popups-to-escape-sandbox allow-same-origin', title: '브리핑 본문' });
           f.srcdoc = b.html; f.onload = () => { try { f.style.height = f.contentDocument.documentElement.scrollHeight + 'px'; } catch {} };
@@ -318,6 +320,7 @@
     },
 
     music: {
+      pub: true,
       tag: 'CITY · SYNTH', title: '음악',
       tabs: [
         { label: '좋아하는 곡', empty: '아직 없어요. 좋아하는 곡과 그 이유를 남겨 보세요.', load: () => all(favSongsCol, 'c'),
@@ -361,8 +364,8 @@
             return [
               p.songs.length ? el('ul', { class: 'rm-list' }, p.songs.map(s => el('li', {},
                 safe(s.link) ? el('a', { class: 'rm-row', href: safe(s.link), target: '_blank', rel: 'noopener' }, el('span', { class: 'rm-row-main' }, el('b', {}, s.title || s.link))) : el('div', { class: 'rm-row static' }, el('span', { class: 'rm-row-main' }, el('b', {}, s.title || ''))),
-                el('button', { type: 'button', class: 'rm-x', 'aria-label': (s.title || '곡') + ' 빼기', onclick: () => act(() => deleteDoc(doc(playlistSongsCol, s.id)), () => load(p.id)) }, '빼기')))) : el('p', { class: 'rm-text' }, '곡이 없어요.'),
-              f];
+                !ro() && el('button', { type: 'button', class: 'rm-x', 'aria-label': (s.title || '곡') + ' 빼기', onclick: () => act(() => deleteDoc(doc(playlistSongsCol, s.id)), () => load(p.id)) }, '빼기')))) : el('p', { class: 'rm-text' }, '곡이 없어요.'),
+              !ro() && f];
           },
           fields: [['name', '플레이리스트 이름']],
           save: (v, p) => p ? updateDoc(doc(playlistsCol, p.id), v) : addDoc(playlistsCol, { ...v, c: Date.now() }),
@@ -377,11 +380,14 @@
 
   /* ── 화면 ── */
   let st = null, seq = 0;
+  const ro = () => !!st?.room.pub && !window.MKVault?.hasAccess(); // 공개 칸을 잠금 안 풀고 보는 중
   const def = () => st.room.tabs ? { ...st.room.tabs[st.tab], tag: st.room.tag, title: st.room.title } : st.room;
 
   async function load(keep) { // keep: 다시 불러온 뒤 그 항목 화면으로 돌아감(플레이리스트 곡 넣기 등)
     const my = ++seq; st.view = 'loading'; st.chips = null; draw();
     try {
+      if (!window.mkDataReady) await new Promise(r => addEventListener('mk:data-ready', r, { once: true })); // 공개 칸은 인증 없이 바로 열려서 Firebase 준비를 기다림
+      if (my !== seq) return;
       const items = await def().load(st); if (my !== seq) return; st.items = items; st.view = 'list';
       const again = keep && items.find(x => x.id === keep); if (again) { st.item = again; st.view = 'item'; }
     } catch (e) { if (my !== seq) return; st.err = e.message || String(e); st.view = 'error'; }
@@ -424,8 +430,8 @@
       if (meta) body.append(el('p', { class: 'rm-meta' }, meta));
       body.append(...d.view(st.item, st).flat(Infinity).filter(Boolean));
       const tools = el('div', { class: 'rm-tools' });
-      if (d.save && (!d.canEdit || d.canEdit(st.item))) tools.append(el('button', { type: 'button', class: 'rm-btn ghost', onclick: () => { st.view = 'compose'; draw(); } }, '고치기'));
-      if (d.remove) tools.append(el('button', { type: 'button', class: 'rm-btn ghost danger', onclick: () => confirm('지울까요? 되돌릴 수 없어요.') && act(() => d.remove(st.item)) }, '지우기'));
+      if (d.save && !ro() && (!d.canEdit || d.canEdit(st.item))) tools.append(el('button', { type: 'button', class: 'rm-btn ghost', onclick: () => { st.view = 'compose'; draw(); } }, '고치기'));
+      if (d.remove && !ro()) tools.append(el('button', { type: 'button', class: 'rm-btn ghost danger', onclick: () => confirm('지울까요? 되돌릴 수 없어요.') && act(() => d.remove(st.item)) }, '지우기'));
       if (tools.children.length) body.append(tools);
     } else if (st.view === 'compose') {
       const v = st.item ? (d.edit ? d.edit(st.item) : st.item) : (d.defaults ? d.defaults() : {});
@@ -450,7 +456,8 @@
     } else if (d.render) d.render(body, st); // 탭이 화면을 직접 그림(YouTube)
     else { // list
       const tools = el('div', { class: 'rm-tools' });
-      if (d.save) tools.append(el('button', { type: 'button', class: 'rm-btn', onclick: () => { st.item = null; st.note = ''; st.view = 'compose'; draw(); } }, '+ 새로 넣기'));
+      if (d.save && ro()) tools.append(el('button', { type: 'button', class: 'rm-btn ghost', onclick: () => MKVault.unlock(() => draw()) }, '잠금 풀고 고치기'));
+      else if (d.save) tools.append(el('button', { type: 'button', class: 'rm-btn', onclick: () => { st.item = null; st.note = ''; st.view = 'compose'; draw(); } }, '+ 새로 넣기'));
       if (d.upload) {
         const inp = el('input', { type: 'file', multiple: true, hidden: true, onchange: () => { const files = [...inp.files]; inp.value = ''; if (files.length) act(() => d.upload(files, st)); } });
         tools.append(inp, el('button', { type: 'button', class: 'rm-btn', onclick: () => inp.click() }, '+ 파일 올리기'));
@@ -491,6 +498,7 @@
 
   window.mkRooms = {
     has: k => k in ROOMS,
+    pub: k => !!ROOMS[k]?.pub,
     define: (k, d) => { ROOMS[k] = d; }, // desk.js(잡생각·할 일 달력)가 방을 더함
     kit: { el, all, day, say, act, reload: () => load() },
     open(key, close) { root.removeAttribute('aria-busy'); st?.leave?.(); retryOrphans(); st = { room: ROOMS[key], tab: 0, filter: null, items: [], view: 'loading', close, note: '' }; load(); },

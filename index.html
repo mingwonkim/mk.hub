@@ -2321,6 +2321,7 @@ window.openApp=openApp;window.goHub=goHub;window.goBack=goBack;
   playlistsCol=collection(db,'mk_app','data','playlists');playlistSongsCol=collection(db,'mk_app','data','playlist_songs');
   gallerCol=collection(db,'mk_app','data','gallery');
   briefsCol=collection(db,'mk_app','data','briefs');
+  window.mkDataReady=true;window.dispatchEvent(new Event('mk:data-ready')); // rooms.js: 공개 칸은 인증 없이 열려서 이걸 기다림
   // Only server-authenticated owner sessions may load private data.
   let _dataLoaded=false;
   onIdTokenChanged(auth,async function(user){
