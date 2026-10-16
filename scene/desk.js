@@ -322,4 +322,11 @@
       paint();
     },
   });
+
+  // 서재 액자 → 명언 모음(누구나 보는 글이라 잠금 없음)
+  mkRooms.define('quotes', {
+    tag: 'Study · Frame', title: 'Words to keep', sub: 'A short one goes up on the frame every day.', pub: true,
+    load: async () => [], row: () => ({}),
+    render: body => body.append(el('iframe', { class: 'rm-tool', src: 'quotes.html?embed&v=1016s', title: 'Words to keep' })),
+  });
 })();

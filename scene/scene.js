@@ -77,12 +77,12 @@
 </div>
 <div class="mk-layer" id="lsStudy" tabindex="-1" role="region" aria-label="Study">
   <div class="mk-stage">
-    <img class="mk-bg" loading="lazy" src="${S}study-3024.webp" srcset="${S}study-3024.webp 3024w, ${S}study-6048.webp 6048w" sizes="max(117vw, 277vh)" alt="A study with a large window over the night city">
-    <a class="mk-spot" href="#thoughts" aria-label="Thoughts" style="left:46%;top:63%;width:14%;height:17%"></a>
-    <a class="mk-spot" href="#todo" aria-label="Tasks" style="left:58.4%;top:74.5%;width:7%;height:11.5%"></a>
-    <a class="mk-spot" href="#todo" aria-label="Tasks (tall board)" style="left:65.8%;top:65%;width:3.4%;height:18.5%"></a>
-    <a class="mk-spot" href="#files" aria-label="Files" style="left:68.4%;top:84%;width:5.8%;height:15%"></a>
-    <a class="mk-spot" href="#settings" aria-label="Settings" style="left:74%;top:28%;width:25%;height:24%"></a>
+    <img class="mk-bg" loading="lazy" src="${S}study2-1920.webp" srcset="${S}study2-1920.webp 1920w, ${S}study2-3840.webp 3840w" sizes="max(100vw, 233vh)" alt="A tall glass-roofed library study at dusk over the city">
+    <a class="mk-spot" href="#thoughts" aria-label="Thoughts" style="left:39.5%;top:75%;width:14%;height:11%"></a>
+    <a class="mk-spot mk-quote" href="#quotes" aria-label="Words to keep" style="left:77.3%;top:43.4%;width:5.4%;height:14.7%"><span></span></a>
+    <a class="mk-spot mk-cal" href="#todo" aria-label="Tasks" style="left:92.6%;top:40.4%;width:7.4%;height:19.9%"></a>
+    <a class="mk-spot" href="#files" aria-label="Files" style="left:69.6%;top:71%;width:15.4%;height:14%"></a>
+    <button type="button" class="mk-spot mk-deck" aria-label="Turntable — study music" style="left:74%;top:60%;width:7.8%;height:10.5%"></button>
   </div>
   <a class="mk-back" href="#">← City</a>
   <a class="mk-gear" href="#settings" aria-label="Settings"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Settings</span></a>
@@ -114,16 +114,45 @@
       const layer = LAYERS[which];
       layer.focus({ preventScroll: true });
       if (layer.scrollWidth > layer.clientWidth) // 세로 화면: 그림을 좌우로 밀어 볼 수 있음. 처음엔 비행선/책상이 가운데
-        layer.scrollLeft = layer.scrollWidth * (which === 'scene' ? .505 : .57) - layer.clientWidth / 2;
+        layer.scrollLeft = layer.scrollWidth * (which === 'scene' ? .505 : .62) - layer.clientWidth / 2;
     }
     if (!which && pinDlg.open) { pinOk = null; pinDlg.close(); }
     if (which === 'scene' || which === 'study') back = which === 'study' ? '#study' : '';
+    if (which === 'study') wall(); // 할 일 방에서 돌아오면 달력 동그라미도 새로
     if (which && window.mkBgm) { which === 'study' || (which === 'room' && back === '#study') ? mkBgm.play() : mkBgm.pause(); soundUi(); } // 음악은 서재(와 서재에서 연 방)에서만
   }
   const sound = study.querySelector('.mk-sound');
   const soundUi = () => { const on = !!window.mkBgm?.isOn(); sound.classList.toggle('on', on); sound.setAttribute('aria-pressed', String(on)); };
   sound.addEventListener('pointerdown', e => e.stopPropagation()); // 문서의 '첫 터치에 소리 켜기'보다 이 버튼이 먼저(안 그러면 켜자마자 꺼짐)
   sound.addEventListener('click', () => { window.mkBgm?.toggle(); soundUi(); });
+  /* 서재 벽: 턴테이블 = 음악 켜고 끄기. 달력은 이번 달을 그리고 할 일이 있는 날에 빨간 동그라미(저장고가 열려 있을 때만 읽음).
+     액자는 날짜마다 바뀌는 짧은 명언(quotes.html에서 읽음 — 못 읽으면 그림 속 문구가 그대로 보임) */
+  const deck = study.querySelector('.mk-deck'), cal = study.querySelector('.mk-cal'), quote = study.querySelector('.mk-quote span');
+  deck.addEventListener('pointerdown', e => e.stopPropagation());
+  deck.addEventListener('click', () => { window.mkBgm?.toggle(); soundUi(); });
+  const pad2 = n => String(n).padStart(2, '0');
+  function paintCal(busy) {
+    const now = new Date(), y = now.getFullYear(), m = now.getMonth(), lead = new Date(y, m, 1).getDay(), n = new Date(y, m + 1, 0).getDate();
+    let cells = '<i></i>'.repeat(lead);
+    for (let d = 1; d <= n; d++) cells += `<i class="${busy.has(`${y}-${pad2(m + 1)}-${pad2(d)}`) ? 'busy' : ''}${d === now.getDate() ? ' today' : ''}">${d}</i>`;
+    cal.innerHTML = `<div><b>${now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</b><u>${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(w => `<i>${w}</i>`).join('')}</u><span>${cells}</span></div>`;
+  }
+  let quotes = null;
+  async function wall() {
+    paintCal(new Set());
+    try { // todosCol·getDocs는 index.html 뒤쪽 스크립트의 전역(아직 없으면 건너뜀)
+      if (window.MKVault?.hasAccess() && todosCol) paintCal(new Set((await getDocs(todosCol)).docs.map(d => d.data()).filter(x => x.date && !x.let).map(x => x.date)));
+    } catch {}
+    try {
+      quotes ||= [...new DOMParser().parseFromString(await (await fetch('quotes.html')).text(), 'text/html').querySelectorAll('.card')]
+        .map(c => [c.querySelector('.text')?.textContent.trim().replace(/^"|"$/g, '') || '', c.querySelector('.author')?.textContent.replace(/^—\s*/, '').trim() || ''])
+        .filter(([t]) => t && t.length <= 34); // ponytail: 액자가 작아서 짧은 것만. 긴 명언은 액자를 누르면 보임
+      const [t, a] = quotes[Math.floor((Date.now() - new Date().getTimezoneOffset() * 6e4) / 864e5) % quotes.length];
+      quote.innerHTML = ''; quote.append(Object.assign(document.createElement('q'), { textContent: t }));
+      if (a) quote.append(Object.assign(document.createElement('small'), { textContent: a }));
+      quote.parentElement.classList.add('on');
+    } catch {}
+  }
   /* 방을 닫거나 저장고 인증을 그냥 닫으면 마지막에 있던 도시/서재로 */
   let back = '';
   const was = () => Object.values(LAYERS).some(l => l.classList.contains('on'));
