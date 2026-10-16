@@ -463,7 +463,7 @@
         { label: 'Practice', wide: true,
           load: async () => [{ id: 'p', t: 'Perfect Pitch Quest', s: 'Hear a note, name it, level up.', h: 'pitch-trainer.html' }, { id: 'c', t: 'Chord Dictionary', s: 'K-pop chords, progressions, the circle of fifths and theory.', h: 'chord-dictionary.html' }],
           row: x => ({ title: x.t, sub: x.s }),
-          view: x => [el('iframe', { class: 'rm-tool', src: x.h + '?embed&v=1016p', title: x.t })] },
+          view: x => [el('iframe', { class: 'rm-tool', src: x.h + '?embed&v=1016r', title: x.t })] },
       ],
     },
   };

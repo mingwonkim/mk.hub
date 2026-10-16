@@ -242,3 +242,8 @@ body.tool-pitch,body.tool-chord{font-size:14px}
 .tool-pitch #sc-quiz.on{padding-bottom:10px}
 .tool-pitch #sc-quiz:has(.kb) #fbArea{min-height:34px;margin-bottom:0}
 .tool-pitch #sc-quiz:has(.kb) #fbArea .fb{margin-top:6px;padding:6px}
+/* 듣기 단계(A4 등, 건반 없음): 빈 피드백 칸을 없애고 재생판을 키워 위아래 고르게 */
+.tool-pitch #sc-quiz #fbArea:empty{display:none}
+.tool-pitch #sc-quiz:not(:has(.kb)) .play-btn{width:clamp(90px,34vh,320px);height:clamp(90px,34vh,320px)}
+.tool-pitch #sc-quiz:not(:has(.kb)) .ans-grid{margin-bottom:auto}
+.tool-pitch #sc-quiz:not(:has(.kb)) .ans-grid > div > div:first-child{font-size:clamp(30px,7vh,56px)!important}
