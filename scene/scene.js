@@ -195,7 +195,9 @@
   }
 
   /* ── 인트로: 처음 들어올 때(탭 세션당 한 번) 다크 배경 로고 → 현수막으로 날아가 박힘 ── */
-  function land() {
+  function land(fly) { // 드론이 화면 밖에서 날아오는 건 홈페이지를 처음 열 때(인트로 뒤)만. 방에서 돌아오면 제자리에 떠 있음
+    const c = scene.querySelector('.mk-courier');
+    if (!fly) c.classList.add('here'); else setTimeout(() => c.classList.add('here'), 4000);
     scene.classList.add('go');
   }
   function playIntro() {
@@ -210,7 +212,7 @@
       mark.style.color = ink;
       const labs = mark.querySelector('.labs'); labs.style.animation = 'none'; labs.style.transition = 'opacity .4s'; labs.style.opacity = '0'; // 캐노피 인쇄엔 LABS 줄이 없음
       mark.style.transform = `translate(${bx - a.left}px, ${by - a.top}px) rotate(9deg) scale(${bw / a.width})`;
-      setTimeout(() => { land(); mark.style.transition = 'opacity .35s'; mark.style.opacity = '0'; }, 900);
+      setTimeout(() => { land(true); mark.style.transition = 'opacity .35s'; mark.style.opacity = '0'; }, 900);
       setTimeout(() => intro.classList.remove('on'), 1300);
     };
     setTimeout(fly, 2700);

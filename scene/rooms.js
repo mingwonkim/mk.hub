@@ -166,6 +166,55 @@
   // 예술·IT는 옛 메모 폴더와 섞이지 않게 따로 된 컬렉션
   const roomCol = k => () => collection(db, 'mk_app', 'data', 'room_' + k);
   const guestCol = () => collection(db, 'mk_app', 'data', 'guestbook');
+  // 브리프 읽음: 보는 사람 기기마다(localStorage), 주인은 Firestore read도. 최신 브리프를 읽었으면 도시의 드론이 반짝이지 않음
+  const READ = 'mk_brief_read';
+  const readIds = () => { try { return new Set(JSON.parse(localStorage.getItem(READ) || '[]')); } catch { return new Set(); } };
+  const isRead = b => readIds().has(b.id) || (!!b.read && !!window.MKVault?.hasAccess());
+  const markRead = b => {
+    try { localStorage.setItem(READ, JSON.stringify([...readIds(), b.id].slice(-300))); } catch {}
+    if (!ro()) updateDoc(doc(briefsCol, b.id), { read: true }).catch(() => {});
+    b.read = true; drone();
+  };
+  async function drone() { // 최신 브리프가 안 읽혔을 때만 반짝임(브리프가 없으면 조용히)
+    if (!window.mkDataReady) await new Promise(r => addEventListener('mk:data-ready', r, { once: true }));
+    try { const [last] = await all(briefsCol, 'date'); document.querySelector('.mk-courier')?.classList.toggle('read', !last || isRead(last)); } catch {}
+  }
+  drone();
+
+  // 브리프 메일 HTML → 섹션·기사 데이터(DOMParser는 스크립트를 돌리지 않음. 글자와 링크만 꺼냄). 모양이 다르면 null → 원본 iframe
+  function briefParse(html) {
+    const box = new DOMParser().parseFromString(html, 'text/html').body.querySelector('div');
+    if (!box) return null;
+    const txt = n => (n?.textContent || '').replace(/\s+/g, ' ').trim(), href = n => safe(n?.getAttribute('href') || '');
+    const secs = []; let cur = null;
+    for (const n of box.children) {
+      const s = n.getAttribute('style') || '';
+      if (/letter-spacing:\s*2px/.test(s) && /uppercase/.test(s)) { secs.push(cur = { name: txt(n), items: [] }); continue; }
+      if (!cur) continue; // 맨 위 머리(날짜)
+      if (n.tagName === 'TABLE') { for (const tr of n.querySelectorAll('tr')) { const [a, b] = tr.querySelectorAll('td'); if (!a) continue; const m = txt(b).match(/^([▲▼●])\s*(.*)$/); cur.items.push({ title: txt(a), url: href(a.querySelector('a')), summary: m ? m[2] : txt(b), tone: m ? { '▲': 'up', '▼': 'down', '●': 'flat' }[m[1]] : null }); } continue; }
+      const a = n.querySelector('a'), kids = [...n.querySelectorAll(':scope > div')];
+      if (a) cur.items.push({ title: txt(a), url: href(a), summary: txt(kids[0]), source: txt(kids[1]) });
+      else if (txt(n)) cur.items.push({ note: txt(n) });
+    }
+    return secs.some(x => x.items.length) ? secs : null;
+  }
+  function briefView(b, bar) {
+    const secs = b.html && briefParse(b.html);
+    if (!secs) { // 옛 모양: 원본 메일 HTML — 스크립트 없는 격리 iframe
+      const f = el('iframe', { class: 'rm-frame', sandbox: 'allow-popups allow-popups-to-escape-sandbox allow-same-origin', title: 'Brief' });
+      f.srcdoc = b.html || ''; f.onload = () => { try { f.style.height = f.contentDocument.documentElement.scrollHeight + 'px'; } catch {} };
+      return [bar, f];
+    }
+    const n = secs.reduce((t, x) => t + x.items.filter(i => !i.note).length, 0);
+    const story = (i, lead) => i.note ? el('div', { class: 'bf-card note' }, i.note) : el(i.url ? 'a' : 'div', { class: 'bf-card' + (lead ? ' lead' : '') + (i.tone ? ' tone ' + i.tone : ''), href: i.url, target: i.url && '_blank', rel: i.url && 'noopener' },
+      i.source && el('small', {}, i.source), el('h4', {}, i.title), i.summary && el('p', {}, i.summary));
+    return [
+      el('div', { class: 'bf-top' }, el('span', {}, `${n} stories · ${secs.length} sections`), bar),
+      el('div', { class: 'bf' }, secs.map((s, k) => el('section', { class: 'bf-sec', style: `--i:${k}` },
+        el('header', {}, el('span', {}, String(k + 1).padStart(2, '0')), el('h3', {}, s.name), el('small', {}, s.items.filter(i => !i.note).length || '')),
+        el('div', { class: 'bf-cards' }, s.items.map((i, j) => story(i, k === 0 && j === 0 && !i.tone)))))),
+    ];
+  }
 
   // 설정 → 다른 기기 추가: 코드(4-4, 10분, 일회용)를 크게 보여 주고 남은 시간 표시
   function pairView() {
@@ -303,21 +352,15 @@
       pub: true,
       tag: 'City · Courier drone', title: 'Morning Brief', sub: 'What the courier drone brought in — and notes left by visitors.',
       tabs: [
-        { label: 'Briefs', empty: 'No brief has arrived yet. They come Monday and Thursday mornings.',
+        { label: 'Briefs', wide: true, empty: 'No brief has arrived yet. They come Monday and Thursday mornings.',
           async load(st) { const items = await all(briefsCol, 'date'); const months = [...new Set(items.map(b => monthOf(b.date)))]; st.chips = months.length > 1 ? [{ label: 'All', value: null }, ...months.map(m => ({ label: m, value: m }))] : null; return items; },
           match: (b, m) => monthOf(b.date) === m,
           group: b => monthOf(b.date),
-          row: b => { const d = ymdParse(b.date); return { title: d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }), sub: b.count ? b.count + ' stories' : '', meta: b.read ? '' : 'New', big: String(d.getDate()) }; },
+          row: b => { const d = ymdParse(b.date); return { title: d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }), sub: b.count ? b.count + ' stories' : '', meta: isRead(b) ? '' : 'New', big: String(d.getDate()) }; },
           view: b => {
-            if (!b.read && !ro()) updateDoc(doc(briefsCol, b.id), { read: true }).then(() => { b.read = true; }).catch(() => {});
-            if (b.html) { // 원본 메일 HTML — 스크립트 없는 격리 iframe
-              const f = el('iframe', { class: 'rm-frame', sandbox: 'allow-popups allow-popups-to-escape-sandbox allow-same-origin', title: 'Brief' });
-              f.srcdoc = b.html; f.onload = () => { try { f.style.height = f.contentDocument.documentElement.scrollHeight + 'px'; } catch {} };
-              return [f];
-            }
-            const sec = (name, list) => list?.length ? [el('h3', { class: 'rm-sec' }, name), list.map(i => el('div', { class: 'rm-story' },
-              safe(i.url) ? el('a', { href: safe(i.url), target: '_blank', rel: 'noopener' }, i.title || '') : el('b', {}, i.title || ''), el('p', {}, i.summary || ''), el('small', {}, i.source || '')))] : null;
-            return [sec('AI industry', b.news), sec('Markets', b.market)];
+            const done = isRead(b), mark = el('button', { type: 'button', class: 'rm-btn' + (done ? ' ghost' : ''), disabled: done, onclick: () => { markRead(b); mark.textContent = '✓ Read'; mark.disabled = true; mark.classList.add('ghost'); } }, done ? '✓ Read' : 'Mark as read');
+            const bar = el('div', { class: 'rm-tools rm-readbar' }, mark);
+            return briefView(b, bar);
           } },
         { label: 'Guestbook', load: async () => (await all(guestCol(), 'c')).slice(0, 200), row: () => ({}), render: guestbook },
       ],

@@ -89,10 +89,18 @@ html.mk-layer-open, html.mk-layer-open body { overflow: hidden; }
 .mk-spot:hover, .mk-spot:focus-visible { outline: none; } /* 무엇인지 표시하지 않음(숨겨둔 저장소). 키보드 포커스만 은은히 */
 .mk-spot:focus-visible { box-shadow: 0 0 18px 2px rgba(255, 190, 150, .2); }
 /* 모닝 브리프 드론(= 우체통): 멀리서 날아와 떠 있고, 새 소식이 온 것처럼 이따금 부르르 떪(글자 표시 없음). 인트로가 끝나야 출발(.go) */
-.mk-courier { left: 35.5%; top: 27.5%; width: 3.6%; aspect-ratio: 640 / 301; opacity: 0; }
+.mk-courier { left: 34.9%; top: 27%; width: 4.8%; aspect-ratio: 640 / 301; opacity: 0; }
 .mk-courier img { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* 클릭 유도: 뒤에서 은은히 숨쉬는 빛 + 손가락이 닿기 쉬운 넓은 터치 영역 */
+.mk-courier::before { content: ""; position: absolute; left: 50%; top: 50%; width: 130%; aspect-ratio: 1; border-radius: 50%; border: 2px solid rgba(255, 236, 200, .9); box-shadow: 0 0 12px rgba(255, 210, 150, .8), inset 0 0 12px rgba(255, 210, 150, .5); translate: -50% -50%; animation: mk-glow 2.4s ease-out 4s infinite both; pointer-events: none; }
+.mk-courier::after { content: ""; position: absolute; inset: -70% -30%; }
+.go .mk-courier .body { animation: mk-bob 3.2s ease-in-out 4s infinite, mk-shine 2.4s ease-in-out 4s infinite; }
+@keyframes mk-shine { 0%, 100% { filter: drop-shadow(0 0 2px rgba(255, 220, 170, .5)) } 50% { filter: drop-shadow(0 0 8px rgba(255, 240, 210, 1)) brightness(1.25) } }
+@keyframes mk-glow { 0% { opacity: 0; scale: .5 } 25% { opacity: 1 } 100% { opacity: 0; scale: 1.4 } }
 .go .mk-courier { animation: mk-arrive 4s cubic-bezier(.2, .7, .3, 1) both; }
-.go .mk-courier .body { animation: mk-bob 3.2s ease-in-out 4s infinite; }
+.go .mk-courier.here { animation: none; opacity: 1; }
+.mk-courier.read::before { display: none; } /* 최신 브리프를 읽음 → 반짝임·고리 없음 */
+.go .mk-courier.read .body { animation: mk-bob 3.2s ease-in-out infinite; filter: none; }
 @keyframes mk-arrive { from { transform: translate(180%, -620%) scale(.12); opacity: 0 } 15% { opacity: 1 } to { transform: none; opacity: 1 } }
 @keyframes mk-bob { 0%, 100% { translate: 0 0 } 50% { translate: 0 -9% } }
 @keyframes mk-buzz { 0%, 78%, 100% { rotate: 0deg } 80% { rotate: -5deg } 82% { rotate: 5deg } 84% { rotate: -4deg } 86% { rotate: 4deg } 88% { rotate: -2deg } 90% { rotate: 1deg } }
@@ -256,6 +264,7 @@ html.mk-layer-open, html.mk-layer-open body { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .mk-dr, .go .mk-courier, .go .mk-courier .body { animation: none; opacity: 1; }
   .mk-courier { opacity: 1; }
+  .mk-courier::before { animation: none; opacity: .7; }
   .mk-pin, .mk-pin-ring::before, .rm-ring::before { animation: none; }
 }
 
