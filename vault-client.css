@@ -47,3 +47,4 @@
 .vault-access button:disabled{opacity:.4;cursor:wait}
 .vault-access button:focus-visible,.vault-access-top button:focus-visible{outline:1px solid var(--c);outline-offset:4px;border-radius:4px}
 @media(prefers-reduced-motion:reduce){.vault-access,.vault-pattern::before{animation:none}}
+@media(min-height:1000px){.vault-access-sheet>*{zoom:var(--z,1)}} /* 큰 화면 배율(scene.css의 --z) */

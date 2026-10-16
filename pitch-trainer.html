@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <script>if(/[?&]embed/.test(location.search))document.documentElement.classList.add('embed')</script>
-<title>절대음감 트레이너</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+<title>Perfect Pitch Quest</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;600;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#FBF7F0;--sf:#FFFFFF;--sf2:#F1ECE3;--bd:#E8DFD2;
@@ -305,7 +305,8 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 @keyframes float100{0%,100%{transform:translateY(0) rotate(-5deg);}50%{transform:translateY(-12px) rotate(5deg);}}
 @keyframes confettiFall{0%{transform:translateY(-20px) rotateZ(0deg);opacity:1;}100%{transform:translateY(110vh) rotateZ(720deg);opacity:0;}}
 </style>
-<link rel="stylesheet" href="hub-tools.css">
+<link rel="stylesheet" href="hub-tools.css?v=1016h">
+<link rel="stylesheet" href="music-tools.css?v=1016k">
 </head>
 <body class="tool-pitch">
 <div class="app">
@@ -325,8 +326,8 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
   </div>
   <div class="journey-bar">
     <div class="jb-top">
-      <span class="jb-label">📅 에구치 6개월 여정</span>
-      <span class="jb-val"><span id="jDays">0</span> / 180일</span>
+      <span class="jb-label">📅 Eguchi 6-month journey</span>
+      <span class="jb-val"><span id="jDays">0</span> / 180 days</span>
     </div>
     <div class="jb-wrap">
       <div class="jb-track"><div class="jb-fill" id="jFill" style="width:0%"></div></div>
@@ -340,35 +341,35 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
     </div>
   </div>
   <div class="tabs">
-    <button class="tb on" onclick="tab('train')"><svg class="ic" viewBox="0 0 24 24"><path d="M9 4 4 6v14l5-2 6 2 5-2V4l-5 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg> 레벨맵</button>
-    <button class="tb" onclick="tab('endless')"><svg class="ic" viewBox="0 0 24 24"><path d="M12 12c-2-2.7-4-4-6-4a4 4 0 0 0 0 8c2 0 4-1.3 6-4Zm0 0c2 2.7 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.3-6 4Z"/></svg> 무한</button>
-    <button class="tb" onclick="tab('stats')"><svg class="ic" viewBox="0 0 24 24"><path d="M6 20v-4M12 20V8M18 20v-9"/></svg> 기록</button>
-    <button class="tb" onclick="tab('ach')"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M9 14.5 8 22l4-2.5L16 22l-1-7.5"/></svg> 업적</button>
+    <button class="tb on" onclick="tab('train')"><svg class="ic" viewBox="0 0 24 24"><path d="M9 4 4 6v14l5-2 6 2 5-2V4l-5 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg> Levels</button>
+    <button class="tb" onclick="tab('endless')"><svg class="ic" viewBox="0 0 24 24"><path d="M12 12c-2-2.7-4-4-6-4a4 4 0 0 0 0 8c2 0 4-1.3 6-4Zm0 0c2 2.7 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.3-6 4Z"/></svg> Endless</button>
+    <button class="tb" onclick="tab('stats')"><svg class="ic" viewBox="0 0 24 24"><path d="M6 20v-4M12 20V8M18 20v-9"/></svg> Stats</button>
+    <button class="tb" onclick="tab('ach')"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M9 14.5 8 22l4-2.5L16 22l-1-7.5"/></svg> Badges</button>
   </div>
 
   <!-- Train / Level Map -->
   <div class="sc on" id="sc-train">
     <div class="today-box" id="todayBox">
       <div class="today-top">
-        <h3><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/></svg> 오늘의 미션</h3>
+        <h3><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/></svg> Today's mission</h3>
         <span class="today-day" id="tDay"></span>
       </div>
       <div class="today-stats">
-        <div class="today-stat"><div class="v acc" id="tToday">+0</div><div class="l">오늘 XP</div></div>
-        <div class="today-stat"><div class="v gold" id="tTotal">Lv.1</div><div class="l">현재 레벨</div></div>
-        <div class="today-stat"><div class="v ok" id="tGoal">0일</div><div class="l">6개월 여정</div></div>
+        <div class="today-stat"><div class="v acc" id="tToday">+0</div><div class="l">XP today</div></div>
+        <div class="today-stat"><div class="v gold" id="tTotal">Lv.1</div><div class="l">Level</div></div>
+        <div class="today-stat"><div class="v ok" id="tGoal">Day 0</div><div class="l">6-month journey</div></div>
       </div>
       <div class="today-steps" id="tSteps"></div>
       <div class="today-prog">
         <div class="bar"><div class="fill" id="tProgFill" style="width:0%"></div></div>
         <span class="pct" id="tProgPct">0/3</span>
       </div>
-      <div class="complete-msg" id="tComplete">🎉 오늘 미션 클리어!</div>
+      <div class="complete-msg" id="tComplete">🎉 Today's mission cleared!</div>
     </div>
 
-    <div class="section-label"><span style="display:inline-flex;align-items:center;gap:7px;"><svg class="ic" viewBox="0 0 24 24"><path d="M9 18V6l10-2v10"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="14" r="2.5"/></svg>단음 훈련 (Wong 2025)</span></div>
+    <div class="section-label"><span style="display:inline-flex;align-items:center;gap:7px;"><svg class="ic" viewBox="0 0 24 24"><path d="M9 18V6l10-2v10"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="14" r="2.5"/></svg>Single notes (Wong 2025)</span></div>
     <div class="level-path" id="noteMap"></div>
-    <div class="section-label" style="margin-top:20px;"><span style="display:inline-flex;align-items:center;gap:7px;"><svg class="ic" viewBox="0 0 24 24"><path d="m12 3 8 4-8 4-8-4 8-4Z"/><path d="m4 12 8 4 8-4"/><path d="m4 17 8 4 8-4"/></svg>화음 훈련 (에구치)</span></div>
+    <div class="section-label" style="margin-top:20px;"><span style="display:inline-flex;align-items:center;gap:7px;"><svg class="ic" viewBox="0 0 24 24"><path d="m12 3 8 4-8 4-8-4 8-4Z"/><path d="m4 12 8 4 8-4"/><path d="m4 17 8 4 8-4"/></svg>Chords (Eguchi)</span></div>
     <div class="level-path" id="chordMap"></div>
   </div>
 
@@ -392,7 +393,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
       <button class="play-btn" id="playBtn" onclick="playQ()">
         <span class="note-icon">♪</span>
       </button>
-      <div class="play-hint" id="playHint">터치하여 소리 듣기</div>
+      <div class="play-hint" id="playHint">Tap to listen</div>
     </div>
     <div class="ans-grid" id="ansGrid" style="align-self:center;"></div>
     <div id="fbArea"></div>
@@ -408,65 +409,65 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
       <div class="result-stars" id="rStars"></div>
       <div class="result-xp" id="rXp"></div>
       <div class="result-stats">
-        <div><span class="n" id="rOk"></span>정답</div>
-        <div><span class="n" id="rNg"></span>오답</div>
-        <div><span class="n" id="rTime"></span>시간</div>
-        <div><span class="n" id="rRT"></span>평균RT</div>
+        <div><span class="n" id="rOk"></span>Correct</div>
+        <div><span class="n" id="rNg"></span>Wrong</div>
+        <div><span class="n" id="rTime"></span>Time</div>
+        <div><span class="n" id="rRT"></span>Avg RT</div>
       </div>
-      <button class="btn-primary" onclick="retry()">🔄 다시 도전</button>
+      <button class="btn-primary" onclick="retry()">🔄 Try again</button>
       <button class="btn-secondary" id="nextBtn" onclick="goNext()" style="display:none"></button>
-      <button class="btn-secondary" onclick="tab('train')">← 레벨 선택</button>
+      <button class="btn-secondary" onclick="tab('train')">← Choose a level</button>
     </div>
   </div>
 
   <!-- Endless -->
   <div class="sc" id="sc-endless">
     <div class="endless-header">
-      <h2>♾️ 무한 퀴즈</h2>
-      <p>끝없이 반복 · 틀린 음은 더 자주 출제<br>멈추고 싶을 때 중단 버튼을 누르세요</p>
+      <h2>♾️ Endless quiz</h2>
+      <p>Keeps going · notes you miss come back more often<br>Press Stop whenever you want to finish</p>
     </div>
     <div class="mode-btns" id="eModes"></div>
     <div style="display:flex;justify-content:center;margin-bottom:16px;">
-      <button class="btn-primary" style="max-width:200px;" onclick="startEndless()">▶ 시작</button>
+      <button class="btn-primary" style="max-width:200px;" onclick="startEndless()">▶ Start</button>
     </div>
     <div class="endless-stats" id="eStats">
-      <div class="stb"><div class="v" id="eTot">0</div><div class="l">문제 수</div></div>
-      <div class="stb"><div class="v" id="eAcc">0%</div><div class="l">정확도</div></div>
-      <div class="stb"><div class="v" id="eCombo">0</div><div class="l">최고 콤보</div></div>
-      <div class="stb"><div class="v" id="eTime">0:00</div><div class="l">경과 시간</div></div>
+      <div class="stb"><div class="v" id="eTot">0</div><div class="l">Questions</div></div>
+      <div class="stb"><div class="v" id="eAcc">0%</div><div class="l">Accuracy</div></div>
+      <div class="stb"><div class="v" id="eCombo">0</div><div class="l">Best combo</div></div>
+      <div class="stb"><div class="v" id="eTime">0:00</div><div class="l">Elapsed</div></div>
     </div>
   </div>
 
   <!-- Stats -->
   <div class="sc" id="sc-stats">
     <div class="stat-grid">
-      <div class="stat-box"><div class="v" id="stT">0</div><div class="l">총 문제</div></div>
-      <div class="stat-box"><div class="v" id="stA">0%</div><div class="l">정확도</div></div>
-      <div class="stat-box"><div class="v" id="stC">0</div><div class="l">최고 콤보</div></div>
-      <div class="stat-box"><div class="v" id="stD">0</div><div class="l">연속 일수</div></div>
-      <div class="stat-box"><div class="v" style="color:var(--gold);" id="stTime">0h</div><div class="l">총 공부시간</div></div>
-      <div class="stat-box"><div class="v" style="color:var(--ok);" id="stGoal">0%</div><div class="l">6개월 달성률</div></div>
+      <div class="stat-box"><div class="v" id="stT">0</div><div class="l">Total questions</div></div>
+      <div class="stat-box"><div class="v" id="stA">0%</div><div class="l">Accuracy</div></div>
+      <div class="stat-box"><div class="v" id="stC">0</div><div class="l">Best combo</div></div>
+      <div class="stat-box"><div class="v" id="stD">0</div><div class="l">Day streak</div></div>
+      <div class="stat-box"><div class="v" style="color:var(--gold);" id="stTime">0h</div><div class="l">Total practice</div></div>
+      <div class="stat-box"><div class="v" style="color:var(--ok);" id="stGoal">0%</div><div class="l">6-month progress</div></div>
       <div class="stat-box" style="grid-column:1/-1;background:linear-gradient(135deg,var(--accd),rgba(244,114,182,.06));border-color:rgba(255,107,53,.2);">
         <div class="v" style="color:var(--acc);" id="stLv">Lv.1</div>
-        <div class="l" id="stRank">음감의 씨앗</div>
+        <div class="l" id="stRank">Seed of pitch</div>
       </div>
     </div>
 
-    <div class="section-title">📅 최근 활동 (14일)</div>
+    <div class="section-title">📅 Last 14 days</div>
     <div class="streak-row" id="streakRow"></div>
 
-    <div class="section-title">🎵 음별 정확도</div>
+    <div class="section-title">🎵 Accuracy by note</div>
     <div id="noteAccList"></div>
 
-    <div class="section-title">📝 최근 세션</div>
+    <div class="section-title">📝 Recent sessions</div>
     <div id="sessionList"></div>
 
-    <button class="btn-secondary" style="margin-top:14px;" onclick="resetStats()">통계 초기화</button>
+    <button class="btn-secondary" style="margin-top:14px;" onclick="resetStats()">Reset stats</button>
   </div>
 
   <!-- Achievements -->
   <div class="sc" id="sc-ach">
-    <div class="section-title">🏅 업적</div>
+    <div class="section-title">🏅 Badges</div>
     <div class="ach-grid" id="achGrid"></div>
   </div>
 </div>
@@ -482,7 +483,7 @@ function unlockAudio(){
 }
 ['touchstart','pointerdown','mousedown','keydown'].forEach(ev=>document.addEventListener(ev,unlockAudio,{once:true,passive:true}));
 const NN = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-const KO = {C:'도','C#':'도#',D:'레','D#':'레#',E:'미',F:'파','F#':'파#',G:'솔','G#':'솔#',A:'라','A#':'라#',B:'시'};
+const KO = {C:'Do','C#':'Do#',D:'Re','D#':'Re#',E:'Mi',F:'Fa','F#':'Fa#',G:'Sol','G#':'Sol#',A:'La','A#':'La#',B:'Ti'};
 function freq(n,o){return 440*Math.pow(2,((o-4)*12+NN.indexOf(n)-9)/12);}
 const TIMBRES = {
   piano:{wave:'triangle',h:[1,.4,.18,.08]},
@@ -510,32 +511,32 @@ function sfx(t){
 
 // ===== NOTE LEVELS =====
 const NL=[
-  {id:'n1',title:'A4 기준음 암기',notes:['A'],octs:[4],mode:'listen',qs:10,desc:'440Hz 라 — 모든 음의 기준',tag:'기준음',rt:0},
-  {id:'n2',title:'2음: A vs C',notes:['A','C'],octs:[4],mode:'quiz',qs:12,desc:'라 ↔ 도 구별',tag:'단3도',rt:5000},
-  {id:'n3',title:'3음: A, C, E',notes:['A','C','E'],octs:[4],mode:'quiz',qs:14,desc:'라·도·미 구별',tag:'장3화음',rt:5000},
-  {id:'n4',title:'4음: + G',notes:['A','C','E','G'],octs:[4],mode:'quiz',qs:16,desc:'라·도·미·솔',tag:'완전5도',rt:4500},
-  {id:'n5',title:'5음: + D',notes:['A','C','D','E','G'],octs:[4],mode:'quiz',qs:16,desc:'5음 펜타토닉',tag:'펜타토닉',rt:4000},
-  {id:'n6',title:'7음: 온음계',notes:['C','D','E','F','G','A','B'],octs:[4],mode:'quiz',qs:18,desc:'도레미파솔라시',tag:'메이저 스케일',rt:4000},
-  {id:'n7',title:'9음: + F#, Bb',notes:['C','D','E','F','F#','G','A','A#','B'],octs:[4],mode:'quiz',qs:20,desc:'흰건반 + 검은건반 2개',tag:'반음계①',rt:3500},
-  {id:'n8',title:'12음: 크로매틱',notes:NN.slice(),octs:[4],mode:'quiz',qs:22,desc:'12음 전체 판별',tag:'크로매틱',rt:3000},
-  {id:'n9',title:'옥타브 일반화',notes:NN.slice(),octs:[3,4,5],mode:'quiz',qs:24,desc:'C3~C5 다중 옥타브',tag:'옥타브',rt:3000},
-  {id:'n10',title:'음색 일반화',notes:NN.slice(),octs:[3,4,5],mode:'timbre',qs:24,desc:'피아노·기타·신스 랜덤',tag:'음색',rt:2500},
+  {id:'n1',title:'Memorize A4',notes:['A'],octs:[4],mode:'listen',qs:10,desc:'440 Hz La — the reference for every note',tag:'Reference',rt:0},
+  {id:'n2',title:'2 notes: A vs C',notes:['A','C'],octs:[4],mode:'quiz',qs:12,desc:'Tell La from Do',tag:'Minor 3rd',rt:5000},
+  {id:'n3',title:'3 notes: A, C, E',notes:['A','C','E'],octs:[4],mode:'quiz',qs:14,desc:'Tell La, Do, Mi apart',tag:'Major triad',rt:5000},
+  {id:'n4',title:'4 notes: + G',notes:['A','C','E','G'],octs:[4],mode:'quiz',qs:16,desc:'La, Do, Mi, Sol',tag:'Perfect 5th',rt:4500},
+  {id:'n5',title:'5 notes: + D',notes:['A','C','D','E','G'],octs:[4],mode:'quiz',qs:16,desc:'Five-note pentatonic',tag:'Pentatonic',rt:4000},
+  {id:'n6',title:'7 notes: diatonic',notes:['C','D','E','F','G','A','B'],octs:[4],mode:'quiz',qs:18,desc:'Do Re Mi Fa Sol La Ti',tag:'Major scale',rt:4000},
+  {id:'n7',title:'9 notes: + F#, Bb',notes:['C','D','E','F','F#','G','A','A#','B'],octs:[4],mode:'quiz',qs:20,desc:'White keys + two black keys',tag:'Chromatic ①',rt:3500},
+  {id:'n8',title:'12 notes: chromatic',notes:NN.slice(),octs:[4],mode:'quiz',qs:22,desc:'Name all 12 notes',tag:'Chromatic',rt:3000},
+  {id:'n9',title:'Across octaves',notes:NN.slice(),octs:[3,4,5],mode:'quiz',qs:24,desc:'C3 to C5, several octaves',tag:'Octaves',rt:3000},
+  {id:'n10',title:'Across timbres',notes:NN.slice(),octs:[3,4,5],mode:'timbre',qs:24,desc:'Random piano, guitar, synth',tag:'Timbre',rt:2500},
 ];
 
 // ===== EGUCHI CHORDS =====
 const ECH=[
-  {id:'C_R',color:'#e74c3c',name:'빨강',notes:[['C',4],['E',4],['G',4]],label:'C 근음'},
-  {id:'F_2',color:'#f1c40f',name:'노랑',notes:[['C',4],['F',4],['A',4]],label:'F 제2전위'},
-  {id:'G_1',color:'#3498db',name:'파랑',notes:[['B',3],['D',4],['G',4]],label:'G 제1전위'},
-  {id:'F_1',color:'#2c3e50',name:'검정',notes:[['A',3],['C',4],['F',4]],label:'F 제1전위'},
-  {id:'G_2',color:'#27ae60',name:'초록',notes:[['D',4],['G',4],['B',4]],label:'G 제2전위'},
-  {id:'C_1',color:'#e67e22',name:'주황',notes:[['E',4],['G',4],['C',5]],label:'C 제1전위'},
-  {id:'F_R',color:'#8e44ad',name:'보라',notes:[['F',4],['A',4],['C',5]],label:'F 근음'},
-  {id:'G_R',color:'#FFB6C1',name:'분홍',notes:[['G',4],['B',4],['D',5]],label:'G 근음'},
-  {id:'C_2',color:'#8B4513',name:'갈색',notes:[['G',4],['C',5],['E',5]],label:'C 제2전위'},
+  {id:'C_R',color:'#e74c3c',name:'Red',notes:[['C',4],['E',4],['G',4]],label:'C root'},
+  {id:'F_2',color:'#f1c40f',name:'Yellow',notes:[['C',4],['F',4],['A',4]],label:'F 2nd inv.'},
+  {id:'G_1',color:'#3498db',name:'Blue',notes:[['B',3],['D',4],['G',4]],label:'G 1st inv.'},
+  {id:'F_1',color:'#2c3e50',name:'Black',notes:[['A',3],['C',4],['F',4]],label:'F 1st inv.'},
+  {id:'G_2',color:'#27ae60',name:'Green',notes:[['D',4],['G',4],['B',4]],label:'G 2nd inv.'},
+  {id:'C_1',color:'#e67e22',name:'Orange',notes:[['E',4],['G',4],['C',5]],label:'C 1st inv.'},
+  {id:'F_R',color:'#8e44ad',name:'Purple',notes:[['F',4],['A',4],['C',5]],label:'F root'},
+  {id:'G_R',color:'#FFB6C1',name:'Pink',notes:[['G',4],['B',4],['D',5]],label:'G root'},
+  {id:'C_2',color:'#8B4513',name:'Brown',notes:[['G',4],['C',5],['E',5]],label:'C 2nd inv.'},
 ];
 const CL=[];
-for(let i=0;i<9;i++){const chs=ECH.slice(0,i+1);CL.push({id:'c'+(i+1),title:i===0?`${ECH[i].name}색 화음 암기`:`${i+1}개 화음 구별`,chords:chs,mode:i===0?'listen':'chord',qs:i===0?8:Math.min(10+i*2,20),desc:chs.map(c=>c.name).join('·'),tag:`화음 Phase${i+1}`});}
+for(let i=0;i<9;i++){const chs=ECH.slice(0,i+1);CL.push({id:'c'+(i+1),title:i===0?`Memorize the ${ECH[i].name} chord`:`Tell ${i+1} chords apart`,chords:chs,mode:i===0?'listen':'chord',qs:i===0?8:Math.min(10+i*2,20),desc:chs.map(c=>c.name).join('·'),tag:`Chord phase ${i+1}`});}
 
 // ===== LEVEL SYSTEM (Lv1-100, 에구치 6개월 = 150,000 XP = Lv100) =====
 const TOTAL_XP_MAX = 150000;
@@ -547,54 +548,54 @@ function xpThreshold(n){
 function getLevel(xp){for(let n=100;n>=1;n--)if(xp>=xpThreshold(n))return n;return 1;}
 
 const RANK_TITLES=[
-  {lv:1,  icon:'🥚', name:'음감의 씨앗'},
-  {lv:5,  icon:'🐣', name:'입문자'},
-  {lv:10, icon:'🎵', name:'수련생'},
-  {lv:15, icon:'🎶', name:'견습 연주자'},
-  {lv:20, icon:'🎸', name:'음감 훈련생'},
-  {lv:25, icon:'🎹', name:'연습생'},
-  {lv:30, icon:'🎨', name:'화음 탐험가'},
-  {lv:35, icon:'🎯', name:'음정 사냥꾼'},
-  {lv:40, icon:'⚡', name:'음감 전사'},
-  {lv:45, icon:'🌟', name:'선율 마스터'},
-  {lv:50, icon:'🏅', name:'반음계의 달인'},
-  {lv:55, icon:'🎻', name:'음악 수도자'},
-  {lv:60, icon:'🔮', name:'음감 현자'},
-  {lv:65, icon:'💎', name:'크로매틱 마스터'},
-  {lv:70, icon:'🌙', name:'달의 귀'},
-  {lv:75, icon:'⭐', name:'별의 귀'},
-  {lv:80, icon:'🔥', name:'불꽃의 청음'},
-  {lv:85, icon:'👁', name:'음감 각성자'},
-  {lv:90, icon:'🌈', name:'색채의 귀'},
-  {lv:95, icon:'🏆', name:'에구치 완성자'},
-  {lv:99, icon:'👑', name:'절대음감 전야'},
-  {lv:100,icon:'🎯', name:'절대음감 보유자'},
+  {lv:1,  icon:'🥚', name:'Seed of pitch'},
+  {lv:5,  icon:'🐣', name:'Beginner'},
+  {lv:10, icon:'🎵', name:'Apprentice'},
+  {lv:15, icon:'🎶', name:'Junior player'},
+  {lv:20, icon:'🎸', name:'Ear trainee'},
+  {lv:25, icon:'🎹', name:'Trainee'},
+  {lv:30, icon:'🎨', name:'Chord explorer'},
+  {lv:35, icon:'🎯', name:'Interval hunter'},
+  {lv:40, icon:'⚡', name:'Ear warrior'},
+  {lv:45, icon:'🌟', name:'Melody master'},
+  {lv:50, icon:'🏅', name:'Chromatic adept'},
+  {lv:55, icon:'🎻', name:'Music monk'},
+  {lv:60, icon:'🔮', name:'Ear sage'},
+  {lv:65, icon:'💎', name:'Chromatic master'},
+  {lv:70, icon:'🌙', name:'Moon ear'},
+  {lv:75, icon:'⭐', name:'Star ear'},
+  {lv:80, icon:'🔥', name:'Flame listener'},
+  {lv:85, icon:'👁', name:'Awakened ear'},
+  {lv:90, icon:'🌈', name:'Color ear'},
+  {lv:95, icon:'🏆', name:'Eguchi graduate'},
+  {lv:99, icon:'👑', name:'Eve of perfect pitch'},
+  {lv:100,icon:'🎯', name:'Perfect pitch'},
 ];
 function getRank(lv){let r=RANK_TITLES[0];for(const t of RANK_TITLES){if(lv>=t.lv)r=t;else break;}return r;}
 
 // ===== ACHIEVEMENTS =====
 const ACHS=[
-  {id:'first',icon:'🌱',name:'첫 걸음',desc:'첫 번째 퀴즈 완료',check:s=>s.sessions&&s.sessions.length>=1},
-  {id:'streak3',icon:'🔥',name:'3일 연속',desc:'3일 연속 훈련',check:s=>s.sk>=3},
-  {id:'streak7',icon:'🌟',name:'일주일 연속',desc:'7일 연속 훈련',check:s=>s.sk>=7},
-  {id:'combo10',icon:'⚡',name:'10연속',desc:'10 콤보 달성',check:s=>s.bc>=10},
-  {id:'combo20',icon:'💥',name:'20연속',desc:'20 콤보 달성',check:s=>s.bc>=20},
-  {id:'perfect',icon:'💎',name:'퍼펙트',desc:'한 세션 100% 달성',check:s=>s.hasPerfect},
-  {id:'q100',icon:'📚',name:'100문제',desc:'총 100문제 풀기',check:s=>(s.tc+s.tw)>=100},
-  {id:'q500',icon:'📖',name:'500문제',desc:'총 500문제 풀기',check:s=>(s.tc+s.tw)>=500},
-  {id:'q1000',icon:'🧠',name:'1000문제',desc:'총 1000문제 풀기',check:s=>(s.tc+s.tw)>=1000},
-  {id:'note5',icon:'🎵',name:'5레벨 달성',desc:'단음 N-5 언락',check:s=>s.nul>=5},
-  {id:'note8',icon:'🎼',name:'12음 마스터',desc:'단음 N-8 언락',check:s=>s.nul>=8},
-  {id:'allnote',icon:'🏆',name:'단음 완주',desc:'단음 모든 레벨 클리어',check:s=>s.nul>=NL.length},
-  {id:'chord3',icon:'🎨',name:'화음 3종',desc:'화음 C-3 언락',check:s=>s.cul>=3},
-  {id:'allchord',icon:'🌈',name:'화음 완주',desc:'화음 모든 레벨 클리어',check:s=>s.cul>=CL.length},
-  {id:'hour1',icon:'⏰',name:'1시간 달성',desc:'총 1시간 훈련',check:s=>(s.totalSec||0)>=3600},
-  {id:'hour10',icon:'🕙',name:'10시간 달성',desc:'총 10시간 훈련',check:s=>(s.totalSec||0)>=36000},
-  {id:'lv50',icon:'🏅',name:'절반의 여정',desc:'Lv.50 달성',check:s=>getLevel(s.xp)>=50},
-  {id:'lv100',icon:'🎯',name:'절대음감 보유자',desc:'Lv.100 달성 — 에구치 6개월 완성!',check:s=>s.lv100achieved||getLevel(s.xp)>=100},
-  {id:'day30',icon:'📅',name:'한 달 연속',desc:'30일 이상 훈련',check:s=>(s.days||[]).length>=30},
-  {id:'day90',icon:'🗓',name:'3개월 돌파',desc:'90일 이상 훈련',check:s=>(s.days||[]).length>=90},
-  {id:'day180',icon:'🌟',name:'6개월 완주',desc:'180일 이상 훈련',check:s=>(s.days||[]).length>=180},
+  {id:'first',icon:'🌱',name:'First step',desc:'Finish your first quiz',check:s=>s.sessions&&s.sessions.length>=1},
+  {id:'streak3',icon:'🔥',name:'3-day streak',desc:'Practice 3 days in a row',check:s=>s.sk>=3},
+  {id:'streak7',icon:'🌟',name:'7-day streak',desc:'Practice 7 days in a row',check:s=>s.sk>=7},
+  {id:'combo10',icon:'⚡',name:'Combo 10',desc:'Reach a 10 combo',check:s=>s.bc>=10},
+  {id:'combo20',icon:'💥',name:'Combo 20',desc:'Reach a 20 combo',check:s=>s.bc>=20},
+  {id:'perfect',icon:'💎',name:'Perfect',desc:'100% in one session',check:s=>s.hasPerfect},
+  {id:'q100',icon:'📚',name:'100 questions',desc:'Answer 100 questions',check:s=>(s.tc+s.tw)>=100},
+  {id:'q500',icon:'📖',name:'500 questions',desc:'Answer 500 questions',check:s=>(s.tc+s.tw)>=500},
+  {id:'q1000',icon:'🧠',name:'1000 questions',desc:'Answer 1000 questions',check:s=>(s.tc+s.tw)>=1000},
+  {id:'note5',icon:'🎵',name:'Level 5',desc:'Unlock note level N-5',check:s=>s.nul>=5},
+  {id:'note8',icon:'🎼',name:'12-note master',desc:'Unlock note level N-8',check:s=>s.nul>=8},
+  {id:'allnote',icon:'🏆',name:'All notes',desc:'Clear every note level',check:s=>s.nul>=NL.length},
+  {id:'chord3',icon:'🎨',name:'3 chords',desc:'Unlock chord level C-3',check:s=>s.cul>=3},
+  {id:'allchord',icon:'🌈',name:'All chords',desc:'Clear every chord level',check:s=>s.cul>=CL.length},
+  {id:'hour1',icon:'⏰',name:'1 hour',desc:'Practice 1 hour in total',check:s=>(s.totalSec||0)>=3600},
+  {id:'hour10',icon:'🕙',name:'10 hours',desc:'Practice 10 hours in total',check:s=>(s.totalSec||0)>=36000},
+  {id:'lv50',icon:'🏅',name:'Halfway',desc:'Reach Lv.50',check:s=>getLevel(s.xp)>=50},
+  {id:'lv100',icon:'🎯',name:'Perfect pitch',desc:'Reach Lv.100 — the Eguchi 6 months, done!',check:s=>s.lv100achieved||getLevel(s.xp)>=100},
+  {id:'day30',icon:'📅',name:'One month',desc:'Practice on 30+ days',check:s=>(s.days||[]).length>=30},
+  {id:'day90',icon:'🗓',name:'Three months',desc:'Practice on 90+ days',check:s=>(s.days||[]).length>=90},
+  {id:'day180',icon:'🌟',name:'Six months',desc:'Practice on 180+ days',check:s=>(s.days||[]).length>=180},
 ];
 
 // ===== STATE =====
@@ -627,7 +628,7 @@ function updHeader(){
   }else{
     document.getElementById('hXP').textContent='150,000';
     document.getElementById('hXM').textContent='150,000';
-    document.getElementById('hNR').textContent='🎯 절대음감 보유자!';
+    document.getElementById('hNR').textContent='🎯 Perfect pitch!';
     document.getElementById('hXB').style.width='100%';
   }
   // Journey bar
@@ -655,7 +656,7 @@ function showLevelUp(lv){
     <div class="em">${rank.icon}</div>
     <h2>LEVEL UP!</h2>
     <div class="rank">Lv.${lv} · ${rank.name}</div>
-    <button class="btn-primary" onclick="this.closest('.levelup-overlay').remove()">계속하기</button>
+    <button class="btn-primary" onclick="this.closest('.levelup-overlay').remove()">Continue</button>
   </div>`;
   document.body.appendChild(el);
   setTimeout(()=>{if(el.parentNode)el.remove();},5000);
@@ -670,15 +671,15 @@ function showLv100(){
   el.className='lv100-overlay';
   el.innerHTML=`<div class="lv100-box">
     <span class="em100">🎯</span>
-    <h1>절대음감 획득!</h1>
-    <div class="lv100-rank">Lv.100 달성!</div>
+    <h1>Perfect pitch unlocked!</h1>
+    <div class="lv100-rank">Lv.100 reached!</div>
     <div class="lv100-sub">
-      에구치 메소드 6개월 여정 완성!<br>
-      당신은 이제 절대음감 보유자입니다.
+      The Eguchi method's 6-month journey is complete!<br>
+      You now have perfect pitch.
     </div>
-    <div class="lv100-days">${(S.days||[]).length}일</div>
-    <div class="lv100-days-l">총 훈련 일수</div>
-    <button class="btn-gold" onclick="this.closest('.lv100-overlay').remove()">🎊 절대음감 달성!</button>
+    <div class="lv100-days">${(S.days||[]).length} days</div>
+    <div class="lv100-days-l">Days practised</div>
+    <button class="btn-gold" onclick="this.closest('.lv100-overlay').remove()">🎊 Perfect pitch!</button>
   </div>`;
   document.body.appendChild(el);
 }
@@ -709,7 +710,7 @@ function drainAchQueue(){
   const a=_achQueue.shift();
   const el=document.createElement('div');
   el.className='ach-popup';
-  el.innerHTML=`<div class="ap-icon">${a.icon}</div><div><div class="ap-title">업적 달성!</div><div class="ap-name">${a.name}</div></div>`;
+  el.innerHTML=`<div class="ap-icon">${a.icon}</div><div><div class="ap-title">Badge earned!</div><div class="ap-name">${a.name}</div></div>`;
   document.body.appendChild(el);
   setTimeout(()=>{el.style.transition='opacity .4s';el.style.opacity='0';setTimeout(()=>{if(el.parentNode)el.remove();drainAchQueue();},400);},2500);
 }
@@ -744,7 +745,7 @@ function renderLevelMap(){
     const stars=sc>=90?'★★★':sc>=70?'★★☆':sc>0?'★☆☆':'☆☆☆';
     let iconCls=locked?'locked':isMastered?'mastered':'note';
     let iconTxt=locked?'🔒':isMastered?'★':'N'+(i+1);
-    let badge=locked?'<span class="ln-badge locked">🔒 잠김</span>':isMastered?'<span class="ln-badge done">✓ 마스터</span>':isCurrent?'<span class="ln-badge new">▶ 도전중</span>':'';
+    let badge=locked?'<span class="ln-badge locked">🔒 Locked</span>':isMastered?'<span class="ln-badge done">✓ Mastered</span>':isCurrent?'<span class="ln-badge new">▶ In progress</span>':'';
     return`<div class="${cls}" onclick="startLv('${l.id}','note')">
       <div class="ln-icon ${iconCls}">${iconTxt}</div>
       <div class="ln-body"><div class="ln-title">${l.title}</div><div class="ln-desc">${l.desc} · ${l.tag}</div></div>
@@ -763,7 +764,7 @@ function renderLevelMap(){
     const dots=l.chords.map(c=>`<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${c.color};"></span>`).join(' ');
     let iconCls=locked?'locked':isMastered?'mastered':'chord';
     let iconTxt=locked?'🔒':isMastered?'★':'C'+(i+1);
-    let badge=locked?'<span class="ln-badge locked">🔒 잠김</span>':isMastered?'<span class="ln-badge done">✓ 마스터</span>':isCurrent?'<span class="ln-badge new">▶ 도전중</span>':'';
+    let badge=locked?'<span class="ln-badge locked">🔒 Locked</span>':isMastered?'<span class="ln-badge done">✓ Mastered</span>':isCurrent?'<span class="ln-badge new">▶ In progress</span>':'';
     return`<div class="${cls}" onclick="startLv('${l.id}','chord')">
       <div class="ln-icon ${iconCls}">${iconTxt}</div>
       <div class="ln-body"><div class="ln-title">${l.title}</div><div class="ln-desc">${dots}</div></div>
@@ -780,9 +781,9 @@ function renderToday(){
   const dayNum=(S.days||[]).length||1;
   document.getElementById('tDay').textContent='Day '+dayNum+' / 180';
   const steps=[
-    {icon:'<svg class="ic" viewBox="0 0 24 24"><path d="M9 18V6l10-2v10"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="14" r="2.5"/></svg>',color:'var(--acc)',title:'단음 훈련 15분',sub:'N-'+S.nul+' 레벨 도전',done:r.steps[0],action:()=>{const lv=NL[S.nul-1];if(lv)startLv(lv.id,'note');}},
-    {icon:'<svg class="ic" viewBox="0 0 24 24"><path d="m12 3 8 4-8 4-8-4 8-4Z"/><path d="m4 12 8 4 8-4"/><path d="m4 17 8 4 8-4"/></svg>',color:'var(--gold)',title:'화음 훈련 10분',sub:'C-'+S.cul+' 레벨 도전',done:r.steps[1],action:()=>{const lv=CL[S.cul-1];if(lv)startLv(lv.id,'chord');}},
-    {icon:'<svg class="ic" viewBox="0 0 24 24"><path d="M12 12c-2-2.7-4-4-6-4a4 4 0 0 0 0 8c2 0 4-1.3 6-4Zm0 0c2 2.7 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.3-6 4Z"/></svg>',color:'var(--ok)',title:'무한 퀴즈 5분',sub:'약점 음 집중 반복',done:r.steps[2],action:()=>{tab('endless');}},
+    {icon:'<svg class="ic" viewBox="0 0 24 24"><path d="M9 18V6l10-2v10"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="14" r="2.5"/></svg>',color:'var(--acc)',title:'Notes · 15 min',sub:'Try level N-'+S.nul,done:r.steps[0],action:()=>{const lv=NL[S.nul-1];if(lv)startLv(lv.id,'note');}},
+    {icon:'<svg class="ic" viewBox="0 0 24 24"><path d="m12 3 8 4-8 4-8-4 8-4Z"/><path d="m4 12 8 4 8-4"/><path d="m4 17 8 4 8-4"/></svg>',color:'var(--gold)',title:'Chords · 10 min',sub:'Try level C-'+S.cul,done:r.steps[1],action:()=>{const lv=CL[S.cul-1];if(lv)startLv(lv.id,'chord');}},
+    {icon:'<svg class="ic" viewBox="0 0 24 24"><path d="M12 12c-2-2.7-4-4-6-4a4 4 0 0 0 0 8c2 0 4-1.3 6-4Zm0 0c2 2.7 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.3-6 4Z"/></svg>',color:'var(--ok)',title:'Endless · 5 min',sub:'Drill your weak notes',done:r.steps[2],action:()=>{tab('endless');}},
   ];
   document.getElementById('tSteps').innerHTML=steps.map((s,i)=>`
     <div class="tstep ${s.done?'done':''}" onclick="routineGo(${i})" id="tstep${i}">
@@ -842,7 +843,7 @@ function renderQ(){
   if(lv.cat==='chord')renderChordAns();else renderNoteAns();
   document.getElementById('fbArea').innerHTML='';
   document.getElementById('playBtn').classList.remove('on');
-  document.getElementById('playHint').textContent=lv.cat==='chord'?'터치하여 화음 듣기':'터치하여 음 듣기';
+  document.getElementById('playHint').textContent=lv.cat==='chord'?'Tap to hear the chord':'Tap to hear the note';
 }
 
 function startRT(ms){
@@ -865,10 +866,10 @@ function timeOut(){
   // Show correct answer
   if(Q.lv.cat==='note'){
     document.querySelectorAll('.ans-btn').forEach(b=>{if(b.querySelector('.main')&&b.querySelector('.main').textContent===Q.cur.note)b.classList.add('ok');});
-    document.getElementById('fbArea').innerHTML=`<div class="fb ng">⏰ 시간 초과! 정답: ${Q.cur.note}(${KO[Q.cur.note]})</div>`;
+    document.getElementById('fbArea').innerHTML=`<div class="fb ng">⏰ Time's up! Answer: ${Q.cur.note}(${KO[Q.cur.note]})</div>`;
   }else{
     document.querySelectorAll('.chord-btn').forEach(b=>{if(b.querySelector('.chord-name')&&b.querySelector('.chord-name').textContent===Q.cur.name)b.classList.add('ok');});
-    document.getElementById('fbArea').innerHTML=`<div class="fb ng">⏰ 시간 초과! 정답: ${Q.cur.name}색</div>`;
+    document.getElementById('fbArea').innerHTML=`<div class="fb ng">⏰ Time's up! Answer: ${Q.cur.name}</div>`;
   }
   document.querySelectorAll('.ans-btn,.chord-btn').forEach(b=>b.disabled=true);
   document.getElementById('sc-quiz').classList.add('shake');
@@ -886,18 +887,24 @@ function loseLife(){
   }
 }
 
+
+// 답 버튼을 피아노 건반으로(한 옥타브, 음 이름만 맞히면 됨). 이 레벨에 없는 음은 흐리게 막아 둠. 버튼은 그대로 .ans-btn + .main(정답 표시 로직이 씀)
+function keysHTML(notes,fn){
+  const W=['C','D','E','F','G','A','B'],BK=[['C#',1],['D#',2],['F#',4],['G#',5],['A#',6]];
+  const key=(n,cls,style)=>notes.includes(n)?`<button class="ans-btn key ${cls}" style="${style||''}" onclick="${fn}(this,'${n}')"><span class="main">${n}</span><span class="sub">${KO[n]}</span></button>`:`<span class="key ${cls} off" style="${style||''}"><span class="main">${n}</span></span>`;
+  return `<div class="kbd">${W.map(n=>key(n,'w')).join('')}${BK.map(([n,i])=>key(n,'b',`left:${(i/7*100).toFixed(3)}%`)).join('')}</div>`;
+}
 function renderNoteAns(){
   const lv=Q.lv,g=document.getElementById('ansGrid');
   if(lv.mode==='listen'){
     g.className='ans-grid g2';
     g.innerHTML=`<div style="grid-column:1/-1;text-align:center;">
       <div style="font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:800;color:var(--gold);margin-bottom:6px;">A4</div>
-      <div style="font-size:12px;color:var(--txd);margin-bottom:12px;">라 — 440Hz 기준음</div>
-      <button class="btn-primary" onclick="listenNext()" style="max-width:180px;margin:0 auto;">${Q.c<Q.lv.qs-1?'다음 ▶':'완료 ✓'}</button></div>`;
+      <div style="font-size:12px;color:var(--txd);margin-bottom:12px;">La — the 440 Hz reference</div>
+      <button class="btn-primary" onclick="listenNext()" style="max-width:180px;margin:0 auto;">${Q.c<Q.lv.qs-1?'Next ▶':'Done ✓'}</button></div>`;
   }else{
-    const nc=lv.notes.length;
-    g.className='ans-grid '+(nc<=4?'g2':nc<=6?'g3':'g4');
-    g.innerHTML=lv.notes.map(n=>`<button class="ans-btn" onclick="ansNote(this,'${n}')"><span class="main">${n}</span><span class="sub">${KO[n]}</span></button>`).join('');
+    g.className='ans-grid kb';
+    g.innerHTML=keysHTML(lv.notes,'ansNote');
   }
 }
 
@@ -907,9 +914,9 @@ function renderChordAns(){
     g.className='ans-grid g2';
     g.innerHTML=`<div style="grid-column:1/-1;text-align:center;">
       <div style="width:52px;height:52px;border-radius:50%;background:${Q.cur.color};margin:0 auto 8px;border:2px solid rgba(255,255,255,.1);"></div>
-      <div style="font-size:15px;font-weight:800;">"${Q.cur.name}색" 화음</div>
+      <div style="font-size:15px;font-weight:800;">The ${Q.cur.name} chord</div>
       <div style="font-size:11px;color:var(--txd);margin:4px 0 12px;">${Q.cur.label}</div>
-      <button class="btn-primary" onclick="listenNext()" style="max-width:180px;margin:0 auto;">${Q.c<Q.lv.qs-1?'다음 ▶':'완료 ✓'}</button></div>`;
+      <button class="btn-primary" onclick="listenNext()" style="max-width:180px;margin:0 auto;">${Q.c<Q.lv.qs-1?'Next ▶':'Done ✓'}</button></div>`;
   }else{
     const nc=lv.chords.length;
     g.className='ans-grid g3';
@@ -950,11 +957,11 @@ function ansNote(btn,n){
     const mul=Math.min(1+Math.floor(Q.cb/3),4),xp=10*mul;Q.txp+=xp;S.xp+=xp;
     btn.classList.add('ok');sfx('ok');floatXP(xp,btn);updCombo();
     const rtStr=Q.lv.rt?` · ${(rt/1000).toFixed(1)}s`:'';
-    document.getElementById('fbArea').innerHTML=`<div class="fb ok">${Q.cur.note}(${KO[Q.cur.note]}) 정답!${rtStr} <div class="xpg">+${xp} XP</div></div>`;
+    document.getElementById('fbArea').innerHTML=`<div class="fb ok">${Q.cur.note}(${KO[Q.cur.note]}) correct!${rtStr} <div class="xpg">+${xp} XP</div></div>`;
   }else{
     S.tw++;Q.ng++;Q.qs[Q.c]._ok=false;Q.cb=0;loseLife();btn.classList.add('ng');sfx('ng');updCombo();
     document.querySelectorAll('.ans-btn').forEach(b=>{if(b.querySelector('.main').textContent===Q.cur.note)b.classList.add('ok');});
-    document.getElementById('fbArea').innerHTML=`<div class="fb ng">정답: ${Q.cur.note}(${KO[Q.cur.note]})</div>`;
+    document.getElementById('fbArea').innerHTML=`<div class="fb ng">Answer: ${Q.cur.note}(${KO[Q.cur.note]})</div>`;
     document.getElementById('sc-quiz').classList.add('shake');setTimeout(()=>document.getElementById('sc-quiz').classList.remove('shake'),300);
     setTimeout(()=>playN(Q.cur.note,Q.cur.oct,1,Q.cur.tmb),300);
   }
@@ -970,11 +977,11 @@ function ansChord(btn,id){
     S.ns[k].c++;S.tc++;Q.ok++;Q.qs[Q.c]._ok=true;Q.cb++;if(Q.cb>S.bc)S.bc=Q.cb;
     const mul=Math.min(1+Math.floor(Q.cb/3),4),xp=10*mul;Q.txp+=xp;S.xp+=xp;
     btn.classList.add('ok');sfx('ok');floatXP(xp,btn);updCombo();
-    document.getElementById('fbArea').innerHTML=`<div class="fb ok">"${Q.cur.name}색" 정답! <div class="xpg">+${xp} XP</div></div>`;
+    document.getElementById('fbArea').innerHTML=`<div class="fb ok">${Q.cur.name} — correct! <div class="xpg">+${xp} XP</div></div>`;
   }else{
     S.tw++;Q.ng++;Q.qs[Q.c]._ok=false;Q.cb=0;loseLife();btn.classList.add('ng');sfx('ng');updCombo();
     document.querySelectorAll('.chord-btn').forEach(b=>{if(b.querySelector('.chord-name').textContent===Q.cur.name)b.classList.add('ok');});
-    document.getElementById('fbArea').innerHTML=`<div class="fb ng">정답: ${Q.cur.name}색 (${Q.cur.label})</div>`;
+    document.getElementById('fbArea').innerHTML=`<div class="fb ng">Answer: ${Q.cur.name} (${Q.cur.label})</div>`;
     document.getElementById('sc-quiz').classList.add('shake');setTimeout(()=>document.getElementById('sc-quiz').classList.remove('shake'),300);
     setTimeout(()=>playChord(Q.cur.notes),300);
   }
@@ -1019,16 +1026,16 @@ function finish(){
   document.getElementById('rTime').textContent=m+':'+(s<10?'0':'')+s;
   document.getElementById('rRT').textContent=avgRT?(avgRT/1000).toFixed(1)+'s':'-';
   document.getElementById('rStars').textContent=pct>=90?'★★★':pct>=70?'★★☆':'★☆☆';
-  document.getElementById('rXp').textContent='+'+Q.txp+' XP'+(bonus>0?` (+${bonus} 보너스)`: '');
-  if(pct>=80){document.getElementById('rEmoji').textContent='🎉';document.getElementById('rTitle').textContent='훌륭해요!';document.getElementById('rSub').textContent=pct===100?'퍼펙트! 완벽한 점수!':'80% 이상 달성!';sfx('up');}
-  else if(pct>=60){document.getElementById('rEmoji').textContent='💪';document.getElementById('rTitle').textContent='좋은 시도!';document.getElementById('rSub').textContent='조금만 더!';}
-  else{document.getElementById('rEmoji').textContent='🎯';document.getElementById('rTitle').textContent='계속 도전!';document.getElementById('rSub').textContent='반복이 핵심';}
+  document.getElementById('rXp').textContent='+'+Q.txp+' XP'+(bonus>0?` (+${bonus} bonus)`: '');
+  if(pct>=80){document.getElementById('rEmoji').textContent='🎉';document.getElementById('rTitle').textContent='Great work!';document.getElementById('rSub').textContent=pct===100?'Perfect score!':'Over 80%!';sfx('up');}
+  else if(pct>=60){document.getElementById('rEmoji').textContent='💪';document.getElementById('rTitle').textContent='Nice try!';document.getElementById('rSub').textContent='Almost there!';}
+  else{document.getElementById('rEmoji').textContent='🎯';document.getElementById('rTitle').textContent='Keep going!';document.getElementById('rSub').textContent='Repetition is the key';}
   const nb=document.getElementById('nextBtn');
   let hasNext=false;
   if(Q.lv.cat==='note'){const idx=NL.findIndex(l=>l.id===Q.lv.id);hasNext=idx+1<NL.length&&idx+1<S.nul;}
   else{const idx=CL.findIndex(l=>l.id===Q.lv.id);hasNext=idx+1<CL.length&&idx+1<S.cul;}
-  if(unlk){nb.style.display='block';nb.innerHTML='다음 레벨 → <span class="new-badge">NEW</span>';}
-  else if(hasNext){nb.style.display='block';nb.innerHTML='다음 레벨 →';}
+  if(unlk){nb.style.display='block';nb.innerHTML='Next level → <span class="new-badge">NEW</span>';}
+  else if(hasNext){nb.style.display='block';nb.innerHTML='Next level →';}
   else{nb.style.display='none';}
   ss('result');
 }
@@ -1047,25 +1054,25 @@ function renderEndlessOpts(){
   const avail=unlN>=8?NN.slice():unlN>=7?['C','D','E','F','F#','G','A','A#','B']:unlN>=6?['C','D','E','F','G','A','B']:unlN>=5?['A','C','D','E','G']:unlN>=4?['A','C','E','G']:unlN>=3?['A','C','E']:unlN>=2?['A','C']:['A'];
   endlessNotes=avail;endlessChords=ECH.slice(0,Math.min(unlC,9));
   document.getElementById('eModes').innerHTML=`
-    <button class="mode-btn ${endlessMode==='note'?'on':''}" onclick="endlessMode='note';renderEndlessOpts()">🎹 단음 ${avail.length}음</button>
-    <button class="mode-btn ${endlessMode==='chord'?'on':''}" onclick="endlessMode='chord';renderEndlessOpts()">🎨 화음 ${endlessChords.length}개</button>
-    <button class="mode-btn ${endlessMode==='mix'?'on':''}" onclick="endlessMode='mix';renderEndlessOpts()">🔀 혼합</button>`;
+    <button class="mode-btn ${endlessMode==='note'?'on':''}" onclick="endlessMode='note';renderEndlessOpts()">🎹 Notes · ${avail.length}</button>
+    <button class="mode-btn ${endlessMode==='chord'?'on':''}" onclick="endlessMode='chord';renderEndlessOpts()">🎨 Chords · ${endlessChords.length}</button>
+    <button class="mode-btn ${endlessMode==='mix'?'on':''}" onclick="endlessMode='mix';renderEndlessOpts()">🔀 Mixed</button>`;
 }
 function startEndless(){
   if(!endlessMode)endlessMode='note';
   E={ok:0,ng:0,cb:0,bcb:0,t0:Date.now(),tid:null,cur:null,running:true};
   ss('quiz');clearTimers();
   E.tid=setInterval(()=>{const s=Math.floor((Date.now()-E.t0)/1000),m=Math.floor(s/60);document.getElementById('qTimer').textContent=m+':'+(s%60<10?'0':'')+(s%60);},1000);
-  Q.lv={id:'endless',cat:endlessMode==='chord'?'chord':'note',title:'무한 퀴즈',desc:'멈출 때까지 계속',mode:'endless',rt:0};
+  Q.lv={id:'endless',cat:endlessMode==='chord'?'chord':'note',title:'Endless quiz',desc:'Until you stop',mode:'endless',rt:0};
   startSession('endless');nextEndless();
 }
 function nextEndless(){
   if(!E.running)return;
   document.getElementById('qLabel').textContent='♾️';
-  document.getElementById('qTitle').textContent='무한 퀴즈';
+  document.getElementById('qTitle').textContent='Endless quiz';
   document.getElementById('qLives').innerHTML='';
   const tot=E.ok+E.ng;
-  document.getElementById('qSub').textContent=`${tot}문제 · 정답률 ${tot?Math.round(E.ok/tot*100):0}% · 최고콤보 ${E.bcb}`;
+  document.getElementById('qSub').textContent=`${tot} questions · ${tot?Math.round(E.ok/tot*100):0}% correct · best combo ${E.bcb}`;
   document.getElementById('qProg').innerHTML='';
   document.getElementById('rtFill').style.width='100%';document.getElementById('rtFill').style.background='var(--ok)';
   updCBEndless();
@@ -1083,13 +1090,12 @@ function nextEndless(){
     g.className='ans-grid g3';
     g.innerHTML=endlessChords.map(ch=>`<button class="chord-btn" onclick="ansEndlessChord(this,'${ch.id}')"><div class="chord-color" style="background:${ch.color}"></div><span class="chord-name">${ch.name}</span></button>`).join('');
   }else{
-    const nc=endlessNotes.length;
-    g.className='ans-grid '+(nc<=4?'g2':nc<=6?'g3':'g4');
-    g.innerHTML=endlessNotes.map(n=>`<button class="ans-btn" onclick="ansEndlessNote(this,'${n}')"><span class="main">${n}</span><span class="sub">${KO[n]}</span></button>`).join('');
+    g.className='ans-grid kb';
+    g.innerHTML=keysHTML(endlessNotes,'ansEndlessNote');
   }
-  document.getElementById('fbArea').innerHTML=`<div style="text-align:center;margin-top:10px;"><button class="btn-secondary" style="max-width:200px;margin:0 auto;color:var(--ng);border-color:var(--ng);" onclick="stopEndless()">⏹ 중단</button></div>`;
+  document.getElementById('fbArea').innerHTML=`<div style="text-align:center;margin-top:10px;"><button class="btn-secondary" style="max-width:200px;margin:0 auto;color:var(--ng);border-color:var(--ng);" onclick="stopEndless()">⏹ Stop</button></div>`;
   document.getElementById('playBtn').classList.remove('on');
-  document.getElementById('playHint').textContent=E.cur.type==='chord'?'터치하여 화음 듣기':'터치하여 음 듣기';
+  document.getElementById('playHint').textContent=E.cur.type==='chord'?'Tap to hear the chord':'Tap to hear the note';
 }
 function pickWeighted(){
   const pool=[];
@@ -1109,11 +1115,11 @@ function ansEndlessNote(btn,n){
   if(ok){S.ns[k].c++;S.tc++;E.ok++;E.cb++;if(E.cb>E.bcb)E.bcb=E.cb;if(E.cb>S.bc)S.bc=E.cb;
     const mul=Math.min(1+Math.floor(E.cb/3),4),xp=10*mul;S.xp+=xp;
     btn.classList.add('ok');sfx('ok');floatXP(xp,btn);updCBEndless();
-    document.getElementById('fbArea').innerHTML=`<div class="fb ok">${E.cur.note}(${KO[E.cur.note]}) 정답! <div class="xpg">+${xp} XP</div></div><div style="text-align:center;margin-top:8px;"><button class="btn-secondary" style="max-width:200px;margin:0 auto;color:var(--ng);border-color:var(--ng);" onclick="stopEndless()">⏹ 중단</button></div>`;
+    document.getElementById('fbArea').innerHTML=`<div class="fb ok">${E.cur.note}(${KO[E.cur.note]}) correct! <div class="xpg">+${xp} XP</div></div><div style="text-align:center;margin-top:8px;"><button class="btn-secondary" style="max-width:200px;margin:0 auto;color:var(--ng);border-color:var(--ng);" onclick="stopEndless()">⏹ Stop</button></div>`;
   }else{S.tw++;E.ng++;E.cb=0;btn.classList.add('ng');sfx('ng');updCBEndless();
     document.querySelectorAll('.ans-btn').forEach(b=>{if(b.querySelector('.main').textContent===E.cur.note)b.classList.add('ok');});
     setTimeout(()=>playN(E.cur.note,E.cur.oct,1,E.cur.tmb),300);
-    document.getElementById('fbArea').innerHTML=`<div class="fb ng">정답: ${E.cur.note}(${KO[E.cur.note]})</div><div style="text-align:center;margin-top:8px;"><button class="btn-secondary" style="max-width:200px;margin:0 auto;color:var(--ng);border-color:var(--ng);" onclick="stopEndless()">⏹ 중단</button></div>`;
+    document.getElementById('fbArea').innerHTML=`<div class="fb ng">Answer: ${E.cur.note}(${KO[E.cur.note]})</div><div style="text-align:center;margin-top:8px;"><button class="btn-secondary" style="max-width:200px;margin:0 auto;color:var(--ng);border-color:var(--ng);" onclick="stopEndless()">⏹ Stop</button></div>`;
   }
   document.querySelectorAll('.ans-btn').forEach(b=>b.disabled=true);
   saveState();setTimeout(()=>nextEndless(),ok?600:1400);
@@ -1125,11 +1131,11 @@ function ansEndlessChord(btn,id){
   if(ok){S.ns[k].c++;S.tc++;E.ok++;E.cb++;if(E.cb>E.bcb)E.bcb=E.cb;if(E.cb>S.bc)S.bc=E.cb;
     const mul=Math.min(1+Math.floor(E.cb/3),4),xp=10*mul;S.xp+=xp;
     btn.classList.add('ok');sfx('ok');floatXP(xp,btn);updCBEndless();
-    document.getElementById('fbArea').innerHTML=`<div class="fb ok">"${E.cur.chord.name}색" 정답! <div class="xpg">+${xp} XP</div></div><div style="text-align:center;margin-top:8px;"><button class="btn-secondary" style="max-width:200px;margin:0 auto;color:var(--ng);border-color:var(--ng);" onclick="stopEndless()">⏹ 중단</button></div>`;
+    document.getElementById('fbArea').innerHTML=`<div class="fb ok">${E.cur.chord.name} — correct! <div class="xpg">+${xp} XP</div></div><div style="text-align:center;margin-top:8px;"><button class="btn-secondary" style="max-width:200px;margin:0 auto;color:var(--ng);border-color:var(--ng);" onclick="stopEndless()">⏹ Stop</button></div>`;
   }else{S.tw++;E.ng++;E.cb=0;btn.classList.add('ng');sfx('ng');updCBEndless();
     document.querySelectorAll('.chord-btn').forEach(b=>{if(b.querySelector('.chord-name').textContent===E.cur.chord.name)b.classList.add('ok');});
     setTimeout(()=>playChord(E.cur.chord.notes),300);
-    document.getElementById('fbArea').innerHTML=`<div class="fb ng">정답: ${E.cur.chord.name}색</div><div style="text-align:center;margin-top:8px;"><button class="btn-secondary" style="max-width:200px;margin:0 auto;color:var(--ng);border-color:var(--ng);" onclick="stopEndless()">⏹ 중단</button></div>`;
+    document.getElementById('fbArea').innerHTML=`<div class="fb ng">Answer: ${E.cur.chord.name}</div><div style="text-align:center;margin-top:8px;"><button class="btn-secondary" style="max-width:200px;margin:0 auto;color:var(--ng);border-color:var(--ng);" onclick="stopEndless()">⏹ Stop</button></div>`;
   }
   document.querySelectorAll('.chord-btn').forEach(b=>b.disabled=true);
   saveState();setTimeout(()=>nextEndless(),ok?600:1400);
@@ -1140,16 +1146,16 @@ function stopEndless(){
   const tot=E.ok+E.ng,pct=tot?Math.round(E.ok/tot*100):0,sec=Math.floor((Date.now()-E.t0)/1000),m=Math.floor(sec/60),s=sec%60;
   let bonus=Math.floor(tot/10)*5;S.xp+=bonus;
   if(!S.sessions)S.sessions=[];
-  S.sessions.unshift({date:new Date().toISOString(),lvTitle:'무한 퀴즈',pct,ok:E.ok,ng:E.ng,sec,xp:bonus,cat:'endless'});
+  S.sessions.unshift({date:new Date().toISOString(),lvTitle:'Endless quiz',pct,ok:E.ok,ng:E.ng,sec,xp:bonus,cat:'endless'});
   if(S.sessions.length>50)S.sessions=S.sessions.slice(0,50);
   saveState();
   document.getElementById('rScore').innerHTML=E.ok+'<span>/'+tot+'</span>';
   document.getElementById('rOk').textContent=E.ok;document.getElementById('rNg').textContent=E.ng;
   document.getElementById('rTime').textContent=m+':'+(s<10?'0':'')+s;document.getElementById('rRT').textContent='-';
   document.getElementById('rStars').textContent=pct>=90?'★★★':pct>=70?'★★☆':'★☆☆';
-  document.getElementById('rXp').textContent='+'+bonus+' 보너스 XP';
-  if(pct>=80){document.getElementById('rEmoji').textContent='🎉';document.getElementById('rTitle').textContent='훌륭해요!';document.getElementById('rSub').textContent=tot+'문제 완료!';}
-  else{document.getElementById('rEmoji').textContent='💪';document.getElementById('rTitle').textContent='좋은 시도!';document.getElementById('rSub').textContent='계속 반복!';}
+  document.getElementById('rXp').textContent='+'+bonus+' bonus XP';
+  if(pct>=80){document.getElementById('rEmoji').textContent='🎉';document.getElementById('rTitle').textContent='Great work!';document.getElementById('rSub').textContent=tot+' questions done!';}
+  else{document.getElementById('rEmoji').textContent='💪';document.getElementById('rTitle').textContent='Nice try!';document.getElementById('rSub').textContent='Keep repeating!';}
   document.getElementById('nextBtn').style.display='none';ss('result');
 }
 
@@ -1162,7 +1168,7 @@ function renderStats(){
   document.getElementById('stGoal').textContent=Math.min(Math.round((S.days||[]).length/180*100),100)+'%';
   const lv=getLevel(S.xp);const rank=getRank(lv);
   const slv=document.getElementById('stLv');if(slv)slv.textContent=rank.icon+' Lv.'+lv;
-  const srk=document.getElementById('stRank');if(srk)srk.textContent=rank.name+(lv>=100?' ✓':' · 다음: '+getRank(lv+1>100?100:lv+1).name);
+  const srk=document.getElementById('stRank');if(srk)srk.textContent=rank.name+(lv>=100?' ✓':' · next: '+getRank(lv+1>100?100:lv+1).name);
   // Streak calendar (14 days)
   const row=document.getElementById('streakRow');row.innerHTML='';
   for(let i=13;i>=0;i--){
@@ -1182,15 +1188,15 @@ function renderStats(){
   }).join('');
   // Session history
   const sl=document.getElementById('sessionList');
-  if(!S.sessions||S.sessions.length===0){sl.innerHTML='<div style="text-align:center;color:var(--txd);font-size:13px;padding:20px;">아직 기록이 없어요</div>';return;}
+  if(!S.sessions||S.sessions.length===0){sl.innerHTML='<div style="text-align:center;color:var(--txd);font-size:13px;padding:20px;">No sessions yet</div>';return;}
   sl.innerHTML=S.sessions.slice(0,10).map(s=>{
     const d=new Date(s.date);
     const ds=`${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;
     const stars=s.pct>=90?'★★★':s.pct>=70?'★★☆':'★☆☆';
-    return`<div class="session-item"><span class="si-date">${ds}</span><div class="si-info"><div class="si-score">${s.lvTitle}</div><div class="si-sub">${s.ok}정답 / ${s.ok+s.ng}문제 · ${s.pct}% · +${s.xp}XP</div></div><span class="si-stars">${stars}</span></div>`;
+    return`<div class="session-item"><span class="si-date">${ds}</span><div class="si-info"><div class="si-score">${s.lvTitle}</div><div class="si-sub">${s.ok} correct / ${s.ok+s.ng} · ${s.pct}% · +${s.xp}XP</div></div><span class="si-stars">${stars}</span></div>`;
   }).join('');
 }
-function resetStats(){if(confirm('통계를 초기화할까요?')){S.ns={};S.tc=0;S.tw=0;S.bc=0;S.sk=0;S.days=[];S.ld=null;S.xp=0;S.xpDayStart=0;S.sessions=[];S.hasPerfect=false;S.unlockedAchs=[];S.lv100achieved=false;saveState();renderStats();}}
+function resetStats(){if(confirm('Reset all stats?')){S.ns={};S.tc=0;S.tw=0;S.bc=0;S.sk=0;S.days=[];S.ld=null;S.xp=0;S.xpDayStart=0;S.sessions=[];S.hasPerfect=false;S.unlockedAchs=[];S.lv100achieved=false;saveState();renderStats();}}
 
 // ===== ACHIEVEMENTS =====
 function renderAch(){
@@ -1200,7 +1206,7 @@ function renderAch(){
       <div class="ach-icon">${a.icon}</div>
       <div class="ach-name">${a.name}</div>
       <div class="ach-desc">${a.desc}</div>
-      <span class="ach-badge ${unlocked?'gold':'locked'}">${unlocked?'달성':'미달성'}</span>
+      <span class="ach-badge ${unlocked?'gold':'locked'}">${unlocked?'Earned':'Locked'}</span>
     </div>`;
   }).join('');
 }
@@ -1227,7 +1233,7 @@ function updTodayTime(){
   const dayCount=(S.days||[]).length;
   const e=document.getElementById('tToday');if(e)e.textContent='+'+todayXp;
   const e2=document.getElementById('tTotal');if(e2)e2.textContent='Lv.'+lv;
-  const e3=document.getElementById('tGoal');if(e3)e3.textContent=dayCount+'일';
+  const e3=document.getElementById('tGoal');if(e3)e3.textContent='Day '+dayCount;
 }
 
 window.addEventListener('beforeunload',()=>endSession());

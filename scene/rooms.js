@@ -49,7 +49,9 @@
     if (!r.ok) throw new Error('YouTube search failed: ' + (j.error?.message || r.status));
     return (j.items || []).map(i => ({ id: i.id.videoId, title: unent(i.snippet.title), channel: unent(i.snippet.channelTitle), thumb: i.snippet.thumbnails?.medium?.url || i.snippet.thumbnails?.default?.url }));
   }
-  const player = id => el('div', { class: 'rm-video' }, el('iframe', { src: `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&playsinline=1&rel=0`, title: 'YouTube player', allow: 'autoplay; encrypted-media; picture-in-picture', allowfullscreen: true }));
+  // 일부 공식 MV(예: HYBE LABELS)는 다른 사이트 재생을 막아 둠 → 플레이어 아래 항상 'YouTube에서 열기'
+  const player = id => el('div', { class: 'rm-player' }, el('div', { class: 'rm-video' }, el('iframe', { src: `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&playsinline=1&rel=0`, title: 'YouTube player', allow: 'autoplay; encrypted-media; picture-in-picture', allowfullscreen: true })),
+    el('a', { class: 'rm-btn ghost sm rm-ytlink', href: `https://www.youtube.com/watch?v=${id}`, target: '_blank', rel: 'noopener' }, 'Open on YouTube ↗'));
   async function setYtKey() {
     const key = ask('YouTube Data API key (starts with AIza…)'); if (!key) return '';
     if (!/^[\w-]{20,60}$/.test(key)) throw new Error("That doesn't look like a key. Check it again.");
@@ -461,7 +463,7 @@
         { label: 'Practice', wide: true,
           load: async () => [{ id: 'p', t: 'Perfect Pitch Quest', s: 'Hear a note, name it, level up.', h: 'pitch-trainer.html' }, { id: 'c', t: 'Chord Dictionary', s: 'K-pop chords, progressions, the circle of fifths and theory.', h: 'chord-dictionary.html' }],
           row: x => ({ title: x.t, sub: x.s }),
-          view: x => [el('iframe', { class: 'rm-tool', src: x.h + '?embed', title: x.t })] },
+          view: x => [el('iframe', { class: 'rm-tool', src: x.h + '?embed&v=1016k', title: x.t })] },
       ],
     },
   };
@@ -610,7 +612,7 @@
         }
       }
     }
-    const main = el('main', { class: 'rm-main' + (d.wide && st.view === 'item' ? ' wide' : '') + (st.key !== shownKey ? ' enter' : '') }, head, body);
+    const main = el('main', { class: 'rm-main' + (d.wide && st.view === 'item' ? ' wide' : '') + (st.key !== shownKey ? ' enter' : ''), 'data-room': st.key }, head, body);
     shownKey = st.key;
     root.replaceChildren(el('div', { class: 'rm-shell' }, sidebar(), main));
     if (focus) h.focus({ preventScroll: true });

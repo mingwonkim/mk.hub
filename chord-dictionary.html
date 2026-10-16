@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <script>if(/[?&]embed/.test(location.search))document.documentElement.classList.add('embed')</script>
-<title>코드 사전 — K-POP 피아노</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600;800&family=Space+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet">
+<title>Chord Dictionary — K-pop piano</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;600;800&family=Space+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#131313;--sf:#1c1b1b;--sf2:#201f1f;--bd:#353535;
@@ -62,65 +62,67 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 .empty{text-align:center;padding:40px 20px;color:var(--txd);font-size:13px;}
 @media(max-width:400px){.chord-grid{grid-template-columns:repeat(auto-fill,minmax(95px,1fr));}}
 </style>
-<link rel="stylesheet" href="hub-tools.css">
+<link rel="stylesheet" href="hub-tools.css?v=1016h">
+<link rel="stylesheet" href="music-tools.css?v=1016k">
 </head>
 <body class="tool-chord">
 <div class="app">
-<div class="hd"><div class="logo"><span class="mk-tool-label">MUSIC LAB / 02</span>CHORD DICTIONARY<em>K-POP · 코드진행 · 이론</em></div></div>
+<div class="hd"><div class="logo"><span class="mk-tool-label">MUSIC LAB / 02</span>CHORD DICTIONARY<em>K-pop · progressions · theory</em></div></div>
 <div class="tabs">
-  <button class="tb on" onclick="tab('chords')">코드</button>
-  <button class="tb" onclick="tab('prog')">코드진행</button>
-  <button class="tb" onclick="tab('circle')">5도권</button>
-  <button class="tb" onclick="tab('theory')">이론</button>
+  <button class="tb on" onclick="tab('chords')">Chords</button>
+  <button class="tb" onclick="tab('prog')">Progressions</button>
+  <button class="tb" onclick="tab('circle')">Circle of fifths</button>
+  <button class="tb" onclick="tab('theory')">Theory</button>
 </div>
+<div class="cd-kbd" id="cdKbd" aria-hidden="true"></div>
 <div class="sc on" id="sc-chords">
-  <div class="sh">🎹 Key 선택</div><div class="key-sel" id="keySel"></div><div class="mode-row" id="modeRow"></div>
-  <div class="sh">다이어토닉 <span class="badge" id="chordCount">-</span></div><div class="chord-grid" id="chordGrid"></div>
+  <div class="sh">🎹 Key</div><div class="key-sel" id="keySel"></div><div class="mode-row" id="modeRow"></div>
+  <div class="sh">Diatonic <span class="badge" id="chordCount">-</span></div><div class="chord-grid" id="chordGrid"></div>
   <div id="borrowedSection"></div>
   <div id="famousProgs"></div>
 </div>
 <div class="sc" id="sc-prog">
-  <div style="display:flex;gap:8px;margin-bottom:10px;"><input class="si" id="progSearch" placeholder="🔍 곡명, 아티스트, 코드..." oninput="rProgs()" style="margin:0;flex:1;"><button class="abtn p" onclick="toggleAdd()">+ 곡 추가</button></div>
+  <div style="display:flex;gap:8px;margin-bottom:10px;"><input class="si" id="progSearch" placeholder="🔍 Song, artist, chord..." oninput="rProgs()" style="margin:0;flex:1;"><button class="abtn p" onclick="toggleAdd()">+ Add song</button></div>
   <div class="add-form" id="addForm">
-    <div style="font-size:14px;font-weight:800;margin-bottom:10px;">곡 추가</div>
+    <div style="font-size:14px;font-weight:800;margin-bottom:10px;">Add a song</div>
     <!-- AI Auto mode -->
     <div id="aiMode">
-      <div style="font-size:12px;color:var(--txd);margin-bottom:8px;">곡 이름만 입력하면 AI가 코드진행을 자동 분석해요</div>
-      <div class="row"><input id="ai_query" placeholder="곡 이름 + 아티스트 (예: Attention 뉴진스)" style="flex:3;"><button class="abtn p" onclick="aiAnalyze()" id="aiBtn" style="flex:1;white-space:nowrap;">🤖 AI 분석</button></div>
+      <div style="font-size:12px;color:var(--txd);margin-bottom:8px;">Type a song name and AI works out the chord progression</div>
+      <div class="row"><input id="ai_query" placeholder="Song + artist (e.g. Attention NewJeans)" style="flex:3;"><button class="abtn p" onclick="aiAnalyze()" id="aiBtn" style="flex:1;white-space:nowrap;">🤖 Analyze</button></div>
       <div id="aiStatus" style="font-size:11px;color:var(--txd);margin:6px 0;min-height:18px;"></div>
       <div id="aiResult" style="display:none;">
-        <div style="font-size:12px;font-weight:700;margin-bottom:6px;color:var(--ok);">✅ 분석 완료 — 확인 후 저장하세요</div>
-        <div class="row"><input id="af_name" placeholder="곡 이름"><input id="af_artist" placeholder="아티스트"></div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:6px;color:var(--ok);">✅ Done — check it, then save</div>
+        <div class="row"><input id="af_name" placeholder="Song"><input id="af_artist" placeholder="Artist"></div>
         <div class="row"><input id="af_scale" placeholder="Key"><input id="af_bpm" placeholder="BPM" type="number"></div>
-        <input id="af_deg" placeholder="디그리">
-        <input id="af_chords" placeholder="코드 (쉼표 구분)">
-        <input id="af_tags" placeholder="태그 (쉼표 구분)">
-        <input id="af_top" placeholder="탑노트/메모">
-        <div style="display:flex;gap:6px;margin-top:6px;"><button class="abtn p" onclick="addSong()">저장</button><button class="abtn s2" onclick="toggleAdd()">취소</button></div>
+        <input id="af_deg" placeholder="Degrees">
+        <input id="af_chords" placeholder="Chords (comma separated)">
+        <input id="af_tags" placeholder="Tags (comma separated)">
+        <input id="af_top" placeholder="Top note / memo">
+        <div style="display:flex;gap:6px;margin-top:6px;"><button class="abtn p" onclick="addSong()">Save</button><button class="abtn s2" onclick="toggleAdd()">Cancel</button></div>
       </div>
       <div style="margin-top:8px;border-top:1px solid var(--bd);padding-top:8px;">
-        <button class="abtn s2" onclick="showManual()" style="font-size:11px;">수동 입력으로 전환</button>
+        <button class="abtn s2" onclick="showManual()" style="font-size:11px;">Enter manually</button>
       </div>
     </div>
     <!-- Manual mode -->
     <div id="manualMode" style="display:none;">
-      <div class="row"><input id="mf_name" placeholder="곡 이름"><input id="mf_artist" placeholder="아티스트"></div>
-      <div class="row"><input id="mf_scale" placeholder="Key (예: Bb Major)"><input id="mf_bpm" placeholder="BPM" type="number"></div>
-      <input id="mf_deg" placeholder="디그리 (예: IV - V - iii - vi)">
-      <input id="mf_chords" placeholder="코드 쉼표 구분 (예: F,G,Em,Am)">
-      <input id="mf_tags" placeholder="태그 쉼표 구분">
-      <input id="mf_top" placeholder="탑노트/메모 (선택)">
-      <div style="display:flex;gap:6px;margin-top:4px;"><button class="abtn p" onclick="addSongManual()">저장</button><button class="abtn s2" onclick="showAI()">AI 분석으로 전환</button><button class="abtn s2" onclick="toggleAdd()">취소</button></div>
+      <div class="row"><input id="mf_name" placeholder="Song"><input id="mf_artist" placeholder="Artist"></div>
+      <div class="row"><input id="mf_scale" placeholder="Key (e.g. Bb Major)"><input id="mf_bpm" placeholder="BPM" type="number"></div>
+      <input id="mf_deg" placeholder="Degrees (e.g. IV - V - iii - vi)">
+      <input id="mf_chords" placeholder="Chords, comma separated (e.g. F,G,Em,Am)">
+      <input id="mf_tags" placeholder="Tags, comma separated">
+      <input id="mf_top" placeholder="Top note / memo (optional)">
+      <div style="display:flex;gap:6px;margin-top:4px;"><button class="abtn p" onclick="addSongManual()">Save</button><button class="abtn s2" onclick="showAI()">Use AI analysis</button><button class="abtn s2" onclick="toggleAdd()">Cancel</button></div>
     </div>
   </div>
   <div class="fr" id="progFilters"></div>
-  <div class="sh">🎵 코드 진행 <span class="badge" id="progCount">-</span></div><div id="progList"></div>
+  <div class="sh">🎵 Progressions <span class="badge" id="progCount">-</span></div><div id="progList"></div>
 </div>
 <div class="sc" id="sc-circle">
-  <div class="cof-info"><h3>⭕ 5도권 / 4도권</h3><p>시계=5도 상행(#추가) · 반시계=4도 상행(♭추가)<br>터치→다이어토닉 코드</p></div>
+  <div class="cof-info"><h3>⭕ Circle of fifths / fourths</h3><p>Clockwise = up a fifth (adds ♯) · counter-clockwise = up a fourth (adds ♭)<br>Tap a key to see its diatonic chords</p></div>
   <div class="cof-wrap"><svg class="cof-svg" viewBox="0 0 400 400" id="cofSvg"></svg></div><div id="cofDetail"></div>
 </div>
-<div class="sc" id="sc-theory"><div class="sh">📚 K-POP 필수 이론</div><div id="theoryList"></div></div>
+<div class="sc" id="sc-theory"><div class="sh">📚 K-pop theory essentials</div><div id="theoryList"></div></div>
 </div>
 <script>
 const NN=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
@@ -178,7 +180,13 @@ function playN(n,o,dur=1.5){
   }
 }
 
-function playV(v,dur=1.5){v.forEach(([n,o])=>playN(n,o,dur));}
+function playV(v,dur=1.5){hl(v);v.forEach(([n,o])=>playN(n,o,dur));}
+// 왼쪽 건반(두 옥타브): 지금 울리는 코드의 음을 켬. 3옥타브 이하는 아래 옥타브, 4 이상은 위 옥타브에
+(function(){const el=document.getElementById('cdKbd'),W=['C','D','E','F','G','A','B'],BK=[['C#',1],['D#',2],['F#',4],['G#',5],['A#',6]];let h='';
+  for(let o=0;o<2;o++){W.forEach((n,i)=>h+=`<span class="w" data-k="${n}${o}" style="left:${((o*7+i)/14*100).toFixed(3)}%"></span>`);BK.forEach(([n,i])=>h+=`<span class="b" data-k="${n}${o}" style="left:${((o*7+i)/14*100).toFixed(3)}%"></span>`);}
+  el.innerHTML=h+'<b class="cd-kbd-l">C3</b><b class="cd-kbd-l r">C4</b>';})();
+let _hlT=null;
+function hl(v){const el=document.getElementById('cdKbd');el.querySelectorAll('.on').forEach(k=>k.classList.remove('on'));v.forEach(([n,o])=>el.querySelector(`[data-k="${n}${o<=3?0:1}"]`)?.classList.add('on'));clearTimeout(_hlT);_hlT=setTimeout(()=>el.querySelectorAll('.on').forEach(k=>k.classList.remove('on')),1600);}
 
 let _seqTimer=null;
 function playSeq(vs,bpm,cb){
@@ -220,6 +228,7 @@ function tryLoadTone(){
             sampler.triggerAttackRelease(n+o,dur);
           };
           playV=function(v,dur=1.5){
+            hl(v);
             if(Tone.context.state!=='running')Tone.start();
             sampler.triggerAttackRelease(v.map(([n,o])=>n+o),dur);
           };
@@ -235,11 +244,11 @@ function tryLoadTone(){
 tryLoadTone();
 
 const NOTES=NN;function nn(i,fl){const n=NOTES[((i%12)+12)%12];return(fl&&ENH[n])?ENH[n]:n;}
-const CT={'':  {iv:[0,4,7],l:'메이저'},'m': {iv:[0,3,7],l:'마이너'},'7': {iv:[0,4,7,10],l:'dom7'},'M7':{iv:[0,4,7,11],l:'M7'},'m7':{iv:[0,3,7,10],l:'m7'},'dim':{iv:[0,3,6],l:'dim'},'m7b5':{iv:[0,3,6,10],l:'m7♭5'}};
+const CT={'':  {iv:[0,4,7],l:'major'},'m': {iv:[0,3,7],l:'minor'},'7': {iv:[0,4,7,10],l:'dom7'},'M7':{iv:[0,4,7,11],l:'M7'},'m7':{iv:[0,3,7,10],l:'m7'},'dim':{iv:[0,3,6],l:'dim'},'m7b5':{iv:[0,3,6,10],l:'m7♭5'}};
 const MS=[0,2,4,5,7,9,11],mS=[0,2,3,5,7,8,10];
-const MD=[{d:'I',t:'',l:'토닉'},{d:'ii',t:'m',l:'서브도미넌트'},{d:'iii',t:'m',l:'메디안트'},{d:'IV',t:'',l:'서브도미넌트'},{d:'V',t:'',l:'도미넌트'},{d:'vi',t:'m',l:'상대단조'},{d:'vii°',t:'dim',l:'이끎음'}];
+const MD=[{d:'I',t:'',l:'tonic'},{d:'ii',t:'m',l:'subdominant'},{d:'iii',t:'m',l:'mediant'},{d:'IV',t:'',l:'subdominant'},{d:'V',t:'',l:'dominant'},{d:'vi',t:'m',l:'relative minor'},{d:'vii°',t:'dim',l:'leading tone'}];
 const MD7=[{d:'IM7',t:'M7'},{d:'iim7',t:'m7'},{d:'iiim7',t:'m7'},{d:'IVM7',t:'M7'},{d:'V7',t:'7'},{d:'vim7',t:'m7'},{d:'viim7♭5',t:'m7b5'}];
-const mD=[{d:'i',t:'m',l:'토닉'},{d:'ii°',t:'dim',l:''},{d:'III',t:'',l:'상대장조'},{d:'iv',t:'m',l:'서브도미넌트'},{d:'V',t:'',l:'도미넌트'},{d:'VI',t:'',l:''},{d:'VII',t:'',l:'서브토닉'}];
+const mD=[{d:'i',t:'m',l:'tonic'},{d:'ii°',t:'dim',l:''},{d:'III',t:'',l:'relative major'},{d:'iv',t:'m',l:'subdominant'},{d:'V',t:'',l:'dominant'},{d:'VI',t:'',l:''},{d:'VII',t:'',l:'subtonic'}];
 function gcn(r,tp,oct){const c=CT[tp]||CT[''];const ri=NOTES.indexOf(r);if(ri<0)return[];return c.iv.map(iv=>{const ni=(ri+iv)%12;return[NOTES[ni],oct+Math.floor((ri+iv)/12)];});}
 function bkc(kr,mode,is7){const ri=NOTES.indexOf(kr);if(ri<0)return[];const fl=FK.includes(kr);const sc=mode==='major'?MS:mS;const dg=is7?(mode==='major'?MD7:MD):(mode==='major'?MD:mD);
   return dg.map((d,i)=>{const ni=(ri+sc[i])%12;const nm=nn(ni,fl);const tp=is7&&MD7[i]?MD7[i].t:d.t;const notes=gcn(NOTES[ni],tp,4);
@@ -247,17 +256,17 @@ function bkc(kr,mode,is7){const ri=NOTES.indexOf(kr);if(ri<0)return[];const fl=F
 
 function getBorrowed(kr,mode){const ri=NOTES.indexOf(kr);if(ri<0)return{mi:[],sd:[],pic:[]};const fl=FK.includes(kr);const b={mi:[],sd:[],pic:[]};
   if(mode==='major'){
-    [{s:8,t:'',d:'bVI',desc:'몽환적 (마이너에서 빌림)'},{s:10,t:'',d:'bVII',desc:'웅장한 해결 (마이너에서 빌림)'},{s:5,t:'m',d:'iv',desc:'IV를 마이너로 → 슬픈 느낌'},{s:3,t:'',d:'bIII',desc:'밝은 전환'}].forEach(mc=>{
+    [{s:8,t:'',d:'bVI',desc:'Dreamy (borrowed from minor)'},{s:10,t:'',d:'bVII',desc:'Grand resolution (borrowed from minor)'},{s:5,t:'m',d:'iv',desc:'IV made minor → sad'},{s:3,t:'',d:'bIII',desc:'Bright shift'}].forEach(mc=>{
       const ni=(ri+mc.s)%12;const nm=nn(ni,fl);const notes=gcn(NOTES[ni],mc.t,4);
       b.mi.push({name:nm+(mc.t==='m'?'m':''),deg:mc.d,desc:mc.desc,notes,nms:notes.map(([n,o])=>(fl&&ENH[n]?ENH[n]:n)+o)});});
-    [{s:9,t:'7',d:'V7/ii',desc:'→Dm(ii)으로 해결'},{s:11,t:'7',d:'V7/iii',desc:'→Em(iii)으로 해결'},{s:0,t:'7',d:'V7/IV',desc:'→F(IV)로 해결'},{s:2,t:'7',d:'V7/V',desc:'→G(V)로 해결'},{s:4,t:'7',d:'V7/vi',desc:'→Am(vi)으로 해결 ★자주씀'}].forEach(sd=>{
+    [{s:9,t:'7',d:'V7/ii',desc:'→ resolves to Dm (ii)'},{s:11,t:'7',d:'V7/iii',desc:'→ resolves to Em (iii)'},{s:0,t:'7',d:'V7/IV',desc:'→ resolves to F (IV)'},{s:2,t:'7',d:'V7/V',desc:'→ resolves to G (V)'},{s:4,t:'7',d:'V7/vi',desc:'→ resolves to Am (vi) ★ common'}].forEach(sd=>{
       const ni=(ri+sd.s)%12;const nm=nn(ni,fl);const notes=gcn(NOTES[ni],sd.t,4);
       b.sd.push({name:nm+'7',deg:sd.d,desc:sd.desc,notes,nms:notes.map(([n,o])=>(fl&&ENH[n]?ENH[n]:n)+o)});});
   } else {
-    [{s:0,t:'',d:'I(피카르디)',desc:'마이너→메이저 끝맺음!'},{s:5,t:'',d:'IV',desc:'iv→IV 메이저화'}].forEach(mc=>{
+    [{s:0,t:'',d:'I (Picardy)',desc:'End a minor song on major!'},{s:5,t:'',d:'IV',desc:'iv → IV made major'}].forEach(mc=>{
       const ni=(ri+mc.s)%12;const nm=nn(ni,fl);const notes=gcn(NOTES[ni],mc.t,4);
       b.pic.push({name:nm,deg:mc.d,desc:mc.desc,notes,nms:notes.map(([n,o])=>(fl&&ENH[n]?ENH[n]:n)+o)});});
-    [{s:7,t:'7',d:'V7',desc:'→i 강한 해결 (하모닉 마이너)'},{s:2,t:'7',d:'V7/iv',desc:'→iv 해결'}].forEach(sd=>{
+    [{s:7,t:'7',d:'V7',desc:'→ strong resolution to i (harmonic minor)'},{s:2,t:'7',d:'V7/iv',desc:'→ resolves to iv'}].forEach(sd=>{
       const ni=(ri+sd.s)%12;const nm=nn(ni,fl);const notes=gcn(NOTES[ni],sd.t,4);
       b.sd.push({name:nm+'7',deg:sd.d,desc:sd.desc,notes,nms:notes.map(([n,o])=>(fl&&ENH[n]?ENH[n]:n)+o)});});
   }
@@ -271,15 +280,15 @@ function rChords(){
   const ks=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
   const ds=['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
   document.getElementById('keySel').innerHTML=ks.map((k,i)=>`<button class="key-btn${k===curKey?' on':''}" onclick="curKey='${k}';rChords()">${ds[i]}</button>`).join('');
-  document.getElementById('modeRow').innerHTML=`<button class="mode-btn${curMode==='major'?' on':''}" onclick="curMode='major';rChords()">메이저</button><button class="mode-btn${curMode==='minor'?' on':''}" onclick="curMode='minor';rChords()">마이너</button><span style="margin-left:auto;display:flex;gap:4px;"><button class="mode-btn${!cur7?' on':''}" onclick="cur7=false;rChords()">3화음</button><button class="mode-btn${cur7?' on':''}" onclick="cur7=true;rChords()">7th</button></span>`;
+  document.getElementById('modeRow').innerHTML=`<button class="mode-btn${curMode==='major'?' on':''}" onclick="curMode='major';rChords()">Major</button><button class="mode-btn${curMode==='minor'?' on':''}" onclick="curMode='minor';rChords()">Minor</button><span style="margin-left:auto;display:flex;gap:4px;"><button class="mode-btn${!cur7?' on':''}" onclick="cur7=false;rChords()">Triads</button><button class="mode-btn${cur7?' on':''}" onclick="cur7=true;rChords()">7th</button></span>`;
   const ch=bkc(curKey,curMode,cur7);
-  document.getElementById('chordCount').textContent=ch.length+'개';
+  document.getElementById('chordCount').textContent=ch.length+'';
   document.getElementById('chordGrid').innerHTML=ch.map((c,i)=>`<div class="cc" onclick="pcc(${i})" id="c${i}"><span class="dg" style="background:var(--accd);color:var(--acc);">${c.deg}</span><div class="cn">${c.name}</div><div class="ct">${CT[c.type]?.l||''}</div><div class="cd">${c.nms.join(' ')}</div></div>`).join('');
   window._ch=ch;
   const bw=getBorrowed(curKey,curMode);let h='';
-  if(bw.sd.length){h+=`<div class="sec-label sd">🎯 세컨더리 도미넌트 — 해결감을 만드는 빌려쓰기</div><div class="chord-grid">${bw.sd.map(c=>`<div class="cc" onclick="playV([${c.notes.map(n=>`['${n[0]}',${n[1]}]`).join(',')}])" style="border-color:var(--pink);"><span class="dg" style="background:var(--pinkd);color:var(--pink);">${c.deg}</span><div class="cn">${c.name}</div><div class="ct" style="color:var(--pink);">${c.desc}</div><div class="cd">${c.nms.join(' ')}</div></div>`).join('')}</div>`;}
-  if(bw.mi.length){h+=`<div class="sec-label mi">🎨 모달 인터체인지 — 마이너에서 빌려 쓸 수 있는 코드</div><div class="chord-grid">${bw.mi.map(c=>`<div class="cc" onclick="playV([${c.notes.map(n=>`['${n[0]}',${n[1]}]`).join(',')}])" style="border-color:var(--ok);"><span class="dg" style="background:var(--okd);color:var(--ok);">${c.deg}</span><div class="cn">${c.name}</div><div class="ct" style="color:var(--ok);">${c.desc}</div><div class="cd">${c.nms.join(' ')}</div></div>`).join('')}</div>`;}
-  if(bw.pic.length){h+=`<div class="sec-label pic">✨ 피카르디 / 메이저화</div><div class="chord-grid">${bw.pic.map(c=>`<div class="cc" onclick="playV([${c.notes.map(n=>`['${n[0]}',${n[1]}]`).join(',')}])" style="border-color:var(--ok);"><span class="dg" style="background:var(--okd);color:var(--ok);">${c.deg}</span><div class="cn">${c.name}</div><div class="ct" style="color:var(--ok);">${c.desc}</div><div class="cd">${c.nms.join(' ')}</div></div>`).join('')}</div>`;}
+  if(bw.sd.length){h+=`<div class="sec-label sd">🎯 Secondary dominants — borrowed chords that pull toward a resolution</div><div class="chord-grid">${bw.sd.map(c=>`<div class="cc" onclick="playV([${c.notes.map(n=>`['${n[0]}',${n[1]}]`).join(',')}])" style="border-color:var(--pink);"><span class="dg" style="background:var(--pinkd);color:var(--pink);">${c.deg}</span><div class="cn">${c.name}</div><div class="ct" style="color:var(--pink);">${c.desc}</div><div class="cd">${c.nms.join(' ')}</div></div>`).join('')}</div>`;}
+  if(bw.mi.length){h+=`<div class="sec-label mi">🎨 Modal interchange — chords you can borrow from minor</div><div class="chord-grid">${bw.mi.map(c=>`<div class="cc" onclick="playV([${c.notes.map(n=>`['${n[0]}',${n[1]}]`).join(',')}])" style="border-color:var(--ok);"><span class="dg" style="background:var(--okd);color:var(--ok);">${c.deg}</span><div class="cn">${c.name}</div><div class="ct" style="color:var(--ok);">${c.desc}</div><div class="cd">${c.nms.join(' ')}</div></div>`).join('')}</div>`;}
+  if(bw.pic.length){h+=`<div class="sec-label pic">✨ Picardy / made major</div><div class="chord-grid">${bw.pic.map(c=>`<div class="cc" onclick="playV([${c.notes.map(n=>`['${n[0]}',${n[1]}]`).join(',')}])" style="border-color:var(--ok);"><span class="dg" style="background:var(--okd);color:var(--ok);">${c.deg}</span><div class="cn">${c.name}</div><div class="ct" style="color:var(--ok);">${c.desc}</div><div class="cd">${c.nms.join(' ')}</div></div>`).join('')}</div>`;}
   document.getElementById('borrowedSection').innerHTML=h;
   // Famous progressions in current key
   rFamous();
@@ -288,16 +297,16 @@ function rFamous(){
   const ri=NOTES.indexOf(curKey);const fl=FK.includes(curKey);
   const n=i=>nn((ri+i)%12,fl);
   const progs=[
-    {name:'캐논 I-V-vi-IV',degs:[0,7,9,5],types:['','','m',''],num:'1564'},
-    {name:'왕도 IV-V-iii-vi',degs:[5,7,4,9],types:['','','m','m'],num:'4536'},
-    {name:'로열로드 IV-V-vi-I',degs:[5,7,9,0],types:['','','m',''],num:'4561'},
-    {name:'감성 vi-IV-I-V',degs:[9,5,0,7],types:['m','','',''],num:'6415'},
-    {name:'재즈 ii-V-I',degs:[2,7,0],types:['m','',''],num:'251'},
-    {name:'하행 vi-V-IV',degs:[9,7,5],types:['m','',''],num:'654'},
-    {name:'모달 bVI-bVII-I',degs:[8,10,0],types:['','',''],num:'bVI-bVII-I',modal:true},
-    {name:'슬픈 i-bVII-bVI-bVII',degs:[0,10,8,10],types:['m','','',''],num:'뉴진스패턴',minor:true},
+    {name:'Canon I-V-vi-IV',degs:[0,7,9,5],types:['','','m',''],num:'1564'},
+    {name:'Royal road IV-V-iii-vi',degs:[5,7,4,9],types:['','','m','m'],num:'4536'},
+    {name:'Royal IV-V-vi-I',degs:[5,7,9,0],types:['','','m',''],num:'4561'},
+    {name:'Emotional vi-IV-I-V',degs:[9,5,0,7],types:['m','','',''],num:'6415'},
+    {name:'Jazz ii-V-I',degs:[2,7,0],types:['m','',''],num:'251'},
+    {name:'Descending vi-V-IV',degs:[9,7,5],types:['m','',''],num:'654'},
+    {name:'Modal bVI-bVII-I',degs:[8,10,0],types:['','',''],num:'bVI-bVII-I',modal:true},
+    {name:'Sad i-bVII-bVI-bVII',degs:[0,10,8,10],types:['m','','',''],num:'NewJeans pattern',minor:true},
   ];
-  let html=`<div class="sec-label" style="color:var(--blue);background:var(--blued);">🎶 유명 코드진행 원클릭 재생 (${curMode==='major'?n(0)+' Major':n(0)+'m'})</div>`;
+  let html=`<div class="sec-label" style="color:var(--blue);background:var(--blued);">🎶 Famous progressions — one click to play (${curMode==='major'?n(0)+' Major':n(0)+'m'})</div>`;
   html+=`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;">`;
   progs.forEach((p,pi)=>{
     // Build chord names and voicings for current key
@@ -418,30 +427,30 @@ function buildVoicings(chordNames){
 }
 
 const P=[
-  {name:'Attention',artist:'뉴진스',scale:'Bb Major',deg:'bVIM7 - bVIIM7 - IM7',chords:['GbM7','AbM7','BbM7'],bpm:105,tags:['모달인터체인지'],top:'탑노트: Bb→C→D'},
-  {name:'OMG',artist:'뉴진스',scale:'F Major',deg:'ii7 - V7 - iii7 - vi7',chords:['Gm7','C7','Dm7','Am7'],bpm:127,tags:['2563'],top:''},
-  {name:'Hype Boy',artist:'뉴진스',scale:'E minor',deg:'i - bVII - bVI - bVII',chords:['Em','D','C','D'],bpm:100,tags:['마이너'],top:''},
-  {name:'Ditto',artist:'뉴진스',scale:'Gb minor',deg:'i - bVII - bVI - bVII',chords:['Gbm','E','Db','E'],bpm:134,tags:['마이너'],top:''},
-  {name:'Super Shy',artist:'뉴진스',scale:'F minor',deg:'i - bVII - bVI - bVII',chords:['Fm','Eb','Db','Eb'],bpm:150,tags:['마이너'],top:''},
-  {name:'How Sweet',artist:'뉴진스',scale:'Eb Major',deg:'I - vi - IV - V',chords:['Eb','Cm','Ab','Bb'],bpm:113,tags:['메이저','1645'],top:''},
-  {name:'Bubble Gum',artist:'뉴진스',scale:'A Major',deg:'IM7 - iiim7 - IVM7 - V',chords:['AM7','C#m7','DM7','E'],bpm:105,tags:['메이저'],top:''},
-  {name:'MELTINGPOINT',artist:'ZEROBASEONE',scale:'F Major',deg:'I - ii7 - vi7 - V',chords:['F','Gm7','Dm7','C'],bpm:114,tags:['메이저'],top:''},
-  {name:'SWEAT',artist:'ZEROBASEONE',scale:'Bb minor',deg:'IV - iii - ii7 - i',chords:['Gb','Ebm','Fm7','Bbm'],bpm:119,tags:['마이너','4236'],top:''},
-  {name:'In Bloom',artist:'ZEROBASEONE',scale:'Gb Major',deg:'IV - ii - iii7 - vi',chords:['B','Abm','Bbm7','Ebm'],bpm:82,tags:['메이저'],top:''},
-  {name:'FIREWORK',artist:'&TEAM',scale:'B Major',deg:'IV - V - vi - V',chords:['E','F#','G#m','F#'],bpm:128,tags:['메이저','4536'],top:''},
-  {name:'Magnetic',artist:'아일릿',scale:'Db Major',deg:'III7 - IVM7 - V - vi',chords:['F7','GbM7','Ab','Bbm'],bpm:110,tags:['세컨더리도미넌트'],top:''},
-  {name:'내일에서 기다릴게',artist:'TXT',scale:'D Major',deg:'ii7 - iii7 - VIM7',chords:['Em7','F#m7','BM7'],bpm:96,tags:['피카르디3도'],top:''},
-  {name:'Bye My Monster',artist:'온앤오프',scale:'D Major',deg:'ii7 - V7 - IM7 - IVM7',chords:['Em7','A7','DM7','GM7'],bpm:96,tags:['2-5-1'],top:''},
-  {name:'Breathe',artist:'골든차일드',scale:'D Major',deg:'IV - V - iii - vi',chords:['G','A','F#m','Bm'],bpm:108,tags:['왕도진행','4536'],top:''},
-  {name:'Shadow',artist:'세븐틴',scale:'Bb Major',deg:'vi - V - IV',chords:['Gm','F','Eb'],bpm:110,tags:['654'],top:''},
-  {name:'셜록',artist:'샤이니',scale:'F minor',deg:'VI - iv - I(피카르디)',chords:['Db','Bbm','F'],bpm:140,tags:['피카르디3도'],top:''},
-  {name:'Crying&Laughter',artist:'더보이즈',scale:'D minor',deg:'IV - III7 - i - bVI',chords:['Bb','A7','Dm','F'],bpm:120,tags:['세컨더리도미넌트'],top:''},
-  {name:'Kick it 4 now',artist:'TNX',scale:'C minor',deg:'IV - V - bvii°패싱 - i',chords:['Ab','Bb','Bdim','Cm'],bpm:116,tags:['패싱디미니쉬'],top:''},
-  {name:'알고리즘',artist:'청하',scale:'F# minor',deg:'i - iv7 - VIM7 - VII',chords:['F#m','Bm7','DM7','E'],bpm:106,tags:['마이너','6245'],top:''},
+  {name:'Attention',artist:'NewJeans',scale:'Bb Major',deg:'bVIM7 - bVIIM7 - IM7',chords:['GbM7','AbM7','BbM7'],bpm:105,tags:['Modal interchange'],top:'Top note: Bb→C→D'},
+  {name:'OMG',artist:'NewJeans',scale:'F Major',deg:'ii7 - V7 - iii7 - vi7',chords:['Gm7','C7','Dm7','Am7'],bpm:127,tags:['2563'],top:''},
+  {name:'Hype Boy',artist:'NewJeans',scale:'E minor',deg:'i - bVII - bVI - bVII',chords:['Em','D','C','D'],bpm:100,tags:['Minor'],top:''},
+  {name:'Ditto',artist:'NewJeans',scale:'Gb minor',deg:'i - bVII - bVI - bVII',chords:['Gbm','E','Db','E'],bpm:134,tags:['Minor'],top:''},
+  {name:'Super Shy',artist:'NewJeans',scale:'F minor',deg:'i - bVII - bVI - bVII',chords:['Fm','Eb','Db','Eb'],bpm:150,tags:['Minor'],top:''},
+  {name:'How Sweet',artist:'NewJeans',scale:'Eb Major',deg:'I - vi - IV - V',chords:['Eb','Cm','Ab','Bb'],bpm:113,tags:['Major','1645'],top:''},
+  {name:'Bubble Gum',artist:'NewJeans',scale:'A Major',deg:'IM7 - iiim7 - IVM7 - V',chords:['AM7','C#m7','DM7','E'],bpm:105,tags:['Major'],top:''},
+  {name:'MELTINGPOINT',artist:'ZEROBASEONE',scale:'F Major',deg:'I - ii7 - vi7 - V',chords:['F','Gm7','Dm7','C'],bpm:114,tags:['Major'],top:''},
+  {name:'SWEAT',artist:'ZEROBASEONE',scale:'Bb minor',deg:'IV - iii - ii7 - i',chords:['Gb','Ebm','Fm7','Bbm'],bpm:119,tags:['Minor','4236'],top:''},
+  {name:'In Bloom',artist:'ZEROBASEONE',scale:'Gb Major',deg:'IV - ii - iii7 - vi',chords:['B','Abm','Bbm7','Ebm'],bpm:82,tags:['Major'],top:''},
+  {name:'FIREWORK',artist:'&TEAM',scale:'B Major',deg:'IV - V - vi - V',chords:['E','F#','G#m','F#'],bpm:128,tags:['Major','4536'],top:''},
+  {name:'Magnetic',artist:'ILLIT',scale:'Db Major',deg:'III7 - IVM7 - V - vi',chords:['F7','GbM7','Ab','Bbm'],bpm:110,tags:['Secondary dominant'],top:''},
+  {name:"Can't You See Me?",artist:'TXT',scale:'D Major',deg:'ii7 - iii7 - VIM7',chords:['Em7','F#m7','BM7'],bpm:96,tags:['Picardy third'],top:''},
+  {name:'Bye My Monster',artist:'ONF',scale:'D Major',deg:'ii7 - V7 - IM7 - IVM7',chords:['Em7','A7','DM7','GM7'],bpm:96,tags:['2-5-1'],top:''},
+  {name:'Breathe',artist:'Golden Child',scale:'D Major',deg:'IV - V - iii - vi',chords:['G','A','F#m','Bm'],bpm:108,tags:['Royal road','4536'],top:''},
+  {name:'Shadow',artist:'SEVENTEEN',scale:'Bb Major',deg:'vi - V - IV',chords:['Gm','F','Eb'],bpm:110,tags:['654'],top:''},
+  {name:'Sherlock',artist:'SHINee',scale:'F minor',deg:'VI - iv - I (Picardy)',chords:['Db','Bbm','F'],bpm:140,tags:['Picardy third'],top:''},
+  {name:'Crying&Laughter',artist:'THE BOYZ',scale:'D minor',deg:'IV - III7 - i - bVI',chords:['Bb','A7','Dm','F'],bpm:120,tags:['Secondary dominant'],top:''},
+  {name:'Kick it 4 now',artist:'TNX',scale:'C minor',deg:'IV - V - bvii° passing - i',chords:['Ab','Bb','Bdim','Cm'],bpm:116,tags:['Passing diminished'],top:''},
+  {name:'Algorithm',artist:'CHUNG HA',scale:'F# minor',deg:'i - iv7 - VIM7 - VII',chords:['F#m','Bm7','DM7','E'],bpm:106,tags:['Minor','6245'],top:''},
   {name:'Hot & Cold',artist:'SMTown',scale:'E Major',deg:'IV - V - vi - I',chords:['A','B','C#m','E'],bpm:122,tags:['4561'],top:''},
-  {name:'4-5-3-6 (왕도진행)',artist:'K-POP 공통',scale:'C Major',deg:'IV - V - iii - vi',chords:['F','G','Em','Am'],bpm:100,tags:['왕도진행'],top:''},
-  {name:'1-5-6-4 (캐논)',artist:'K-POP 공통',scale:'C Major',deg:'I - V - vi - IV',chords:['C','G','Am','F'],bpm:100,tags:['캐논진행'],top:''},
-  {name:'2-5-1',artist:'K-POP 발라드',scale:'C Major',deg:'ii7 - V7 - IM7',chords:['Dm7','G7','CM7'],bpm:78,tags:['2-5-1'],top:''},
+  {name:'4-5-3-6 (royal road)',artist:'K-pop standard',scale:'C Major',deg:'IV - V - iii - vi',chords:['F','G','Em','Am'],bpm:100,tags:['Royal road'],top:''},
+  {name:'1-5-6-4 (canon)',artist:'K-pop standard',scale:'C Major',deg:'I - V - vi - IV',chords:['C','G','Am','F'],bpm:100,tags:['Canon'],top:''},
+  {name:'2-5-1',artist:'K-pop ballad',scale:'C Major',deg:'ii7 - V7 - IM7',chords:['Dm7','G7','CM7'],bpm:78,tags:['2-5-1'],top:''},
 ];
 
 let userSongs=JSON.parse(localStorage.getItem('cd_us')||'[]');
@@ -453,11 +462,11 @@ function showAI(){document.getElementById('aiMode').style.display='';document.ge
 // AI Analysis using Claude API
 async function aiAnalyze(){
   const query=document.getElementById('ai_query').value.trim();
-  if(!query){alert('곡 이름을 입력하세요');return;}
+  if(!query){alert('Enter a song name');return;}
   const btn=document.getElementById('aiBtn');
   const status=document.getElementById('aiStatus');
-  btn.disabled=true;btn.textContent='분석 중...';
-  status.textContent='🔍 AI가 코드진행을 분석하고 있어요...';
+  btn.disabled=true;btn.textContent='Analyzing…';
+  status.textContent='🔍 AI is working out the chords…';
   try{
     const resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
@@ -466,16 +475,16 @@ async function aiAnalyze(){
         model:'claude-sonnet-4-20250514',
         max_tokens:1000,
         system:`You are a K-POP music theory expert. When given a song name, provide chord progression analysis. RESPOND ONLY IN THIS EXACT JSON FORMAT with no extra text:
-{"name":"song name","artist":"artist","scale":"Key (e.g. Bb Major)","bpm":105,"deg":"bVIM7 - bVIIM7 - IM7","chords":["GbM7","AbM7","BbM7"],"tags":["모달인터체인지"],"top":"탑노트 설명","voicings":[[["Db",3],["F",3],["Gb",3],["Bb",3]],[["Eb",3],["G",3],["Ab",3],["C",4]],[["F",3],["A",3],["Bb",3],["D",4]]]}
+{"name":"song name","artist":"artist","scale":"Key (e.g. Bb Major)","bpm":105,"deg":"bVIM7 - bVIIM7 - IM7","chords":["GbM7","AbM7","BbM7"],"tags":["Modal interchange"],"top":"top note notes","voicings":[[["Db",3],["F",3],["Gb",3],["Bb",3]],[["Eb",3],["G",3],["Ab",3],["C",4]],[["F",3],["A",3],["Bb",3],["D",4]]]}
 voicings: array of chords, each chord is array of [noteName, octave] pairs representing piano voicing from bottom to top. Use proper voice leading with smooth top note movement. Use the CHORUS chord progression. Always use sharp note names (C#, not Db) in voicings array for technical accuracy, but display names can use flats.`,
-        messages:[{role:'user',content:`이 곡의 코러스 코드진행을 분석해줘: ${query}`}]
+        messages:[{role:'user',content:`Analyze the chorus chord progression of this song: ${query}`}]
       })
     });
     const data=await resp.json();
     const text=data.content?.map(c=>c.text||'').join('')||'';
     // Parse JSON from response
     const jsonMatch=text.match(/\{[\s\S]*\}/);
-    if(!jsonMatch)throw new Error('분석 결과를 파싱할 수 없어요');
+    if(!jsonMatch)throw new Error("Couldn't read the analysis");
     const result=JSON.parse(jsonMatch[0]);
     // Fill form
     document.getElementById('af_name').value=result.name||query;
@@ -491,10 +500,10 @@ voicings: array of chords, each chord is array of [noteName, octave] pairs repre
     document.getElementById('aiResult').style.display='';
     status.textContent='';
   }catch(e){
-    status.innerHTML=`<span style="color:var(--red);">❌ 분석 실패: ${e.message}</span><br><span style="font-size:10px;">수동 입력으로 전환하거나 다시 시도하세요</span>`;
+    status.innerHTML=`<span style="color:var(--red);">❌ Analysis failed: ${e.message}</span><br><span style="font-size:10px;">Try again or enter it manually</span>`;
     console.error(e);
   }
-  btn.disabled=false;btn.textContent='🤖 AI 분석';
+  btn.disabled=false;btn.textContent='🤖 Analyze';
 }
 
 function addSong(){
@@ -504,7 +513,7 @@ function addSong(){
   const chords=document.getElementById('af_chords').value.trim().split(',').map(s=>s.trim()).filter(Boolean);
   const tags=document.getElementById('af_tags').value.trim().split(',').map(s=>s.trim()).filter(Boolean);
   const top=document.getElementById('af_top').value.trim();
-  if(!name||!chords.length){alert('곡 이름과 코드를 입력하세요');return;}
+  if(!name||!chords.length){alert('Enter a song name and chords');return;}
   userSongs.push({name,artist,scale,deg,chords,bpm,tags,top,user:true});
   localStorage.setItem('cd_us',JSON.stringify(userSongs));toggleAdd();
   ['af_name','af_artist','af_scale','af_bpm','af_deg','af_chords','af_tags','af_top'].forEach(id=>document.getElementById(id).value='');
@@ -519,7 +528,7 @@ function addSongManual(){
   const chords=document.getElementById('mf_chords').value.trim().split(',').map(s=>s.trim()).filter(Boolean);
   const tags=document.getElementById('mf_tags').value.trim().split(',').map(s=>s.trim()).filter(Boolean);
   const top=document.getElementById('mf_top').value.trim();
-  if(!name||!chords.length){alert('곡 이름과 코드를 입력하세요');return;}
+  if(!name||!chords.length){alert('Enter a song name and chords');return;}
   const fts={'Db':'C#','Eb':'D#','Gb':'F#','Ab':'G#','Bb':'A#'};
   const v=chords.map(ch=>{let r='',tp='';if(ch.length>=2&&(ch[1]==='#'||ch[1]==='b')){r=ch.substring(0,2);tp=ch.substring(2);}else{r=ch[0];tp=ch.substring(1);}const sr=fts[r]||r;let ct='';if(tp==='m7')ct='m7';else if(tp==='M7'||tp==='maj7')ct='M7';else if(tp==='7')ct='7';else if(tp==='m')ct='m';else if(tp==='dim')ct='dim';else ct='';return gcn(sr,ct,4);});
   userSongs.push({name,artist,scale,deg,chords,bpm,v,tags,top,user:true});
@@ -529,15 +538,15 @@ function addSongManual(){
 }
 function rProgs(){
   const tags=new Set();getAllP().forEach(p=>p.tags?.forEach(t=>tags.add(t)));
-  document.getElementById('progFilters').innerHTML=['all',...Array.from(tags).sort()].map(t=>`<button class="fc${t===curFilter?' on':''}" onclick="curFilter='${t}';rProgs()">${t==='all'?'전체':t}</button>`).join('');
+  document.getElementById('progFilters').innerHTML=['all',...Array.from(tags).sort()].map(t=>`<button class="fc${t===curFilter?' on':''}" onclick="curFilter='${t}';rProgs()">${t==='all'?'All':t}</button>`).join('');
   const q=(document.getElementById('progSearch').value||'').toLowerCase();
   let progs=getAllP();if(curFilter!=='all')progs=progs.filter(p=>p.tags?.includes(curFilter));
   if(q)progs=progs.filter(p=>(p.name+p.artist+(p.chords||[]).join('')+(p.deg||'')+(p.scale||'')).toLowerCase().includes(q));
-  document.getElementById('progCount').textContent=progs.length+'곡';
-  if(!progs.length){document.getElementById('progList').innerHTML='<div class="empty">🔍 검색 결과 없음</div>';return;}
-  document.getElementById('progList').innerHTML=progs.map((p,i)=>`<div class="pc" id="pc${i}"><div class="pt"><div><div class="pn">${p.name}${p.user?'<span style="font-size:9px;color:var(--ok);margin-left:4px;">직접 추가</span>':''}<span class="bpm-label">${p.bpm||100} BPM</span></div><div class="pa">${p.artist||''} · ${p.scale||''}</div></div><div style="display:flex;gap:6px;">${p.user?`<button class="pp" onclick="event.stopPropagation();delU(${i})" style="border-color:var(--red);color:var(--red);background:var(--redd);font-size:10px;">✕</button>`:``}<button class="pp" onclick="event.stopPropagation();pProg(${i})" id="pp${i}">▶</button></div></div><div class="pd">${p.deg||''}</div><div class="pcs">${(p.chords||[]).map(c=>`<span class="pch">${c}</span>`).join('→')}</div>${p.top?`<div style="font-size:10px;color:var(--txd);margin:3px 0;">${p.top}</div>`:''}<div class="ptags">${(p.tags||[]).map(t=>`<span class="ptg ${t.includes('도미넌트')||t.includes('피카르디')||t.includes('패싱')||t.includes('모달')?'t':t.includes('메이저')||t.includes('마이너')?'s':'g'}">${t}</span>`).join('')}</div></div>`).join('');
+  document.getElementById('progCount').textContent=progs.length+'';
+  if(!progs.length){document.getElementById('progList').innerHTML='<div class="empty">🔍 No matches</div>';return;}
+  document.getElementById('progList').innerHTML=progs.map((p,i)=>`<div class="pc" id="pc${i}"><div class="pt"><div><div class="pn">${p.name}${p.user?'<span style="font-size:9px;color:var(--ok);margin-left:4px;">added</span>':''}<span class="bpm-label">${p.bpm||100} BPM</span></div><div class="pa">${p.artist||''} · ${p.scale||''}</div></div><div style="display:flex;gap:6px;">${p.user?`<button class="pp" onclick="event.stopPropagation();delU(${i})" style="border-color:var(--red);color:var(--red);background:var(--redd);font-size:10px;">✕</button>`:``}<button class="pp" onclick="event.stopPropagation();pProg(${i})" id="pp${i}">▶</button></div></div><div class="pd">${p.deg||''}</div><div class="pcs">${(p.chords||[]).map(c=>`<span class="pch">${c}</span>`).join('→')}</div>${p.top?`<div style="font-size:10px;color:var(--txd);margin:3px 0;">${p.top}</div>`:''}<div class="ptags">${(p.tags||[]).map(t=>`<span class="ptg ${/dominant|picardy|passing|modal/i.test(t)?'t':/^(major|minor)$/i.test(t)?'s':'g'}">${t}</span>`).join('')}</div></div>`).join('');
   window._progs=progs;}
-function delU(i){const p=window._progs[i];if(!p?.user||!confirm(p.name+' 삭제?'))return;userSongs=userSongs.filter(u=>u.name!==p.name||u.artist!==p.artist);localStorage.setItem('cd_us',JSON.stringify(userSongs));rProgs();}
+function delU(i){const p=window._progs[i];if(!p?.user||!confirm('Delete '+p.name+'?'))return;userSongs=userSongs.filter(u=>u.name!==p.name||u.artist!==p.artist);localStorage.setItem('cd_us',JSON.stringify(userSongs));rProgs();}
 let _pi=null;
 function pProg(i){
   const p=window._progs[i];if(!p?.chords)return;
@@ -553,39 +562,39 @@ function pProg(i){
 const CM=['C','G','D','A','E','B','Gb','Db','Ab','Eb','Bb','F'];const Cm2=['Am','Em','Bm','F#m','C#m','G#m','Ebm','Bbm','Fm','Cm','Gm','Dm'];let cofSel=null;
 function rCOF(){const svg=document.getElementById('cofSvg');const cx=200,cy=200,rO=155,rM=115;let h='';
   h+=`<circle cx="${cx}" cy="${cy}" r="${rO+12}" fill="none" stroke="#353535" stroke-width="1"/>`;h+=`<circle cx="${cx}" cy="${cy}" r="${rM+4}" fill="none" stroke="#353535" stroke-width="1" stroke-dasharray="3,3"/>`;
-  for(let i=0;i<12;i++){const a=(i*30-90)*Math.PI/180;h+=`<line x1="${cx+Math.cos(a)*80}" y1="${cy+Math.sin(a)*80}" x2="${cx+Math.cos(a)*(rO+8)}" y2="${cy+Math.sin(a)*(rO+8)}" stroke="#eeedea" stroke-width="1"/>`;}
-  h+=`<text x="${cx}" y="22" text-anchor="middle" fill="var(--acc)" font-size="10" font-weight="700" font-family="Noto Sans KR">5도 →</text>`;h+=`<text x="${cx}" y="392" text-anchor="middle" fill="var(--pink)" font-size="10" font-weight="700" font-family="Noto Sans KR">← 4도</text>`;
+  for(let i=0;i<12;i++){const a=(i*30-90)*Math.PI/180;h+=`<line x1="${cx+Math.cos(a)*80}" y1="${cy+Math.sin(a)*80}" x2="${cx+Math.cos(a)*(rO+8)}" y2="${cy+Math.sin(a)*(rO+8)}" stroke="#ffffff1f" stroke-width="1"/>`;}
+  h+=`<text x="${cx}" y="22" text-anchor="middle" fill="var(--acc)" font-size="10" font-weight="700" font-family="Inter">5ths →</text>`;h+=`<text x="${cx}" y="392" text-anchor="middle" fill="var(--pink)" font-size="10" font-weight="700" font-family="Inter">← 4ths</text>`;
   CM.forEach((k,i)=>{const a=(i*30-90)*Math.PI/180;const x=cx+Math.cos(a)*rO,y=cy+Math.sin(a)*rO;const on=cofSel===k;h+=`<text x="${x}" y="${y+5}" text-anchor="middle" fill="${on?'var(--acc)':'var(--tx)'}" font-size="14" font-weight="${on?900:700}" font-family="JetBrains Mono" onclick="cofSel='${k}';rCOF()" style="cursor:pointer">${k}</text>`;});
   Cm2.forEach((k,i)=>{const a=(i*30-90)*Math.PI/180;const x=cx+Math.cos(a)*rM,y=cy+Math.sin(a)*rM;const on=cofSel===k;h+=`<text x="${x}" y="${y+4}" text-anchor="middle" fill="${on?'var(--pink)':'var(--txd)'}" font-size="10" font-weight="${on?700:400}" font-family="JetBrains Mono" onclick="cofSel='${k}';rCOF()" style="cursor:pointer">${k}</text>`;});
-  h+=`<text x="${cx}" y="${cy-2}" text-anchor="middle" fill="var(--txd)" font-size="10" font-weight="600">5도권</text>`;svg.innerHTML=h;
-  const el=document.getElementById('cofDetail');if(!cofSel){el.innerHTML='<div class="empty">키를 터치하면 다이어토닉 코드</div>';return;}
+  h+=`<text x="${cx}" y="${cy-2}" text-anchor="middle" fill="var(--txd)" font-size="10" font-weight="600">Circle</text>`;svg.innerHTML=h;
+  const el=document.getElementById('cofDetail');if(!cofSel){el.innerHTML='<div class="empty">Tap a key to see its diatonic chords</div>';return;}
   const isM=cofSel.endsWith('m');const root=isM?cofSel.replace('m',''):cofSel;const fts={'Db':'C#','Eb':'D#','Gb':'F#','Ab':'G#','Bb':'A#'};const sr=fts[root]||root;const ch=bkc(sr,isM?'minor':'major',false);const fl=FK.includes(root);
-  el.innerHTML=`<div style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:14px;margin-top:8px;box-shadow:var(--shadow);"><div style="font-size:15px;font-weight:800;margin-bottom:8px;">${cofSel} ${isM?'마이너':'메이저'}</div><div class="chord-grid">${ch.map(c=>`<div class="cc" onclick="playV([${c.notes.map(n=>`['${n[0]}',${n[1]}]`).join(',')}])"><span class="dg" style="background:var(--accd);color:var(--acc);">${c.deg}</span><div class="cn">${c.name}</div><div class="ct">${c.label}</div></div>`).join('')}</div><div style="font-size:11px;color:var(--txd);margin-top:8px;"><b>상대조:</b> ${isM?nn((NOTES.indexOf(sr)+3)%12,fl)+' Major':nn((NOTES.indexOf(sr)+9)%12,fl)+'m'}</div></div>`;}
+  el.innerHTML=`<div style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:14px;margin-top:8px;box-shadow:var(--shadow);"><div style="font-size:15px;font-weight:800;margin-bottom:8px;">${cofSel} ${isM?'minor':'major'}</div><div class="chord-grid">${ch.map(c=>`<div class="cc" onclick="playV([${c.notes.map(n=>`['${n[0]}',${n[1]}]`).join(',')}])"><span class="dg" style="background:var(--accd);color:var(--acc);">${c.deg}</span><div class="cn">${c.name}</div><div class="ct">${c.label}</div></div>`).join('')}</div><div style="font-size:11px;color:var(--txd);margin-top:8px;"><b>Relative key:</b> ${isM?nn((NOTES.indexOf(sr)+3)%12,fl)+' Major':nn((NOTES.indexOf(sr)+9)%12,fl)+'m'}</div></div>`;}
 
 // Theory
 function rTheory(){document.getElementById('theoryList').innerHTML=`
-<div class="tc"><span class="tp">핵심</span><h3>5도권</h3><div class="ex"><b>5도:</b> C→G→D→A→E→B→Gb<br><b>4도:</b> C→F→Bb→Eb→Ab→Db→Gb<br><br>인접 키끼리 전조가 가장 자연스러움</div></div>
-<div class="tc"><span class="tp">핵심</span><h3>다이어토닉</h3><div class="ex"><b>메이저:</b> I-ii-iii-IV-V-vi-vii°<br><b>C:</b> C-Dm-Em-F-G-Am-Bdim<br><b>7th:</b> CM7-Dm7-Em7-FM7-G7-Am7-Bm7♭5</div></div>
-<div class="tc"><span class="tp">K-POP 필수</span><h3>모달 인터체인지</h3><p>코드 탭에서 Key 선택하면 빌려 쓸 수 있는 코드가 바로 나와요!</p>
-<div class="ex"><b>C Major에서 빌려 쓸 수 있는 코드:</b><br>원래 IV=F → <b>iv=Fm</b> (슬픈 느낌)<br>원래 없는 <b>Ab(bVI)</b> → 몽환적<br>원래 없는 <b>Bb(bVII)</b> → 웅장<br><br><b>bVI→bVII→I = K-POP 최다빈출!</b></div>
-<div class="ex"><b>Attention (뉴진스)</b> Bb Major<br>다이어토닉: Bb,Cm,Dm,Eb,F,Gm,Adim<br>→ GbM7,AbM7 사용 (Bb minor에서 빌림)<br><b>GbM7(bVI)→AbM7(bVII)→BbM7(I)</b></div></div>
-<div class="tc"><span class="tp">K-POP 필수</span><h3>세컨더리 도미넌트</h3><p>코드 탭에서 확인 가능!</p>
-<div class="ex"><b>원리:</b> V7 → I 의 강한 해결감을 다른 코드에도 적용하는 것<br><br>
-<b>원래 V7→I 은 메이저로 해결하는 게 기본이에요:</b><br>
-G7 → C (메이저) ← 이게 원칙<br><br>
-<b>그런데 마이너 코드로 해결하는 것도 많이 씁니다:</b><br>
-E7 → Am (마이너) ← 이것도 해결감이 강함!<br><br>
-즉, <b>V7 뒤에 메이저가 오든 마이너가 오든 상관없이</b><br>
-"다음 코드의 5도 위에서 7코드로 내려오면 해결감이 생긴다"가 핵심<br><br>
-<b>K-POP 예시:</b><br>
-• <b>Magnetic(아일릿):</b> F7→GbM7 (V7→메이저로 해결)<br>
-• <b>Crying&Laughter(더보이즈):</b> A7→Dm (V7→마이너로 해결)<br>
-• <b>Movie(비투비):</b> C7→Fm7 (V7→마이너로 해결)</div></div>
-<div class="tc"><span class="tp">K-POP 필수</span><h3>피카르디 3도</h3><div class="ex">마이너 끝을 메이저로!<br><b>셜록(샤이니):</b> Fm→F(메이저)<br><b>내일에서 기다릴게(TXT):</b> Bm→BM7</div></div>
-<div class="tc"><span class="tp">K-POP 필수</span><h3>패싱 디미니쉬</h3><div class="ex"><b>Kick it 4 now(TNX):</b><br>Ab→Bb→<b>Bdim</b>→Cm<br>베이스: Ab→Bb→B→C (반음계!)</div></div>
-<div class="tc"><span class="tp">왕도</span><h3>K-POP TOP 5</h3><div class="ex"><b>①4-5-3-6</b> 왕도 (Breathe)<br><b>②1-5-6-4</b> 캐논 (Hype Boy)<br><b>③6-4-1-5</b> 감성 (Ditto/ETA)<br><b>④4-5-6-1</b> 로열로드 (Hot&Cold)<br><b>⑤2-5-1</b> 재즈 (Bye My Monster)</div></div>
-<div class="tc"><span class="tp">뉴진스</span><h3>뉴진스 패턴</h3><div class="ex"><b>Attention:</b> bVI-bVII-I (모달인터체인지)<br><b>OMG:</b> ii9-V7-iii7-vi7 (재즈적)<br><b>Hype Boy/Ditto/Super Shy:</b> i-bVII-bVI-bVII<br>→ <b>마이너 i-bVII-bVI-bVII 루프</b>가 시그니처!</div></div>
-<div class="tc"><span class="tp">팁</span><h3>탑노트가 느낌을 결정</h3><div class="ex"><b>순차:</b> Shadow G→F→Eb<br><b>반음계:</b> Kick it 4 now Ab→Bb→B→C<br><b>유지:</b> Crying&Laughter Bb→A→A→A</div></div>`;}
+<div class="tc"><span class="tp">Core</span><h3>Circle of fifths</h3><div class="ex"><b>Fifths:</b> C→G→D→A→E→B→Gb<br><b>Fourths:</b> C→F→Bb→Eb→Ab→Db→Gb<br><br>Neighbouring keys modulate most naturally</div></div>
+<div class="tc"><span class="tp">Core</span><h3>Diatonic chords</h3><div class="ex"><b>Major:</b> I-ii-iii-IV-V-vi-vii°<br><b>C:</b> C-Dm-Em-F-G-Am-Bdim<br><b>7th:</b> CM7-Dm7-Em7-FM7-G7-Am7-Bm7♭5</div></div>
+<div class="tc"><span class="tp">K-pop essential</span><h3>Modal interchange</h3><p>Pick a key in the Chords tab and the chords you can borrow show up right away.</p>
+<div class="ex"><b>Chords you can borrow in C major:</b><br>IV is normally F → <b>iv = Fm</b> (sad)<br>Not in the key: <b>Ab (bVI)</b> → dreamy<br>Not in the key: <b>Bb (bVII)</b> → grand<br><br><b>bVI→bVII→I is the most common move in K-pop!</b></div>
+<div class="ex"><b>Attention (NewJeans)</b> Bb major<br>Diatonic: Bb, Cm, Dm, Eb, F, Gm, Adim<br>→ uses GbM7 and AbM7 (borrowed from Bb minor)<br><b>GbM7 (bVI) → AbM7 (bVII) → BbM7 (I)</b></div></div>
+<div class="tc"><span class="tp">K-pop essential</span><h3>Secondary dominants</h3><p>See them in the Chords tab.</p>
+<div class="ex"><b>The idea:</b> take the strong pull of V7 → I and aim it at other chords<br><br>
+<b>V7 → I normally resolves to a major chord:</b><br>
+G7 → C (major) ← the rule<br><br>
+<b>Resolving to a minor chord is just as common:</b><br>
+E7 → Am (minor) ← still a strong resolution!<br><br>
+So <b>whether a major or minor chord follows V7</b>,<br>
+"a 7th chord a fifth above the next chord makes it feel resolved" is the key<br><br>
+<b>K-pop examples:</b><br>
+• <b>Magnetic (ILLIT):</b> F7→GbM7 (V7 → major)<br>
+• <b>Crying&Laughter (THE BOYZ):</b> A7→Dm (V7 → minor)<br>
+• <b>Movie (BTOB):</b> C7→Fm7 (V7 → minor)</div></div>
+<div class="tc"><span class="tp">K-pop essential</span><h3>Picardy third</h3><div class="ex">End a minor song on major!<br><b>Sherlock (SHINee):</b> Fm→F (major)<br><b>Can't You See Me? (TXT):</b> Bm→BM7</div></div>
+<div class="tc"><span class="tp">K-pop essential</span><h3>Passing diminished</h3><div class="ex"><b>Kick it 4 now (TNX):</b><br>Ab→Bb→<b>Bdim</b>→Cm<br>Bass: Ab→Bb→B→C (chromatic!)</div></div>
+<div class="tc"><span class="tp">Royal road</span><h3>K-pop top 5</h3><div class="ex"><b>① 4-5-3-6</b> royal road (Breathe)<br><b>② 1-5-6-4</b> canon (Hype Boy)<br><b>③ 6-4-1-5</b> emotional (Ditto / ETA)<br><b>④ 4-5-6-1</b> royal (Hot&Cold)<br><b>⑤ 2-5-1</b> jazz (Bye My Monster)</div></div>
+<div class="tc"><span class="tp">NewJeans</span><h3>The NewJeans pattern</h3><div class="ex"><b>Attention:</b> bVI-bVII-I (modal interchange)<br><b>OMG:</b> ii9-V7-iii7-vi7 (jazzy)<br><b>Hype Boy / Ditto / Super Shy:</b> i-bVII-bVI-bVII<br>→ the <b>minor i-bVII-bVI-bVII loop</b> is their signature!</div></div>
+<div class="tc"><span class="tp">Tip</span><h3>The top note sets the mood</h3><div class="ex"><b>Stepwise:</b> Shadow G→F→Eb<br><b>Chromatic:</b> Kick it 4 now Ab→Bb→B→C<br><b>Held:</b> Crying&Laughter Bb→A→A→A</div></div>`;}
 
 rChords();rProgs();
 </script>

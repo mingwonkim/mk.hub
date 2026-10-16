@@ -1,0 +1,228 @@
+/* 음악 연습 도구(절대음감·코드 사전) 전용 — hub-tools.css 위에 덮음.
+   컨셉: 어두운 저장고 안에 놓인 '연주회 프로그램/악보 종이'. 크림 종이 + 먹색 글자 + 버밀리언 강조, 재생 버튼은 LP판.
+   글자는 크게(21:9에서 멀리서도 읽히게 zoom으로 한 번에 키움). */
+body.tool-pitch,body.tool-chord{
+  --bg:#f2ebdf;--sf:#fbf7ef;--sf2:#1a17140a;--bd:#1a17141c;--tx:#1a1714;--txd:#6e655b;--txl:#a39a8f;
+  --acc:#e2432a;--accd:#e2432a14;--accg:#e2432a55;--ok:#1f7a55;--okd:#1f7a5514;--okg:#1f7a5555;--ng:#c8321f;--ngd:#c8321f14;
+  --gold:#b07a1c;--goldd:#b07a1c17;--warn:#c4661f;--warm:#e2432a;--warmd:#e2432a14;--red:#c8321f;--redd:#c8321f12;
+  --pink:#9b4a8a;--pinkd:#9b4a8a14;--blue:#2a5a9b;--blued:#2a5a9b12;--sky:#e2432a;--skyd:#e2432a14;--ink:#1a1714;
+  color-scheme:light;background:var(--bg);color:var(--tx);font-size:16px}
+html.embed body.tool-pitch,html.embed body.tool-chord{background:var(--bg)}
+/* 종이 결 + 오선 무늬(아주 옅게) */
+body.tool-pitch::before,body.tool-chord::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+  background:repeating-linear-gradient(0deg,transparent 0 27px,#1a17140b 27px 28px) 0 18px/100% 140px no-repeat,radial-gradient(120% 90% at 100% 0,#e2432a0d,transparent 55%)}
+:is(.tool-pitch,.tool-chord) .app{position:relative;z-index:1}
+:is(.tool-pitch,.tool-chord) ::selection{background:#e2432a33;color:var(--tx)}
+:is(.tool-pitch,.tool-chord) .sc,:is(.tool-pitch,.tool-chord) .app{scrollbar-color:#1a171433 transparent}
+
+/* 탭: 먹색 알약 */
+:is(.tool-pitch,.tool-chord) .tabs{background:#1a171408;border-color:var(--bd)}
+:is(.tool-pitch,.tool-chord) .tb{color:var(--txd);font-size:15px}
+:is(.tool-pitch,.tool-chord) .tb:hover{background:#1a17140d;color:var(--tx)}
+:is(.tool-pitch,.tool-chord) .tb.on{background:var(--ink);color:var(--bg)}
+
+/* 카드: 흰 종이 + 가는 선 */
+:is(.tool-pitch,.tool-chord) :is(.level-node,.pc,.cc,.stat-box,.ach-card,.add-form,.today-box,.result-card,.session-item,.tc,.journey-bar,.stb){background:var(--sf);border:1px solid var(--bd);box-shadow:0 1px 0 #fff inset,0 10px 30px -18px #1a171440}
+:is(.tool-pitch,.tool-chord) :is(.level-node,.pc,.cc,.tstep,.session-item):hover{background:#fff;border-color:#1a171440}
+:is(.tool-pitch,.tool-chord) :is(.level-node.current,.pc.playing,.cc.playing){background:var(--ink);color:var(--bg);border-color:var(--ink)}
+:is(.tool-pitch,.tool-chord) :is(.level-node.current,.pc.playing,.cc.playing) :is(.ln-desc,.ct,.cd,.pa,.ln-pct){color:#cfc5b8}
+.tool-pitch .level-node.current .ln-icon{color:var(--bg);border-color:#ffffff40}
+.tool-pitch .level-node.mastered{border-color:#b07a1c66;background:var(--sf)}
+:is(.tool-pitch,.tool-chord) :is(.ln-icon){background:#1a171406!important}
+:is(.tool-pitch,.tool-chord) :is(.ln-badge.new){background:#e2432a;color:#fff;border:0}
+:is(.tool-pitch,.tool-chord) :is(.ln-badge.locked,.ach-badge.locked){background:#1a17140d;color:var(--txd)}
+:is(.tool-pitch,.tool-chord) :is(.ln-badge.done,.ach-badge.gold){background:#b07a1c1c;color:var(--gold);border:0}
+.tool-pitch .ln-title{font-size:17px}.tool-pitch .ln-desc{font-size:13px}
+.tool-pitch .level-node{padding:18px 20px}
+
+/* 제목류: 세리프, 앞에 번호 느낌 */
+:is(.tool-pitch,.tool-chord) :is(.sh,.section-label,.section-title){font-size:30px;color:var(--tx)}
+:is(.tool-pitch,.tool-chord) .section-label:after{background:var(--tx);opacity:.15}
+
+/* 오늘의 미션: 먹색 띠 */
+.tool-pitch .today-box{background:var(--ink);color:var(--bg);border:0;padding:24px 26px}
+.tool-pitch .today-box :is(.today-stat,.tstep){background:#ffffff0c;border-color:#ffffff1c}
+.tool-pitch .today-box :is(.l,.tstep-sub,.pct){color:#b8ae9f}
+.tool-pitch .today-stat .v{font-size:38px}
+.tool-pitch .today-stat .v.acc{color:#ff8a6b}.tool-pitch .today-stat .v.gold{color:#f0c46a}.tool-pitch .today-stat .v.ok{color:#8fe0b8}
+.tool-pitch .tstep-title{font-size:15px}.tool-pitch .tstep-sub{font-size:12px}
+.tool-pitch .today-box .tstep-check{border-color:#ffffff40}
+.tool-pitch .today-box .today-prog .bar{background:#ffffff1c}
+.tool-pitch .today-day{color:#f0c46a;border-color:#f0c46a55}
+
+/* 머리 알약·XP */
+:is(.tool-pitch,.tool-chord) :is(.pill,.lv-badge){background:var(--sf);border-color:var(--bd);font-size:13px}
+:is(.tool-pitch,.tool-chord) :is(.xpb,.today-prog .bar,.rt-bar,.note-bar .bb,.jb-track,.q-progress .dot){background:#1a171414}
+:is(.tool-pitch,.tool-chord) :is(.xpf,.today-prog .fill,.note-bar .bf,.jb-fill){background:var(--acc)}
+.tool-pitch .q-progress .dot.cur{background:var(--ink)}
+.tool-pitch :is(.xpt,.jb-top){font-size:13px}
+
+/* 재생 버튼 = LP판(홈·라벨), 재생 중엔 돈다 */
+.tool-pitch .play-btn{width:190px;height:190px;border:0;background:radial-gradient(circle,#e2432a 0 17%,#1a1714 17.5% 19%,transparent 19.5%),repeating-radial-gradient(circle,#1a1714 0 2px,#262220 2px 3px),#1a1714;box-shadow:0 20px 40px -14px #1a171488,inset 0 0 0 6px #1a1714}
+.tool-pitch .play-btn::before{inset:0;background:conic-gradient(from 30deg,transparent 0 40deg,#ffffff22 60deg,transparent 80deg 220deg,#ffffff14 240deg,transparent 260deg);-webkit-mask:none;mask:none;border-radius:50%;animation:none}
+.tool-pitch .play-btn.on{animation:lp 1.8s linear infinite;box-shadow:0 0 0 8px #e2432a22,0 20px 40px -14px #1a171488}
+.tool-pitch .play-btn .note-icon{font-size:30px;filter:none;color:#fff}
+@keyframes lp{to{rotate:1turn}}
+.tool-pitch .play-hint{font-size:14px;color:var(--txd)}
+.tool-pitch .quiz-title{font-size:40px}
+.tool-pitch .quiz-sub{font-size:15px}
+.tool-pitch :is(.quiz-label,.quiz-timer){font-size:15px}
+
+/* 답 = 피아노 건반 */
+.tool-pitch .ans-grid.kb{display:block}
+.tool-pitch .kbd{position:relative;display:flex;height:230px;width:100%;max-width:900px;margin:0 auto;border-radius:0 0 16px 16px;overflow:visible}
+.tool-pitch .kbd .key{all:unset;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:2px;cursor:pointer;user-select:none;-webkit-user-select:none;transition:background .15s,transform .1s}
+.tool-pitch .kbd .key.w{flex:1;height:100%;background:#fffdf8;border:1px solid #1a171433;border-left-width:0;border-radius:0 0 12px 12px;padding-bottom:16px;box-shadow:inset 0 -8px 0 #ece4d6}
+.tool-pitch .kbd .key.w:first-child{border-left-width:1px}
+.tool-pitch .kbd .key.b{position:absolute;top:0;width:9.2%;height:60%;transform:translateX(-50%);background:linear-gradient(#2a2622,#1a1714);border-radius:0 0 8px 8px;padding-bottom:10px;z-index:2;box-shadow:0 6px 10px -4px #0006}
+.tool-pitch .kbd .key .main{font:500 20px var(--mono);color:var(--tx)}
+.tool-pitch .kbd .key .sub{font-size:12px;color:var(--txd)}
+.tool-pitch .kbd .key.b .main{font-size:14px;color:#f2ebdf}.tool-pitch .kbd .key.b .sub{color:#a39a8f;font-size:10px}
+.tool-pitch .kbd .key.w:hover{background:#fff6ee}
+.tool-pitch .kbd .key.b:hover{background:#3a332d}
+.tool-pitch .kbd .key:active{transform:translateX(var(--tx0,0)) scale(.98)}
+.tool-pitch .kbd .key.b:active{transform:translateX(-50%) scale(.98)}
+.tool-pitch .kbd .key.off{cursor:default;pointer-events:none}
+.tool-pitch .kbd .key.w.off{background:#efe8dc}.tool-pitch .kbd .key.w.off .main{color:#c9bfb1}
+.tool-pitch .kbd .key.b.off{background:#4a443e}.tool-pitch .kbd .key.b.off .main{color:#7d756c}
+.tool-pitch .kbd .key.ok{background:#1f7a55!important}.tool-pitch .kbd .key.ok :is(.main,.sub){color:#fff}
+.tool-pitch .kbd .key.ng{background:#c8321f!important}.tool-pitch .kbd .key.ng :is(.main,.sub){color:#fff}
+.tool-pitch .kbd .key:disabled{pointer-events:none}
+
+/* 화음 답(색 원) */
+.tool-pitch .chord-btn{background:var(--sf);border-color:var(--bd);min-height:110px}
+.tool-pitch .chord-color{width:46px;height:46px}
+.tool-pitch .chord-name{font-size:15px}
+.tool-pitch .fb{font-size:17px}
+.tool-pitch .fb.ok{background:#1f7a5512;border-color:#1f7a5544}
+.tool-pitch .fb.ng{background:#c8321f10;border-color:#c8321f40}
+
+/* 버튼 */
+:is(.tool-pitch,.tool-chord) :is(.btn-primary,.abtn.p){background:var(--ink);color:var(--bg);font-size:15px}
+:is(.tool-pitch,.tool-chord) :is(.btn-primary,.abtn.p):hover{background:#000;box-shadow:none}
+:is(.tool-pitch,.tool-chord) :is(.btn-secondary,.abtn.s2){border-color:#1a171433;color:var(--tx)}
+:is(.tool-pitch,.tool-chord) :is(.key-btn,.mode-btn,.fc,.si,.add-form input,.ans-btn,.abtn){background:var(--sf);border-color:var(--bd);color:var(--tx)}
+:is(.tool-pitch,.tool-chord) :is(.key-btn,.mode-btn,.fc,.abtn):hover{background:#fff;border-color:#1a171455}
+:is(.tool-pitch,.tool-chord) :is(.key-btn.on,.mode-btn.on,.fc.on){background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.tool-chord .key-btn{font-size:15px;padding:10px 15px}
+.tool-chord .mode-btn{font-size:13px;padding:8px 16px}
+.tool-chord .fc{font-size:12px;padding:7px 13px}
+.tool-chord .si{font-size:15px}
+
+/* 결과·기록·업적 */
+.tool-pitch .result-score{color:var(--acc);text-shadow:none;font-size:80px}
+.tool-pitch .result-title{font:400 36px var(--serif)}
+.tool-pitch :is(.stat-box .v,.stb .v){color:var(--tx);font-size:44px}
+.tool-pitch :is(.stat-box .l,.stb .l){font-size:13px}
+.tool-pitch .stat-box[style*="background"]{background:var(--ink)!important;color:var(--bg);border:0!important}
+.tool-pitch .stat-box[style*="background"] .v{color:#ff8a6b!important}
+.tool-pitch .stat-box[style*="background"] .l{color:#cfc5b8}
+.tool-pitch .streak-day{width:34px;height:34px;font-size:11px;background:#1a17140d}
+.tool-pitch .streak-day.active{background:var(--acc);box-shadow:none}
+.tool-pitch .note-bar .nn{font-size:15px}.tool-pitch .note-bar .pc{font-size:13px}
+.tool-pitch .ach-name{font-size:15px}.tool-pitch .ach-desc{font-size:12px}.tool-pitch .ach-icon{font-size:36px}
+.tool-pitch .ach-card.unlocked{border-color:#b07a1c55}
+.tool-pitch .session-item .si-score{font-size:15px}.tool-pitch .session-item .si-sub{font-size:13px}
+:is(.tool-pitch,.tool-chord) :is(.levelup-box,.lv100-box,.ach-popup){background:var(--sf);color:var(--tx);border-color:var(--bd);box-shadow:0 30px 80px #1a171455}
+:is(.tool-pitch,.tool-chord) :is(.levelup-overlay,.lv100-overlay){background:#f2ebdfcc}
+
+/* 코드 사전 */
+.tool-chord .cc .cn{font-size:34px}
+.tool-chord .cc .ct{font-size:12px}.tool-chord .cc .cd{font-size:11px}
+.tool-chord .cc .dg{background:#1a17140d!important;color:var(--tx)!important;font-size:10px}
+.tool-chord .cc.playing .dg{background:#ffffff1c!important;color:var(--bg)!important}
+.tool-chord .sec-label{background:var(--sf);font-size:14px}
+.tool-chord .pc .pn{font-size:30px}.tool-chord .pc .pa{font-size:13px}.tool-chord .pc .pd{font-size:14px;color:var(--acc)}
+.tool-chord .pc .pch{font-size:15px;background:#1a17140b}
+.tool-chord .pc.playing .pch{background:#ffffff16}
+.tool-chord .pc .ptg{font-size:11px}
+.tool-chord .pp{width:40px;height:40px;font-size:15px;border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.tool-chord .pc.playing .pp{background:var(--acc);border-color:var(--acc)}
+.tool-chord .bpm-label{font-size:12px}
+.tool-chord .tc h3{font-size:30px}.tool-chord .tc p{font-size:14px}.tool-chord .tc .ex{font-size:14px;background:#1a171406;color:var(--tx)}
+.tool-chord .tc .tp{background:var(--acc);color:#fff;font-size:11px}
+.tool-chord .cof-info h3{font-size:34px}.tool-chord .cof-info p{font-size:14px}
+.tool-chord #cofSvg text{fill:var(--tx)}
+.tool-chord #cofSvg line,.tool-chord #cofSvg circle{stroke:#1a171426}
+
+/* 코드 사전 건반(왼쪽 기둥, 울리는 음이 켜짐) */
+.tool-chord .cd-kbd{position:relative;height:120px;margin:4px 0 20px;border:1px solid #1a171433;border-radius:0 0 12px 12px;background:#fffdf8;overflow:hidden}
+.tool-chord .cd-kbd .w{position:absolute;top:0;bottom:0;width:calc(100%/14);border-right:1px solid #1a171426;transition:background .12s}
+.tool-chord .cd-kbd .b{position:absolute;top:0;width:calc(100%/14*.62);height:60%;transform:translateX(-50%);background:#1a1714;border-radius:0 0 5px 5px;z-index:2;transition:background .12s}
+.tool-chord .cd-kbd .w.on{background:#e2432a}
+.tool-chord .cd-kbd .b.on{background:#e2432a}
+.tool-chord .cd-kbd-l{position:absolute;bottom:6px;left:6px;font:600 10px var(--mono);color:var(--txl);z-index:3}
+.tool-chord .cd-kbd-l.r{left:calc(50% + 6px)}
+
+/* 21:9: 왼쪽 기둥(상태·탭·건반), 글자 크게 */
+@media(min-width:1000px){
+  .tool-chord .cd-kbd{grid-column:1;grid-row:2;align-self:start;height:150px}
+  :is(.tool-pitch,.tool-chord) .app{grid-template-columns:300px minmax(0,1fr);padding-top:10px}
+  .tool-pitch .ans-grid.kb{max-width:none!important}
+  .tool-pitch .kbd{height:260px}
+}
+@media(max-width:999px){.tool-chord .cd-kbd{height:90px}}
+@media(prefers-reduced-motion:reduce){.tool-pitch .play-btn.on{animation:none}}
+
+/* ── 한 화면에 들어가게: 방 배율(--z)이 이미 키워 주므로 여기선 크기를 줄이고, 높이에 맞춰 늘고 줄게(vh) ── */
+body.tool-pitch,body.tool-chord{font-size:14px}
+:is(.tool-pitch,.tool-chord) :is(.sh,.section-label,.section-title){font-size:24px}
+:is(.tool-pitch,.tool-chord) .tb{font-size:14px;padding:9px 14px}
+.tool-pitch .hd{padding:6px 2px 4px;margin:0}
+.tool-pitch .xps{padding:8px 2px 8px}
+.tool-pitch .journey-bar{padding:10px 12px;margin-bottom:10px}
+.tool-pitch .today-box{padding:16px 18px;margin-bottom:10px}
+.tool-pitch .today-top{margin-bottom:8px}
+.tool-pitch .today-top h3{font-size:22px}
+.tool-pitch .today-stat{padding:6px}
+.tool-pitch .today-stat .v{font-size:28px}
+.tool-pitch .today-stats{margin-bottom:8px}
+.tool-pitch .tstep{padding:8px 12px}
+.tool-pitch .level-node{padding:12px 16px}
+.tool-pitch .ln-title{font-size:15px}.tool-pitch .ln-desc{font-size:12px}
+.tool-pitch .ln-icon{width:40px;height:40px}
+/* 퀴즈: 재생판·건반·제목이 화면 높이에 맞춰 줄어듦 */
+.tool-pitch #sc-quiz{justify-content:flex-start;gap:0}
+.tool-pitch .quiz-title{font-size:clamp(22px,4.6vh,36px);margin-bottom:0}
+.tool-pitch .quiz-sub{font-size:13px;margin-bottom:6px}
+.tool-pitch .rt-bar{margin-bottom:6px}
+.tool-pitch .combo-row{min-height:24px;margin-bottom:2px}
+.tool-pitch .combo-num{font-size:22px}
+.tool-pitch .q-progress{margin-bottom:clamp(6px,2vh,14px)}
+.tool-pitch .play-area{margin-bottom:clamp(6px,2vh,16px)}
+.tool-pitch .play-btn{width:clamp(84px,21vh,170px);height:clamp(84px,21vh,170px)}
+.tool-pitch .play-hint{margin-top:clamp(4px,1.2vh,12px);font-size:13px}
+.tool-pitch .kbd{height:clamp(110px,27vh,230px)}
+.tool-pitch .kbd .key .main{font-size:clamp(13px,2.4vh,18px)}
+.tool-pitch .kbd .key .sub{font-size:11px}
+.tool-pitch .kbd .key.w{padding-bottom:clamp(6px,1.6vh,14px)}
+.tool-pitch .fb{margin-top:8px;padding:8px;font-size:15px}
+.tool-pitch :is(.stat-box .v,.stb .v){font-size:34px}
+.tool-pitch .stat-box{padding:12px}
+.tool-pitch .result-score{font-size:60px}
+/* 코드 사전: 다이어토닉 7개를 한 줄에, 카드·건반 낮게 */
+.tool-chord .hd{display:none}
+.tool-chord .key-sel{margin-bottom:8px}
+.tool-chord .key-btn{font-size:13px;padding:7px 12px}
+.tool-chord .mode-btn{font-size:12px;padding:6px 14px}
+.tool-chord .mode-row{margin-bottom:6px}
+.tool-chord .sh{margin:12px 0 8px}
+.tool-chord .cc{padding:10px 8px}
+.tool-chord .cc .cn{font-size:26px}
+.tool-chord .cc .ct{font-size:11px}.tool-chord .cc .cd{font-size:10px}
+.tool-chord .pc .pn{font-size:24px}.tool-chord .pc .pch{font-size:13px}
+.tool-chord .tc h3{font-size:24px}.tool-chord .tc .ex,.tool-chord .tc p{font-size:13px}
+.tool-chord .cof-info h3{font-size:28px}
+@media(min-width:1000px){
+  .tool-chord .chord-grid{grid-template-columns:repeat(7,minmax(0,1fr))}
+  .tool-chord .cd-kbd{height:110px}
+  :is(.tool-pitch,.tool-chord) .app{grid-template-columns:260px minmax(0,1fr);column-gap:28px;padding-top:4px}
+  .tool-pitch .kbd{height:clamp(110px,27vh,230px)}
+  .tool-pitch .level-path{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+}
+/* 퀴즈: 위엔 진행 정보, 재생판·답은 남은 높이의 가운데(위로 쏠리지 않게) */
+.tool-pitch #sc-quiz .play-area{margin-top:auto}
+.tool-pitch #sc-quiz #fbArea{margin-bottom:auto;min-height:48px}
+.tool-pitch #sc-quiz .play-btn{width:clamp(84px,25vh,220px);height:clamp(84px,25vh,220px)}
+.tool-pitch #sc-quiz .kbd{height:clamp(110px,30vh,260px)}
+.tool-pitch #sc-quiz .ans-grid{margin-top:clamp(4px,2vh,20px)}
