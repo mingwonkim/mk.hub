@@ -226,3 +226,19 @@ body.tool-pitch,body.tool-chord{font-size:14px}
 .tool-pitch #sc-quiz .play-btn{width:clamp(84px,25vh,220px);height:clamp(84px,25vh,220px)}
 .tool-pitch #sc-quiz .kbd{height:clamp(110px,30vh,260px)}
 .tool-pitch #sc-quiz .ans-grid{margin-top:clamp(4px,2vh,20px)}
+/* 아래 빈 공간까지 고르게: 머리 ─ 빈칸 ─ 재생판 ─ 빈칸 ─ 답 ─ 빈칸 */
+.tool-pitch #sc-quiz .play-area{margin-top:auto;margin-bottom:auto}
+.tool-pitch #sc-quiz .ans-grid{margin-top:0;margin-bottom:auto}
+.tool-pitch #sc-quiz #fbArea{margin-bottom:clamp(8px,3vh,28px)}
+.tool-pitch #sc-quiz .play-btn{width:clamp(90px,30vh,270px);height:clamp(90px,30vh,270px)}
+.tool-pitch #sc-quiz .play-hint{font-size:clamp(13px,1.8vh,16px)}
+.tool-pitch #sc-quiz .kbd{height:clamp(110px,33vh,300px)}
+/* 건반은 남은 높이를 채움(빈칸·스크롤 둘 다 없이). 재생판은 화면 높이 비례 */
+.tool-pitch #sc-quiz .play-btn{width:clamp(90px,24vh,240px);height:clamp(90px,24vh,240px)}
+.tool-pitch #sc-quiz .ans-grid.kb{flex:1 1 0;min-height:110px;max-height:340px;display:flex;margin-bottom:0}
+.tool-pitch #sc-quiz .ans-grid.kb .kbd{height:auto;flex:1}
+.tool-pitch #sc-quiz:has(.kb) .play-area{margin-bottom:clamp(8px,2.5vh,24px)}
+.tool-pitch #sc-quiz:has(.kb) #fbArea{min-height:40px;margin-bottom:6px}
+.tool-pitch #sc-quiz.on{padding-bottom:10px}
+.tool-pitch #sc-quiz:has(.kb) #fbArea{min-height:34px;margin-bottom:0}
+.tool-pitch #sc-quiz:has(.kb) #fbArea .fb{margin-top:6px;padding:6px}

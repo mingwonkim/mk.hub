@@ -306,7 +306,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 @keyframes confettiFall{0%{transform:translateY(-20px) rotateZ(0deg);opacity:1;}100%{transform:translateY(110vh) rotateZ(720deg);opacity:0;}}
 </style>
 <link rel="stylesheet" href="hub-tools.css?v=1016h">
-<link rel="stylesheet" href="music-tools.css?v=1016k">
+<link rel="stylesheet" href="music-tools.css?v=1016p">
 </head>
 <body class="tool-pitch">
 <div class="app">
@@ -492,10 +492,10 @@ const TIMBRES = {
   organ:{wave:'sine',h:[1,.6,.4,.3,.2,.1]},
 };
 function playN(n,o,d=1.3,tmb='piano'){
-  if(AC.state==='suspended')AC.resume();
+  if(AC.state!=='running'){AC.resume().then(()=>playN(n,o,d,tmb));return;} // 잠든 오디오를 깨운 뒤에 울림(깨기 전에 예약하면 소리가 안 나는 경우가 있음)
   const T=TIMBRES[tmb]||TIMBRES.piano;
   const f=freq(n,o),t=AC.currentTime,m=AC.createGain();
-  m.gain.setValueAtTime(.22,t);m.gain.exponentialRampToValueAtTime(.001,t+d);m.connect(AC.destination);
+  m.gain.setValueAtTime(.5,t);m.gain.exponentialRampToValueAtTime(.001,t+d);m.connect(AC.destination);
   T.h.forEach((g,i)=>{const os=AC.createOscillator(),gn=AC.createGain();os.type=i===0?T.wave:'sine';os.frequency.setValueAtTime(f*(i+1),t);gn.gain.setValueAtTime(g*.25,t);gn.gain.exponentialRampToValueAtTime(.001,t+d*(1-i*.1));os.connect(gn);gn.connect(m);os.start(t);os.stop(t+d);});
 }
 function playChord(notes,d=1.6){notes.forEach(([n,o])=>playN(n,o,d));}
