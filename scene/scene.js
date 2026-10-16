@@ -77,10 +77,11 @@
 </div>
 <div class="mk-layer" id="lsStudy" tabindex="-1" role="region" aria-label="Study">
   <div class="mk-stage">
-    <img class="mk-bg" loading="lazy" src="${S}study2-1920.webp" srcset="${S}study2-1920.webp 1920w, ${S}study2-3840.webp 3840w" sizes="max(100vw, 233vh)" alt="A tall glass-roofed library study at dusk over the city">
+    <img class="mk-bg" loading="lazy" src="${S}study3-1920.webp" srcset="${S}study3-1920.webp 1920w, ${S}study3-3840.webp 3840w" sizes="max(100vw, 233vh)" alt="A tall glass-roofed library study at dusk over the city">
     <a class="mk-spot" href="#thoughts" aria-label="Thoughts" style="left:39.5%;top:75%;width:14%;height:11%"></a>
-    <a class="mk-spot mk-quote" href="#quotes" aria-label="Words to keep" style="left:77.3%;top:43.4%;width:5.4%;height:14.7%"><span></span></a>
-    <a class="mk-spot mk-cal" href="#todo" aria-label="Tasks" style="left:92.6%;top:40.4%;width:7.4%;height:19.9%"></a>
+    <div class="mk-ink" aria-hidden="true"><div class="ink-q"><p>You have to lose something to gain something.</p></div><b class="ink-t"></b><div class="ink-g"></div></div>
+    <a class="mk-spot" href="#quotes" aria-label="Words to keep" style="left:77.2%;top:43.3%;width:5.2%;height:14.8%"></a>
+    <a class="mk-spot" href="#todo" aria-label="Tasks" style="left:92.7%;top:40.4%;width:7.3%;height:19.9%"></a>
     <a class="mk-spot" href="#files" aria-label="Files" style="left:69.6%;top:71%;width:15.4%;height:14%"></a>
     <button type="button" class="mk-spot mk-deck" aria-label="Turntable — study music" style="left:74%;top:60%;width:7.8%;height:10.5%"></button>
   </div>
@@ -125,17 +126,33 @@
   const soundUi = () => { const on = !!window.mkBgm?.isOn(); sound.classList.toggle('on', on); sound.setAttribute('aria-pressed', String(on)); };
   sound.addEventListener('pointerdown', e => e.stopPropagation()); // 문서의 '첫 터치에 소리 켜기'보다 이 버튼이 먼저(안 그러면 켜자마자 꺼짐)
   sound.addEventListener('click', () => { window.mkBgm?.toggle(); soundUi(); });
-  /* 서재 벽: 턴테이블 = 음악 켜고 끄기. 달력은 이번 달을 그리고 할 일이 있는 날에 빨간 동그라미(저장고가 열려 있을 때만 읽음).
-     액자는 날짜마다 바뀌는 짧은 명언(quotes.html에서 읽음 — 못 읽으면 그림 속 문구가 그대로 보임) */
-  const deck = study.querySelector('.mk-deck'), cal = study.querySelector('.mk-cal'), quote = study.querySelector('.mk-quote span');
+  /* 서재 벽: 턴테이블 = 음악 켜고 끄기. 액자·달력 글자는 글자를 지운 원판(study3) 위에 '인쇄'함:
+     그림 좌표(3840×1648 px, astra가 딴 종이 네 모서리)에 원근 변환(matrix3d)으로 붙이고 곱하기 혼합 → 종이 결·조명이 글자에 그대로 묻음.
+     달력은 이번 달 + 할 일 있는 날 빨간 동그라미(저장고가 열려 있을 때만 읽음), 액자는 날짜마다 바뀌는 짧은 명언(quotes.html) */
+  const deck = study.querySelector('.mk-deck'), paper = study.querySelector('.mk-ink'), stage = paper.parentElement;
   deck.addEventListener('pointerdown', e => e.stopPropagation());
   deck.addEventListener('click', () => { window.mkBgm?.toggle(); soundUi(); });
+  const QUADS = { // 왼위, 오른위, 오른아래, 왼아래 [w,h는 글자 상자 크기]
+    'ink-q': [[2963, 729], [3162, 713], [3163, 956], [2965, 949], 400, 480],
+    'ink-t': [[3585, 712], [3835, 697], [3836, 723], [3586, 740], 500, 56], // 원래 제목 줄을 좌우로 늘림(달 이름 길이가 달라서 가운데 정렬)
+    'ink-g': [[3573, 758], [3826, 746], [3827, 978], [3573, 969], 508, 446],
+  };
+  for (const [cls, [[x0, y0], [x1, y1], [x2, y2], [x3, y3], w, h]] of Object.entries(QUADS)) { // 단위 사각형 → 네 점(사영 변환)
+    const dx1 = x1 - x2, dx2 = x3 - x2, dx3 = x0 - x1 + x2 - x3, dy1 = y1 - y2, dy2 = y3 - y2, dy3 = y0 - y1 + y2 - y3, den = dx1 * dy2 - dx2 * dy1;
+    const g = (dx3 * dy2 - dx2 * dy3) / den, k = (dx1 * dy3 - dx3 * dy1) / den;
+    const m = [(x1 - x0 + g * x1) / w, (y1 - y0 + g * y1) / w, 0, g / w, (x3 - x0 + k * x3) / h, (y3 - y0 + k * y3) / h, 0, k / h, 0, 0, 1, 0, x0, y0, 0, 1];
+    Object.assign(paper.querySelector('.' + cls).style, { width: w + 'px', height: h + 'px', transform: `matrix3d(${m.join(',')})` });
+  }
+  new ResizeObserver(() => paper.style.scale = stage.clientWidth / 3840).observe(stage);
   const pad2 = n => String(n).padStart(2, '0');
   function paintCal(busy) {
     const now = new Date(), y = now.getFullYear(), m = now.getMonth(), lead = new Date(y, m, 1).getDay(), n = new Date(y, m + 1, 0).getDate();
     let cells = '<i></i>'.repeat(lead);
     for (let d = 1; d <= n; d++) cells += `<i class="${busy.has(`${y}-${pad2(m + 1)}-${pad2(d)}`) ? 'busy' : ''}${d === now.getDate() ? ' today' : ''}">${d}</i>`;
-    cal.innerHTML = `<div><b>${now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</b><u>${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(w => `<i>${w}</i>`).join('')}</u><span>${cells}</span></div>`;
+    paper.querySelector('.ink-t').textContent = now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    const g = paper.querySelector('.ink-g');
+    g.style.setProperty('--rows', Math.ceil((lead + n) / 7));
+    g.innerHTML = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(w => `<u>${w}</u>`).join('') + cells;
   }
   let quotes = null;
   async function wall() {
@@ -148,10 +165,10 @@
         .map(c => [c.querySelector('.text')?.textContent.trim().replace(/^"|"$/g, '') || '', c.querySelector('.author')?.textContent.replace(/^—\s*/, '').trim() || ''])
         .filter(([t]) => t && t.length <= 34); // ponytail: 액자가 작아서 짧은 것만. 긴 명언은 액자를 누르면 보임
       const [t, a] = quotes[Math.floor((Date.now() - new Date().getTimezoneOffset() * 6e4) / 864e5) % quotes.length];
-      quote.innerHTML = ''; quote.append(Object.assign(document.createElement('q'), { textContent: t }));
-      if (a) quote.append(Object.assign(document.createElement('small'), { textContent: a }));
-      quote.parentElement.classList.add('on');
-    } catch {}
+      const q = paper.querySelector('.ink-q'); q.innerHTML = '';
+      q.append(Object.assign(document.createElement('p'), { textContent: t }));
+      if (a) q.append(Object.assign(document.createElement('small'), { textContent: '— ' + a }));
+    } catch {} // 못 읽으면 기본 문구(You have to lose something…)가 그대로
   }
   /* 방을 닫거나 저장고 인증을 그냥 닫으면 마지막에 있던 도시/서재로 */
   let back = '';
