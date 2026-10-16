@@ -6,13 +6,13 @@ const OWNER_EMAIL='kmin5940@naver.com';
 const SESSION_MS=12*60*60*1000,REAUTH_MS=5*60*1000;
 class VaultError extends Error{constructor(status,message){super(message);this.status=status;}}
 function requireOwner(claims,access=false,now=Date.now()){
- if(!claims||claims.email!==OWNER_EMAIL||claims.email_verified!==true||claims.vault_owner!==true||!Number.isFinite(claims.vault_otp_at)||now-claims.vault_otp_at>SESSION_MS||claims.vault_otp_at>now+5000||(access&&claims.vault_access!==true))throw new VaultError(401,'인증이 필요합니다.');
+ if(!claims||claims.email!==OWNER_EMAIL||claims.email_verified!==true||claims.vault_owner!==true||!Number.isFinite(claims.vault_otp_at)||now-claims.vault_otp_at>SESSION_MS||claims.vault_otp_at>now+5000||(access&&claims.vault_access!==true))throw new VaultError(401,'Sign-in required.');
  return claims;
 }
 function otpHash(id,code,pepper){return createHmac('sha256',pepper).update(id+':'+code).digest('hex');}
 // Pattern = 4-9 distinct dots (0-8, row-major) in drawing order.
 function normalizePasswords(values){
- if(!Array.isArray(values)||values.length!==1||typeof values[0]!=='string'||!/^[0-8]{4,9}$/.test(values[0])||new Set(values[0]).size!==values[0].length)throw new VaultError(400,'점 4개 이상을 이어 그려주세요.');
+ if(!Array.isArray(values)||values.length!==1||typeof values[0]!=='string'||!/^[0-8]{4,9}$/.test(values[0])||new Set(values[0]).size!==values[0].length)throw new VaultError(400,'Connect at least 4 dots.');
  return values;
 }
 async function hashPasswords(values){return Promise.all(normalizePasswords(values).map(async password=>{const salt=randomBytes(16).toString('hex');return{salt,hash:(await scrypt(password,salt,64)).toString('hex')};}));}
@@ -23,7 +23,7 @@ async function verifyPasswords(values,stored){
 }
 function consumeRate(previous,now,limit,cooldownMs){
  const record=previous&&now-previous.start<3600000?previous:{start:now,count:0,last:0};
- if(record.count>=limit||(record.last&&now-record.last<cooldownMs))throw new VaultError(429,'잠시 후 다시 요청해주세요.');
+ if(record.count>=limit||(record.last&&now-record.last<cooldownMs))throw new VaultError(429,'Try again in a moment.');
  return{start:record.start,count:record.count+1,last:now};
 }
 module.exports={OWNER_EMAIL,SESSION_MS,REAUTH_MS,VaultError,requireOwner,normalizePasswords,hashPasswords,verifyPasswords,consumeRate,otpHash};

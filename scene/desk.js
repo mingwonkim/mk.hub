@@ -9,18 +9,18 @@
   const parse = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
   const addDays = (s, n) => { const d = parse(s); d.setDate(d.getDate() + n); return ymd(d); };
   const today = () => ymd(new Date());
-  const WD = ['일', '월', '화', '수', '목', '금', '토'];
-  const label = s => { const d = parse(s); return `${d.getMonth() + 1}월 ${d.getDate()}일 (${WD[d.getDay()]})`; };
-  const ago = t => { const m = Math.round((Date.now() - t) / 60000); return m < 1 ? '방금' : m < 60 ? m + '분 전' : m < 1440 ? Math.round(m / 60) + '시간 전' : Math.round(m / 1440) + '일 전'; };
+  const WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const label = s => { const d = parse(s); return `${WD[d.getDay()]}, ${MON[d.getMonth()]} ${d.getDate()}`; };
+  const ago = t => { const m = Math.round((Date.now() - t) / 60000); return m < 1 ? 'just now' : m < 60 ? m + 'm ago' : m < 1440 ? Math.round(m / 60) + 'h ago' : Math.round(m / 1440) + 'd ago'; };
   const store = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} };
   const read = k => { try { return localStorage.getItem(k); } catch { return null; } };
   const THOUGHTS = () => collection(db, 'mk_app', 'data', 'thoughts');
   const tdoc = id => doc(todosCol, id);
 
   // 잡생각 ↔ 할 일 전환(두 방 위)
-  const switcher = on => el('nav', { class: 'dk-switch', 'aria-label': '책상' },
-    el('a', { href: '#thoughts', 'aria-current': on === 'thoughts' ? 'page' : null }, '잡생각'),
-    el('a', { href: '#todo', 'aria-current': on === 'todo' ? 'page' : null }, '할 일'));
+  const switcher = on => el('nav', { class: 'dk-switch', 'aria-label': 'Desk' },
+    el('a', { href: '#thoughts', 'aria-current': on === 'thoughts' ? 'page' : null }, 'Thoughts'),
+    el('a', { href: '#todo', 'aria-current': on === 'todo' ? 'page' : null }, 'Tasks'));
 
   // 되돌리기 알림(5초)
   // undo: () => Promise<boolean>. 실패하면 알림을 남겨 다시 누를 수 있게
@@ -28,8 +28,8 @@
     host.querySelector('.dk-toast')?.remove();
     const msg = el('span', {}, text), btn = undo && el('button', { type: 'button', onclick: async () => {
       btn.disabled = true; clearTimeout(timer);
-      if (await undo()) t.remove(); else { msg.textContent = '되돌리지 못했어요. 다시 눌러 주세요.'; btn.disabled = false; }
-    } }, '되돌리기');
+      if (await undo()) t.remove(); else { msg.textContent = "Couldn't undo. Try again."; btn.disabled = false; }
+    } }, 'Undo');
     const t = el('div', { class: 'dk-toast', role: 'status' }, msg, btn);
     host.append(t); const timer = setTimeout(() => t.remove(), 5000);
   }
@@ -38,17 +38,17 @@
 
   // 할 일 만들기(잡생각에서도 씀): 날짜 고르기 칩
   function dateChips(onPick) {
-    const custom = el('input', { type: 'date', class: 'dk-date', 'aria-label': '날짜 선택', onchange: e => e.target.value && onPick(e.target.value) });
+    const custom = el('input', { type: 'date', class: 'dk-date', 'aria-label': 'Pick a date', onchange: e => e.target.value && onPick(e.target.value) });
     return el('div', { class: 'dk-chips' },
-      el('button', { type: 'button', onclick: () => onPick(today()) }, '오늘'),
-      el('button', { type: 'button', onclick: () => onPick(addDays(today(), 1)) }, '내일'),
-      el('label', { class: 'dk-pick' }, '날짜 선택', custom),
-      el('button', { type: 'button', onclick: () => onPick(null) }, '날짜 없이'));
+      el('button', { type: 'button', onclick: () => onPick(today()) }, 'Today'),
+      el('button', { type: 'button', onclick: () => onPick(addDays(today(), 1)) }, 'Tomorrow'),
+      el('label', { class: 'dk-pick' }, 'Pick a date', custom),
+      el('button', { type: 'button', onclick: () => onPick(null) }, 'No date'));
   }
 
   /* ───────── 잡생각 ───────── */
   mkRooms.define('thoughts', {
-    tag: 'STUDY · STICKY NOTES', title: '잡생각',
+    tag: 'Study · Sticky notes', title: 'Thoughts', sub: 'Put it down the moment it shows up.',
     load: () => all(THOUGHTS(), 'c'),
     row: () => ({}),
     render(body, st) {
@@ -62,9 +62,9 @@
       const offerTriage = () => {
         const open = items.filter(x => x.state === 'open' && !(x.snooze > Date.now()));
         if (!open.length || read('mk_triage_day') === today()) return;
-        triageBox.replaceChildren(el('div', { class: 'dk-offer' }, el('p', {}, '생각 3개만 살펴볼까요?'),
-          el('button', { type: 'button', class: 'rm-btn sm', onclick: () => { store('mk_triage_day', today()); triage(); } }, '살펴보기'),
-          el('button', { type: 'button', class: 'rm-btn ghost sm', onclick: () => { store('mk_triage_day', today()); triageBox.replaceChildren(); } }, '지금 말고')));
+        triageBox.replaceChildren(el('div', { class: 'dk-offer' }, el('p', {}, 'Look at just three thoughts?'),
+          el('button', { type: 'button', class: 'rm-btn sm', onclick: () => { store('mk_triage_day', today()); triage(); } }, 'Look'),
+          el('button', { type: 'button', class: 'rm-btn ghost sm', onclick: () => { store('mk_triage_day', today()); triageBox.replaceChildren(); } }, 'Not now')));
       };
       function triage() {
         const now = Date.now(), open = items.filter(x => x.state === 'open' && !(x.snooze > now));
@@ -72,9 +72,9 @@
         const queue = [...old, ...open.filter(x => !old.includes(x))].slice(0, 3);
         let i = 0;
         const step = () => {
-          if (i >= queue.length) return triageBox.replaceChildren(el('div', { class: 'dk-offer' }, el('p', {}, '다 봤어요. 나머지는 그대로 둬도 괜찮아요.'),
-            el('button', { type: 'button', class: 'rm-btn ghost sm', onclick: () => triageBox.replaceChildren() }, '닫기'),
-            !read('mk_resurface_off') && el('button', { type: 'button', class: 'dk-link', onclick: e => { store('mk_resurface_off', '1'); e.target.remove(); } }, '오래된 생각 다시 보여주기 끄기')));
+          if (i >= queue.length) return triageBox.replaceChildren(el('div', { class: 'dk-offer' }, el('p', {}, "That's all. The rest can stay as they are."),
+            el('button', { type: 'button', class: 'rm-btn ghost sm', onclick: () => triageBox.replaceChildren() }, 'Close'),
+            !read('mk_resurface_off') && el('button', { type: 'button', class: 'dk-link', onclick: e => { store('mk_resurface_off', '1'); e.target.remove(); } }, 'Stop resurfacing old thoughts')));
           const x = queue[i++];
           triageBox.replaceChildren(el('div', { class: 'dk-offer focus' }, el('small', {}, `${i} / ${queue.length} · ${ago(x.c)}`), el('p', { class: 'dk-big' }, x.text),
             actions(x, step, true)));
@@ -86,7 +86,7 @@
       function actions(x, after, inTriage) {
         const box = el('div', { class: 'dk-actions' });
         const toTodo = el('button', { type: 'button', class: 'rm-btn sm', disabled: !!x.todoId, onclick: () => {
-          const text = el('input', { class: 'dk-line', value: x.text.split('\n')[0].slice(0, 120), 'aria-label': '할 일 문구' });
+          const text = el('input', { class: 'dk-line', value: x.text.split('\n')[0].slice(0, 120), 'aria-label': 'Task text' });
           let busy = false;
           box.replaceChildren(text, dateChips(async date => {
             if (busy) return; busy = true;
@@ -96,21 +96,21 @@
               if (!(await getDoc(tdoc(todoId))).exists()) // 이미 있으면(부분 실패 뒤 재시도) 덮어쓰지 않고 연결만
                 await setDoc(tdoc(todoId), { text: text.value.trim() || x.text, date, done: false, c: Date.now(), from: x.id });
               await updateDoc(doc(THOUGHTS(), x.id), { state: 'todo', todoId }); Object.assign(x, { state: 'todo', todoId });
-              say(date ? `${label(date)} 할 일로 옮겼어요.` : '날짜 없는 할 일로 옮겼어요.'); paint(); after?.();
-            } catch (e) { say('실패했어요(다시 눌러도 겹치지 않아요): ' + e.message); }
+              say(date ? `Moved to tasks for ${label(date)}.` : 'Moved to tasks, no date.'); paint(); after?.();
+            } catch (e) { say('Failed (pressing again will not duplicate it): ' + e.message); }
             finally { busy = false; }
           }));
           text.focus();
-        } }, x.todoId ? '할 일에 있음' : '할 일로');
-        const keep = el('button', { type: 'button', class: 'rm-btn ghost sm', onclick: () => set(x, { state: x.state === 'kept' ? 'open' : 'kept' }, after) }, x.state === 'kept' ? '간직 풀기' : '간직하기');
+        } }, x.todoId ? 'In tasks' : 'Make a task');
+        const keep = el('button', { type: 'button', class: 'rm-btn ghost sm', onclick: () => set(x, { state: x.state === 'kept' ? 'open' : 'kept' }, after) }, x.state === 'kept' ? 'Unkeep' : 'Keep');
         const letGo = el('button', { type: 'button', class: 'rm-btn ghost sm', onclick: async () => { const was = x.state;
-          if (await set(x, { state: 'let', letAt: Date.now() }, after)) undoToast(host, '놓아줬어요.', () => x.state === 'let' ? set(x, { state: was }) : Promise.resolve(true)); } }, '놓아주기');
-        box.append(...[toTodo, keep, letGo, inTriage && el('button', { type: 'button', class: 'dk-link', onclick: () => set(x, { snooze: Date.now() + 7 * 864e5 }, after) }, '그대로 두기')].filter(Boolean));
+          if (await set(x, { state: 'let', letAt: Date.now() }, after)) undoToast(host, 'Let go.', () => x.state === 'let' ? set(x, { state: was }) : Promise.resolve(true)); } }, 'Let go');
+        box.append(...[toTodo, keep, letGo, inTriage && el('button', { type: 'button', class: 'dk-link', onclick: () => set(x, { snooze: Date.now() + 7 * 864e5 }, after) }, 'Leave it')].filter(Boolean));
         return box;
       }
       async function set(x, patch, after) { // 성공 여부를 돌려줌(되돌리기는 성공했을 때만)
         try { await updateDoc(doc(THOUGHTS(), x.id), patch); Object.assign(x, patch); paint(); after?.(); return true; }
-        catch (e) { say('실패했어요: ' + e.message); return false; }
+        catch (e) { say('Failed: ' + e.message); return false; }
       }
 
       // 목록: 최신 5개(3줄), 더 보기·검색
@@ -125,26 +125,26 @@
             const open = el('button', { type: 'button', class: 'dk-note-body', 'data-k': 'n' + x.id, 'aria-expanded': 'false', onclick: () => {
               const on = open.getAttribute('aria-expanded') !== 'true'; open.setAttribute('aria-expanded', String(on));
               card.querySelector('.dk-actions')?.remove(); if (on) card.append(actions(x));
-            } }, el('p', {}, x.text), el('small', {}, ago(x.c) + (x.state === 'kept' ? ' · 간직' : x.state === 'todo' ? ' · 할 일로 옮김' : '')));
+            } }, el('p', {}, x.text), el('small', {}, ago(x.c) + (x.state === 'kept' ? ' · kept' : x.state === 'todo' ? ' · moved to tasks' : '')));
             card.append(open); return card;
           }),
-          pool.length > 5 && !expanded && !q ? el('button', { type: 'button', class: 'dk-link', onclick: () => { expanded = true; paint(); } }, `더 보기 (${pool.length - 5})`) : null,
-          let_.length ? el('button', { type: 'button', class: 'dk-link', 'aria-expanded': String(showLet), onclick: () => { showLet = !showLet; paint(); } }, `놓아준 생각 ${let_.length}`) : null,
-          ...(showLet ? let_.map(x => el('div', { class: 'dk-let' }, el('span', {}, x.text), el('button', { type: 'button', class: 'dk-link', onclick: () => set(x, { state: 'open' }) }, '되돌리기'))) : []),
+          pool.length > 5 && !expanded && !q ? el('button', { type: 'button', class: 'dk-link', onclick: () => { expanded = true; paint(); } }, `Show more (${pool.length - 5})`) : null,
+          let_.length ? el('button', { type: 'button', class: 'dk-link', 'aria-expanded': String(showLet), onclick: () => { showLet = !showLet; paint(); } }, `Let go · ${let_.length}`) : null,
+          ...(showLet ? let_.map(x => el('div', { class: 'dk-let' }, el('span', {}, x.text), el('button', { type: 'button', class: 'dk-link', onclick: () => set(x, { state: 'open' }) }, 'Bring back'))) : []),
         ].filter(Boolean));
       }
-      const search = el('input', { type: 'search', class: 'dk-search', placeholder: '찾기', 'aria-label': '잡생각 찾기', oninput: e => { query = e.target.value; paint(); } });
+      const search = el('input', { type: 'search', class: 'dk-search', placeholder: 'Search', 'aria-label': 'Search thoughts', oninput: e => { query = e.target.value; paint(); } });
 
       // 입력: 본문 한 칸. Enter는 줄바꿈, '담기'로 저장(저장 뒤에도 키보드 유지), 초안은 기기에
-      const ta = el('textarea', { class: 'dk-input', rows: 1, placeholder: '떠오른 생각, 그냥 여기 내려놓기', 'aria-label': '잡생각 적기' });
+      const ta = el('textarea', { class: 'dk-input', rows: 1, placeholder: 'Whatever is on your mind — drop it here', 'aria-label': 'Write a thought' });
       const status = el('small', { class: 'dk-status', role: 'status' });
-      const putBtn = el('button', { type: 'button', class: 'dk-put' }, '담기');
+      const putBtn = el('button', { type: 'button', class: 'dk-put' }, 'Drop');
       let composing = false, saving = false;
       ta.value = read('mk_thought_draft') || '';
       const grow = () => { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, innerHeight * .4) + 'px'; };
       ta.addEventListener('compositionstart', () => { composing = true; });
       ta.addEventListener('compositionend', () => { composing = false; });
-      ta.addEventListener('input', () => { grow(); store('mk_thought_draft', ta.value || null); status.textContent = ta.value ? '기기에 보관됨' : ''; });
+      ta.addEventListener('input', () => { grow(); store('mk_thought_draft', ta.value || null); status.textContent = ta.value ? 'Draft saved on this device' : ''; });
       ta.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey) && !e.isComposing) { e.preventDefault(); put(); } }); // PC: Ctrl/⌘+Enter(한글 조합 중엔 무시)
       putBtn.addEventListener('pointerdown', e => e.preventDefault()); // 눌러도 입력창 포커스(키보드) 유지
       putBtn.addEventListener('click', () => put());
@@ -153,22 +153,22 @@
         if (composing) return void ta.addEventListener('compositionend', () => setTimeout(put), { once: true }); // 한글 조합이 끝난 뒤 저장
         const text = ta.value.trim(); if (!text) return ta.focus();
         // 누르는 순간 입력창을 비워 다음 생각을 바로 적게 함. 실패하면 되돌려 넣음(그새 쓴 글 앞에)
-        saving = true; putBtn.disabled = true; ta.value = ''; grow(); status.textContent = '담는 중…';
+        saving = true; putBtn.disabled = true; ta.value = ''; grow(); status.textContent = 'Saving…';
         try {
           const c = Date.now(), ref = await addDoc(THOUGHTS(), { text, c, state: 'open' });
           items.unshift({ id: ref.id, text, c, state: 'open' }); paint();
           store('mk_thought_draft', ta.value || null);
-          status.textContent = '여기 담아뒀어요 · 동기화됨';
+          status.textContent = 'Kept here · synced';
           bar.classList.remove('glow'); void bar.offsetWidth; bar.classList.add('glow');
         } catch (e) {
           ta.value = text + (ta.value ? '\n' + ta.value : ''); grow(); store('mk_thought_draft', ta.value);
-          status.textContent = '저장하지 못했어요. 글은 그대로 있어요 — 다시 담기를 눌러 주세요.';
+          status.textContent = "Couldn't save. Your text is still here — press Drop again.";
         } finally { saving = false; putBtn.disabled = false; ta.focus(); }
       }
       const bar = el('div', { class: 'dk-bar' }, ta, putBtn);
 
       body.append(...[triageBox, list, items.length > 5 && search,
-        el('a', { class: 'dk-link block', href: '#memo' }, '메모 보관함 →'),
+        el('a', { class: 'dk-link block', href: '#memo' }, 'Notes archive →'),
         el('div', { class: 'dk-dock' }, status, bar)].filter(Boolean));
       paint(); offerTriage(); grow();
       setTimeout(() => ta.focus({ preventScroll: true }), 30);
@@ -178,7 +178,7 @@
   /* ───────── 할 일 달력 ───────── */
   let sel = today(), monthOpen = false, logView = false;
   mkRooms.define('todo', {
-    tag: 'STUDY · CORKBOARD', title: '할 일',
+    tag: 'Study · Corkboard', title: 'Tasks', sub: 'One thing first. The rest can wait.',
     load: async () => (await all(todosCol)).filter(x => !x.let),
     row: () => ({}),
     render(body, st) {
@@ -194,7 +194,7 @@
       const busyOn = id => inFlight.set(id, (inFlight.get(id) || 0) + 1), busyOff = id => { const n = (inFlight.get(id) || 1) - 1; n ? inFlight.set(id, n) : inFlight.delete(id); };
       async function save(x, patch, msg, undoPatch) {
         if ('date' in patch) {
-          if (firstBusy) { say('잠깐만요, 다시 눌러 주세요.'); return false; } // 별표 처리 중엔 날짜 이동 안 함
+          if (firstBusy) { say('One moment — press again.'); return false; } // 별표 처리 중엔 날짜 이동 안 함
           patch = { ...patch, first: false }; // 날짜를 옮기면 '먼저 할 1개'는 늘 풂(하루 1개 유지)
         }
         busyOn(x.id); let off = false;
@@ -203,10 +203,10 @@
           // 되돌리기: 그새 다른 변경이 없을 때만(바꾼 값이 그대로일 때)
           if (msg) undoToast(host, msg, undoPatch && (() => Object.keys(undoPatch).every(k => x[k] === patch[k] || (x[k] == null && patch[k] == null)) ? save(x, undoPatch) : Promise.resolve(true)));
           return true;
-        } catch (e) { say('실패했어요: ' + e.message); return false; }
+        } catch (e) { say('Failed: ' + e.message); return false; }
         finally { if (!off) busyOff(x.id); }
       }
-      const check = x => save(x, x.done ? { done: false, completedAt: null } : { done: true, completedAt: Date.now() }, x.done ? null : '끝냈어요.', { done: false, completedAt: null });
+      const check = x => save(x, x.done ? { done: false, completedAt: null } : { done: true, completedAt: Date.now() }, x.done ? null : 'Done.', { done: false, completedAt: null });
       const first = async x => { // 하루에 1개만: 다른 것을 먼저 풀고 나서 켬(연타 막음)
         if (firstBusy || on(x.date).some(y => inFlight.has(y.id))) return; firstBusy = true;
         try {
@@ -219,27 +219,27 @@
 
       function row(x, extra) {
         const text = el('button', { type: 'button', class: 'dk-todo-text', onclick: () => {
-          const inp = el('input', { class: 'dk-line', value: x.text || '', 'aria-label': '할 일 고치기',
+          const inp = el('input', { class: 'dk-line', value: x.text || '', 'aria-label': 'Edit task',
             onkeydown: e => { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); inp.blur(); } },
             onblur: () => { const v = inp.value.trim(); v && v !== x.text ? save(x, { text: v }) : paint(); } });
           text.replaceWith(inp); inp.focus();
         } }, x.text || '');
         return el('li', { class: 'dk-todo' + (x.done ? ' done' : '') + (x.first ? ' first' : '') },
-          el('button', { type: 'button', class: 'rm-check', 'data-k': 'c' + x.id, 'aria-pressed': String(!!x.done), 'aria-label': (x.done ? '안 끝냄으로: ' : '끝냄으로: ') + x.text, onclick: () => check(x) }),
+          el('button', { type: 'button', class: 'rm-check', 'data-k': 'c' + x.id, 'aria-pressed': String(!!x.done), 'aria-label': (x.done ? 'Mark not done: ' : 'Mark done: ') + x.text, onclick: () => check(x) }),
           text,
-          extra || (!x.done && x.date && el('button', { type: 'button', class: 'dk-star', 'data-k': 's' + x.id, 'aria-pressed': String(!!x.first), 'aria-label': '먼저 할 1개로' + (x.first ? ' 풀기' : ''), title: '먼저 할 1개', onclick: () => first(x) }, x.first ? '★' : '☆')));
+          extra || (!x.done && x.date && el('button', { type: 'button', class: 'dk-star', 'data-k': 's' + x.id, 'aria-pressed': String(!!x.first), 'aria-label': (x.first ? 'Unset ' : 'Set ') + 'as the one thing first', title: 'One thing first', onclick: () => first(x) }, x.first ? '★' : '☆')));
       }
 
       function weekStrip() {
         const start = addDays(sel, -parse(sel).getDay());
         const days = Array.from({ length: 7 }, (_, i) => addDays(start, i));
         return el('div', { class: 'dk-week' },
-          el('button', { type: 'button', class: 'dk-nav', 'data-k': 'pw', 'aria-label': '이전 주', onclick: () => { sel = addDays(sel, -7); paint(); } }, '‹'),
+          el('button', { type: 'button', class: 'dk-nav', 'data-k': 'pw', 'aria-label': 'Previous week', onclick: () => { sel = addDays(sel, -7); paint(); } }, '‹'),
           ...days.map((d, i) => { const n = left(d), done = on(d).filter(x => x.done).length; const dd = parse(d);
-            return el('button', { type: 'button', class: 'dk-day' + (d === sel ? ' sel' : '') + (d === today() ? ' today' : ''), 'data-k': 'd' + i, 'aria-pressed': String(d === sel), 'aria-label': `${label(d)} 남음 ${n}`, onclick: () => { sel = d; paint(); } },
-              el('small', {}, WD[dd.getDay()]), el('b', {}, dd.getDate()), el('i', {}, n ? `남음 ${n}` : done ? '✓' : ''));
+            return el('button', { type: 'button', class: 'dk-day' + (d === sel ? ' sel' : '') + (d === today() ? ' today' : ''), 'data-k': 'd' + i, 'aria-pressed': String(d === sel), 'aria-label': `${label(d)}, ${n} left`, onclick: () => { sel = d; paint(); } },
+              el('small', {}, WD[dd.getDay()]), el('b', {}, dd.getDate()), el('i', {}, n ? `${n} left` : done ? '✓' : ''));
           }),
-          el('button', { type: 'button', class: 'dk-nav', 'data-k': 'nw', 'aria-label': '다음 주', onclick: () => { sel = addDays(sel, 7); paint(); } }, '›'));
+          el('button', { type: 'button', class: 'dk-nav', 'data-k': 'nw', 'aria-label': 'Next week', onclick: () => { sel = addDays(sel, 7); paint(); } }, '›'));
       }
       function monthGrid() {
         const d0 = parse(sel); d0.setDate(1);
@@ -247,47 +247,47 @@
         const cells = [...Array(startPad).fill(null), ...Array.from({ length: days }, (_, i) => ymd(new Date(d0.getFullYear(), d0.getMonth(), i + 1)))];
         const move = n => { const d = parse(sel); d.setDate(1); d.setMonth(d.getMonth() + n); sel = ymd(d); paint(); };
         return el('div', { class: 'dk-month' },
-          el('div', { class: 'dk-month-head' }, el('button', { type: 'button', class: 'dk-nav', 'data-k': 'pm', 'aria-label': '이전 달', onclick: () => move(-1) }, '‹'), el('span', {}, `${d0.getFullYear()}년 ${d0.getMonth() + 1}월`), el('button', { type: 'button', class: 'dk-nav', 'data-k': 'nm', 'aria-label': '다음 달', onclick: () => move(1) }, '›')),
+          el('div', { class: 'dk-month-head' }, el('button', { type: 'button', class: 'dk-nav', 'data-k': 'pm', 'aria-label': 'Previous month', onclick: () => move(-1) }, '‹'), el('span', {}, `${MON[d0.getMonth()]} ${d0.getFullYear()}`), el('button', { type: 'button', class: 'dk-nav', 'data-k': 'nm', 'aria-label': 'Next month', onclick: () => move(1) }, '›')),
           el('div', { class: 'dk-grid' }, WD.map(w => el('small', {}, w)),
             cells.map(d => d ? (() => { const n = left(d), done = on(d).filter(x => x.done).length;
-              return el('button', { type: 'button', class: 'dk-cell' + (d === sel ? ' sel' : '') + (d === today() ? ' today' : ''), 'data-k': 'm' + d, 'aria-label': `${label(d)} 남음 ${n} 완료 ${done}`, onclick: () => { sel = d; monthOpen = false; paint(); main.querySelector(`[data-k="d${parse(d).getDay()}"]`)?.focus(); } }, // 달력이 닫히면 주간 줄의 그날로 초점
+              return el('button', { type: 'button', class: 'dk-cell' + (d === sel ? ' sel' : '') + (d === today() ? ' today' : ''), 'data-k': 'm' + d, 'aria-label': `${label(d)}, ${n} left, ${done} done`, onclick: () => { sel = d; monthOpen = false; paint(); main.querySelector(`[data-k="d${parse(d).getDay()}"]`)?.focus(); } }, // 달력이 닫히면 주간 줄의 그날로 초점
                 el('b', {}, parse(d).getDate()), el('i', {}, n ? String(n) : done ? '✓' : ''));
             })() : el('span'))));
       }
 
       function dayView() {
         const list = on(sel), todo = list.filter(x => !x.done).sort((a, b) => (b.first ? 1 : 0) - (a.first ? 1 : 0) || (a.c || 0) - (b.c || 0)), done = list.filter(x => x.done);
-        const out = [el('h2', { class: 'dk-dayhead' }, label(sel), el('small', {}, ` · 남음 ${todo.length} · 완료 ${done.length}`))];
-        out.push(todo.length ? el('ul', { class: 'dk-list' }, todo.map(x => row(x))) : el('p', { class: 'dk-empty' }, list.length ? '이날 할 일은 다 했어요.' : '이날은 비어 있어요.'));
-        if (done.length) out.push(el('details', { class: 'dk-fold' }, el('summary', {}, `완료 ${done.length}`), el('ul', { class: 'dk-list' }, done.map(x => row(x)))));
+        const out = [el('h2', { class: 'dk-dayhead' }, label(sel), el('small', {}, ` · ${todo.length} left · ${done.length} done`))];
+        out.push(todo.length ? el('ul', { class: 'dk-list' }, todo.map(x => row(x))) : el('p', { class: 'dk-empty' }, list.length ? 'Everything for this day is done.' : 'Nothing on this day.'));
+        if (done.length) out.push(el('details', { class: 'dk-fold' }, el('summary', {}, `Done · ${done.length}`), el('ul', { class: 'dk-list' }, done.map(x => row(x)))));
         if (sel === today()) { // 지난 날짜 미완료 — 연체 표시 없이 접어 둠
           const past = items.filter(x => !x.done && !x.let && x.date && x.date < today());
-          if (past.length) out.push(el('details', { class: 'dk-fold' }, el('summary', {}, `다시 정할 일 · ${past.length}개`),
+          if (past.length) out.push(el('details', { class: 'dk-fold' }, el('summary', {}, `To reschedule · ${past.length}`),
             el('ul', { class: 'dk-list' }, past.map(x => row(x, el('div', { class: 'dk-chips sm' },
-              el('button', { type: 'button', onclick: () => save(x, { date: today() }, '오늘로 옮겼어요.', { date: x.date }) }, '오늘로'),
-              el('label', { class: 'dk-pick' }, '날짜 바꾸기', el('input', { type: 'date', class: 'dk-date', 'aria-label': '날짜 바꾸기', onchange: e => e.target.value && save(x, { date: e.target.value }, '옮겼어요.', { date: x.date }) })),
-              el('button', { type: 'button', onclick: () => save(x, { date: null }, '날짜 없이 뒀어요.', { date: x.date }) }, '날짜 없이'),
-              el('button', { type: 'button', onclick: () => save(x, { let: true }, '놓아줬어요.', { let: false }) }, '놓아주기')))))));
+              el('button', { type: 'button', onclick: () => save(x, { date: today() }, 'Moved to today.', { date: x.date }) }, 'Today'),
+              el('label', { class: 'dk-pick' }, 'Change date', el('input', { type: 'date', class: 'dk-date', 'aria-label': 'Change date', onchange: e => e.target.value && save(x, { date: e.target.value }, 'Moved.', { date: x.date }) })),
+              el('button', { type: 'button', onclick: () => save(x, { date: null }, 'Left without a date.', { date: x.date }) }, 'No date'),
+              el('button', { type: 'button', onclick: () => save(x, { let: true }, 'Let go.', { let: false }) }, 'Let go')))))));
         }
         const free = items.filter(x => !x.date && !x.done && !x.let);
-        if (free.length) out.push(el('details', { class: 'dk-fold' }, el('summary', {}, `날짜 없는 일 · ${free.length}`),
-          el('ul', { class: 'dk-list' }, free.map(x => row(x, el('button', { type: 'button', class: 'dk-chip-one', onclick: () => save(x, { date: sel }, `${label(sel)}로 옮겼어요.`, { date: null }) }, '이날로'))))));
+        if (free.length) out.push(el('details', { class: 'dk-fold' }, el('summary', {}, `No date · ${free.length}`),
+          el('ul', { class: 'dk-list' }, free.map(x => row(x, el('button', { type: 'button', class: 'dk-chip-one', onclick: () => save(x, { date: sel }, `Moved to ${label(sel)}.`, { date: null }) }, 'This day'))))));
         return out;
       }
       function logList() { // 실제 끝낸 시각 기준. 예전 항목(시각 없음)은 추정하지 않음
         const t0 = parse(today()).getTime(), w0 = t0 - parse(today()).getDay() * 864e5;
         const doneAt = items.filter(x => x.done && x.completedAt).sort((a, b) => b.completedAt - a.completedAt);
-        const part = (name, list) => [el('h2', { class: 'dk-dayhead' }, name, el('small', {}, ` · ${list.length}개`)),
-          list.length ? el('ul', { class: 'dk-list' }, list.map(x => el('li', { class: 'dk-todo done' }, el('span', { class: 'dk-todo-text' }, x.text), el('small', {}, new Date(x.completedAt).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }))))) : el('p', { class: 'dk-empty' }, '아직 없어요.')];
-        return [...part('오늘 해낸 일', doneAt.filter(x => x.completedAt >= t0)), ...part('이번 주', doneAt.filter(x => x.completedAt >= w0 && x.completedAt < t0))];
+        const part = (name, list) => [el('h2', { class: 'dk-dayhead' }, name, el('small', {}, ` · ${list.length}`)),
+          list.length ? el('ul', { class: 'dk-list' }, list.map(x => el('li', { class: 'dk-todo done' }, el('span', { class: 'dk-todo-text' }, x.text), el('small', {}, new Date(x.completedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }))))) : el('p', { class: 'dk-empty' }, 'Nothing yet.')];
+        return [...part('Done today', doneAt.filter(x => x.completedAt >= t0)), ...part('This week', doneAt.filter(x => x.completedAt >= w0 && x.completedAt < t0))];
       }
 
       // 빠른 추가(아래 고정): 본문만, 버튼에 날짜를 적어 둠
       let noDate = false;
-      const add = el('input', { class: 'dk-input one', placeholder: '할 일 한 줄', 'aria-label': '할 일 추가', enterkeyhint: 'done' });
+      const add = el('input', { class: 'dk-input one', placeholder: 'One line', 'aria-label': 'Add a task', enterkeyhint: 'done' });
       const addBtn = el('button', { type: 'button', class: 'dk-put' });
-      const noDateBtn = el('button', { type: 'button', class: 'dk-nodate', 'aria-pressed': 'false', onclick: () => { noDate = !noDate; noDateBtn.setAttribute('aria-pressed', String(noDate)); addLabel(); } }, '날짜 없이');
-      const addLabel = () => { addBtn.textContent = noDate ? '날짜 없이 추가' : `${parse(sel).getMonth() + 1}월 ${parse(sel).getDate()}일에 추가`; };
+      const noDateBtn = el('button', { type: 'button', class: 'dk-nodate', 'aria-pressed': 'false', onclick: () => { noDate = !noDate; noDateBtn.setAttribute('aria-pressed', String(noDate)); addLabel(); } }, 'No date');
+      const addLabel = () => { addBtn.textContent = noDate ? 'Add, no date' : `Add to ${MON[parse(sel).getMonth()]} ${parse(sel).getDate()}`; };
       let adding = false, addComposing = false;
       add.addEventListener('compositionstart', () => { addComposing = true; });
       add.addEventListener('compositionend', () => { addComposing = false; });
@@ -299,7 +299,7 @@
         try {
           const x = { text, date: noDate ? null : sel, done: false, c: Date.now() }, ref = await addDoc(todosCol, x);
           items.push({ id: ref.id, ...x }); paint();
-        } catch (e) { add.value = text + (add.value ? ' ' + add.value : ''); say('실패했어요(글은 그대로 있어요): ' + e.message); }
+        } catch (e) { add.value = text + (add.value ? ' ' + add.value : ''); say('Failed (your text is still here): ' + e.message); }
         finally { adding = false; addBtn.disabled = false; add.focus(); }
       }
       add.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); addTodo(); } });
@@ -311,9 +311,9 @@
         const d = parse(sel);
         main.replaceChildren(
           el('div', { class: 'dk-head' },
-            el('button', { type: 'button', class: 'dk-monthbtn', 'data-k': 'mb', 'aria-expanded': String(monthOpen), onclick: () => { monthOpen = !monthOpen; logView = false; paint(); } }, `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${monthOpen ? '▴' : '▾'}`),
-            el('button', { type: 'button', class: 'rm-btn ghost sm', 'data-k': 'td', onclick: () => { sel = today(); logView = false; paint(); } }, '오늘'),
-            el('button', { type: 'button', class: 'rm-btn ghost sm', 'data-k': 'lg', 'aria-pressed': String(logView), onclick: () => { logView = !logView; paint(); } }, '기록')),
+            el('button', { type: 'button', class: 'dk-monthbtn', 'data-k': 'mb', 'aria-expanded': String(monthOpen), onclick: () => { monthOpen = !monthOpen; logView = false; paint(); } }, `${MON[d.getMonth()]} ${d.getFullYear()} ${monthOpen ? '▴' : '▾'}`),
+            el('button', { type: 'button', class: 'rm-btn ghost sm', 'data-k': 'td', onclick: () => { sel = today(); logView = false; paint(); } }, 'Today'),
+            el('button', { type: 'button', class: 'rm-btn ghost sm', 'data-k': 'lg', 'aria-pressed': String(logView), onclick: () => { logView = !logView; paint(); } }, 'Log')),
           monthOpen ? monthGrid() : weekStrip(),
           ...(logView ? logList() : dayView()));
         addLabel();

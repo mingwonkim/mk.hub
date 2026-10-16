@@ -1,7 +1,7 @@
-/* 저장고 방들 — 옛 MK.HUB 페이지는 버리고, 같은 Firestore 데이터를 새 화면(비행선 해치 톤) 하나에 그림.
-   db·getDocs·memosCol 등은 index.html의 전역 let — 같은 전역 스코프라 이름으로 바로 씀(저장고 인증 뒤에만 열림).
-   scene.js 라우터가 mkRooms.open(키, 닫기함수)로 부름.
-   옛 화면에서 안 옮긴 것: 테마 전환·홈 카드 이름·모듈 순서·배경 사진(옛 홈 배치 전용). */
+/* 저장고 방들 — 같은 Firestore 데이터를 새 화면 하나에 그림(UI는 영어).
+   모양: 왼쪽 사이드바(모든 칸, recent.design 식) + 큰 제목·한 줄 설명 + 알약 필터 + 카드 그리드(달·날짜로 묶음).
+   db·getDocs·memosCol 등은 index.html의 전역 let — 같은 전역 스코프라 이름으로 바로 씀.
+   scene.js 라우터가 mkRooms.open(키, 닫기함수)로 부름. 사이드바는 #키 링크라 라우터가 잠금도 처리. */
 (() => {
   const root = document.getElementById('lsRoom');
   const el = (tag, props = {}, ...kids) => {
@@ -13,15 +13,17 @@
     n.append(...kids.flat().filter(x => x != null && x !== false));
     return n;
   };
-  const day = t => t ? new Date(t).toLocaleDateString('ko-KR', { year: '2-digit', month: 'short', day: 'numeric' }) : '';
-  const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+  const MON = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const day = t => t ? new Date(t).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+  const ymdParse = s => { const [y, m, d] = String(s).split('-').map(Number); return new Date(y, (m || 1) - 1, d || 1); };
+  const monthOf = t => { const d = typeof t === 'string' ? ymdParse(t) : new Date(t); return `${MON[d.getMonth()]} ${d.getFullYear()}`; };
   const all = async (col, field, dir = 'desc') => (await getDocs(field ? query(col, orderBy(field, dir)) : col)).docs.map(d => ({ id: d.id, ...d.data() }));
-  const size = b => !b ? '' : b < 1048576 ? Math.max(1, Math.round(b / 1024)) + 'KB' : (b / 1048576).toFixed(1) + 'MB';
+  const size = b => !b ? '' : b < 1048576 ? Math.max(1, Math.round(b / 1024)) + ' KB' : (b / 1048576).toFixed(1) + ' MB';
   const safe = u => { try { return ['https:', 'http:', 'mk-private:'].includes(new URL(u, location.href).protocol) ? u : null; } catch { return null; } }; // javascript: 등 차단
   const vid = u => { u = (u || '').trim(); const m = u.match(/youtu\.be\/([\w-]{11})/) || u.match(/[?&]v=([\w-]{11})/) || u.match(/embed\/([\w-]{11})/) || u.match(/^([\w-]{11})$/); return m ? m[1] : null; };
   const MAX = 50 * 1024 * 1024;
   async function put(file, prefix) { // Storage에 올리고 {n,url,path,size,type}
-    if (file.size > MAX) throw new Error(file.name + ': 50MB까지 올릴 수 있어요');
+    if (file.size > MAX) throw new Error(file.name + ': up to 50 MB');
     const r = sRef(stg, prefix + 'f' + Date.now() + '_' + Math.random().toString(36).slice(2, 6) + '_' + file.name);
     await uploadBytes(r, file);
     try { return { n: file.name, url: await getDownloadURL(r), path: r.fullPath, size: file.size, type: file.type }; }
@@ -36,51 +38,51 @@
   // GitHub 추가 백업(서버가 연결돼 있을 때만). 상태는 한 번만 물어봄
   let ghOn = null;
   const gh = () => ghOn || (ghOn = MKVault.api('status', {}, 'vaultGithub').then(r => !!r.connected).catch(() => false));
-  // YouTube: 키는 mk_app/settings.yt_api_key(옛 MK.HUB와 같은 자리). 검색 결과는 방 안 플레이어에서 바로 재생
+  // YouTube: 키는 mk_app/settings.yt_api_key. 검색 결과는 방 안 플레이어에서 바로 재생
   let ytKeyCache = null;
   const ytKey = async () => ytKeyCache ?? (ytKeyCache = (await getDoc(ytKeyDoc)).data()?.yt_api_key || '');
   const unent = t => new DOMParser().parseFromString(t || '', 'text/html').documentElement.textContent; // API 제목의 &amp; 등 풀기(실행 없음)
   async function ytSearch(q, n = 12) {
-    const key = await ytKey(); if (!key) throw new Error('YouTube API 키가 없어요. 설정에서 넣어 주세요.');
+    const key = await ytKey(); if (!key) throw new Error('No YouTube API key. Add one in Settings.');
     const r = await fetch('https://www.googleapis.com/youtube/v3/search?' + new URLSearchParams({ part: 'snippet', type: 'video', videoEmbeddable: 'true', maxResults: n, q, key }));
     const j = await r.json().catch(() => ({}));
-    if (!r.ok) throw new Error('YouTube 검색 실패: ' + (j.error?.message || r.status));
+    if (!r.ok) throw new Error('YouTube search failed: ' + (j.error?.message || r.status));
     return (j.items || []).map(i => ({ id: i.id.videoId, title: unent(i.snippet.title), channel: unent(i.snippet.channelTitle), thumb: i.snippet.thumbnails?.medium?.url || i.snippet.thumbnails?.default?.url }));
   }
-  const player = id => el('div', { class: 'rm-video' }, el('iframe', { src: `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&playsinline=1&rel=0`, title: 'YouTube 재생', allow: 'autoplay; encrypted-media; picture-in-picture', allowfullscreen: true }));
+  const player = id => el('div', { class: 'rm-video' }, el('iframe', { src: `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&playsinline=1&rel=0`, title: 'YouTube player', allow: 'autoplay; encrypted-media; picture-in-picture', allowfullscreen: true }));
   async function setYtKey() {
-    const key = ask('YouTube Data API 키 (AIza…로 시작)'); if (!key) return '';
-    if (!/^[\w-]{20,60}$/.test(key)) throw new Error('키 모양이 이상해요. 다시 확인해 주세요.');
-    await setDoc(ytKeyDoc, { yt_api_key: key }, { merge: true }); ytKeyCache = key; return 'YouTube API 키를 저장했어요.';
+    const key = ask('YouTube Data API key (starts with AIza…)'); if (!key) return '';
+    if (!/^[\w-]{20,60}$/.test(key)) throw new Error("That doesn't look like a key. Check it again.");
+    await setDoc(ytKeyDoc, { yt_api_key: key }, { merge: true }); ytKeyCache = key; return 'YouTube API key saved.';
   }
   const device = () => MKVault.deviceLabel();
   // 다시 인증이 필요한 서버 작업(401): 패턴/Face ID로 다시 연 뒤 한 번 더 누르게 함(Face ID 창은 누른 직후에만 뜸)
   const reauth = async (fn, again) => { try { return await fn(); } catch (e) { if (e.status !== 401) throw e; MKVault.unlock(() => say(again)); return null; } };
   // 곡 넣기 화면의 YouTube 찾기: 결과를 누르면 링크(와 비어 있는 제목·가수)를 채움
   function ytPicker() {
-    const out = el('ul', { class: 'rm-list rm-yt' }), q = el('input', { type: 'search', placeholder: 'YouTube에서 찾기', 'aria-label': 'YouTube에서 찾기', enterkeyhint: 'search' });
+    const out = el('ul', { class: 'rm-list rm-yt' }), q = el('input', { type: 'search', placeholder: 'Search YouTube', 'aria-label': 'Search YouTube', enterkeyhint: 'search' });
     const go = async () => {
       if (!q.value.trim()) return;
-      out.replaceChildren(el('li', { class: 'rm-group' }, '찾는 중…'));
+      out.replaceChildren(el('li', { class: 'rm-hint' }, 'Searching…'));
       try {
         const list = await ytSearch(q.value.trim(), 6);
         out.replaceChildren(...(list.length ? list.map(v => el('li', {}, el('button', { type: 'button', class: 'rm-row', onclick: e => {
           const f = e.currentTarget.closest('form'), set = (k, val) => { if (f.elements[k] && (k === 'link' || !f.elements[k].value)) f.elements[k].value = val; };
           set('link', 'https://youtu.be/' + v.id); set('title', v.title); set('t', v.title); set('artist', v.channel);
-          out.replaceChildren(el('li', { class: 'rm-group' }, '골랐어요 · ' + v.title));
+          out.replaceChildren(el('li', { class: 'rm-hint' }, 'Picked · ' + v.title));
         } }, v.thumb && el('img', { class: 'rm-thumb', src: v.thumb, alt: '', loading: 'lazy' }), el('span', { class: 'rm-row-main' }, el('b', {}, v.title), el('small', {}, v.channel)))))
-          : [el('li', { class: 'rm-group' }, '결과가 없어요.')]));
-      } catch (e) { out.replaceChildren(el('li', { class: 'rm-group' }, e.message)); }
+          : [el('li', { class: 'rm-hint' }, 'No results.')]));
+      } catch (e) { out.replaceChildren(el('li', { class: 'rm-hint' }, e.message)); }
     };
     q.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); go(); } }); // 폼 저장이 아니라 검색
-    return { node: el('div', { class: 'rm-extra' }, el('div', { class: 'rm-inline' }, q, el('button', { type: 'button', class: 'rm-btn sm', onclick: go }, '찾기')), out), collect: async () => ({}), discard() {}, saved() {} };
+    return { node: el('div', { class: 'rm-extra' }, el('div', { class: 'rm-inline' }, q, el('button', { type: 'button', class: 'rm-btn sm', onclick: go }, 'Search')), out), collect: async () => ({}), discard() {}, saved() {} };
   }
   const thumbOf = id => vid(id) ? `https://i.ytimg.com/vi/${vid(id)}/mqdefault.jpg` : null;
   async function ghAll(kind) { let cursor = null, n = 0; do { const r = await MKVault.api(kind, { cursor }, 'vaultGithub'); cursor = r.cursor; n += r.count; } while (cursor); return n; }
 
-  /* 그림판: 흰 종이(옛 그림과 같은 바탕), 펜 색·굵기·지우개·되돌리기. 바뀐 경우에만 저장 때 올림 */
+  /* 그림판: 흰 종이, 펜 색·굵기·지우개·되돌리기. 바뀐 경우에만 저장 때 올림 */
   function drawPad(src, onUpload) {
-    const cv = el('canvas', { class: 'rm-canvas', width: 1200, height: 800, role: 'img', 'aria-label': '그림판 — 마우스나 손가락으로 그려요' });
+    const cv = el('canvas', { class: 'rm-canvas', width: 1200, height: 800, role: 'img', 'aria-label': 'Drawing pad — draw with a mouse, pen or finger' });
     const g = cv.getContext('2d'), hist = [];
     let color = '#14161c', w = 4, erase = false, dirty = false, last = null, done = null, touched = false;
     g.fillStyle = '#fff'; g.fillRect(0, 0, cv.width, cv.height);
@@ -90,16 +92,16 @@
     cv.addEventListener('pointerdown', e => { e.preventDefault(); cv.setPointerCapture(e.pointerId); hist.push(g.getImageData(0, 0, cv.width, cv.height)); if (hist.length > 30) hist.shift(); last = pt(e); dirty = touched = true; done = null; line(last, last); });
     cv.addEventListener('pointermove', e => { if (!last) return; const p = pt(e); line(last, p); last = p; });
     cv.addEventListener('pointerup', () => { last = null; }); cv.addEventListener('pointercancel', () => { last = null; });
-    const sw = ['#14161c', '#e5484d', '#2f7cf6', '#16a34a', '#f59e0b'].map(c => el('button', { type: 'button', class: 'rm-sw', style: `--sw:${c}`, 'aria-label': '펜 색 ' + c, 'aria-pressed': String(c === color), onclick: () => { color = c; erase = false; mark(); } }));
-    const er = el('button', { type: 'button', class: 'rm-btn ghost sm', 'aria-pressed': 'false', onclick: () => { erase = !erase; mark(); } }, '지우개');
+    const sw = ['#14161c', '#e5484d', '#2f7cf6', '#16a34a', '#f59e0b'].map(c => el('button', { type: 'button', class: 'rm-sw', style: `--sw:${c}`, 'aria-label': 'Pen colour ' + c, 'aria-pressed': String(c === color), onclick: () => { color = c; erase = false; mark(); } }));
+    const er = el('button', { type: 'button', class: 'rm-btn ghost sm', 'aria-pressed': 'false', onclick: () => { erase = !erase; mark(); } }, 'Eraser');
     const mark = () => { sw.forEach(b => b.setAttribute('aria-pressed', String(!erase && b.style.getPropertyValue('--sw') === color))); er.setAttribute('aria-pressed', String(erase)); };
-    const hint = el('p', { class: 'rm-hint', id: 'rmPadHint' }, '마우스·펜·손가락으로 그려요. 키보드만 쓴다면 내용 칸에 글로 적어 주세요.');
+    const hint = el('p', { class: 'rm-hint', id: 'rmPadHint' }, 'Draw with a mouse, pen or finger. Keyboard only? Write it in the text box instead.');
     cv.setAttribute('aria-describedby', 'rmPadHint');
     const node = el('div', { class: 'rm-pad' }, hint,
       el('div', { class: 'rm-padbar' }, sw, er,
-        el('label', { class: 'rm-size' }, '굵기', el('input', { type: 'range', min: 1, max: 24, value: w, oninput: e => { w = +e.target.value; } })),
-        el('button', { type: 'button', class: 'rm-btn ghost sm', onclick: () => { const h = hist.pop(); if (h) { g.putImageData(h, 0, 0); dirty = true; done = null; } } }, '되돌리기'),
-        el('button', { type: 'button', class: 'rm-btn ghost sm', onclick: () => { hist.push(g.getImageData(0, 0, cv.width, cv.height)); g.fillStyle = '#fff'; g.fillRect(0, 0, cv.width, cv.height); dirty = touched = true; done = null; } }, '모두 지우기')),
+        el('label', { class: 'rm-size' }, 'Size', el('input', { type: 'range', min: 1, max: 24, value: w, oninput: e => { w = +e.target.value; } })),
+        el('button', { type: 'button', class: 'rm-btn ghost sm', onclick: () => { const h = hist.pop(); if (h) { g.putImageData(h, 0, 0); dirty = true; done = null; } } }, 'Undo'),
+        el('button', { type: 'button', class: 'rm-btn ghost sm', onclick: () => { hist.push(g.getImageData(0, 0, cv.width, cv.height)); g.fillStyle = '#fff'; g.fillRect(0, 0, cv.width, cv.height); dirty = touched = true; done = null; } }, 'Clear')),
       cv);
     return {
       node,
@@ -121,15 +123,15 @@
     const keep = [...(m?.att || [])], add = [], uploads = new Set(); // uploads: 이번에 새로 올린 모든 경로(그림 재업로드·뺀 첨부 포함)
     const list = el('div', { class: 'rm-atts' });
     const paint = () => list.replaceChildren(
-      ...keep.map((a, i) => el('div', { class: 'rm-att' }, el('span', {}, `${a.n} · ${size(a.size)}`), el('button', { type: 'button', 'aria-label': a.n + ' 빼기', onclick: () => { keep.splice(i, 1); paint(); } }, '빼기'))),
-      ...add.map((f, i) => el('div', { class: 'rm-att new' }, el('span', {}, `${f.name} · 저장할 때 올려요`), el('button', { type: 'button', 'aria-label': f.name + ' 빼기', onclick: () => { add.splice(i, 1); paint(); } }, '빼기'))));
-    const inp = el('input', { type: 'file', multiple: true, hidden: true, onchange: () => { for (const f of inp.files) f.size > MAX ? say(f.name + ': 50MB까지 올릴 수 있어요') : add.push(f); inp.value = ''; paint(); } });
+      ...keep.map((a, i) => el('div', { class: 'rm-att' }, el('span', {}, `${a.n} · ${size(a.size)}`), el('button', { type: 'button', 'aria-label': 'Remove ' + a.n, onclick: () => { keep.splice(i, 1); paint(); } }, 'Remove'))),
+      ...add.map((f, i) => el('div', { class: 'rm-att new' }, el('span', {}, `${f.name} · uploads on save`), el('button', { type: 'button', 'aria-label': 'Remove ' + f.name, onclick: () => { add.splice(i, 1); paint(); } }, 'Remove'))));
+    const inp = el('input', { type: 'file', multiple: true, hidden: true, onchange: () => { for (const f of inp.files) f.size > MAX ? say(f.name + ': up to 50 MB') : add.push(f); inp.value = ''; paint(); } });
     const pad = drawPad(m?.canvas_url, p => uploads.add(p));
     pad.node.hidden = !m?.canvas_url;
-    const tog = el('button', { type: 'button', class: 'rm-btn ghost', 'aria-expanded': String(!pad.node.hidden), onclick: () => { pad.node.hidden = !pad.node.hidden; tog.setAttribute('aria-expanded', String(!pad.node.hidden)); tog.textContent = pad.node.hidden ? '그림 그리기' : '그림 접기'; } }, pad.node.hidden ? '그림 그리기' : '그림 접기');
+    const tog = el('button', { type: 'button', class: 'rm-btn ghost', 'aria-expanded': String(!pad.node.hidden), onclick: () => { pad.node.hidden = !pad.node.hidden; tog.setAttribute('aria-expanded', String(!pad.node.hidden)); tog.textContent = pad.node.hidden ? 'Draw' : 'Hide drawing'; } }, pad.node.hidden ? 'Draw' : 'Hide drawing');
     paint();
     return {
-      node: el('div', { class: 'rm-extra' }, el('div', { class: 'rm-tools' }, el('button', { type: 'button', class: 'rm-btn ghost', onclick: () => inp.click() }, '+ 첨부'), tog), list, inp, pad.node),
+      node: el('div', { class: 'rm-extra' }, el('div', { class: 'rm-tools' }, el('button', { type: 'button', class: 'rm-btn ghost', onclick: () => inp.click() }, '+ Attach'), tog), list, inp, pad.node),
       async collect() {
         while (add.length) { const a = await put(add[0], 'mk_files/'); uploads.add(a.path); keep.push(a); add.shift(); paint(); } // 올린 건 keep으로 — 실패 후 다시 저장해도 두 번 안 올림
         return { att: [...keep], ...await pad.collect() };
@@ -148,20 +150,22 @@
       await deleteDoc(doc(col(), id));
     },
   });
-  const chipsOf = folders => [{ label: '전체', value: null }, ...folders.map(f => ({ label: f.name || '이름 없음', value: f.id }))];
+  const chipsOf = folders => [{ label: 'All', value: null }, ...folders.map(f => ({ label: f.name || 'Untitled', value: f.id }))];
 
-  // 글 방(제목+내용): 예술·IT 저장고, 음악 노트
-  const noteRoom = (tag, title, col, empty) => ({
-    tag, title, empty,
+  // 글 방(제목+내용): 예술·IT
+  const noteRoom = (o, col) => ({
+    ...o,
     load: () => all(col(), 'u'),
-    row: m => ({ title: m.t || '제목 없음', sub: (m.b || '').split('\n')[0], meta: day(m.u) }),
+    row: m => ({ title: m.t || 'Untitled', sub: (m.b || '').slice(0, 220), meta: day(m.u) }),
+    group: m => monthOf(m.u || m.c || Date.now()),
     view: m => [el('p', { class: 'rm-text' }, m.b || '')],
-    fields: [['t', '제목'], ['b', '내용', 'textarea']],
+    fields: [['t', 'Title'], ['b', 'Body', 'textarea']],
     save: (v, m) => m ? updateDoc(doc(col(), m.id), { ...v, u: Date.now() }) : addDoc(col(), { ...v, c: Date.now(), u: Date.now() }),
     remove: m => deleteDoc(doc(col(), m.id)),
   });
-  // 예술·IT는 옛 메모 폴더와 섞이지 않게 따로 된 컬렉션(처음엔 비어 있음). 규칙: mk_app/data/* 는 저장고 주인만
+  // 예술·IT는 옛 메모 폴더와 섞이지 않게 따로 된 컬렉션
   const roomCol = k => () => collection(db, 'mk_app', 'data', 'room_' + k);
+  const guestCol = () => collection(db, 'mk_app', 'data', 'guestbook');
 
   // 설정 → 다른 기기 추가: 코드(4-4, 10분, 일회용)를 크게 보여 주고 남은 시간 표시
   function pairView() {
@@ -169,47 +173,80 @@
     const make = el('button', { type: 'button', class: 'rm-btn', onclick: async () => {
       make.disabled = true;
       try {
-        const r = await reauth(() => MKVault.api('pair-create'), '다시 인증했어요. "코드 만들기"를 한 번 더 눌러 주세요.');
+        const r = await reauth(() => MKVault.api('pair-create'), 'Verified again. Press "Create code" once more.');
         if (!r) return;
         const left = el('p', { class: 'rm-meta' });
-        const tick = () => { const s = Math.max(0, Math.round((r.expires - Date.now()) / 1000)); left.textContent = s ? `${Math.floor(s / 60)}분 ${s % 60}초 남음 · 한 번만 쓸 수 있어요` : '시간이 지났어요. 새로 만들어 주세요.'; if (s && box.isConnected) setTimeout(tick, 1000); };
-        box.replaceChildren(el('p', { class: 'rm-code', 'aria-label': '기기 추가 코드 ' + r.code.split('').join(' ') }, r.code), left); tick();
-      } catch (e) { say('실패했어요: ' + e.message); } finally { make.disabled = false; }
-    } }, '코드 만들기');
+        const tick = () => { const s = Math.max(0, Math.round((r.expires - Date.now()) / 1000)); left.textContent = s ? `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')} left · single use` : 'Expired. Create a new one.'; if (s && box.isConnected) setTimeout(tick, 1000); };
+        box.replaceChildren(el('p', { class: 'rm-code', 'aria-label': 'Device code ' + r.code.split('').join(' ') }, r.code), left); tick();
+      } catch (e) { say('Failed: ' + e.message); } finally { make.disabled = false; }
+    } }, 'Create code');
     return [el('ol', { class: 'rm-steps' },
-      el('li', {}, '여기서 코드를 만들어요.'),
-      el('li', {}, '새 기기에서 민권.com → 비행선이나 전광판을 눌러 저장고 창을 열어요.'),
-      el('li', {}, '"복구 코드 · 기기 추가 코드로 열기"를 누르고 코드를 넣어요.'),
-      el('li', {}, '열리면 바로 그 기기에 Face ID를 등록해요.')),
+      el('li', {}, 'Create a code here.'),
+      el('li', {}, 'On the new device, open 민권.com and tap the airship or a billboard to open the vault.'),
+      el('li', {}, 'Choose "Use a recovery or device code" and enter it.'),
+      el('li', {}, 'Once it opens, register Face ID on that device.')),
       el('div', { class: 'rm-tools' }, make), box];
   }
   // 설정 → 복구 코드: 남은 개수, 새로 만들기(옛 코드 무효), 만든 직후에만 코드가 보임
   function recoveryView() {
-    const status = el('p', { class: 'rm-meta' }, '확인 중…'), box = el('div', { class: 'rm-code-box' });
-    MKVault.api('recovery-status').then(r => { status.textContent = !r.created ? '아직 만든 적 없어요.' : !r.valid ? '예전 코드는 패턴 변경·모든 기기 로그아웃으로 무효예요. 새로 만들어 주세요.' : `남은 코드 ${r.left}개 · ${day(r.created)} 만듦`; }, () => { status.textContent = ''; });
+    const status = el('p', { class: 'rm-meta' }, 'Checking…'), box = el('div', { class: 'rm-code-box' });
+    MKVault.api('recovery-status').then(r => { status.textContent = !r.created ? 'Never created.' : !r.valid ? 'Old codes were revoked by a pattern change or a sign-out everywhere. Create new ones.' : `${r.left} codes left · created ${day(r.created)}`; }, () => { status.textContent = ''; });
     const make = el('button', { type: 'button', class: 'rm-btn', onclick: async () => {
-      if (!confirm('새로 만들면 예전 복구 코드는 모두 못 써요. 만들까요?')) return;
+      if (!confirm('Creating new codes revokes all old ones. Continue?')) return;
       make.disabled = true;
       try {
-        const r = await reauth(() => MKVault.api('recovery-create'), '다시 인증했어요. "새로 만들기"를 한 번 더 눌러 주세요.');
+        const r = await reauth(() => MKVault.api('recovery-create'), 'Verified again. Press "Create new" once more.');
         if (!r) return;
         const text = r.codes.join('\n');
-        box.replaceChildren(el('p', { class: 'rm-note', role: 'status' }, '지금 한 번만 보여요. 종이에 적거나 안전한 곳에 저장해 두세요. 하나씩 한 번만 쓸 수 있어요.'),
+        box.replaceChildren(el('p', { class: 'rm-note', role: 'status' }, 'Shown only once. Write them down or keep them somewhere safe. Each works one time.'),
           el('ul', { class: 'rm-codes' }, r.codes.map(c => el('li', {}, c))),
-          el('button', { type: 'button', class: 'rm-btn ghost', onclick: e => navigator.clipboard?.writeText(text).then(() => { e.target.textContent = '복사했어요'; }, () => say('복사하지 못했어요. 직접 적어 주세요.')) }, '모두 복사'));
-        status.textContent = `남은 코드 ${r.codes.length}개 · 방금 만듦`;
-      } catch (e) { say('실패했어요: ' + e.message); } finally { make.disabled = false; }
-    } }, '새로 만들기');
-    return [status, el('p', { class: 'rm-text' }, 'Face ID와 패턴을 모두 못 쓸 때 저장고 창의 "복구 코드 · 기기 추가 코드로 열기"에 넣어요. 열리면 새 Face ID를 등록할 수 있어요.'), el('div', { class: 'rm-tools' }, make), box];
+          el('button', { type: 'button', class: 'rm-btn ghost', onclick: e => navigator.clipboard?.writeText(text).then(() => { e.target.textContent = 'Copied'; }, () => say("Couldn't copy. Write them down instead.")) }, 'Copy all'));
+        status.textContent = `${r.codes.length} codes left · just created`;
+      } catch (e) { say('Failed: ' + e.message); } finally { make.disabled = false; }
+    } }, 'Create new');
+    return [status, el('p', { class: 'rm-text' }, 'If neither Face ID nor your pattern works, enter one of these under "Use a recovery or device code" in the vault window. You can register a new Face ID after it opens.'), el('div', { class: 'rm-tools' }, make), box];
   }
+
+  /* 방명록(드론 칸의 두 번째 탭): 누구나 이름·한마디를 남김. 규칙이 길이·필드를 검사, 지우기는 주인만 */
+  function guestbook(body, st) {
+    const list = st.items;
+    const name = el('input', { name: 'name', maxlength: 40, placeholder: 'Your name', 'aria-label': 'Your name', autocomplete: 'nickname' });
+    const msg = el('textarea', { name: 'msg', rows: 3, maxlength: 500, placeholder: 'Leave a note for the city…', 'aria-label': 'Message' });
+    try { name.value = localStorage.getItem('mk_guest_name') || ''; } catch {}
+    const form = el('form', { class: 'rm-guest-form', onsubmit: e => {
+      e.preventDefault();
+      const n = name.value.trim(), m = msg.value.trim();
+      if (!n) return name.focus(); if (!m) return msg.focus();
+      try { localStorage.setItem('mk_guest_name', n); } catch {}
+      act(() => addDoc(guestCol(), { name: n, msg: m, c: Date.now() }).then(() => 'Thank you for stopping by.'));
+    } }, el('div', { class: 'rm-guest-row' }, name, el('button', { class: 'rm-btn' }, 'Sign')), msg);
+    body.append(form);
+    if (!list.length) return body.append(empty('No one has signed yet. Be the first.'));
+    let last = null, grid = null;
+    for (const g of list) {
+      const t = g.c || 0, mo = monthOf(t);
+      if (mo !== last) { last = mo; body.append(el('h2', { class: 'rm-group-h' }, mo)); grid = el('div', { class: 'rm-grid notes' }); body.append(grid); }
+      grid.append(el('article', { class: 'rm-card note', style: `--i:${grid.children.length}` },
+        el('p', { class: 'rm-card-quote' }, g.msg || ''),
+        el('footer', {}, el('b', {}, g.name || 'Someone'), el('time', {}, day(t))),
+        window.MKVault?.hasAccess() && el('button', { type: 'button', class: 'rm-x', 'aria-label': 'Delete note from ' + (g.name || 'someone'), onclick: () => confirm('Delete this note?') && act(() => deleteDoc(doc(guestCol(), g.id))) }, '×')));
+    }
+  }
+
+  // 사이드바 묶음과 이름(라우터 키)
+  const NAV = [
+    ['Desk', [['thoughts', 'Thoughts'], ['todo', 'Tasks'], ['memo', 'Notes'], ['files', 'Files']]],
+    ['City', [['briefing', 'Morning Brief'], ['music', 'Music'], ['art', 'Art'], ['it', 'Tech']]],
+    ['System', [['settings', 'Settings']]],
+  ];
 
   const ROOMS = {
     // pub: 메인 화면(도시)의 칸 — 누구나 보기만, 고치기는 잠금을 푼 뒤(규칙도 읽기만 공개)
-    art: { ...noteRoom('VAULT · ART', '예술 저장고', roomCol('art'), '아직 비어 있어요. 첫 작품이나 생각을 넣어 보세요.'), pub: true },
-    it: { ...noteRoom('VAULT · IT', 'IT 저장고', roomCol('it'), '아직 비어 있어요. 첫 기록을 넣어 보세요.'), pub: true },
+    art: { ...noteRoom({ tag: 'City · Gallery', title: 'Art', sub: 'Works, sketches and things worth looking at twice.', empty: 'Nothing here yet. Add a first piece or thought.' }, roomCol('art')), pub: true },
+    it: { ...noteRoom({ tag: 'City · Circuit', title: 'Tech', sub: 'Notes on tools, code and the machines we live with.', empty: 'Nothing here yet. Add a first entry.' }, roomCol('it')), pub: true },
 
     memo: {
-      tag: 'STUDY · CORKBOARD', title: '메모',
+      tag: 'Study · Corkboard', title: 'Notes', sub: 'Everything written down, kept in one place.',
       folders: folderOps(() => memoFoldersCol, () => memosCol),
       async load(st) {
         const [items, folders] = await Promise.all([all(memosCol, 'u'), all(memoFoldersCol, 'order', 'asc')]);
@@ -217,22 +254,23 @@
         return items;
       },
       match: (m, f) => (m.folder || 'none') === f,
-      row: m => ({ title: m.t || '제목 없음', sub: m.type === 'draw' ? '그림' : m.att?.length && !m.b ? m.att[0].n : (m.b || '').split('\n')[0] || (m.canvas_url ? '그림' : ''), meta: day(m.u) }),
+      row: m => ({ title: m.t || 'Untitled', sub: m.type === 'draw' ? 'Drawing' : m.att?.length && !m.b ? m.att[0].n : (m.b || '').slice(0, 220) || (m.canvas_url ? 'Drawing' : ''), meta: day(m.u), thumb: m.type === 'draw' ? m.b : m.canvas_url }),
+      group: m => monthOf(m.u || m.c || Date.now()),
       view: (m, st) => [
-        m.type === 'draw' ? el('img', { class: 'rm-img', src: m.b, alt: m.t || '그림' }) : m.b && el('p', { class: 'rm-text' }, m.b),
-        m.canvas_url && el('img', { class: 'rm-img', src: m.canvas_url, alt: '함께 그린 그림' }),
+        m.type === 'draw' ? el('img', { class: 'rm-img', src: m.b, alt: m.t || 'Drawing' }) : m.b && el('p', { class: 'rm-text' }, m.b),
+        m.canvas_url && el('img', { class: 'rm-img', src: m.canvas_url, alt: 'Attached drawing' }),
         (m.att || []).map(a => el('a', { class: 'rm-file', href: safe(a.url), download: a.n }, `${a.n} · ${size(a.size)}`)),
-        st.folders?.length && el('label', { class: 'rm-move' }, el('span', {}, '폴더'),
-          el('select', { onchange: e => act(() => updateDoc(doc(memosCol, m.id), { folder: e.target.value }).then(() => '옮겼어요.'), () => load(m.id)) },
-            el('option', { value: 'none', selected: (m.folder || 'none') === 'none' }, '폴더 없음'),
-            st.folders.map(f => el('option', { value: f.id, selected: m.folder === f.id }, f.name || '이름 없음')))),
+        st.folders?.length && el('label', { class: 'rm-move' }, el('span', {}, 'Folder'),
+          el('select', { onchange: e => act(() => updateDoc(doc(memosCol, m.id), { folder: e.target.value }).then(() => 'Moved.'), () => load(m.id)) },
+            el('option', { value: 'none', selected: (m.folder || 'none') === 'none' }, 'No folder'),
+            st.folders.map(f => el('option', { value: f.id, selected: m.folder === f.id }, f.name || 'Untitled')))),
       ],
-      fields: [['t', '제목'], ['b', '내용', 'textarea']],
+      fields: [['t', 'Title'], ['b', 'Body', 'textarea']],
       optional: true, // 제목 없이 그림·첨부만 넣어도 됨
       extra: memoExtra,
       canEdit: m => m.type !== 'draw', // 옛 '그림만' 기록은 b가 그림 주소라 글로 고치면 안 됨
       async save(v, m, st) {
-        if (!v.t && !v.b && !v.att.length && !v.canvas_url && !m?.canvas_url) throw new Error('제목, 내용, 그림, 첨부 중 하나는 넣어 주세요');
+        if (!v.t && !v.b && !v.att.length && !v.canvas_url && !m?.canvas_url) throw new Error('Add a title, text, drawing or attachment');
         const data = { t: v.t, b: v.b, att: v.att, u: Date.now(), type: v.canvas_url || m?.canvas_url ? 'note' : m?.type === 'file' ? 'file' : 'text' };
         if (v.canvas_url) Object.assign(data, { canvas_url: v.canvas_url, canvas_path: v.canvas_path });
         const id = m ? (await updateDoc(doc(memosCol, m.id), data), m.id) : (await addDoc(memosCol, { ...data, folder: st.filter || 'none', c: Date.now() })).id;
@@ -246,7 +284,7 @@
     },
 
     files: {
-      tag: 'STUDY · DRAWER', title: '파일', empty: '서랍이 비어 있어요.',
+      tag: 'Study · Drawer', title: 'Files', sub: 'Documents and attachments, sealed in the drawer.', empty: 'The drawer is empty.',
       folders: folderOps(() => fileFoldersCol, () => filesCol),
       async load(st) {
         const [items, folders] = await Promise.all([all(filesCol, 'c'), all(fileFoldersCol, 'order', 'asc')]);
@@ -254,65 +292,72 @@
         return items;
       },
       match: (f, v) => f.folder === v,
-      row: f => ({ title: f.n || '파일', sub: [f.type, size(f.size)].filter(Boolean).join(' · '), meta: day(f.c) }),
-      view: f => [el('a', { class: 'rm-file', href: safe(f.url), download: f.n }, '내려받기 · ' + (f.n || '파일'))],
+      row: f => ({ title: f.n || 'File', sub: [f.type, size(f.size)].filter(Boolean).join(' · '), meta: day(f.c) }),
+      group: f => monthOf(f.c || Date.now()),
+      view: f => [el('a', { class: 'rm-file', href: safe(f.url), download: f.n }, 'Download · ' + (f.n || 'file'))],
       upload: async (list, st) => { for (const f of list) { const a = await put(f, 'mk_files/'); try { await addDoc(filesCol, { ...a, c: Date.now(), folder: st.filter || null }); } catch (e) { drop(a.path); throw e; } } },
       remove: f => deleteDoc(doc(filesCol, f.id)).then(() => drop(f.path)),
     },
 
     briefing: {
       pub: true,
-      tag: 'COURIER · MORNING BRIEF', title: '모닝 브리프', empty: '아직 도착한 브리핑이 없어요. 월·목 아침에 와요.',
-      load: () => all(briefsCol, 'date'),
-      row: b => ({ title: b.dateDisplay || b.date, sub: [b.weekday, b.count && b.count + '건'].filter(Boolean).join(' · '), meta: b.read ? '' : 'NEW' }),
-      view: b => {
-        if (!b.read && !ro()) updateDoc(doc(briefsCol, b.id), { read: true }).then(() => { b.read = true; }).catch(() => {});
-        if (b.html) { // 원본 메일 HTML — 스크립트 없는 격리 iframe
-          const f = el('iframe', { class: 'rm-frame', sandbox: 'allow-popups allow-popups-to-escape-sandbox allow-same-origin', title: '브리핑 본문' });
-          f.srcdoc = b.html; f.onload = () => { try { f.style.height = f.contentDocument.documentElement.scrollHeight + 'px'; } catch {} };
-          return [f];
-        }
-        const sec = (name, list) => list?.length ? [el('h3', { class: 'rm-sec' }, name), list.map(i => el('div', { class: 'rm-story' },
-          safe(i.url) ? el('a', { href: safe(i.url), target: '_blank', rel: 'noopener' }, i.title || '') : el('b', {}, i.title || ''), el('p', {}, i.summary || ''), el('small', {}, i.source || '')))] : null;
-        return [sec('AI 업계', b.news), sec('시장 영향', b.market)];
-      },
+      tag: 'City · Courier drone', title: 'Morning Brief', sub: 'What the courier drone brought in — and notes left by visitors.',
+      tabs: [
+        { label: 'Briefs', empty: 'No brief has arrived yet. They come Monday and Thursday mornings.',
+          async load(st) { const items = await all(briefsCol, 'date'); const months = [...new Set(items.map(b => monthOf(b.date)))]; st.chips = months.length > 1 ? [{ label: 'All', value: null }, ...months.map(m => ({ label: m, value: m }))] : null; return items; },
+          match: (b, m) => monthOf(b.date) === m,
+          group: b => monthOf(b.date),
+          row: b => { const d = ymdParse(b.date); return { title: d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }), sub: b.count ? b.count + ' stories' : '', meta: b.read ? '' : 'New', big: String(d.getDate()) }; },
+          view: b => {
+            if (!b.read && !ro()) updateDoc(doc(briefsCol, b.id), { read: true }).then(() => { b.read = true; }).catch(() => {});
+            if (b.html) { // 원본 메일 HTML — 스크립트 없는 격리 iframe
+              const f = el('iframe', { class: 'rm-frame', sandbox: 'allow-popups allow-popups-to-escape-sandbox allow-same-origin', title: 'Brief' });
+              f.srcdoc = b.html; f.onload = () => { try { f.style.height = f.contentDocument.documentElement.scrollHeight + 'px'; } catch {} };
+              return [f];
+            }
+            const sec = (name, list) => list?.length ? [el('h3', { class: 'rm-sec' }, name), list.map(i => el('div', { class: 'rm-story' },
+              safe(i.url) ? el('a', { href: safe(i.url), target: '_blank', rel: 'noopener' }, i.title || '') : el('b', {}, i.title || ''), el('p', {}, i.summary || ''), el('small', {}, i.source || '')))] : null;
+            return [sec('AI industry', b.news), sec('Markets', b.market)];
+          } },
+        { label: 'Guestbook', load: async () => (await all(guestCol(), 'c')).slice(0, 200), row: () => ({}), render: guestbook },
+      ],
     },
 
     settings: {
-      tag: 'STUDY · BALCONY', title: '설정',
+      tag: 'Study · Balcony', title: 'Settings', sub: 'Keys, devices and how the vault opens.',
       async load() {
         const list = [
-          { id: 'pin', t: '패턴 바꾸기', s: '저장고를 여는 패턴을 새로 정해요.', run: () => MKVault.changePin() },
-          { id: 'recover', t: '패턴을 잊었어요', s: '등록된 메일로 인증 링크를 보내 새 패턴을 정해요.', run: () => MKVault.recover() },
-          { id: 'study', t: '서재 암호 다시 묻기', s: '이 기기에서 다음에 비행선을 누르면 서재 암호를 다시 물어요.', run: () => { try { localStorage.removeItem('mk_study'); } catch {} return '다음부터 다시 물어요.'; } },
-          { id: 'lock', t: '저장고 잠그기', s: '이 기기에서 지금 바로 로그아웃해요.', run: () => MKVault.logout() },
-          { id: 'all', t: '모든 기기에서 로그아웃', s: '다른 기기의 인증도 전부 풀어요.', run: () => MKVault.logoutAll() },
+          { id: 'pin', t: 'Change pattern', s: 'Set a new pattern for opening the vault.', run: () => MKVault.changePin() },
+          { id: 'recover', t: 'Forgot pattern', s: 'Email a verification link and set a new pattern.', run: () => MKVault.recover() },
+          { id: 'study', t: 'Ask for the study code again', s: 'Next time you tap the airship on this device, the study code is asked again.', run: () => { try { localStorage.removeItem('mk_study'); } catch {} return "It'll ask next time."; } },
+          { id: 'lock', t: 'Lock the vault', s: 'Sign out on this device right now.', run: () => MKVault.logout() },
+          { id: 'all', t: 'Sign out everywhere', s: 'Revoke access on every other device too.', run: () => MKVault.logoutAll() },
         ];
         // Face ID(패스키): 등록은 방금 패턴/Face ID로 연 경우만(서버 규칙). 옵션은 미리 받아 둠 — 누르자마자 Face ID 창이 떠야 해서
         if (MKVault.passkeySupported()) {
           MKVault.passkeyRegisterPrefetch().catch(() => {});
-          list.push({ id: 'face', t: 'Face ID 등록 (이 기기)', s: '다음부터 저장고와 서재를 Face ID로 열어요. 패턴은 예비로 남아요.', reload: true, run: async () => {
-            try { await MKVault.passkeyRegister(device()); return 'Face ID를 등록했어요.'; }
+          list.push({ id: 'face', t: 'Register Face ID on this device', s: 'Open the vault and the study with Face ID. Your pattern stays as a backup.', reload: true, run: async () => {
+            try { await MKVault.passkeyRegister(device()); return 'Face ID registered.'; }
             catch (e) {
               if (e.status !== 401) throw e;
-              MKVault.unlock(() => { MKVault.passkeyRegisterPrefetch().catch(() => {}); say('다시 인증했어요. "Face ID 등록"을 한 번 더 눌러 주세요.'); });
+              MKVault.unlock(() => { MKVault.passkeyRegisterPrefetch().catch(() => {}); say('Verified again. Press "Register Face ID" once more.'); });
               return '';
             } } });
         }
         try {
-          for (const k of (await MKVault.passkeyList()).keys) list.push({ id: 'pk' + k.id, t: 'Face ID 지우기 · ' + (k.label || '기기'), s: `${day(k.created)} 등록${k.used ? ' · 마지막 사용 ' + day(k.used) : ''}`, reload: true,
+          for (const k of (await MKVault.passkeyList()).keys) list.push({ id: 'pk' + k.id, t: 'Remove Face ID · ' + (k.label || 'device'), s: `Registered ${day(k.created)}${k.used ? ' · last used ' + day(k.used) : ''}`, reload: true,
             run: async () => {
-              if (!confirm(`'${k.label || '이 기기'}' Face ID를 지울까요?`)) return '';
-              try { await MKVault.passkeyRemove(k.id); return 'Face ID를 지웠어요.'; }
-              catch (e) { if (e.status !== 401) throw e; MKVault.unlock(() => say('다시 인증했어요. 한 번 더 눌러 지워 주세요.')); return ''; } } });
+              if (!confirm(`Remove Face ID for '${k.label || 'this device'}'?`)) return '';
+              try { await MKVault.passkeyRemove(k.id); return 'Face ID removed.'; }
+              catch (e) { if (e.status !== 401) throw e; MKVault.unlock(() => say('Verified again. Press once more to remove.')); return ''; } } });
         } catch {}
         list.push(
-          { id: 'pair', t: '다른 기기 추가', s: '10분짜리 코드를 만들어 새 기기에서 넣으면 열리고, 그 기기에 Face ID를 등록해요.', view: pairView },
-          { id: 'recovery', t: '복구 코드', s: 'Face ID와 패턴을 모두 못 쓸 때 여는 일회용 코드 8개.', view: recoveryView });
-        list.push({ id: 'yt', t: 'YouTube API 키', s: (await ytKey().catch(() => '')) ? '저장돼 있어요. 바꾸려면 눌러요.' : '음악 방에서 검색·재생하려면 넣어 주세요.', reload: true, run: setYtKey });
+          { id: 'pair', t: 'Add another device', s: 'Make a 10-minute code, enter it on the new device, then register Face ID there.', view: pairView },
+          { id: 'recovery', t: 'Recovery codes', s: 'Eight one-time codes for when Face ID and your pattern both fail.', view: recoveryView });
+        list.push({ id: 'yt', t: 'YouTube API key', s: (await ytKey().catch(() => '')) ? 'Saved. Tap to replace it.' : 'Needed to search and play inside Music.', reload: true, run: setYtKey });
         if (await gh()) list.push(
-          { id: 'ghpush', t: 'GitHub 백업 보내기', s: '메모 전체를 연결된 GitHub 저장소로 보내요.', run: async () => (await ghAll('push-all')) + '개 기록을 보냈어요.' },
-          { id: 'ghpull', t: 'GitHub 백업 가져오기', s: 'GitHub 저장소의 기록을 메모로 가져와요.', run: async () => (await ghAll('pull-all')) + '개 기록을 가져왔어요.' });
+          { id: 'ghpush', t: 'Back up to GitHub', s: 'Send every note to the connected GitHub repository.', run: async () => (await ghAll('push-all')) + ' notes sent.' },
+          { id: 'ghpull', t: 'Restore from GitHub', s: 'Bring notes from the GitHub repository into Notes.', run: async () => (await ghAll('pull-all')) + ' notes restored.' });
         return list;
       },
       row: a => ({ title: a.t, sub: a.s, action: a.run, reload: a.reload }),
@@ -321,57 +366,57 @@
 
     music: {
       pub: true,
-      tag: 'CITY · SYNTH', title: '음악',
+      tag: 'City · Synth', title: 'Music', sub: 'Songs I love, why I love them, and tools for practice.',
       tabs: [
-        { label: '좋아하는 곡', empty: '아직 없어요. 좋아하는 곡과 그 이유를 남겨 보세요.', load: () => all(favSongsCol, 'c'),
+        { label: 'Favourites', empty: 'Nothing yet. Leave a song you love and why.', load: () => all(favSongsCol, 'c'),
           row: s => ({ title: s.title || '', sub: [s.artist, s.reason].filter(Boolean).join(' · '), thumb: thumbOf(s.videoId) }),
-          view: s => [vid(s.videoId) ? player(vid(s.videoId)) : el('p', { class: 'rm-meta' }, 'YouTube 링크가 없어요. 고치기에서 찾아 넣을 수 있어요.'),
+          view: s => [vid(s.videoId) ? player(vid(s.videoId)) : el('p', { class: 'rm-meta' }, 'No YouTube link. You can find one under Edit.'),
             el('p', { class: 'rm-meta' }, s.artist || ''), s.reason && el('p', { class: 'rm-text' }, s.reason)],
-          fields: [['title', '곡 제목'], ['artist', '가수'], ['link', 'YouTube 링크'], ['reason', '좋아하는 이유', 'textarea']],
+          fields: [['title', 'Song'], ['artist', 'Artist'], ['link', 'YouTube link'], ['reason', 'Why I love it', 'textarea']],
           extra: ytPicker,
           defaults: () => ({}),
           async save(v, s) {
             const videoId = vid(v.link) || (s && !v.link ? s.videoId : null) || (!v.link && await ytKey() ? (await ytSearch(`${v.title} ${v.artist}`, 1))[0]?.id : null); // 링크 없으면 키로 찾아 줌
-            if (v.link && !videoId) throw new Error('YouTube 링크를 알아볼 수 없어요');
+            if (v.link && !videoId) throw new Error("Can't read that YouTube link");
             const data = { title: v.title, artist: v.artist, reason: v.reason, videoId };
             return s ? updateDoc(doc(favSongsCol, s.id), data) : addDoc(favSongsCol, { ...data, c: Date.now() });
           },
           edit: s => ({ ...s, link: s.videoId ? 'https://youtu.be/' + s.videoId : '' }),
           remove: s => deleteDoc(doc(favSongsCol, s.id)) },
-        // 곡 분석(옛 음악 노트 music_notes: t,b + 가수·영상). 누르면 그 곡 YouTube가 열리고 아래에 분석
-        { label: '곡 분석', empty: '아직 분석한 곡이 없어요.', load: () => all(musicNotesCol, 'u'),
-          row: m => ({ title: m.t || '제목 없음', sub: [m.artist, (m.b || '').split('\n')[0]].filter(Boolean).join(' · '), meta: day(m.u), thumb: thumbOf(m.videoId) }),
+        // 곡 분석(옛 음악 노트 music_notes: t,b + 가수·영상)
+        { label: 'Analysis', empty: 'No song analysed yet.', load: () => all(musicNotesCol, 'u'),
+          row: m => ({ title: m.t || 'Untitled', sub: [m.artist, (m.b || '').slice(0, 160)].filter(Boolean).join(' · '), meta: day(m.u), thumb: thumbOf(m.videoId) }),
           view: m => [vid(m.videoId) && player(vid(m.videoId)), m.artist && el('p', { class: 'rm-meta' }, m.artist), el('p', { class: 'rm-text' }, m.b || '')],
-          fields: [['t', '곡 제목'], ['artist', '가수'], ['link', 'YouTube 링크'], ['b', '분석', 'textarea']],
+          fields: [['t', 'Song'], ['artist', 'Artist'], ['link', 'YouTube link'], ['b', 'Analysis', 'textarea']],
           extra: ytPicker,
           async save(v, m) {
             const videoId = vid(v.link) || (m && !v.link ? m.videoId || null : null) || (!v.link && await ytKey() ? (await ytSearch(`${v.t} ${v.artist}`, 1))[0]?.id : null);
-            if (v.link && !videoId) throw new Error('YouTube 링크를 알아볼 수 없어요');
+            if (v.link && !videoId) throw new Error("Can't read that YouTube link");
             const data = { t: v.t, artist: v.artist, b: v.b, videoId: videoId || null, u: Date.now() };
             return m ? updateDoc(doc(musicNotesCol, m.id), data) : addDoc(musicNotesCol, { ...data, c: Date.now() });
           },
           edit: m => ({ ...m, link: m.videoId ? 'https://youtu.be/' + m.videoId : '' }),
           remove: m => deleteDoc(doc(musicNotesCol, m.id)) },
-        { label: '플레이리스트', empty: '플레이리스트가 없어요.',
+        { label: 'Playlists', empty: 'No playlists yet.',
           async load() { const [pl, songs] = await Promise.all([all(playlistsCol, 'c'), all(playlistSongsCol, 'c', 'asc')]); pl.forEach(p => { p.songs = songs.filter(s => s.plid === p.id); }); return pl; },
-          row: p => ({ title: p.name || '', meta: p.songs.length + '곡' }),
+          row: p => ({ title: p.name || '', meta: p.songs.length + (p.songs.length === 1 ? ' song' : ' songs') }),
           view: p => {
             const f = el('form', { class: 'rm-inline', onsubmit: e => {
               e.preventDefault(); const title = f.elements.title.value.trim(), link = f.elements.link.value.trim();
-              if (!safe(link)) return say('곡 링크를 넣어 주세요');
+              if (!safe(link)) return say('Add a link to the song');
               act(() => addDoc(playlistSongsCol, { title: title || link, link, plid: p.id, c: Date.now() }), () => load(p.id));
-            } }, el('input', { name: 'title', placeholder: '곡 제목', 'aria-label': '곡 제목' }), el('input', { name: 'link', placeholder: '링크 (YouTube 등)', 'aria-label': '곡 링크' }), el('button', { class: 'rm-btn sm' }, '+ 곡 넣기'));
+            } }, el('input', { name: 'title', placeholder: 'Song', 'aria-label': 'Song' }), el('input', { name: 'link', placeholder: 'Link (YouTube, etc.)', 'aria-label': 'Song link' }), el('button', { class: 'rm-btn sm' }, '+ Add'));
             return [
               p.songs.length ? el('ul', { class: 'rm-list' }, p.songs.map(s => el('li', {},
                 safe(s.link) ? el('a', { class: 'rm-row', href: safe(s.link), target: '_blank', rel: 'noopener' }, el('span', { class: 'rm-row-main' }, el('b', {}, s.title || s.link))) : el('div', { class: 'rm-row static' }, el('span', { class: 'rm-row-main' }, el('b', {}, s.title || ''))),
-                !ro() && el('button', { type: 'button', class: 'rm-x', 'aria-label': (s.title || '곡') + ' 빼기', onclick: () => act(() => deleteDoc(doc(playlistSongsCol, s.id)), () => load(p.id)) }, '빼기')))) : el('p', { class: 'rm-text' }, '곡이 없어요.'),
+                !ro() && el('button', { type: 'button', class: 'rm-x', 'aria-label': 'Remove ' + (s.title || 'song'), onclick: () => act(() => deleteDoc(doc(playlistSongsCol, s.id)), () => load(p.id)) }, '×')))) : el('p', { class: 'rm-text' }, 'No songs yet.'),
               !ro() && f];
           },
-          fields: [['name', '플레이리스트 이름']],
+          fields: [['name', 'Playlist name']],
           save: (v, p) => p ? updateDoc(doc(playlistsCol, p.id), v) : addDoc(playlistsCol, { ...v, c: Date.now() }),
           remove: p => Promise.all(p.songs.map(s => deleteDoc(doc(playlistSongsCol, s.id)))).then(() => deleteDoc(doc(playlistsCol, p.id))) },
-        { label: '연습 도구', wide: true,
-          load: async () => [{ id: 'p', t: '절대음감 퀘스트', s: '레벨을 올리며 음을 듣고 맞혀요.', h: 'pitch-trainer.html' }, { id: 'c', t: '코드 사전', s: 'K-POP 코드, 코드 진행, 5도권, 이론.', h: 'chord-dictionary.html' }],
+        { label: 'Practice', wide: true,
+          load: async () => [{ id: 'p', t: 'Perfect Pitch Quest', s: 'Hear a note, name it, level up.', h: 'pitch-trainer.html' }, { id: 'c', t: 'Chord Dictionary', s: 'K-pop chords, progressions, the circle of fifths and theory.', h: 'chord-dictionary.html' }],
           row: x => ({ title: x.t, sub: x.s }),
           view: x => [el('iframe', { class: 'rm-tool', src: x.h + '?embed', title: x.t })] },
       ],
@@ -379,9 +424,10 @@
   };
 
   /* ── 화면 ── */
-  let st = null, seq = 0;
+  let st = null, seq = 0, shownKey = null;
   const ro = () => !!st?.room.pub && !window.MKVault?.hasAccess(); // 공개 칸을 잠금 안 풀고 보는 중
-  const def = () => st.room.tabs ? { ...st.room.tabs[st.tab], tag: st.room.tag, title: st.room.title } : st.room;
+  const def = () => st.room.tabs ? { ...st.room.tabs[st.tab], tag: st.room.tag, title: st.room.title, sub: st.room.sub } : st.room;
+  const empty = text => el('div', { class: 'rm-state' }, el('div', { class: 'rm-orb' }), el('p', {}, text));
 
   async function load(keep) { // keep: 다시 불러온 뒤 그 항목 화면으로 돌아감(플레이리스트 곡 넣기 등)
     const my = ++seq; st.view = 'loading'; st.chips = null; draw();
@@ -405,33 +451,87 @@
     try {
       const msg = await fn(); if (st !== mine) return; // 그새 다른 방으로 갔으면 결과 무시
       if (after) { root.removeAttribute('aria-busy'); st.note = typeof msg === 'string' ? msg : ''; await after(); } else done(typeof msg === 'string' ? msg : '');
-    } catch (e) { if (st === mine) done('실패했어요: ' + (e.message || e)); }
+    } catch (e) { if (st === mine) done('Failed: ' + (e.message || e)); }
   }
   function ask(label, value = '') { const v = prompt(label, value); return v && v.trim(); }
+
+  const LOCK = '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="2"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>';
+  const ARROW = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg>';
+  function sidebar() {
+    const open = !!window.MKVault?.hasAccess();
+    return el('aside', { class: 'rm-side', 'aria-label': 'Vaults' },
+      el('a', { class: 'rm-brand', href: st.back || '#', 'aria-label': 'Back to the city' }, el('span', { class: 'rm-mark' }, 'MK'), el('span', {}, 'Vaults')),
+      NAV.map(([name, items]) => el('nav', { class: 'rm-nav', 'aria-label': name },
+        el('h2', {}, name),
+        items.map(([k, label]) => { const pub = ROOMS[k]?.pub, a = el('a', { href: '#' + k, 'aria-current': k === st.key ? 'page' : null }, el('span', {}, label));
+          if (!pub && !open) a.insertAdjacentHTML('beforeend', `<i class="rm-lock" title="Locked">${LOCK}</i>`);
+          return a; }))),
+      el('div', { class: 'rm-side-foot' },
+        el('p', {}, open ? 'Vault open' : 'Vault locked', el('i', { class: 'rm-dot' + (open ? ' on' : '') })),
+        el('a', { href: st.back || '#' }, st.back === '#study' ? '← Back to the study' : '← Back to the city')));
+  }
+
+  function card(x, d, i) {
+    const r = d.row(x);
+    const open = r.action ? () => act(r.action, r.reload ? load : null) : d.view ? () => { st.item = x; st.note = ''; st.view = 'item'; draw(); } : null;
+    const inner = [
+      r.thumb && el('img', { class: 'rm-card-img', src: r.thumb, alt: '', loading: 'lazy' }),
+      r.big && el('span', { class: 'rm-card-big' }, r.big),
+      el('span', { class: 'rm-card-main' }, el('b', {}, r.title), r.sub && el('small', {}, r.sub)),
+      el('span', { class: 'rm-card-foot' }, r.meta ? el('time', { class: r.meta === 'New' ? 'new' : null }, r.meta) : el('span'), open && el('i', { class: 'rm-arrow' })),
+    ];
+    const c = open ? el('button', { type: 'button', class: 'rm-card' + (r.big ? ' date' : ''), style: `--i:${i}`, onclick: open }, inner) : el('div', { class: 'rm-card static', style: `--i:${i}` }, inner);
+    c.querySelector('.rm-arrow')?.insertAdjacentHTML('beforeend', ARROW);
+    if (d.toggle) c.prepend(el('button', { type: 'button', class: 'rm-check', 'aria-pressed': String(!!r.done), 'aria-label': (r.done ? 'Mark not done: ' : 'Mark done: ') + r.title, onclick: e => { e.stopPropagation(); act(() => d.toggle(x)); } }));
+    return c;
+  }
 
   function draw(focus = true) {
     if (st.leave && st.view !== 'compose') { st.leave(); st.leave = null; }
     const d = def(), back = st.view === 'item' || st.view === 'compose';
-    const top = el('div', { class: 'rm-top' }, el('span', {}, d.tag),
-      el('button', { type: 'button', onclick: back ? () => { st.view = 'list'; draw(); } : st.close }, back ? '← 목록' : '닫기 ×'));
-    const h = el('h1', { class: 'rm-title', tabindex: '-1' }, st.view === 'item' ? (d.row(st.item).title || '') : st.view === 'compose' ? (st.item ? '고치기' : '새로 넣기') : d.title);
+    const h = el('h1', { class: 'rm-title', tabindex: '-1' }, st.view === 'item' ? (d.row(st.item).title || '') : st.view === 'compose' ? (st.item ? 'Edit' : 'New entry') : d.title);
+    const head = el('header', { class: 'rm-head' },
+      el('div', { class: 'rm-crumb' }, back ? el('button', { type: 'button', onclick: () => { st.view = 'list'; draw(); } }, '← ' + d.title) : el('span', {}, d.tag),
+        el('button', { type: 'button', class: 'rm-close', 'aria-label': 'Close', onclick: st.close }, '×')),
+      h, !back && d.sub && el('p', { class: 'rm-sub' }, d.sub));
     const body = el('div', { class: 'rm-body' });
     if (st.note) body.append(el('p', { class: 'rm-note', role: 'status' }, st.note));
-    if (!back) { // 탭(음악)·폴더 칩: 불러오는 중·오류일 때도 보여서 다른 탭으로 옮겨 갈 수 있음
-      const tabs = st.room.tabs ? st.room.tabs.map((t, i) => ({ label: t.label, on: i === st.tab, pick: () => { st.tab = i; st.filter = null; st.note = ''; load(); } }))
-        : (st.chips || []).map(c => ({ label: c.label, on: c.value === st.filter, pick: () => { st.filter = c.value; st.note = ''; draw(); } }));
-      if (tabs.length) body.append(el('div', { class: 'rm-chips', role: 'group', 'aria-label': '분류' }, tabs.map(t => el('button', { type: 'button', 'aria-pressed': String(t.on), onclick: t.pick }, t.label))));
+
+    if (!back) { // 알약: 탭(음악·브리프) 또는 폴더/달 칩. 오른쪽엔 행동 버튼
+      const bar = el('div', { class: 'rm-bar' });
+      const tabs = st.room.tabs ? st.room.tabs.map((t, i) => ({ label: t.label, on: i === st.tab, pick: () => { st.tab = i; st.filter = null; st.note = ''; load(); } })) : [];
+      const chips = (st.chips || []).map(c => ({ label: c.label, on: c.value === st.filter, pick: () => { st.filter = c.value; st.note = ''; draw(); } }));
+      if (tabs.length) bar.append(el('div', { class: 'rm-pills', role: 'group', 'aria-label': 'Sections' }, tabs.map(t => el('button', { type: 'button', 'aria-pressed': String(t.on), onclick: t.pick }, t.label))));
+      if (chips.length) bar.append(el('div', { class: 'rm-pills soft', role: 'group', 'aria-label': 'Filter' }, chips.map(t => el('button', { type: 'button', 'aria-pressed': String(t.on), onclick: t.pick }, t.label))));
+      const tools = el('div', { class: 'rm-tools' });
+      if (st.view === 'list' && !d.render) {
+        if (d.save && ro()) tools.append(el('button', { type: 'button', class: 'rm-btn ghost', onclick: () => MKVault.unlock(() => draw()) }, 'Unlock to edit'));
+        else if (d.save) tools.append(el('button', { type: 'button', class: 'rm-btn', onclick: () => { st.item = null; st.note = ''; st.view = 'compose'; draw(); } }, '+ New'));
+        if (d.upload) {
+          const inp = el('input', { type: 'file', multiple: true, hidden: true, onchange: () => { const files = [...inp.files]; inp.value = ''; if (files.length) act(() => d.upload(files, st)); } });
+          tools.append(inp, el('button', { type: 'button', class: 'rm-btn', onclick: () => inp.click() }, '+ Upload'));
+        }
+        if (d.folders) {
+          const F = d.folders, cur = st.folders?.find(f => f.id === st.filter);
+          tools.append(el('button', { type: 'button', class: 'rm-btn ghost', onclick: () => { const name = ask('New folder name'); if (name) act(() => addDoc(F.col(), { name, icon: 'folder', order: Date.now() })); } }, '+ Folder'));
+          if (cur) tools.append(
+            el('button', { type: 'button', class: 'rm-btn ghost', onclick: () => { const name = ask('Folder name', cur.name || ''); if (name) act(() => updateDoc(doc(F.col(), cur.id), { name })); } }, 'Rename'),
+            el('button', { type: 'button', class: 'rm-btn ghost danger', onclick: () => confirm(`Delete '${cur.name || 'this folder'}' and everything in it? This can't be undone.`) && act(() => F.wipe(cur.id).then(() => { st.filter = null; })) }, 'Delete folder'));
+        }
+      }
+      if (tools.children.length) bar.append(tools);
+      if (bar.children.length) body.append(bar);
     }
 
-    if (st.view === 'loading') body.append(el('div', { class: 'rm-state' }, el('div', { class: 'rm-ring spin' }), el('p', {}, '불러오는 중')));
-    else if (st.view === 'error') body.append(el('div', { class: 'rm-state' }, el('div', { class: 'rm-ring bad' }), el('p', {}, '불러오지 못했어요. ' + st.err), el('button', { type: 'button', class: 'rm-btn', onclick: () => load() }, '다시 시도')));
+    if (st.view === 'loading') body.append(el('div', { class: 'rm-grid' }, Array.from({ length: 6 }, (_, i) => el('div', { class: 'rm-card skel', style: `--i:${i}` }))));
+    else if (st.view === 'error') body.append(el('div', { class: 'rm-state' }, el('div', { class: 'rm-orb bad' }), el('p', {}, "Couldn't load. " + st.err), el('button', { type: 'button', class: 'rm-btn', onclick: () => load() }, 'Try again')));
     else if (st.view === 'item') {
       const meta = d.row(st.item).meta;
       if (meta) body.append(el('p', { class: 'rm-meta' }, meta));
-      body.append(...d.view(st.item, st).flat(Infinity).filter(Boolean));
+      body.append(el('article', { class: 'rm-read' }, ...d.view(st.item, st).flat(Infinity).filter(Boolean)));
       const tools = el('div', { class: 'rm-tools' });
-      if (d.save && !ro() && (!d.canEdit || d.canEdit(st.item))) tools.append(el('button', { type: 'button', class: 'rm-btn ghost', onclick: () => { st.view = 'compose'; draw(); } }, '고치기'));
-      if (d.remove && !ro()) tools.append(el('button', { type: 'button', class: 'rm-btn ghost danger', onclick: () => confirm('지울까요? 되돌릴 수 없어요.') && act(() => d.remove(st.item)) }, '지우기'));
+      if (d.save && !ro() && (!d.canEdit || d.canEdit(st.item))) tools.append(el('button', { type: 'button', class: 'rm-btn ghost', onclick: () => { st.view = 'compose'; draw(); } }, 'Edit'));
+      if (d.remove && !ro()) tools.append(el('button', { type: 'button', class: 'rm-btn ghost danger', onclick: () => confirm("Delete this? It can't be undone.") && act(() => d.remove(st.item)) }, 'Delete'));
       if (tools.children.length) body.append(tools);
     } else if (st.view === 'compose') {
       const v = st.item ? (d.edit ? d.edit(st.item) : st.item) : (d.defaults ? d.defaults() : {});
@@ -450,43 +550,26 @@
       } }, d.fields.map(([k, label, type]) => el('label', {}, el('span', {}, label),
         type === 'textarea' ? el('textarea', { name: k, rows: 8 }, v[k] || '') : el('input', { name: k, type: type || 'text', value: v[k] || '' }))),
         ex?.node,
-        el('div', { class: 'rm-tools' }, el('button', { class: 'rm-btn' }, '저장'), el('button', { type: 'button', class: 'rm-btn ghost', onclick: () => { st.view = st.item ? 'item' : 'list'; draw(); } }, '취소')));
+        el('div', { class: 'rm-tools' }, el('button', { class: 'rm-btn' }, 'Save'), el('button', { type: 'button', class: 'rm-btn ghost', onclick: () => { st.view = st.item ? 'item' : 'list'; draw(); } }, 'Cancel')));
       st.leave = () => { if (saving) left = true; else ex?.discard(); }; // 취소·목록·Esc·다른 방 모두 여기로
       body.append(form);
-    } else if (d.render) d.render(body, st); // 탭이 화면을 직접 그림(YouTube)
-    else { // list
-      const tools = el('div', { class: 'rm-tools' });
-      if (d.save && ro()) tools.append(el('button', { type: 'button', class: 'rm-btn ghost', onclick: () => MKVault.unlock(() => draw()) }, '잠금 풀고 고치기'));
-      else if (d.save) tools.append(el('button', { type: 'button', class: 'rm-btn', onclick: () => { st.item = null; st.note = ''; st.view = 'compose'; draw(); } }, '+ 새로 넣기'));
-      if (d.upload) {
-        const inp = el('input', { type: 'file', multiple: true, hidden: true, onchange: () => { const files = [...inp.files]; inp.value = ''; if (files.length) act(() => d.upload(files, st)); } });
-        tools.append(inp, el('button', { type: 'button', class: 'rm-btn', onclick: () => inp.click() }, '+ 파일 올리기'));
-      }
-      if (d.folders) {
-        const F = d.folders, cur = st.folders?.find(f => f.id === st.filter);
-        tools.append(el('button', { type: 'button', class: 'rm-btn ghost', onclick: () => { const name = ask('새 폴더 이름'); if (name) act(() => addDoc(F.col(), { name, icon: 'folder', order: Date.now() })); } }, '+ 폴더'));
-        if (cur) tools.append(
-          el('button', { type: 'button', class: 'rm-btn ghost', onclick: () => { const name = ask('폴더 이름', cur.name || ''); if (name) act(() => updateDoc(doc(F.col(), cur.id), { name })); } }, '이름 바꾸기'),
-          el('button', { type: 'button', class: 'rm-btn ghost danger', onclick: () => confirm(`'${cur.name || '이 폴더'}'와 안의 것을 모두 지울까요? 되돌릴 수 없어요.`) && act(() => F.wipe(cur.id).then(() => { st.filter = null; })) }, '폴더 지우기'));
-      }
-      if (tools.children.length) body.append(tools);
+    } else if (d.render) d.render(body, st); // 방이 화면을 직접 그림(잡생각·할 일·방명록)
+    else { // 목록 → 카드 그리드(달로 묶음)
       const items = st.filter != null && d.match ? st.items.filter(x => d.match(x, st.filter)) : st.items;
-      if (!items.length) body.append(el('div', { class: 'rm-state' }, el('div', { class: 'rm-ring' }, el('span', {}, 'EMPTY')), el('p', {}, d.empty || '아직 비어 있어요.')));
+      if (!items.length) body.append(empty(d.empty || 'Nothing here yet.'));
+      else if (!d.group) body.append(el('div', { class: 'rm-grid' }, items.map((x, i) => card(x, d, i))));
       else {
-        const ul = el('ul', { class: 'rm-list' }); let last;
+        let last = null, grid = null, i = 0;
         for (const x of items) {
-          const r = d.row(x), g = d.group?.(x);
-          if (g && g !== last) { last = g; ul.append(el('li', { class: 'rm-group' }, g)); }
-          const inner = [r.thumb && el('img', { class: 'rm-thumb', src: r.thumb, alt: '', loading: 'lazy' }), el('span', { class: 'rm-row-main' }, el('b', {}, r.title), r.sub && el('small', {}, r.sub)), r.meta && el('time', { class: r.meta === 'NEW' ? 'new' : null }, r.meta)];
-          const tgt = r.action || d.view ? el('button', { type: 'button', class: 'rm-row', onclick: r.action ? () => act(r.action, r.reload ? load : null) : () => { st.item = x; st.note = ''; st.view = 'item'; draw(); } }, inner)
-            : el('div', { class: 'rm-row static' }, inner);
-          ul.append(el('li', { class: r.done ? 'done' : null },
-            d.toggle && el('button', { type: 'button', class: 'rm-check', 'aria-pressed': String(!!r.done), 'aria-label': (r.done ? '안 끝냄으로: ' : '끝냄으로: ') + r.title, onclick: () => act(() => d.toggle(x)) }), tgt));
+          const g = d.group(x);
+          if (g !== last) { last = g; body.append(el('h2', { class: 'rm-group-h' }, g, el('small', {}, String(items.filter(y => d.group(y) === g).length)))); grid = el('div', { class: 'rm-grid' }); body.append(grid); }
+          grid.append(card(x, d, i++));
         }
-        body.append(ul);
       }
     }
-    root.replaceChildren(el('div', { class: 'rm-wrap' + (d.wide && st.view === 'item' ? ' wide' : '') }, top, h, body));
+    const main = el('main', { class: 'rm-main' + (d.wide && st.view === 'item' ? ' wide' : '') + (st.key !== shownKey ? ' enter' : '') }, head, body);
+    shownKey = st.key;
+    root.replaceChildren(el('div', { class: 'rm-shell' }, sidebar(), main));
     if (focus) h.focus({ preventScroll: true });
   }
 
@@ -501,6 +584,10 @@
     pub: k => !!ROOMS[k]?.pub,
     define: (k, d) => { ROOMS[k] = d; }, // desk.js(잡생각·할 일 달력)가 방을 더함
     kit: { el, all, day, say, act, reload: () => load() },
-    open(key, close) { root.removeAttribute('aria-busy'); st?.leave?.(); retryOrphans(); st = { room: ROOMS[key], tab: 0, filter: null, items: [], view: 'loading', close, note: '' }; load(); },
+    open(key, close, back) {
+      root.removeAttribute('aria-busy'); st?.leave?.(); retryOrphans();
+      const run = () => { st = { key, room: ROOMS[key], tab: 0, filter: null, items: [], view: 'loading', close, back, note: '' }; load(); };
+      document.startViewTransition && root.classList.contains('on') ? document.startViewTransition(run) : run(); // 칸을 옮길 때 부드럽게 바뀜
+    },
   };
 })();

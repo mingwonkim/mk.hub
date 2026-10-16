@@ -12,14 +12,14 @@ const OTP_PEPPER=defineSecret('VAULT_OTP_PEPPER');
 const AUTH_KEY=defineString('VAULT_FIREBASE_API_KEY',{default:'AIzaSyDWXJ1nIQIZXSMruwFhyoMSU3gf3omiyMc'});
 async function emailAuth(action,body){
  const response=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:'+action+'?key='+AUTH_KEY.value(),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:AbortSignal.timeout(15000)});
- const result=await response.json();if(!response.ok)throw new VaultError(400,action==='sendOobCode'?'메일을 보내지 못했습니다. 잠시 후 다시 요청해주세요.':'링크가 만료됐거나 이미 사용됐습니다. 새 링크를 요청해주세요.');return result;
+ const result=await response.json();if(!response.ok)throw new VaultError(400,action==='sendOobCode'?'Couldn\'t send the email. Try again in a moment.':'This link has expired or was already used. Request a new one.');return result;
 }
 const options={serviceAccount:'mkhub-vault@mingwon-hub.iam.gserviceaccount.com',region:'asia-northeast3',maxInstances:3,memory:'256MiB',timeoutSeconds:60,cors:['https://xn--zf0bu7y.com','https://mingwonkim.github.io','https://mingwon-hub.web.app','https://mingwon-hub.firebaseapp.com','http://127.0.0.1:8766']};
 async function authenticate(req,access=false){
- const match=/^Bearer (.+)$/.exec(req.get('authorization')||'');if(!match)throw new VaultError(401,'인증이 필요합니다.');
- let claims;try{claims=await auth.verifyIdToken(match[1],true);}catch(e){throw new VaultError(401,'인증이 만료됐습니다.');}
+ const match=/^Bearer (.+)$/.exec(req.get('authorization')||'');if(!match)throw new VaultError(401,'Sign-in required.');
+ let claims;try{claims=await auth.verifyIdToken(match[1],true);}catch(e){throw new VaultError(401,'Your session expired.');}
  requireOwner(claims,access);
- if(access){const state=await accessRef.get();if(!state.exists||state.data().version!==claims.vault_version)throw new VaultError(401,'다시 인증해주세요.');}
+ if(access){const state=await accessRef.get();if(!state.exists||state.data().version!==claims.vault_version)throw new VaultError(401,'Please verify again.');}
  return claims;
 }
 async function mint(claims,access,version){
@@ -28,8 +28,8 @@ async function mint(claims,access,version){
 function api(handler){return async(req,res)=>{
  res.set('Cache-Control','no-store');res.set('X-Content-Type-Options','nosniff');
  if(req.method!=='POST'){res.status(405).json({error:'POST only'});return;}
- if(!req.is('application/json')||(Number(req.get('content-length')||0)>32768||Buffer.byteLength(JSON.stringify(req.body||{}))>32768)){res.status(400).json({error:'잘못된 요청입니다.'});return;}
- try{res.json(await handler(req));}catch(error){res.status(error.status||500).json({error:error.status?error.message:'요청을 완료하지 못했습니다. 다시 시도해주세요.'});}
+ if(!req.is('application/json')||(Number(req.get('content-length')||0)>32768||Buffer.byteLength(JSON.stringify(req.body||{}))>32768)){res.status(400).json({error:'Invalid request.'});return;}
+ try{res.json(await handler(req));}catch(error){res.status(error.status||500).json({error:error.status?error.message:'The request didn\'t go through. Try again.'});}
 };}
 async function vaultHandler(req){
  const body=req.body||{},action=body.action;
@@ -45,10 +45,10 @@ async function vaultHandler(req){
   return{sent:true};
  }
  if(action==='complete-link'){
-  if(typeof body.code!=='string'||!body.code||body.code.length>2048)throw new VaultError(400,'새 인증 링크를 요청해주세요.');
+  if(typeof body.code!=='string'||!body.code||body.code.length>2048)throw new VaultError(400,'Request a new verification link.');
   const result=await emailAuth('signInWithEmailLink',{email:OWNER_EMAIL,oobCode:body.code});
   const verified=await auth.verifyIdToken(result.idToken,true);
-  if(verified.email!==OWNER_EMAIL||verified.email_verified!==true)throw new VaultError(403,'소유자 이메일 인증이 필요합니다.');
+  if(verified.email!==OWNER_EMAIL||verified.email_verified!==true)throw new VaultError(403,'The owner\'s email must be verified.');
   return{token:await mint({uid:verified.uid,vault_otp_at:Date.now()},false,0)};
  }
  // Pattern alone opens the vault; email link is only for first setup / recovery.
@@ -58,9 +58,9 @@ async function vaultHandler(req){
  if(action==='verify-pin'){
   // Reserve an attempt before expensive hashing; concurrent requests cannot bypass the limit.
   // Each lockout doubles (15min -> 24h cap); email recovery (set-pin) clears it.
-  const state=await db.runTransaction(async tx=>{const snap=await tx.get(accessRef);if(!snap.exists||snap.data().kind!=='pattern')throw new VaultError(409,'저장고 패턴을 먼저 등록해주세요.');const state=snap.data(),now=Date.now();if(state.lockedUntil>now)throw new VaultError(429,'인증 시도가 많습니다. 잠시 후 다시 시도하거나 비밀번호 찾기를 이용해주세요.');const attempts=state.lockedUntil?0:(state.attempts||0),locks=state.locks||0,lock=attempts+1>=5;tx.update(accessRef,{attempts:attempts+1,lockedUntil:lock?now+Math.min(900000*2**locks,86400000):0,locks:lock?locks+1:locks});return state;});
-  if(!await verifyPasswords(body.passwords,state.passwords))throw new VaultError(403,'패턴이 일치하지 않습니다.');
-  await db.runTransaction(async tx=>{const latest=await tx.get(accessRef);if(latest.data()?.version!==state.version)throw new VaultError(401,'패턴이 변경됐습니다. 다시 시도해주세요.');tx.update(accessRef,{attempts:0,lockedUntil:0,locks:0});});
+  const state=await db.runTransaction(async tx=>{const snap=await tx.get(accessRef);if(!snap.exists||snap.data().kind!=='pattern')throw new VaultError(409,'Set a vault pattern first.');const state=snap.data(),now=Date.now();if(state.lockedUntil>now)throw new VaultError(429,'Too many attempts. Wait a moment or use "Forgot pattern".');const attempts=state.lockedUntil?0:(state.attempts||0),locks=state.locks||0,lock=attempts+1>=5;tx.update(accessRef,{attempts:attempts+1,lockedUntil:lock?now+Math.min(900000*2**locks,86400000):0,locks:lock?locks+1:locks});return state;});
+  if(!await verifyPasswords(body.passwords,state.passwords))throw new VaultError(403,'That pattern doesn\'t match.');
+  await db.runTransaction(async tx=>{const latest=await tx.get(accessRef);if(latest.data()?.version!==state.version)throw new VaultError(401,'The pattern changed. Try again.');tx.update(accessRef,{attempts:0,lockedUntil:0,locks:0});});
   const owner=await auth.getUserByEmail(OWNER_EMAIL);
   return{token:await mint({uid:owner.uid,vault_otp_at:Date.now()},true,state.version)};
  }
@@ -69,7 +69,7 @@ async function vaultHandler(req){
   const now=Date.now(),step=action==='passkey-login-options'?'o':'v',ipRef=db.doc('mk_security/rate/ips/pk'+step+'_'+otpHash('ip',req.ip||'unknown',OTP_PEPPER.value())); // 옵션·검증 따로 셈
   await db.runTransaction(async tx=>{const snap=await tx.get(ipRef);tx.set(ipRef,{...consumeRate(snap.data(),now,40,300),expiresAt:Timestamp.fromMillis(now+3600000)});});
   if(action==='passkey-login-options')return pk.loginOptions();
-  const state=await accessRef.get();if(!state.exists||state.data().kind!=='pattern')throw new VaultError(409,'저장고 패턴을 먼저 등록해주세요.');
+  const state=await accessRef.get();if(!state.exists||state.data().kind!=='pattern')throw new VaultError(409,'Set a vault pattern first.');
   await pk.loginVerify(body);
   const owner=await auth.getUserByEmail(OWNER_EMAIL);
   return{token:await mint({uid:owner.uid,vault_otp_at:now},true,state.data().version)};
@@ -78,7 +78,7 @@ async function vaultHandler(req){
  if(action==='code-login'){
   const now=Date.now(),pepper=OTP_PEPPER.value(),ipRef=db.doc('mk_security/rate/ips/code_'+otpHash('ip',req.ip||'unknown',pepper));
   await db.runTransaction(async tx=>{const ip=await tx.get(ipRef);tx.set(ipRef,{...consumeRate(ip.data(),now,10,2000),expiresAt:Timestamp.fromMillis(now+3600000)});});
-  const state=await accessRef.get();if(!state.exists||state.data().kind!=='pattern')throw new VaultError(409,'저장고 패턴을 먼저 등록해주세요.');
+  const state=await accessRef.get();if(!state.exists||state.data().kind!=='pattern')throw new VaultError(409,'Set a vault pattern first.');
   // 토큰을 먼저 만들어 두고 코드를 소비 — 서버 오류로 코드만 날아가는 일 없게(소비 실패면 토큰은 버림)
   const owner=await auth.getUserByEmail(OWNER_EMAIL),version=state.data().version;
   const token=await mint({uid:owner.uid,vault_otp_at:now},true,version);
@@ -102,15 +102,15 @@ async function vaultHandler(req){
  if(action==='set-pin'){
   const freshRecovery=claims.vault_recovery===true&&Date.now()-claims.vault_otp_at<REAUTH_MS;
   const freshPin=claims.vault_access===true&&Date.now()-claims.vault_pin_at<REAUTH_MS;
-  if(!freshRecovery&&!freshPin)throw new VaultError(401,'암호 변경 전 다시 인증해주세요.');
+  if(!freshRecovery&&!freshPin)throw new VaultError(401,'Verify again before changing the pattern.');
   const passwords=await hashPasswords(body.passwords);
-  const version=await db.runTransaction(async tx=>{const old=await tx.get(accessRef);if(!freshRecovery&&old.data()?.version!==claims.vault_version)throw new VaultError(401,'다시 인증해주세요.');const version=(old.data()?.version||0)+1;tx.set(accessRef,{kind:'pattern',passwords,version,attempts:0,lockedUntil:0,locks:0});return version;});
+  const version=await db.runTransaction(async tx=>{const old=await tx.get(accessRef);if(!freshRecovery&&old.data()?.version!==claims.vault_version)throw new VaultError(401,'Please verify again.');const version=(old.data()?.version||0)+1;tx.set(accessRef,{kind:'pattern',passwords,version,attempts:0,lockedUntil:0,locks:0});return version;});
   return{token:await mint(claims,true,version)};
  }
  if(action==='logout-all'){
   await authenticate(req,true);await accessRef.update({version:FieldValue.increment(1)});await auth.revokeRefreshTokens(claims.uid);return{ok:true};
  }
- throw new VaultError(404,'지원하지 않는 요청입니다.');
+ throw new VaultError(404,'Unsupported request.');
 }
 exports.vault=onRequest({...options,secrets:[OTP_PEPPER]},api(vaultHandler));
 module.exports._private={authenticate,api,options,vaultHandler};
@@ -122,14 +122,14 @@ function noteSlug(value){return String(value||'').replace(/[^a-zA-Z0-9가-힣\-_
 async function githubHandler(req){
  await authenticate(req,true);
  const repository=GITHUB_REPOSITORY.value(),base=GITHUB_PATH.value().replace(/^\/+|\/+$/g,'');
- if(!/^[\w.-]+\/[\w.-]+$/.test(repository)||base.split('/').some(part=>part==='..'))throw new VaultError(503,'백업 연결을 준비 중입니다.');
+ if(!/^[\w.-]+\/[\w.-]+$/.test(repository)||base.split('/').some(part=>part==='..'))throw new VaultError(503,'Backup connection is being prepared.');
  const root='https://api.github.com/repos/'+repository;
  async function github(path,method='GET',body){
   const response=await fetch(root+path,{method,headers:{Authorization:'Bearer '+process.env.VAULT_GITHUB_TOKEN,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(15000)});
   if(response.status===404&&method==='GET')return null;
-  if(!response.ok)throw new VaultError(502,'비공개 백업 연결에 실패했습니다.');return response.json();
+  if(!response.ok)throw new VaultError(502,'Private backup connection failed.');return response.json();
  }
- const repo=await github('');if(!repo||repo.private!==true)throw new VaultError(503,'비공개 보관함 연결을 확인해주세요.');
+ const repo=await github('');if(!repo||repo.private!==true)throw new VaultError(503,'Check the private repository connection.');
  const body=req.body||{};
  if(body.action==='status')return{connected:true};
  async function pushNote(snapshot){
@@ -138,17 +138,17 @@ async function githubHandler(req){
   const safeTitle=String(memo.t||'Untitled').replace(/[\r\n]/g,' ');
   let content='---\ntitle: '+JSON.stringify(safeTitle)+'\nmk_id: '+snapshot.id+'\ncreated: '+new Date(memo.c||Date.now()).toISOString()+'\nupdated: '+new Date(memo.u||Date.now()).toISOString()+'\n---\n\n'+(memo.type==='draw'?'':memo.b||'');
   // Private storage references carry no bearer download token into GitHub.
-  if(memo.canvas_path||memo.type==='draw')content+='\n\n[그림 원본은 MK.HUB 개인 저장고에서 열기](https://xn--zf0bu7y.com/)';
+  if(memo.canvas_path||memo.type==='draw')content+='\n\n[Open the original drawing in the private vault](https://xn--zf0bu7y.com/)';
   const endpoint='/contents/'+path.split('/').map(encodeURIComponent).join('/'),old=await github(endpoint);
   await github(endpoint,'PUT',{message:'MK.HUB: '+safeTitle,content:Buffer.from(content).toString('base64'),...(old?.sha?{sha:old.sha}:{})});
  }
  if(body.action==='push-note'){
-  if(!/^[\w-]{1,128}$/.test(body.id||''))throw new VaultError(400,'기록을 확인해주세요.');
-  const snapshot=await db.doc('mk_app/data/memos/'+body.id).get();if(!snapshot.exists)throw new VaultError(404,'기록을 찾을 수 없습니다.');await pushNote(snapshot);return{count:1};
+  if(!/^[\w-]{1,128}$/.test(body.id||''))throw new VaultError(400,'Check the record.');
+  const snapshot=await db.doc('mk_app/data/memos/'+body.id).get();if(!snapshot.exists)throw new VaultError(404,'Couldn\'t find that record.');await pushNote(snapshot);return{count:1};
  }
  if(body.action==='push-all'){
   let query=db.collection('mk_app/data/memos').orderBy('__name__').limit(3);
-  if(body.cursor){if(!/^[\w-]{1,128}$/.test(body.cursor))throw new VaultError(400,'잘못된 요청입니다.');query=query.startAfter(body.cursor);}
+  if(body.cursor){if(!/^[\w-]{1,128}$/.test(body.cursor))throw new VaultError(400,'Invalid request.');query=query.startAfter(body.cursor);}
   const snapshot=await query.get();for(const note of snapshot.docs)await pushNote(note);
   return{count:snapshot.size,cursor:snapshot.size===3?snapshot.docs.at(-1).id:null};
  }
@@ -156,7 +156,7 @@ async function githubHandler(req){
   const entries=await github('/contents/'+base.split('/').map(encodeURIComponent).join('/'));if(!Array.isArray(entries))return{count:0};
   const dirs=entries.filter(entry=>entry.type==='dir'&&!entry.name.startsWith('.')).sort((a,b)=>a.path.localeCompare(b.path));
   const cursor=body.cursor||{directory:0,file:0};
-  if(!Number.isSafeInteger(cursor.directory)||!Number.isSafeInteger(cursor.file)||cursor.directory<0||cursor.file<0)throw new VaultError(400,'잘못된 요청입니다.');
+  if(!Number.isSafeInteger(cursor.directory)||!Number.isSafeInteger(cursor.file)||cursor.directory<0||cursor.file<0)throw new VaultError(400,'Invalid request.');
   let count=0;
   for(let directory=cursor.directory;directory<dirs.length;directory++){
    const entry=dirs[directory];
@@ -179,7 +179,7 @@ async function githubHandler(req){
   }
   return{count,cursor:null};
  }
- throw new VaultError(404,'지원하지 않는 요청입니다.');
+ throw new VaultError(404,'Unsupported request.');
 }
 if(process.env.VAULT_GITHUB_ENABLED==='true')exports.vaultGithub=onRequest({...options,secrets:[defineSecret('VAULT_GITHUB_TOKEN')]},api(githubHandler));
 module.exports._private.githubHandler=githubHandler;

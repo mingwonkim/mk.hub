@@ -17,49 +17,49 @@ function passkeys(db){
  }
  // 한 번만 쓸 수 있음: 만료·종류가 틀려도 꺼내는 순간 지움(트랜잭션 안에서 throw하면 삭제도 취소되므로 판정은 밖에서). 만료는 TTL 아닌 여기서 판정
  async function takeChallenge(id,kind){
-  if(typeof id!=='string'||!/^[a-f0-9]{32}$/.test(id))throw new VaultError(400,'다시 시도해주세요.');
+  if(typeof id!=='string'||!/^[a-f0-9]{32}$/.test(id))throw new VaultError(400,'Try again.');
   const c=await db.runTransaction(async tx=>{const ref=challenges.doc(id),snap=await tx.get(ref);if(!snap.exists)return null;const data=snap.data();tx.delete(ref);return data;});
-  if(!c)throw new VaultError(400,'다시 시도해주세요.');
-  if(c.kind!==kind||c.expires<Date.now())throw new VaultError(400,'시간이 지났습니다. 다시 시도해주세요.');
+  if(!c)throw new VaultError(400,'Try again.');
+  if(c.kind!==kind||c.expires<Date.now())throw new VaultError(400,'Timed out. Try again.');
   return c.challenge;
  }
- const credId=body=>{const id=body?.response?.id;if(typeof id!=='string'||!/^[\w-]{16,1024}$/.test(id))throw new VaultError(400,'패스키 응답을 확인해주세요.');return id;};
+ const credId=body=>{const id=body?.response?.id;if(typeof id!=='string'||!/^[\w-]{16,1024}$/.test(id))throw new VaultError(400,'Check the passkey response.');return id;};
  return{
   // 등록(로그인된 소유자, 최근 5분 안에 패턴/패스키로 연 경우만)
   async registerOptions(claims){
-   if(!fresh(claims))throw new VaultError(401,'등록 전에 다시 인증해주세요.');
+   if(!fresh(claims))throw new VaultError(401,'Verify again before registering.');
    const existing=await keys.get();
    const options=await generateRegistrationOptions({rpName:'민권.com',rpID:RP_ID,userName:'민권',userDisplayName:'민권',userID:new TextEncoder().encode(claims.uid),attestationType:'none',
     excludeCredentials:existing.docs.map(d=>({id:d.id,transports:d.data().transports||[]})),authenticatorSelection:{residentKey:'preferred',userVerification:'required'}});
    return{options,challengeId:await saveChallenge('reg',options.challenge)};
   },
   async registerVerify(claims,body){
-   if(!fresh(claims))throw new VaultError(401,'등록 전에 다시 인증해주세요.');
+   if(!fresh(claims))throw new VaultError(401,'Verify again before registering.');
    credId(body);const expectedChallenge=await takeChallenge(body.challengeId,'reg');
-   let result;try{result=await verifyRegistrationResponse({response:body.response,expectedChallenge,expectedOrigin:ORIGIN,expectedRPID:RP_ID,requireUserVerification:true});}catch(e){throw new VaultError(400,'패스키를 확인하지 못했습니다.');}
-   if(!result.verified)throw new VaultError(400,'패스키를 확인하지 못했습니다.');
-   const c=result.registrationInfo.credential,label=String(body.label||'이 기기').slice(0,40);
+   let result;try{result=await verifyRegistrationResponse({response:body.response,expectedChallenge,expectedOrigin:ORIGIN,expectedRPID:RP_ID,requireUserVerification:true});}catch(e){throw new VaultError(400,'Couldn\'t verify the passkey.');}
+   if(!result.verified)throw new VaultError(400,'Couldn\'t verify the passkey.');
+   const c=result.registrationInfo.credential,label=String(body.label||'This device').slice(0,40);
    await keys.doc(c.id).set({publicKey:b64(c.publicKey),counter:c.counter,transports:c.transports||[],label,created:Date.now(),used:0});
    return{id:c.id,label};
   },
   // 로그인(인증 전). 저장된 패스키만 허용
   async loginOptions(){
-   const existing=await keys.get();if(existing.empty)throw new VaultError(409,'등록된 Face ID가 없습니다.');
+   const existing=await keys.get();if(existing.empty)throw new VaultError(409,'No Face ID is registered.');
    const options=await generateAuthenticationOptions({rpID:RP_ID,userVerification:'required',allowCredentials:existing.docs.map(d=>({id:d.id,transports:d.data().transports||[]}))});
    return{options,challengeId:await saveChallenge('auth',options.challenge)};
   },
   async loginVerify(body){
    const id=credId(body),expectedChallenge=await takeChallenge(body.challengeId,'auth');
-   const ref=keys.doc(id),snap=await ref.get();if(!snap.exists)throw new VaultError(403,'등록되지 않은 패스키입니다.');
+   const ref=keys.doc(id),snap=await ref.get();if(!snap.exists)throw new VaultError(403,'This passkey is not registered.');
    const k=snap.data();
-   let result;try{result=await verifyAuthenticationResponse({response:body.response,expectedChallenge,expectedOrigin:ORIGIN,expectedRPID:RP_ID,requireUserVerification:true,credential:{id,publicKey:u8(k.publicKey),counter:k.counter||0,transports:k.transports||[]}});}catch(e){throw new VaultError(403,'Face ID를 확인하지 못했습니다.');}
-   if(!result.verified)throw new VaultError(403,'Face ID를 확인하지 못했습니다.');
+   let result;try{result=await verifyAuthenticationResponse({response:body.response,expectedChallenge,expectedOrigin:ORIGIN,expectedRPID:RP_ID,requireUserVerification:true,credential:{id,publicKey:u8(k.publicKey),counter:k.counter||0,transports:k.transports||[]}});}catch(e){throw new VaultError(403,'Couldn\'t verify Face ID.');}
+   if(!result.verified)throw new VaultError(403,'Couldn\'t verify Face ID.');
    // 동시 로그인: 검증에 쓴 counter가 그새 앞질러졌으면 거부(되돌리지 않음). Apple 패스키는 counter가 늘 0
    const next=result.authenticationInfo.newCounter;
-   await db.runTransaction(async tx=>{const cur=(await tx.get(ref)).data();if(!cur)throw new VaultError(403,'등록되지 않은 패스키입니다.');if((cur.counter||0)!==(k.counter||0))throw new VaultError(409,'동시에 로그인했습니다. 다시 시도해주세요.');tx.update(ref,{counter:next,used:Date.now()});});
+   await db.runTransaction(async tx=>{const cur=(await tx.get(ref)).data();if(!cur)throw new VaultError(403,'This passkey is not registered.');if((cur.counter||0)!==(k.counter||0))throw new VaultError(409,'Signed in twice at once. Try again.');tx.update(ref,{counter:next,used:Date.now()});});
   },
   async list(){return{keys:(await keys.get()).docs.map(d=>({id:d.id,label:d.data().label,created:d.data().created,used:d.data().used||0}))};},
-  async remove(claims,id){if(!fresh(claims))throw new VaultError(401,'지우기 전에 다시 인증해주세요.');if(typeof id!=='string'||!/^[\w-]{16,1024}$/.test(id))throw new VaultError(400,'잘못된 요청입니다.');await keys.doc(id).delete();return{ok:true};},
+  async remove(claims,id){if(!fresh(claims))throw new VaultError(401,'Verify again before removing.');if(typeof id!=='string'||!/^[\w-]{16,1024}$/.test(id))throw new VaultError(400,'Invalid request.');await keys.doc(id).delete();return{ok:true};},
  };
 }
 module.exports={passkeys,RP_ID,ORIGIN};

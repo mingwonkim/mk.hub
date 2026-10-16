@@ -19,6 +19,15 @@ service cloud.firestore {
     match /mk_app/data/{collection}/{docId} {
       allow read: if collection in ['briefs', 'room_art', 'room_it', 'fav_songs', 'music_notes', 'playlists', 'playlist_songs'];
     }
+    // 방명록(드론 칸): 누구나 읽고 남김 — 이름·한마디·시각만, 길이 제한. 고치기 없음, 지우기는 주인만
+    match /mk_app/data/guestbook/{id} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['name', 'msg', 'c'])
+        && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 40
+        && request.resource.data.msg is string && request.resource.data.msg.size() > 0 && request.resource.data.msg.size() <= 500
+        && request.resource.data.c is int && request.resource.data.c <= request.time.toMillis() + 60000;
+      allow delete: if owner();
+    }
     match /mk_app/data/briefs/{briefId} {
       allow read, delete: if owner();
       allow update: if owner()

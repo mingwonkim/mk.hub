@@ -16,7 +16,7 @@ function codes(db){
  return{
   // 복구 코드 새로 만들기(옛 코드는 전부 무효). 보여 주는 건 이번 한 번뿐
   async recoveryCreate(claims,pepper){
-   if(!fresh(claims))throw new VaultError(401,'복구 코드를 만들기 전에 다시 인증해주세요.');
+   if(!fresh(claims))throw new VaultError(401,'Verify again before creating recovery codes.');
    const list=Array.from({length:RECOVERY_COUNT},()=>make(10));
    await recoveryRef.set({codes:list.map(c=>({h:hash(pepper,c),used:0})),created:Date.now(),version:claims.vault_version});
    return{codes:list.map(c=>c.slice(0,5)+'-'+c.slice(5))};
@@ -24,7 +24,7 @@ function codes(db){
   async recoveryStatus(version){const d=(await recoveryRef.get()).data();return{created:d?.created||0,left:d?d.codes.filter(c=>!c.used).length:0,valid:!!d&&d.version===version};},
   // 기기 추가 코드(열려 있는 기기에서)
   async pairCreate(claims,pepper){
-   if(!fresh(claims))throw new VaultError(401,'기기 추가 코드를 만들기 전에 다시 인증해주세요.'); // 새 기기에 영구 출입을 주는 일이라 최근 인증만
+   if(!fresh(claims))throw new VaultError(401,'Verify again before creating a device code.'); // 새 기기에 영구 출입을 주는 일이라 최근 인증만
    const code=make(8),now=Date.now();
    await pairs.doc(hash(pepper,code)).set({expires:now+PAIR_MS,used:0,version:claims.vault_version});
    pairs.where('expires','<',now).limit(20).get().then(old=>Promise.all(old.docs.map(d=>d.ref.delete()))).catch(()=>{});
@@ -42,7 +42,7 @@ function codes(db){
     const ok=await db.runTransaction(async tx=>{const snap=await tx.get(recoveryRef);if(!snap.exists||snap.data().version!==version)return false;const list=snap.data().codes,i=list.findIndex(x=>x.h===h&&!x.used);if(i<0)return false;list[i]={...list[i],used:Date.now()};tx.update(recoveryRef,{codes:list});return true;});
     if(ok)return{kind:'recovery'};
    }
-   throw new VaultError(403,'코드가 맞지 않거나 이미 썼거나 시간이 지났습니다.');
+   throw new VaultError(403,'That code is wrong, already used, or expired.');
   },
  };
 }

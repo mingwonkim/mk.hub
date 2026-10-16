@@ -1,39 +1,39 @@
 /* 저장고 인증 — 비행선 해치: 카드 없이 화면 전체, 가운데 큰 다이얼 링 안에 패턴. 서재 암호(scene.css .mk-pin)와 같은 말투 */
-.vault-access{--c:#9fe9ff;--dim:#8aa3b8;position:fixed;inset:0;width:100vw;height:100dvh;max-width:none!important;max-height:none;margin:0;padding:0;border:0;background:none;color:#eef7ff;overflow:hidden;
-  font:14px/1.6 'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif;animation:vault-in .5s cubic-bezier(.2,.8,.2,1)}
+.vault-access{--c:#ffb08a;--dim:#8aa3b8;position:fixed;inset:0;width:100vw;height:100dvh;max-width:none!important;max-height:none;margin:0;padding:0;border:0;background:none;color:#f2eee8;overflow:hidden;
+  font:14px/1.6 Inter,'Pretendard Variable',Pretendard,sans-serif;animation:vault-in .5s cubic-bezier(.2,.8,.2,1)}
 @keyframes vault-in{from{opacity:0;filter:blur(6px)}}
-.vault-access::backdrop{background:radial-gradient(circle at 50% 46%,#16264acc,#050812f2 70%);backdrop-filter:blur(16px) saturate(120%);-webkit-backdrop-filter:blur(16px) saturate(120%)}
+.vault-access::backdrop{background:radial-gradient(circle at 50% 46%,#2a1a22cc,#0b0a0df2 70%);backdrop-filter:blur(16px) saturate(120%);-webkit-backdrop-filter:blur(16px) saturate(120%)}
 .vault-access-sheet{box-sizing:border-box;height:100%;display:flex;flex-direction:column;align-items:center;padding:calc(18px + env(safe-area-inset-top)) 20px calc(22px + env(safe-area-inset-bottom));overflow:auto}
 .vault-access-top{align-self:stretch;display:flex;align-items:center;justify-content:space-between;font:10px ui-monospace,Consolas,monospace;letter-spacing:.3em;color:var(--dim)}
 .vault-access-top button{background:none;border:0;padding:8px 2px;color:var(--dim);font:inherit;letter-spacing:.2em;cursor:pointer}
-.vault-access-top button::before{content:'닫기  ';letter-spacing:.1em}
+.vault-access-top button::before{content:'Close  ';letter-spacing:.1em}
 .vault-access-top button:hover{color:#fff}
-.vault-access h2{margin:auto 0 6px;font:300 26px/1.25 'Space Grotesk','Pretendard Variable',sans-serif;letter-spacing:-.01em;text-align:center}
+.vault-access h2{margin:auto 0 6px;font:400 40px/1.1 'Instrument Serif',Georgia,serif;letter-spacing:0;text-align:center}
 .vault-access-description{margin:0;max-width:300px;font-size:13px;color:var(--dim);text-align:center;overflow-wrap:anywhere}
 .vault-access form{display:flex;flex-direction:column;align-items:center;width:min(320px,100%);margin-top:28px}
 .vault-access-fields{display:contents}
-.vault-access input{box-sizing:border-box;width:100%;padding:12px 2px;border:0;border-bottom:1px solid #9fe9ff55;background:none;color:#fff;font:inherit;text-align:center;outline:none}
+.vault-access input{box-sizing:border-box;width:100%;padding:12px 2px;border:0;border-bottom:1px solid #ffb08a55;background:none;color:#fff;font:inherit;text-align:center;outline:none}
 .vault-access input:focus{border-color:var(--c)}
 
 /* 다이얼 링: 바깥 눈금이 천천히 돌고, 안쪽 얇은 원 안에 3×3 점 */
 .vault-pattern{position:relative;display:grid;grid-template-columns:repeat(3,1fr);place-items:center;width:min(230px,62vw);aspect-ratio:1;margin:34px 0;touch-action:none;user-select:none;-webkit-user-select:none;cursor:crosshair}
 .vault-pattern::before,.vault-pattern::after{content:'';position:absolute;border-radius:50%;pointer-events:none}
-.vault-pattern::before{inset:-17%;background:repeating-conic-gradient(#9fe9ff66 0 .6deg,transparent .6deg 6deg);
+.vault-pattern::before{inset:-17%;background:repeating-conic-gradient(#ffb08a66 0 .6deg,transparent .6deg 6deg);
   -webkit-mask:radial-gradient(closest-side,transparent calc(100% - 10px),#000 calc(100% - 9px));mask:radial-gradient(closest-side,transparent calc(100% - 10px),#000 calc(100% - 9px));animation:vault-turn 60s linear infinite}
-.vault-pattern::after{inset:-9%;border:1px solid #9fe9ff2a;box-shadow:0 0 60px #4fc8ff14 inset}
+.vault-pattern::after{inset:-9%;border:1px solid #ffb08a2a;box-shadow:0 0 60px #ff9a6a14 inset}
 @keyframes vault-turn{to{rotate:1turn}}
 .vault-pattern svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
 .vault-pattern polyline{fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 5px var(--c))}
-.vault-pattern span{width:10px;height:10px;border-radius:50%;background:#eef7ff55;transition:background .15s,scale .2s,box-shadow .2s}
-.vault-pattern span.on{background:#fff;scale:1.6;box-shadow:0 0 0 6px #9fe9ff22,0 0 14px var(--c)}
+.vault-pattern span{width:10px;height:10px;border-radius:50%;background:#f2eee855;transition:background .15s,scale .2s,box-shadow .2s}
+.vault-pattern span.on{background:#fff;scale:1.6;box-shadow:0 0 0 6px #ffb08a22,0 0 14px var(--c)}
 
 .vault-access-error{margin:0;min-height:22px;font-size:12px;color:#ffab8f;text-align:center}
-.vault-access-submit{width:100%;margin-top:6px;padding:14px;border:0;border-radius:999px;background:#eef7ff;color:#0a1224;font:600 14px/1 inherit;letter-spacing:.02em;cursor:pointer;transition:background .2s,box-shadow .2s}
-.vault-access-submit:hover{background:#fff;box-shadow:0 0 28px #9fe9ff55}
+.vault-access-submit{width:100%;margin-top:6px;padding:14px;border:0;border-radius:999px;background:#f2eee8;color:#0b0a0d;font:600 14px/1 inherit;letter-spacing:.02em;cursor:pointer;transition:background .2s,box-shadow .2s}
+.vault-access-submit:hover{background:#fff;box-shadow:0 0 28px #ffb08a55}
 .vault-access-submit[hidden]{display:none}
-.vault-access-passkey{display:flex;align-items:center;gap:10px;margin-top:6px;padding:12px 22px;border:1px solid #eef7ff55;border-radius:999px;background:#eef7ff0d;color:#fff;font:600 14px/1 inherit;cursor:pointer;transition:background .2s,box-shadow .2s}
-.vault-access-passkey::before{content:'';width:18px;height:18px;border:1.5px solid var(--c);border-radius:6px;box-shadow:inset 0 0 0 3px #0000,0 0 10px #9fe9ff66}
-.vault-access-passkey:hover{background:#eef7ff1f;box-shadow:0 0 24px #9fe9ff33}
+.vault-access-passkey{display:flex;align-items:center;gap:10px;margin-top:6px;padding:12px 22px;border:1px solid #f2eee855;border-radius:999px;background:#f2eee80d;color:#fff;font:600 14px/1 inherit;cursor:pointer;transition:background .2s,box-shadow .2s}
+.vault-access-passkey::before{content:'';width:18px;height:18px;border:1.5px solid var(--c);border-radius:6px;box-shadow:inset 0 0 0 3px #0000,0 0 10px #ffb08a66}
+.vault-access-passkey:hover{background:#f2eee81f;box-shadow:0 0 24px #ffb08a33}
 .vault-access-passkey[hidden]{display:none}
 .vault-access-code{margin-top:14px;padding:6px;background:none;border:0;color:var(--dim);font:12px/1 inherit;cursor:pointer}
 .vault-access-code:hover{color:#fff}
